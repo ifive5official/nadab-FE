@@ -161,8 +161,10 @@ function FeatureDescription() {
           }
           updateHasSeenIntro();
           const nextStep = getNextStepPath("intro");
-          navigate({
-            to: nextStep,
+          // 모바일 freeze 이슈때문에 넣음
+          // 더 나은 해결방법 나올 때까지 지우지 말 것
+          Promise.resolve().then(() => {
+            navigate({ to: nextStep });
           });
         }}
       >

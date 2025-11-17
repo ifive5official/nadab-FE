@@ -31,7 +31,8 @@ function Profile() {
           <StepTitle>프로필을 설정해주세요.</StepTitle>
         </div>
         <div className="py-padding-y-xl flex flex-col items-center gap-margin-y-s">
-          <div className="bg-neutral-300 h-16 w-16 rounded-full" />
+          <img src="/default-profile.png" className="h-16 w-16 rounded-full" />
+          {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
           <button className="text-interactive-text-primary text-label-m underline">
             사진 추가
           </button>

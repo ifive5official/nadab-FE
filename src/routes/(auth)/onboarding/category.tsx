@@ -1,26 +1,26 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
 import {
   BarChartSquareFilledIcon,
-  ChartRadarFilledIcon,
-  SignAltFilledIcon,
+  CoffeeFilledIcon,
+  HappyFilledIcon,
   UsersFilledIcon,
 } from "@/components/Icons";
 import StepTitle from "@/features/auth/StepTitle";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useSignupStore from "@/store/signupStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
-  beforeLoad: () => {
-    // 이전 단계 건너뛰는 것 방지
-    const { hasSeenIntro } = useSignupStore.getState();
-    if (!hasSeenIntro) {
-      throw redirect({ to: "/signup/terms" });
-    }
-  },
+  // beforeLoad: () => {
+  //   // 이전 단계 건너뛰는 것 방지
+  //   const { hasSeenIntro } = useSignupStore.getState();
+  //   if (!hasSeenIntro) {
+  //     throw redirect({ to: "/signup/terms" });
+  //   }
+  // },
 });
 
 function Category() {
@@ -32,13 +32,13 @@ function Category() {
       isSelected: false,
     },
     {
-      icon: <ChartRadarFilledIcon />,
-      title: "강점과 약점",
+      icon: <HappyFilledIcon />,
+      title: "내면 탐색",
       isSelected: false,
     },
     {
-      icon: <SignAltFilledIcon />,
-      title: "삶의 방향",
+      icon: <CoffeeFilledIcon />,
+      title: "일상의 균형",
       isSelected: false,
     },
     {
@@ -50,6 +50,13 @@ function Category() {
   const [items, setItems] = useState(initialItems);
   const selectedItem = items.find((item) => item.isSelected);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const { hasSeenIntro } = useSignupStore.getState();
+    if (!hasSeenIntro) {
+      navigate({ to: "/signup/terms", replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="h-full flex flex-col">
@@ -106,8 +113,10 @@ function Category() {
         onClick={() => {
           updateCategory(selectedItem!.title);
           const nextStep = getNextStepPath("category");
-          navigate({
-            to: nextStep,
+          // 모바일 freeze 이슈때문에 넣음
+          // 더 나은 해결방법 나올 때까지 지우지 말 것
+          Promise.resolve().then(() => {
+            navigate({ to: nextStep });
           });
         }}
       >
