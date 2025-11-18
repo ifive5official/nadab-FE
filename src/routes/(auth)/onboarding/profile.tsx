@@ -2,9 +2,11 @@ import BlockButton from "@/components/BlockButton";
 import { InputFieldWithButton } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { UserSchema } from "@/features/user/userSchema";
 import { useDebouncedCallback } from "use-debounce";
+import BottomModal from "@/components/BottomModal";
+import { AnimatePresence } from "motion/react";
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
@@ -13,6 +15,11 @@ export const Route = createFileRoute("/(auth)/onboarding/profile")({
 function Profile() {
   const [nickname, setNickname] = useState("");
   const [nicknameError, setNicknameError] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const albumInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const validateNickname = useDebouncedCallback((value: string) => {
     const NicknameSchema = UserSchema.pick({ nickname: true });
@@ -33,9 +40,51 @@ function Profile() {
         <div className="py-padding-y-xl flex flex-col items-center gap-margin-y-s">
           <img src="/default-profile.png" className="h-16 w-16 rounded-full" />
           {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
-          <button className="text-interactive-text-primary text-label-m underline">
+          <button
+            className="text-interactive-text-primary text-label-m underline"
+            onClick={() => setIsModalOpen(true)}
+          >
             사진 추가
           </button>
+          <input
+            ref={albumInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*"
+          />
+          <input
+            ref={cameraInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*"
+            capture="environment"
+          />
+          <AnimatePresence>
+            {isModalOpen && (
+              <BottomModal
+                title="프로필 사진 추가"
+                items={[
+                  {
+                    label: "앨범에서 사진 선택",
+                    onClick: () => {
+                      albumInputRef.current?.click();
+                    },
+                  },
+                  {
+                    label: "사진 찍기",
+                    onClick: () => {
+                      cameraInputRef.current?.click();
+                    },
+                  },
+                  {
+                    label: "취소",
+                    onClick: () => setIsModalOpen(false),
+                  },
+                ]}
+                onClose={() => setIsModalOpen(false)}
+              />
+            )}
+          </AnimatePresence>
         </div>
         <div className="py-padding-y-m">
           <InputFieldWithButton
