@@ -154,8 +154,17 @@ export function OtpInput({ length, error, onChange, ...props }: OtpInputProps) {
               inputRefs.current[i] = el;
             }}
             value={digit}
-            type="number"
+            type="text"
+            inputMode="numeric"
             maxLength={1}
+            onMouseDown={(e) => {
+              // 항상 커서가 맨 뒤로 가게
+              e.preventDefault();
+              const target = e.target as HTMLInputElement;
+              target.focus();
+              const len = target.value.length;
+              target.setSelectionRange(len, len);
+            }}
             onChange={(e) => handleChange(e, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
             className={clsx(
