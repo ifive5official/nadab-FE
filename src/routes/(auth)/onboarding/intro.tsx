@@ -54,7 +54,8 @@ function FeatureDescription() {
       category: "친구",
       title: `친구들과 
 나의 생각을 나눠요.`,
-      content: `당신이 신뢰하는 소수의 친구들과 당신의 생각 조각을 잠시 나눌 수 있는 작은 공간을 마련했어요.
+      content: `당신이 신뢰하는 소수의 친구들과 당신의 생각 조각을
+잠시 나눌 수 있는 작은 공간을 마련했어요.
 공유하고 싶은 기록이 생겼다면, 공유하기로 함께 나눠보세요.
 ㅤ`,
       imgSrc: "/onboarding3.png",
