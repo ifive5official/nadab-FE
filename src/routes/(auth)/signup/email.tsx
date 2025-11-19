@@ -1,8 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
-import { useState } from "react";
-import { UserSchema } from "@/features/user/userSchema";
-import { useDebouncedCallback } from "use-debounce";
+import { useInputValidation } from "@/hooks/useInputValidation";
 import InputField from "@/components/InputFields";
 import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
@@ -22,20 +20,12 @@ export const Route = createFileRoute("/(auth)/signup/email")({
 
 export default function Email() {
   const updateEmail = useSignupStore.use.updateEmail();
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const {
+    value: email,
+    error: emailError,
+    onChange: onEmailChange,
+  } = useInputValidation("email");
   const navigate = useNavigate();
-
-  // 입력 후 일정 시간이 지나고 검증
-  const validateEmail = useDebouncedCallback((value: string) => {
-    const EmailSchema = UserSchema.pick({ email: true });
-    const result = EmailSchema.safeParse({ email: value });
-    if (!result.success) {
-      setEmailError(result.error.issues[0].message);
-    } else {
-      setEmailError("");
-    }
-  }, 300);
 
   return (
     <div>
@@ -68,11 +58,7 @@ export default function Email() {
             label="이메일 주소"
             id="email"
             name="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailError(""); // 입력 중 에러 문구 X
-              validateEmail(e.target.value);
-            }}
+            onChange={(e) => onEmailChange(e.target.value)}
             value={email}
             placeholder="이메일을 입력해주세요."
             type="email"

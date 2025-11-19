@@ -1,16 +1,16 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
 import useSignupStore from "@/store/signupStore";
-import { useState } from "react";
-import { UserSchema } from "@/features/user/userSchema";
-import { useDebouncedCallback } from "use-debounce";
 import InputField from "@/components/InputFields";
-import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import {
+  useInputValidation,
+  useConfirmPasswordValidation,
+} from "@/hooks/useInputValidation";
 
 export const Route = createFileRoute("/(auth)/signup/password")({
-  component: Email,
+  component: Password,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
     const { isEmailVerified } = useSignupStore.getState();
@@ -20,32 +20,20 @@ export const Route = createFileRoute("/(auth)/signup/password")({
   },
 });
 
-export default function Email() {
+export default function Password() {
   const updatePassword = useSignupStore.use.updatePassword();
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const {
+    value: password,
+    error: passwordError,
+    onChange: onPasswordChange,
+  } = useInputValidation("password");
+  const {
+    value: confirmPassword,
+    error: confirmPasswordError,
+    onChange: onConfirmPasswordChange,
+    validate: validateConfirmPassword,
+  } = useConfirmPasswordValidation(password);
   const navigate = useNavigate();
-
-  // 입력 후 일정 시간이 지나고 검증
-  const validatePassword = useDebouncedCallback((value: string) => {
-    const PasswordSchema = UserSchema.pick({ password: true });
-    const result = PasswordSchema.safeParse({ password: value });
-    if (!result.success) {
-      setPasswordError(result.error.issues[0].message);
-    } else {
-      setPasswordError("");
-    }
-  }, 300);
-
-  const validateConfirmPassword = useDebouncedCallback(() => {
-    if (!(confirmPassword === password)) {
-      setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
-    } else {
-      setConfirmPasswordError("");
-    }
-  }, 300);
 
   return (
     <div>
@@ -71,9 +59,7 @@ export default function Email() {
           id="password"
           name="password"
           onChange={(e) => {
-            setPassword(e.target.value);
-            setPasswordError(""); // 입력 중 에러 문구 X
-            validatePassword(e.target.value);
+            onPasswordChange(e.target.value);
             if (confirmPassword) {
               validateConfirmPassword();
             }
@@ -87,11 +73,7 @@ export default function Email() {
           label="비밀번호 재확인"
           id="confirmPassword"
           name="confirmPassword"
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            setConfirmPasswordError(""); // 입력 중 에러 문구 X
-            validateConfirmPassword();
-          }}
+          onChange={(e) => onConfirmPasswordChange(e.target.value)}
           value={confirmPassword}
           placeholder="비밀번호를 입력해주세요."
           type="password"

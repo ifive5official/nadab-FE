@@ -3,8 +3,7 @@ import { InputFieldWithButton } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { UserSchema } from "@/features/user/userSchema";
-import { useDebouncedCallback } from "use-debounce";
+import { useInputValidation } from "@/hooks/useInputValidation";
 import BottomModal from "@/components/BottomModal";
 import { AnimatePresence } from "motion/react";
 
@@ -13,23 +12,16 @@ export const Route = createFileRoute("/(auth)/onboarding/profile")({
 });
 
 function Profile() {
-  const [nickname, setNickname] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
+  const {
+    value: nickname,
+    error: nicknameError,
+    onChange: onNicknameChange,
+  } = useInputValidation("nickname");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
-
-  const validateNickname = useDebouncedCallback((value: string) => {
-    const NicknameSchema = UserSchema.pick({ nickname: true });
-    const result = NicknameSchema.safeParse({ nickname: value });
-    if (!result.success) {
-      setNicknameError(result.error.issues[0].message);
-    } else {
-      setNicknameError("");
-    }
-  }, 300);
 
   return (
     <div className="h-full flex flex-col">
@@ -89,11 +81,7 @@ function Profile() {
         <div className="py-padding-y-m">
           <InputFieldWithButton
             value={nickname}
-            onChange={(e) => {
-              setNickname(e.target.value);
-              setNicknameError(""); // 입력 중 에러 문구 X
-              validateNickname(e.target.value);
-            }}
+            onChange={(e) => onNicknameChange(e.target.value)}
             error={nicknameError}
             label="닉네임"
             buttonLabel="중복 검사"
