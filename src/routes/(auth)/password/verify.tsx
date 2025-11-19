@@ -1,26 +1,19 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import BlockButton from "@/components/BlockButton";
-import useSignupStore from "@/store/signupStore";
-import { useEffect, useRef, useState } from "react";
-import { OtpInput } from "@/components/InputFields";
-import { useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import useResetPasswordStore from "@/store/resetPasswordStore";
+import { useState, useEffect, useRef } from "react";
+import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import StepTitle from "@/features/auth/StepTitle";
-import { getNextStepPath } from "@/features/auth/signupSteps";
+import { OtpInput } from "@/components/InputFields";
+import BlockButton from "@/components/BlockButton";
 
-export const Route = createFileRoute("/(auth)/signup/emailVerification")({
-  component: EmailVerification,
-  beforeLoad: () => {
-    // 이전 단계 건너뛰는 것 방지
-    const { email } = useSignupStore.getState();
-    if (!email) {
-      throw redirect({ to: "/signup/terms" });
-    }
-  },
+export const Route = createFileRoute("/(auth)/password/verify")({
+  component: Verify,
 });
 
-function EmailVerification() {
-  const updateIsEmailVerified = useSignupStore.use.updateIsEmailVerified();
-  const email = useSignupStore.use.email();
+function Verify() {
+  const updateIsEmailVerified =
+    useResetPasswordStore.use.updateIsEmailVerified();
+  const email = useResetPasswordStore.use.email();
   const [enteredCode, setEnteredCode] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -30,6 +23,7 @@ function EmailVerification() {
 
   // 진입 시 이메일 전송
   // Todo: 여기서 보내지 말고 이전 페이지에서 보내는 것 고려
+  // Todo: 중복 로직 추출 고려
   useEffect(() => {
     // Todo: 이메일 인증번호 발송 api 연동
     alert(email + "로 인증번호 발송: 123456");
@@ -73,7 +67,7 @@ function EmailVerification() {
         if (enteredCode === "123456") {
           alert(enteredCode + "를 백엔드에 전송했습니다. 에러 없음.");
           updateIsEmailVerified();
-          const nextStep = getNextStepPath("emailVerification");
+          const nextStep = getNextStepPath("verify");
           navigate({
             to: nextStep,
           });

@@ -46,9 +46,8 @@ function RouteComponent() {
         {/* todo: 백엔드 연동 */}
         <BlockButton disabled={!password || !email}>완료</BlockButton>
       </form>
-      {/* todo: 비밀번호 찾기 링크로 변경 */}
       <Link
-        to="/"
+        to="/password/forgot"
         className="inline-block w-full text-center text-label-m underline text-brand-primary"
       >
         비밀번호를 잊으셨나요?

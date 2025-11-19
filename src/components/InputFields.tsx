@@ -86,6 +86,7 @@ export function InputFieldWithButton({
           )}
         />
         <button
+          type="button"
           className={clsx(
             "absolute right-0 h-full px-padding-x-s text-button-3",
             {
