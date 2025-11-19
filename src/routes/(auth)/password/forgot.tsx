@@ -4,6 +4,7 @@ import { useInputValidation } from "@/hooks/useInputValidation";
 import BlockButton from "@/components/BlockButton";
 import useResetPasswordStore from "@/store/resetPasswordStore";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(auth)/password/forgot")({
   component: Forgot,
@@ -18,14 +19,29 @@ function Forgot() {
   const updateEmail = useResetPasswordStore.use.updateEmail();
 
   const navigate = useNavigate();
+
+  const emailMutation = useMutation({
+    mutationFn: async ({ email }: { email: string }) => {
+      // Todo: 가입 여부 확인 백엔드 api 연동
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      alert(email + "로 인증번호 발송: 123456");
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { email };
+    },
+    onSuccess: () => {
+      updateEmail(email);
+      const nextStep = getNextStepPath("forgot");
+      navigate({ to: nextStep });
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
+
   return (
     <form
       className="py-padding-x-m flex flex-col gap-margin-y-m"
       onSubmit={(e) => {
         e.preventDefault();
-        updateEmail(email);
-        const nextStep = getNextStepPath("forgot");
-        navigate({ to: nextStep });
+        emailMutation.mutate({ email });
       }}
     >
       <p className="text-caption-m text-neutral-800">
@@ -46,7 +62,12 @@ function Forgot() {
         // Todo: 인증번호 전송 백엔드 연동
         onButtonClick={() => {}}
       />
-      <BlockButton disabled={!email || !!emailError}>다음</BlockButton>
+      <BlockButton
+        isLoading={emailMutation.isPending}
+        disabled={!email || !!emailError}
+      >
+        다음
+      </BlockButton>
     </form>
   );
 }

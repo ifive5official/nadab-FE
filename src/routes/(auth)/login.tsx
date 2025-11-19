@@ -4,12 +4,14 @@ import InputField from "@/components/InputFields";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import useResetPasswordStore from "@/store/resetPasswordStore";
 
 export const Route = createFileRoute("/(auth)/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const resetPasswordStore = useResetPasswordStore.use.reset();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -76,6 +78,7 @@ function RouteComponent() {
       <Link
         to="/password/forgot"
         className="inline-block w-full text-center text-label-m underline text-brand-primary"
+        onClick={resetPasswordStore}
       >
         비밀번호를 잊으셨나요?
       </Link>

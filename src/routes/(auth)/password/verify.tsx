@@ -5,6 +5,7 @@ import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import StepTitle from "@/features/auth/StepTitle";
 import { OtpInput } from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(auth)/password/verify")({
   component: Verify,
@@ -28,14 +29,43 @@ function Verify() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3분
 
-  // 진입 시 이메일 전송
-  // Todo: 여기서 보내지 말고 이전 페이지에서 보내는 것 고려
-  // Todo: 중복 로직 추출 고려
-  useEffect(() => {
-    // Todo: 이메일 인증번호 발송 api 연동
-    alert(email + "로 인증번호 발송: 123456");
-  }, [email]);
+  const resendCodeMutation = useMutation({
+    mutationFn: async ({ email }: { email: string }) => {
+      // Todo: 인증번호 전송 백엔드 api 연동
+      alert(email + "로 인증번호 재전송: 123456");
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { email };
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
 
+  const verifyCodeMutation = useMutation({
+    mutationFn: async ({ enteredCode }: { enteredCode: string }) => {
+      // Todo: 인증번호 확인 백엔드 api 연동
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      if (enteredCode !== "123456") {
+        throw new Error("인증번호 확인 실패");
+      }
+      return { enteredCode };
+    },
+    onSuccess: () => {
+      updateIsEmailVerified();
+      const nextStep = getNextStepPath("verify");
+      navigate({
+        to: nextStep,
+      });
+    },
+
+    onError: (error) => {
+      if (error.message === "인증번호 확인 실패") {
+        setError("입력한 정보를 한번 더 확인해주세요.");
+      } else {
+        // Todo: 에러 처리(토스트 보여줄 예정)
+      }
+    },
+  });
+
+  // Todo: 중복 로직 추출 고려
   function startTimer() {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
@@ -60,8 +90,7 @@ function Verify() {
   function handleResend() {
     setTimeLeft(180);
     startTimer();
-    // Todo: 이메일 인증번호 발송 api 연동
-    alert(email + "로 인증번호 재전송: 123456");
+    resendCodeMutation.mutate({ email });
   }
 
   return (
@@ -70,17 +99,7 @@ function Verify() {
       action=""
       onSubmit={(e) => {
         e.preventDefault();
-        // Todo: 이메일 인증번호 확인 api 연동
-        if (enteredCode === "123456") {
-          alert(enteredCode + "를 백엔드에 전송했습니다. 에러 없음.");
-          updateIsEmailVerified();
-          const nextStep = getNextStepPath("verify");
-          navigate({
-            to: nextStep,
-          });
-        } else {
-          setError("입력한 정보를 한번 더 확인해주세요.");
-        }
+        verifyCodeMutation.mutate({ enteredCode });
       }}
     >
       <StepTitle>
@@ -108,7 +127,12 @@ function Verify() {
         </p>
       </div>
 
-      <BlockButton disabled={enteredCode.length !== 6}>완료</BlockButton>
+      <BlockButton
+        isLoading={verifyCodeMutation.isPending}
+        disabled={enteredCode.length !== 6}
+      >
+        완료
+      </BlockButton>
       <p className="text-center text-label-m text-text-primary">
         인증번호가 오지 않았나요?{" "}
         <button onClick={handleResend} className="text-brand-primary underline">

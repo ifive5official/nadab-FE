@@ -8,6 +8,7 @@ import StepTitle from "@/features/auth/StepTitle";
 import InputField from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(auth)/password/reset")({
   component: Reset,
@@ -33,7 +34,22 @@ function Reset() {
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
   } = useConfirmPasswordValidation(password);
+
   const navigate = useNavigate();
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ password }: { password: string }) => {
+      // Todo: 비밀번호 변경 백엔드 api 연동
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { password };
+    },
+    onSuccess: () => {
+      updatePassword(password);
+      const nextStep = getNextStepPath("reset");
+      navigate({ to: nextStep });
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
 
   return (
     <div>
@@ -45,14 +61,7 @@ function Reset() {
         className="flex flex-col gap-margin-y-m py-padding-y-m"
         onSubmit={(e) => {
           e.preventDefault();
-          if (!passwordError && !confirmPasswordError) {
-            updatePassword(password);
-            // Todo: 백엔드 비밀번호 변경 api 연동
-            const nextStep = getNextStepPath("reset");
-            navigate({
-              to: nextStep,
-            });
-          }
+          resetPasswordMutation.mutate({ password });
         }}
       >
         <InputField
@@ -85,6 +94,7 @@ function Reset() {
           영문, 숫자, 특수문자가 포함된 8자 이상의 비밀번호를 입력해주세요.
         </p>
         <BlockButton
+          isLoading={resetPasswordMutation.isPending}
           disabled={
             !(
               !passwordError &&
