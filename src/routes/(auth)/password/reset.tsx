@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import useResetPasswordStore from "@/store/resetPasswordStore";
 import {
   useInputValidation,
@@ -11,6 +11,13 @@ import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 
 export const Route = createFileRoute("/(auth)/password/reset")({
   component: Reset,
+  beforeLoad: () => {
+    // 이전 단계 건너뛰는 것 방지
+    const { isEmailVerified } = useResetPasswordStore.getState();
+    if (!isEmailVerified) {
+      throw redirect({ to: "/password/forgot" });
+    }
+  },
 });
 
 function Reset() {
