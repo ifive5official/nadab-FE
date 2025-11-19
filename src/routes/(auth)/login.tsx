@@ -1,8 +1,9 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
 import InputField from "@/components/InputFields";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(auth)/login")({
   component: RouteComponent,
@@ -12,12 +13,36 @@ function RouteComponent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      // Todo: 백엔드 api 연동
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ email, password });
+        }, 300);
+      });
+    },
+    onSuccess: () => {
+      navigate({ to: "/" });
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
+
   return (
     <div>
       <SubHeader>로그인</SubHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          mutate({ email, password });
         }}
         className="flex flex-col py-padding-y-m gap-margin-y-m mb-margin-y-l"
       >
@@ -44,7 +69,9 @@ function RouteComponent() {
           placeholder="비밀번호를 입력해주세요."
         />
         {/* todo: 백엔드 연동 */}
-        <BlockButton disabled={!password || !email}>완료</BlockButton>
+        <BlockButton isLoading={isPending} disabled={!password || !email}>
+          완료
+        </BlockButton>
       </form>
       <Link
         to="/password/forgot"

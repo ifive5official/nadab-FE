@@ -1,15 +1,18 @@
 import type { ButtonHTMLAttributes } from "react";
 import clsx from "clsx";
+import { LoadingIcon } from "./Icons";
 
 type Props = {
   variant?: "primary" | "secondary" | "tertiary";
   disabled?: boolean;
+  isLoading?: boolean;
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 // Todo: 로딩 상태(로딩 스피너 + disabled) 추가
 export default function BlockButton({
   variant = "primary",
   disabled = false,
+  isLoading = false,
   children,
   ...props
 }: Props) {
@@ -30,7 +33,7 @@ export default function BlockButton({
       )}
       {...props}
     >
-      {children}
+      {isLoading ? <LoadingIcon /> : children}
     </button>
   );
 }

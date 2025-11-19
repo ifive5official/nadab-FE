@@ -274,3 +274,44 @@ export function UsersFilledIcon() {
     </svg>
   );
 }
+
+export function LoadingIcon({ height = 24 }: { height?: number }) {
+  return (
+    <div style={{ height }} className="flex items-center justify-center">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="animate-spin"
+      >
+        <g
+          clipPath="url(#paint0_angular_15235_14476_clip_path)"
+          data-figma-skip-parse="true"
+        >
+          <g transform="matrix(0 0.01 -0.01 0 10 10)">
+            <foreignObject x="-1020" y="-1020" width="2040" height="2040">
+              <div
+                style={{
+                  background:
+                    "conic-gradient(from 90deg, rgba(255, 255, 255, 1) 0deg, rgba(255, 255, 255, 1) 63.243deg, rgba(255, 255, 255, 0) 360deg)",
+                  height: "100%",
+                  width: "100%",
+                  opacity: 1,
+                }}
+              ></div>
+            </foreignObject>
+          </g>
+        </g>
+        <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10ZM2.99027 10C2.99027 13.8714 6.12863 17.0097 10 17.0097C13.8714 17.0097 17.0097 13.8714 17.0097 10C17.0097 6.12863 13.8714 2.99027 10 2.99027C6.12863 2.99027 2.99027 6.12863 2.99027 10Z" />
+        <circle cx="10.1001" cy="18.5" r="1.5" fill="rgb(255, 255, 255)" />
+        <defs>
+          <clipPath id="paint0_angular_15235_14476_clip_path">
+            <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10ZM2.99027 10C2.99027 13.8714 6.12863 17.0097 10 17.0097C13.8714 17.0097 17.0097 13.8714 17.0097 10C17.0097 6.12863 13.8714 2.99027 10 2.99027C6.12863 2.99027 2.99027 6.12863 2.99027 10Z" />
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+}
