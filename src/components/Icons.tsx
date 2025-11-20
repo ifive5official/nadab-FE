@@ -315,3 +315,23 @@ export function LoadingIcon({ height = 24 }: { height?: number }) {
     </div>
   );
 }
+
+export function SuccessIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M9.51049 15.4674L19.0044 6L20.0636 7.06214L9.50156 17.5947L4 12.0157L5.06805 10.9625L9.51049 15.4674Z"
+        fill="#16A34A"
+      />
+    </svg>
+  );
+}

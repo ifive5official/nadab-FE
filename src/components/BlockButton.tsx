@@ -18,7 +18,7 @@ export default function BlockButton({
 }: Props) {
   return (
     <button
-      disabled={disabled}
+      disabled={disabled || isLoading}
       className={clsx(
         "relative w-full text-center text-button-1 rounded-lg py-padding-y-m",
         {

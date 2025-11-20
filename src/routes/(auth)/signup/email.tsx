@@ -6,6 +6,7 @@ import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useSignupStore from "@/store/signupStore";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(auth)/signup/email")({
   component: Email,
@@ -27,6 +28,22 @@ export default function Email() {
   } = useInputValidation("email");
   const navigate = useNavigate();
 
+  const emailMutation = useMutation({
+    mutationFn: async ({ email }: { email: string }) => {
+      // Todo: 중복 확인 백엔드 api 연동
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      alert(email + "로 인증번호 발송: 123456");
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { email };
+    },
+    onSuccess: () => {
+      updateEmail(email);
+      const nextStep = getNextStepPath("email");
+      navigate({ to: nextStep });
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
+
   return (
     <div>
       <div className="my-margin-y-m">
@@ -39,17 +56,7 @@ export default function Email() {
           e.preventDefault();
           if (!emailError) {
             // Todo: 중복 확인 api 호출 + 로딩 상태 UI 반영
-            // 모바일 페이지 전환 애니메이션 관련 이슈로 인해 추가
-            if (document.activeElement instanceof HTMLElement) {
-              document.activeElement.blur();
-            }
-            updateEmail(email);
-            const nextStep = getNextStepPath("email");
-            // 모바일 freeze 이슈때문에 넣음
-            // 더 나은 해결방법 나올 때까지 지우지 말 것
-            Promise.resolve().then(() => {
-              navigate({ to: nextStep });
-            });
+            emailMutation.mutate({ email });
           }
         }}
       >
@@ -66,7 +73,12 @@ export default function Email() {
           />
         </div>
 
-        <BlockButton disabled={!!emailError || !email}>완료</BlockButton>
+        <BlockButton
+          isLoading={emailMutation.isPending}
+          disabled={!!emailError || !email}
+        >
+          완료
+        </BlockButton>
       </form>
     </div>
   );

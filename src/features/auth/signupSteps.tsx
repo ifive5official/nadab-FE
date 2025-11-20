@@ -51,6 +51,9 @@ export function getNextStepPath(currentStepId: StepId) {
   const currentStepIdx = signupSteps.findIndex(
     (step) => step.id === currentStepId
   );
-  const nextStep = signupSteps[currentStepIdx + 1];
-  return nextStep.path;
+  const nextStepPath =
+    currentStepIdx === signupSteps.length - 1
+      ? "/"
+      : signupSteps[currentStepIdx + 1].path;
+  return nextStepPath;
 }

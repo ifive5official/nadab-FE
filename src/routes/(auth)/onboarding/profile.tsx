@@ -1,30 +1,86 @@
 import BlockButton from "@/components/BlockButton";
 import { InputFieldWithButton } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import BottomModal from "@/components/BottomModal";
 import { AnimatePresence } from "motion/react";
+import { useMutation } from "@tanstack/react-query";
+import { getNextStepPath } from "@/features/auth/signupSteps";
+import useSignupStore from "@/store/signupStore";
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
 });
 
 function Profile() {
+  const signupStore = useSignupStore.getState();
+
   const {
     value: nickname,
     error: nicknameError,
     onChange: onNicknameChange,
   } = useInputValidation("nickname");
+  const [isNicknameOk, setIsNicknameOk] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [profileImgUrl, setProfileImgUrl] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
+  const navigate = useNavigate();
+
+  const checkNicknameMutation = useMutation({
+    mutationFn: async ({ nickname }: { nickname: string }) => {
+      // Todo: 닉네임 중복 확인 백엔드 api 연동
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { nickname };
+    },
+    onSuccess: () => {
+      setIsNicknameOk(true);
+    },
+
+    // Todo: 에러 처리
+  });
+
+  const signupMutation = useMutation({
+    mutationFn: async ({
+      nickname,
+      profileImgUrl,
+    }: {
+      nickname: string;
+      profileImgUrl: string;
+    }) => {
+      // Todo: 회원가입 백엔드 api 연동
+      const user = {
+        email: signupStore.email,
+        password: signupStore.password,
+        category: signupStore.category,
+        nickname,
+        profileImgUrl,
+      };
+      alert(`${JSON.stringify(user)} 회원가입`);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return { nickname };
+    },
+    onSuccess: () => {
+      const nextStep = getNextStepPath("profile");
+      navigate({ to: nextStep });
+    },
+    // Todo: 에러 처리(토스트 보여줄 예정)
+  });
+
   return (
-    <div className="h-full flex flex-col">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        signupMutation.mutate({ nickname, profileImgUrl });
+      }}
+      className="h-full flex flex-col"
+    >
       <div className="flex-1">
         <div className="py-margin-y-m">
           <StepTitle>프로필을 설정해주세요.</StepTitle>
@@ -33,6 +89,7 @@ function Profile() {
           <img src="/default-profile.png" className="h-16 w-16 rounded-full" />
           {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
           <button
+            type="button"
             className="text-interactive-text-primary text-label-m underline"
             onClick={() => setIsModalOpen(true)}
           >
@@ -81,13 +138,20 @@ function Profile() {
         <div className="py-padding-y-m">
           <InputFieldWithButton
             value={nickname}
-            onChange={(e) => onNicknameChange(e.target.value)}
+            onChange={(e) => {
+              setIsNicknameOk(false);
+              onNicknameChange(e.target.value);
+            }}
             error={nicknameError}
+            isOk={isNicknameOk}
+            isLoading={checkNicknameMutation.isPending}
             label="닉네임"
+            id="nickname"
             buttonLabel="중복 검사"
             buttonDisabled={!(nickname && !nicknameError)}
             onButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.stopPropagation();
+              checkNicknameMutation.mutate({ nickname });
             }}
           />
           <p className="text-caption-m text-neutral-800 mt-margin-y-m">
@@ -96,7 +160,12 @@ function Profile() {
         </div>
       </div>
       {/* Todo: 중복 검사 결과 disabled 조건에 포함 */}
-      <BlockButton disabled={!(nickname && !nicknameError)}>완료</BlockButton>
-    </div>
+      <BlockButton
+        isLoading={signupMutation.isPending}
+        disabled={!(nickname && !nicknameError && isNicknameOk)}
+      >
+        완료
+      </BlockButton>
+    </form>
   );
 }

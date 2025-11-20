@@ -10,6 +10,7 @@ type State = {
   hasSeenIntro: boolean;
   category: string;
   nickname: string;
+  profileImgUrl: string;
 };
 
 type Action = {
@@ -20,6 +21,7 @@ type Action = {
   updateHasSeenIntro: () => void;
   updateCategory: (category: State["category"]) => void;
   updateNickname: (nickname: State["nickname"]) => void;
+  updateProfileImgUrl: (url: State["profileImgUrl"]) => void;
   reset: () => void;
 };
 
@@ -33,6 +35,7 @@ const useSignupStoreBase = create<State & Action>()(
       hasSeenIntro: false,
       category: "",
       nickname: "",
+      profileImgUrl: "",
       updateIsTermsAgreed: () => set({ isTermsAgreed: true }),
       updateEmail: (email) => set(() => ({ email: email })),
       updateIsEmailVerified: () => set({ isEmailVerified: true }),
@@ -40,6 +43,8 @@ const useSignupStoreBase = create<State & Action>()(
       updateHasSeenIntro: () => set({ hasSeenIntro: true }),
       updateCategory: (category) => set(() => ({ category: category })),
       updateNickname: (nickname) => set(() => ({ nickname: nickname })),
+      updateProfileImgUrl: (profileImgUrl) =>
+        set(() => ({ profileImgUrl: profileImgUrl })),
       reset: () => set(store.getInitialState),
     }),
     {

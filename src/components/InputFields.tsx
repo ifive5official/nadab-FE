@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import clsx from "clsx";
+import { LoadingIcon, SuccessIcon } from "./Icons";
 
 type Props = {
   variant?: "basic";
@@ -51,11 +52,15 @@ export function InputFieldWithButton({
   id,
   label,
   error,
+  isOk = false,
+  isLoading,
   buttonLabel,
   buttonDisabled,
   onButtonClick,
   ...props
 }: Props & {
+  isOk?: boolean;
+  isLoading: boolean;
   buttonLabel: string;
   onButtonClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   buttonDisabled?: boolean;
@@ -85,24 +90,33 @@ export function InputFieldWithButton({
             error && "text-feedback-error-fg"
           )}
         />
-        <button
-          type="button"
-          className={clsx(
-            "absolute right-0 h-full px-padding-x-s text-button-3",
-            {
-              "bg-button-primary-bg-default text-field-text-inverse hover:bg-button-primary-bg-hover":
-                !buttonDisabled,
-              "bg-button-disabled-bg text-text-disabled": buttonDisabled,
-            }
-          )}
-          disabled={buttonDisabled}
-          onClick={(e) => {
-            e.currentTarget.blur();
-            onButtonClick(e);
-          }}
-        >
-          {buttonLabel}
-        </button>
+        {isOk && (
+          <SuccessIcon className="absolute right-padding-x-xs top-1/2 -translate-y-1/2" />
+        )}
+        {!isOk && (
+          <button
+            type="button"
+            className={clsx(
+              "absolute right-0 h-full px-padding-x-s text-button-3",
+              {
+                "bg-button-primary-bg-default text-field-text-inverse hover:bg-button-primary-bg-hover":
+                  !buttonDisabled,
+                "bg-button-disabled-bg text-text-disabled": buttonDisabled,
+              }
+            )}
+            disabled={buttonDisabled || isLoading}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onButtonClick(e);
+            }}
+          >
+            {/* 너비 유지하려고 넣음 */}
+            <span className="invisible">{buttonLabel}</span>
+            <span className="absolute inset-0 flex justify-center items-center">
+              {isLoading ? <LoadingIcon height={20} /> : buttonLabel}
+            </span>
+          </button>
+        )}
       </div>
 
       {error && (

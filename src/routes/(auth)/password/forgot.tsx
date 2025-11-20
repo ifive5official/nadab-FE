@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { InputFieldWithButton } from "@/components/InputFields";
 import { useInputValidation } from "@/hooks/useInputValidation";
-import BlockButton from "@/components/BlockButton";
 import useResetPasswordStore from "@/store/resetPasswordStore";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import { useMutation } from "@tanstack/react-query";
@@ -56,18 +55,12 @@ function Forgot() {
         placeholder="가입한 이메일 주소를 입력해주세요"
         value={email}
         error={emailError}
+        isLoading={emailMutation.isPending}
         onChange={(e) => onEmailChange(e.target.value)}
         buttonLabel="인증"
         buttonDisabled={!email || !!emailError}
-        // Todo: 인증번호 전송 백엔드 연동
-        onButtonClick={() => {}}
+        onButtonClick={() => emailMutation.mutate({ email })}
       />
-      <BlockButton
-        isLoading={emailMutation.isPending}
-        disabled={!email || !!emailError}
-      >
-        다음
-      </BlockButton>
     </form>
   );
 }
