@@ -23,8 +23,8 @@ function Profile() {
     onChange: onNicknameChange,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [profileImgUrl, setProfileImgUrl] = useState("");
+  // Todo: 이미지 업로드
+  const [profileImgUrl] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
