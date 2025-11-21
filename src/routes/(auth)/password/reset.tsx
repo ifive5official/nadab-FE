@@ -9,6 +9,9 @@ import InputField from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import Modal from "@/components/Modal";
+import { CircleCheckFilledIcon } from "@/components/Icons";
 
 export const Route = createFileRoute("/(auth)/password/reset")({
   component: Reset,
@@ -37,6 +40,8 @@ function Reset() {
 
   const navigate = useNavigate();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const resetPasswordMutation = useMutation({
     mutationFn: async ({ password }: { password: string }) => {
       // Todo: 비밀번호 변경 백엔드 api 연동
@@ -44,9 +49,7 @@ function Reset() {
       return { password };
     },
     onSuccess: () => {
-      updatePassword(password);
-      const nextStep = getNextStepPath("reset");
-      navigate({ to: nextStep });
+      setIsModalOpen(true);
     },
     // Todo: 에러 처리(토스트 보여줄 예정)
   });
@@ -107,6 +110,23 @@ function Reset() {
           완료
         </BlockButton>
       </form>
+      <Modal
+        isOpen={isModalOpen}
+        icon={CircleCheckFilledIcon}
+        title={`비밀번호 변경에\n성공했어요!`}
+        buttons={[
+          {
+            label: "확인",
+            onClick: () => {
+              setIsModalOpen(false);
+              updatePassword(password);
+              const nextStep = getNextStepPath("reset");
+              navigate({ to: nextStep });
+            },
+          },
+        ]}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

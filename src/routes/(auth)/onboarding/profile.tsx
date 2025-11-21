@@ -5,7 +5,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import BottomModal from "@/components/BottomModal";
-import { AnimatePresence } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useSignupStore from "@/store/signupStore";
@@ -108,32 +107,30 @@ function Profile() {
             accept="image/*"
             capture="environment"
           />
-          <AnimatePresence>
-            {isModalOpen && (
-              <BottomModal
-                title="프로필 사진 추가"
-                items={[
-                  {
-                    label: "앨범에서 사진 선택",
-                    onClick: () => {
-                      albumInputRef.current?.click();
-                    },
-                  },
-                  {
-                    label: "사진 찍기",
-                    onClick: () => {
-                      cameraInputRef.current?.click();
-                    },
-                  },
-                  {
-                    label: "취소",
-                    onClick: () => setIsModalOpen(false),
-                  },
-                ]}
-                onClose={() => setIsModalOpen(false)}
-              />
-            )}
-          </AnimatePresence>
+
+          <BottomModal
+            isOpen={isModalOpen}
+            title="프로필 사진 추가"
+            items={[
+              {
+                label: "앨범에서 사진 선택",
+                onClick: () => {
+                  albumInputRef.current?.click();
+                },
+              },
+              {
+                label: "사진 찍기",
+                onClick: () => {
+                  cameraInputRef.current?.click();
+                },
+              },
+              {
+                label: "취소",
+                onClick: () => setIsModalOpen(false),
+              },
+            ]}
+            onClose={() => setIsModalOpen(false)}
+          />
         </div>
         <div className="py-padding-y-m">
           <InputFieldWithButton

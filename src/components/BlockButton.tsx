@@ -7,6 +7,7 @@ type Props = {
   disabled?: boolean;
   isLoading?: boolean;
   children: React.ReactNode;
+  className?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 // Todo: 로딩 상태(로딩 스피너 + disabled) 추가
 export default function BlockButton({
@@ -14,6 +15,7 @@ export default function BlockButton({
   disabled = false,
   isLoading = false,
   children,
+  className,
   ...props
 }: Props) {
   return (
@@ -29,7 +31,8 @@ export default function BlockButton({
           "bg-button-tertiary-bg-default border border-button-tertiary-border-default hover:bg-button-tertiary-bg-hover hover:border-button-tertiary-border-hover text-button-tertiary-text-default":
             variant === "tertiary" && !disabled,
         },
-        disabled && "bg-button-disabled-bg text-button-disabled-text"
+        disabled && "bg-button-disabled-bg text-button-disabled-text",
+        className
       )}
       {...props}
     >

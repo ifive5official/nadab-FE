@@ -185,6 +185,7 @@ export function ChevronRightIcon() {
   );
 }
 
+// 카테고리==================================
 export function BarChartSquareFilledIcon() {
   return (
     <svg
@@ -274,6 +275,7 @@ export function UsersFilledIcon() {
     </svg>
   );
 }
+//===================================
 
 export function LoadingIcon({ height = 24 }: { height?: number }) {
   return (
@@ -331,6 +333,24 @@ export function SuccessIcon({ className }: { className?: string }) {
         clipRule="evenodd"
         d="M9.51049 15.4674L19.0044 6L20.0636 7.06214L9.50156 17.5947L4 12.0157L5.06805 10.9625L9.51049 15.4674Z"
         fill="#16A34A"
+      />
+    </svg>
+  );
+}
+
+// 모달============================
+export function CircleCheckFilledIcon() {
+  return (
+    <svg
+      width="56"
+      height="56"
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M27.9996 12.5999C19.5086 12.5999 12.5996 19.5089 12.5996 27.9999C12.5996 36.4909 19.5086 43.3999 27.9996 43.3999C36.4906 43.3999 43.3996 36.4909 43.3996 27.9999C43.3996 19.5089 36.4906 12.5999 27.9996 12.5999ZM25.6322 34.6513L20.0028 28.9435L21.9964 26.9779L25.6476 30.6809L34.0112 22.3411L35.988 24.3235L25.6322 34.6513Z"
+        fill="#15649B"
       />
     </svg>
   );
