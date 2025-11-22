@@ -12,7 +12,7 @@ export function LandingPage() {
       {/* 위 절반 */}
       <div className="flex-1 flex flex-col justify-center items-center">
         <ColoredMainLogo style={{ height: `${(180 / 796) * 100}dvh` }} />
-        <div className="mt-margin-y-l mb-margin-y-s">
+        <div className="mt-margin-y-xl mb-margin-y-s">
           <ColoredTextLogo style={{ height: `${(36 / 796) * 100}dvh` }} />
         </div>
         <p className="text-label-m text-brand-primary-alpha-60">
@@ -21,8 +21,8 @@ export function LandingPage() {
       </div>
       {/* 아래 절반 */}
       <div className="flex-1 w-full flex flex-col justify-center">
-        <div className="flex flex-col gap-margin-y-l">
-          <div className="flex flex-col gap-margin-y-m">
+        <div className="flex flex-col gap-gap-y-xl">
+          <div className="flex flex-col gap-gap-y-m">
             <BlockButton variant="tertiary">
               <div>
                 <span className="absolute left-padding-x-m">

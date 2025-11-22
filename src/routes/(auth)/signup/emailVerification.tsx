@@ -94,7 +94,7 @@ function EmailVerification() {
 
   return (
     <form
-      className="flex flex-col gap-margin-y-l py-padding-y-m"
+      className="flex flex-col gap-gap-y-xl py-padding-y-m"
       action=""
       onSubmit={(e) => {
         e.preventDefault();
@@ -106,7 +106,7 @@ function EmailVerification() {
         <br />
         인증번호 6자리를 입력해 주세요
       </StepTitle>
-      <div className="flex flex-col gap-gap-y-m">
+      <div className="flex flex-col gap-gap-y-l">
         <OtpInput
           length={6}
           error={error}

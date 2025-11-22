@@ -60,8 +60,8 @@ function Category() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1 flex flex-col gap-padding-y-m">
-        <div className="my-margin-y-m flex flex-col gap-margin-y-m">
+      <div className="flex-1 flex flex-col gap-gap-y-l">
+        <div className="py-padding-y-m flex flex-col gap-gap-y-l">
           <StepTitle>
             당신의 어떤 이야기부터
             <br />
@@ -72,7 +72,7 @@ function Category() {
             선택한 주제에 맞춰, 나답이 질문들을 준비할게요.
           </p>
         </div>
-        <ul className="py-padding-y-m flex flex-col gap-margin-y-m">
+        <ul className="py-padding-y-m flex flex-col gap-padding-y-m">
           {items.map((item, i) => {
             return (
               <li
@@ -92,7 +92,7 @@ function Category() {
                 }}
                 key={i}
                 className={clsx(
-                  "py-padding-y-l px-padding-x-l flex items-center gap-gap-x-m border rounded-xl cursor-pointer",
+                  "py-padding-y-xl px-padding-x-xl flex items-center gap-gap-x-l border rounded-xl cursor-pointer",
                   {
                     "border-neutral-200 hover:bg-interactive-bg-hover hover:border-interactive-border-hover":
                       !item.isSelected,

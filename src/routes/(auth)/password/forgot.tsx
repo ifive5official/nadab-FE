@@ -37,7 +37,7 @@ function Forgot() {
 
   return (
     <form
-      className="py-padding-x-m flex flex-col gap-margin-y-m"
+      className="py-padding-y-m flex flex-col gap-gap-y-l"
       onSubmit={(e) => {
         e.preventDefault();
         emailMutation.mutate({ email });

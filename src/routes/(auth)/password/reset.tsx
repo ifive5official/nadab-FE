@@ -56,12 +56,12 @@ function Reset() {
 
   return (
     <div>
-      <div className="my-margin-y-m">
+      <div className="py-padding-y-m">
         <StepTitle>비밀번호를 설정해주세요.</StepTitle>
       </div>
 
       <form
-        className="flex flex-col gap-margin-y-m py-padding-y-m"
+        className="flex flex-col gap-gap-y-m py-padding-y-m"
         onSubmit={(e) => {
           e.preventDefault();
           resetPasswordMutation.mutate({ password });

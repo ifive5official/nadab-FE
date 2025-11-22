@@ -81,10 +81,10 @@ function Profile() {
       className="h-full flex flex-col"
     >
       <div className="flex-1">
-        <div className="py-margin-y-m">
+        <div className="py-padding-y-m">
           <StepTitle>프로필을 설정해주세요.</StepTitle>
         </div>
-        <div className="py-padding-y-xl flex flex-col items-center gap-margin-y-s">
+        <div className="py-padding-y-xl flex flex-col items-center gap-gap-y-s">
           <img src="/default-profile.png" className="h-16 w-16 rounded-full" />
           {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
           <button
@@ -132,7 +132,7 @@ function Profile() {
             onClose={() => setIsModalOpen(false)}
           />
         </div>
-        <div className="py-padding-y-m">
+        <div className="flex flex-col py-padding-y-m gap-gap-y-l">
           <InputFieldWithButton
             value={nickname}
             onChange={(e) => {
@@ -151,7 +151,7 @@ function Profile() {
               checkNicknameMutation.mutate({ nickname });
             }}
           />
-          <p className="text-caption-m text-neutral-800 mt-margin-y-m">
+          <p className="text-caption-m text-neutral-800">
             2자 이상 10자 이하의 한글, 영문으로 구성된 닉네임을 작성해주세요.
           </p>
         </div>

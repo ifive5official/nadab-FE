@@ -9,7 +9,6 @@ type Props = {
   children: React.ReactNode;
   className?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
-// Todo: 로딩 상태(로딩 스피너 + disabled) 추가
 export default function BlockButton({
   variant = "primary",
   disabled = false,

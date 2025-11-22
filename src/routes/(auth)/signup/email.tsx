@@ -46,12 +46,12 @@ export default function Email() {
 
   return (
     <div>
-      <div className="my-margin-y-m">
+      <div className="py-padding-y-m">
         <StepTitle>이메일을 입력해주세요.</StepTitle>
       </div>
 
       <form
-        className="flex flex-col gap-margin-y-s"
+        className="flex flex-col gap-gap-y-s"
         onSubmit={(e) => {
           e.preventDefault();
           if (!emailError) {
@@ -60,18 +60,17 @@ export default function Email() {
           }
         }}
       >
-        <div className="my-margin-y-m">
-          <InputField
-            label="이메일 주소"
-            id="email"
-            name="email"
-            onChange={(e) => onEmailChange(e.target.value)}
-            value={email}
-            placeholder="이메일을 입력해주세요."
-            type="email"
-            error={emailError}
-          />
-        </div>
+        <InputField
+          label="이메일 주소"
+          id="email"
+          name="email"
+          onChange={(e) => onEmailChange(e.target.value)}
+          value={email}
+          placeholder="이메일을 입력해주세요."
+          type="email"
+          error={emailError}
+          className="py-padding-y-m"
+        />
 
         <BlockButton
           isLoading={emailMutation.isPending}

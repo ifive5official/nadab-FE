@@ -14,6 +14,7 @@ type Props = {
   id?: string;
   label?: string;
   error?: string;
+  className?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function InputField({
@@ -21,10 +22,11 @@ export default function InputField({
   id,
   label,
   error,
+  className,
   ...props
 }: Props) {
   return (
-    <div className="flex flex-col gap-gap-y-s">
+    <div className={clsx("flex flex-col gap-gap-y-s", className)}>
       {label && (
         <label className="text-label-s text-field-text-mute" htmlFor={id}>
           {label}

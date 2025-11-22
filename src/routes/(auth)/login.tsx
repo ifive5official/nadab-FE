@@ -46,7 +46,7 @@ function RouteComponent() {
           e.preventDefault();
           mutate({ email, password });
         }}
-        className="flex flex-col py-padding-y-m gap-margin-y-m mb-margin-y-l"
+        className="flex flex-col pt-padding-y-m gap-gap-y-l mb-margin-y-xl"
       >
         <InputField
           label="이메일"

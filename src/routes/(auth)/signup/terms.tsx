@@ -77,13 +77,13 @@ function Terms() {
 
   return (
     <div>
-      <div className="my-margin-y-m">
+      <div className="py-padding-y-m">
         <StepTitle>서비스 이용약관에 동의해주세요.</StepTitle>
       </div>
 
-      <div className="py-padding-y-m flex flex-col gap-margin-y-m">
+      <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         <button
-          className="flex items-center gap-padding-x-xs text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-lg"
+          className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-lg"
           onClick={() => {
             setItems((prev) =>
               prev.map((item) => ({ ...item, isAgreed: !isAllAgreed }))
@@ -100,13 +100,13 @@ function Terms() {
           </span>
           <p>약관 모두 동의하기</p>
         </button>
-        <ul className="flex flex-col justify-center gap-padding-y-xs">
+        <ul className="flex flex-col justify-center gap-gap-y-s">
           {items.map((item, idx) => {
             return (
               <li
                 key={idx}
                 className={clsx(
-                  "cursor-pointer flex items-center gap-margin-x-s",
+                  "cursor-pointer flex items-center gap-gap-x-s px-padding-x-xs py-padding-y-xs",
                   {
                     "text-text-disabled": !item.isAgreed,
                     "text-text-primary": item.isAgreed,
@@ -125,7 +125,7 @@ function Terms() {
                 }}
               >
                 <button
-                  className={clsx("flex px-padding-x-xs py-padding-y-xs", {
+                  className={clsx({
                     "text-icon-disabled": !item.isAgreed,
                     "text-icon-primary": item.isAgreed,
                   })}

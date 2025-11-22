@@ -138,7 +138,7 @@ function FeatureDescription() {
                       <div className="w-fit text-caption-s text-brand-primary py-padding-y-xxs px-padding-x-xs border border-brand-primary rounded-3xl">
                         {contents[i].category}
                       </div>
-                      <h1 className="whitespace-pre-line text-headline-s text-text-primary mt-margin-y-s mb-margin-y-m">
+                      <h1 className="whitespace-pre-line text-headline-s text-text-primary mt-gap-y-s mb-gap-y-l">
                         {contents[i].title}
                       </h1>
                       <p className="text-text-tertiary text-caption-l whitespace-pre-line">
