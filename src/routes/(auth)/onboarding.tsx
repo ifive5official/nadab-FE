@@ -1,7 +1,5 @@
-import { useLocation, createFileRoute } from "@tanstack/react-router";
+import { useLocation, createFileRoute, Outlet } from "@tanstack/react-router";
 import { GetCurrentStep, type StepId } from "@/features/auth/signupSteps";
-import { AnimatePresence } from "motion/react";
-import { AnimatedOutlet } from "@/components/AnimatedOutlet";
 
 export const Route = createFileRoute("/(auth)/onboarding")({
   component: OnboardingLayout,
@@ -15,9 +13,7 @@ function OnboardingLayout() {
   return (
     <div className="h-full flex flex-col">
       {currentStep.header}
-      <AnimatePresence mode="wait">
-        <AnimatedOutlet key={location.pathname} />
-      </AnimatePresence>
+      <Outlet />
     </div>
   );
 }

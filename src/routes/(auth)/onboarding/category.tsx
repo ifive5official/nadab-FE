@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
 import {
   BarChartSquareFilledIcon,
@@ -8,19 +8,19 @@ import {
 } from "@/components/Icons";
 import StepTitle from "@/features/auth/StepTitle";
 import clsx from "clsx";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useSignupStore from "@/store/signupStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
-  // beforeLoad: () => {
-  //   // 이전 단계 건너뛰는 것 방지
-  //   const { hasSeenIntro } = useSignupStore.getState();
-  //   if (!hasSeenIntro) {
-  //     throw redirect({ to: "/signup/terms" });
-  //   }
-  // },
+  beforeLoad: () => {
+    // 이전 단계 건너뛰는 것 방지
+    const { hasSeenIntro } = useSignupStore.getState();
+    if (!hasSeenIntro) {
+      throw redirect({ to: "/signup/terms" });
+    }
+  },
 });
 
 function Category() {
@@ -50,13 +50,6 @@ function Category() {
   const [items, setItems] = useState(initialItems);
   const selectedItem = items.find((item) => item.isSelected);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const { hasSeenIntro } = useSignupStore.getState();
-    if (!hasSeenIntro) {
-      navigate({ to: "/signup/terms", replace: true });
-    }
-  }, [navigate]);
 
   return (
     <div className="h-full flex flex-col">
@@ -113,11 +106,7 @@ function Category() {
         onClick={() => {
           updateCategory(selectedItem!.title);
           const nextStep = getNextStepPath("category");
-          // 모바일 freeze 이슈때문에 넣음
-          // 더 나은 해결방법 나올 때까지 지우지 말 것
-          Promise.resolve().then(() => {
-            navigate({ to: nextStep });
-          });
+          navigate({ to: nextStep });
         }}
       >
         다음
