@@ -355,3 +355,35 @@ export function CircleCheckFilledIcon() {
     </svg>
   );
 }
+
+// 마이페이지===========================
+export function MenuIcon() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M24.5 14.5834L3.5 14.5834V12.8334L24.5 12.8334V14.5834Z"
+        fill="#17191A"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M24.5 7.58337L3.5 7.58337L3.5 5.83337L24.5 5.83337V7.58337Z"
+        fill="#17191A"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M24.5 21.5834L3.5 21.5834L3.5 19.8334L24.5 19.8334V21.5834Z"
+        fill="#17191A"
+      />
+    </svg>
+  );
+}
