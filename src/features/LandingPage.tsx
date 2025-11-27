@@ -3,9 +3,45 @@ import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
 import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
 import { ColoredMainLogo, ColoredTextLogo } from "@/components/Logos";
+import { instance } from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
 
 export function LandingPage() {
   const reset = useSignupStore.use.reset();
+  const { data: socialLoginUrls } = useQuery({
+    queryKey: ["socialLoginUrls"],
+    queryFn: async () => {
+      const isDev = import.meta.env.DEV;
+      const [naverRes, googleRes] = await Promise.all([
+        instance.get("/api/v1/auth/naver/url"),
+        instance.get("/api/v1/auth/google/url"),
+      ]);
+      const naverUrl = naverRes.data.data.authorizationUrl;
+      const googleUrl = googleRes.data.data.authorizationUrl;
+
+      return {
+        naver: isDev
+          ? naverUrl.replace(
+              "https://nadab-fe.vercel.app/",
+              "http://localhost:3000/"
+            )
+          : naverUrl,
+
+        google: isDev
+          ? googleUrl.replaceAll(
+              "https://nadab-fe.vercel.app/",
+              "http://localhost:3000/"
+            )
+          : googleUrl,
+      };
+    },
+    initialData: {
+      naver: "",
+      google: "",
+    },
+    // Todo: 에러 처리
+  });
+
   return (
     // pt - 전체 레이아웃 하단 패딩때문에 중앙정렬 맞추려고 넣음..
     <div className="w-full h-full flex flex-col items-center pt-padding-y-m">
@@ -23,7 +59,10 @@ export function LandingPage() {
       <div className="flex-1 w-full flex flex-col justify-center">
         <div className="flex flex-col gap-gap-y-xl">
           <div className="flex flex-col gap-gap-y-m">
-            <BlockButton variant="tertiary">
+            <BlockButton
+              variant="tertiary"
+              onClick={() => (window.location.href = socialLoginUrls?.naver)}
+            >
               <div>
                 <span className="absolute left-padding-x-m">
                   <NaverIcon />
@@ -31,7 +70,10 @@ export function LandingPage() {
                 <span>네이버로 로그인</span>
               </div>
             </BlockButton>
-            <BlockButton variant="tertiary">
+            <BlockButton
+              variant="tertiary"
+              onClick={() => (window.location.href = socialLoginUrls?.google)}
+            >
               <div>
                 <span className="absolute left-padding-x-m">
                   <GoogleIcon />
