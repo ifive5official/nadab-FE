@@ -18,7 +18,6 @@ export function LandingPage() {
       ]);
       const naverUrl = naverRes.data.data.authorizationUrl;
       const googleUrl = googleRes.data.data.authorizationUrl;
-
       return {
         naver: isDev
           ? naverUrl.replace(

@@ -33,13 +33,13 @@ function RouteComponent() {
       setAccessToken(accessToken);
       switch (signupStatus) {
         case "PROFILE_INCOMPLETE":
-          navigate({ to: "/onboarding/intro" });
+          navigate({ to: "/onboarding/intro", replace: true });
           break;
         case "WITHDRAWN":
           // Todo: 회원탈퇴시 처리
           break;
         default: // COMPLETED
-          navigate({ to: "/" });
+          navigate({ to: "/", replace: true });
       }
     },
   });

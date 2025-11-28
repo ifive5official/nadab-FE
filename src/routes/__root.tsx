@@ -1,6 +1,21 @@
+import useAuthStore from "@/store/authStore";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { instance } from "@/lib/axios";
 
 export const Route = createRootRoute({
+  beforeLoad: async () => {
+    const { accessToken, setAccessToken } = useAuthStore.getState();
+    console.log(accessToken);
+    if (!accessToken) {
+      try {
+        const res = await instance.post("/api/v1/auth/refresh");
+        const newAccessToken = res.data.data?.accessToken ?? null;
+        setAccessToken(newAccessToken);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
   component: RootComponent,
 });
 
