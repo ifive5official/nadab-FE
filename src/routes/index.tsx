@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LandingPage } from "@/features/LandingPage";
+import Home from "@/features/Home/Home";
 import useAuthStore from "@/store/authStore";
 
 export const Route = createFileRoute("/")({
@@ -8,6 +9,6 @@ export const Route = createFileRoute("/")({
     if (!accessToken) {
       return <LandingPage />;
     }
-    return <div>HOME</div>;
+    return <Home />;
   },
 });
