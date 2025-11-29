@@ -20,9 +20,9 @@ export const Route = createFileRoute("/(auth)/onboarding/intro")({
   component: FeatureDescription,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { password } = useSignupStore.getState();
-    // Todo: 소셜 로그인 확인 필요
-    if (!password) {
+    const { password, isSocialSignup } = useSignupStore.getState();
+    // 소셜 회원가입 시 여기로 바로 이동
+    if (!password && !isSocialSignup) {
       throw redirect({ to: "/signup/terms" });
     }
   },
