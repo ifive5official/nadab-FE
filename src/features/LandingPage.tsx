@@ -5,6 +5,10 @@ import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
 import { ColoredMainLogo, ColoredTextLogo } from "@/components/Logos";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
+import type { components } from "@/generated/api-types";
+import type { ApiResponse } from "@/generated/api";
+
+type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
 export function LandingPage() {
   const reset = useSignupStore.use.reset();
@@ -12,15 +16,17 @@ export function LandingPage() {
     queryKey: ["socialLoginUrls"],
     queryFn: async () => {
       const [naverRes, googleRes] = await Promise.all([
-        api.get("/api/v1/auth/naver/url"),
-        api.get("/api/v1/auth/google/url"),
+        api.get<ApiResponse<UrlRes>>("/api/v1/auth/naver/url"),
+        api.get<ApiResponse<UrlRes>>("/api/v1/auth/google/url"),
       ]);
-      const naverUrl = naverRes.data.data.authorizationUrl;
-      const googleUrl = googleRes.data.data.authorizationUrl;
+
+      const naverUrl = naverRes.data.data!.authorizationUrl;
+      const googleUrl = googleRes.data.data!.authorizationUrl;
       const REDIRECT_BASE = import.meta.env.VITE_REDIRECT_BASE;
+
       return {
-        naver: naverUrl.replace("https://nadab-fe.vercel.app/", REDIRECT_BASE),
-        google: googleUrl.replaceAll(
+        naver: naverUrl!.replace("https://nadab-fe.vercel.app/", REDIRECT_BASE),
+        google: googleUrl!.replaceAll(
           "https://nadab-fe.vercel.app/",
           REDIRECT_BASE
         ),
@@ -48,7 +54,9 @@ export function LandingPage() {
           <div className="flex flex-col gap-gap-y-m">
             <BlockButton
               variant="tertiary"
-              onClick={() => (window.location.href = socialLoginUrls?.naver)}
+              onClick={() =>
+                (window.location.href = socialLoginUrls?.naver ?? "")
+              }
             >
               <div>
                 <span className="absolute left-padding-x-m">
@@ -59,7 +67,9 @@ export function LandingPage() {
             </BlockButton>
             <BlockButton
               variant="tertiary"
-              onClick={() => (window.location.href = socialLoginUrls?.google)}
+              onClick={() =>
+                (window.location.href = socialLoginUrls?.google ?? "")
+              }
             >
               <div>
                 <span className="absolute left-padding-x-m">
