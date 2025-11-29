@@ -8,412 +8,452 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as authSignupRouteImport } from './routes/(auth)/signup'
-import { Route as authPasswordRouteImport } from './routes/(auth)/password'
-import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
-import { Route as authLoginRouteImport } from './routes/(auth)/login'
-import { Route as accountAccountRouteImport } from './routes/(account)/account'
-import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
-import { Route as authSignupPasswordRouteImport } from './routes/(auth)/signup/password'
-import { Route as authSignupEmailVerificationRouteImport } from './routes/(auth)/signup/emailVerification'
-import { Route as authSignupEmailRouteImport } from './routes/(auth)/signup/email'
-import { Route as authPasswordVerifyRouteImport } from './routes/(auth)/password/verify'
-import { Route as authPasswordResetRouteImport } from './routes/(auth)/password/reset'
-import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password/forgot'
-import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
-import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
-import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
-import { Route as accountAccountProfileRouteImport } from './routes/(account)/account.profile'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as authSignupRouteImport } from "./routes/(auth)/signup";
+import { Route as authPasswordRouteImport } from "./routes/(auth)/password";
+import { Route as authOnboardingRouteImport } from "./routes/(auth)/onboarding";
+import { Route as authLoginRouteImport } from "./routes/(auth)/login";
+import { Route as accountAccountRouteImport } from "./routes/(account)/account";
+import { Route as authSignupTermsRouteImport } from "./routes/(auth)/signup/terms";
+import { Route as authSignupPasswordRouteImport } from "./routes/(auth)/signup/password";
+import { Route as authSignupEmailVerificationRouteImport } from "./routes/(auth)/signup/emailVerification";
+import { Route as authSignupEmailRouteImport } from "./routes/(auth)/signup/email";
+import { Route as authPasswordVerifyRouteImport } from "./routes/(auth)/password/verify";
+import { Route as authPasswordResetRouteImport } from "./routes/(auth)/password/reset";
+import { Route as authPasswordForgotRouteImport } from "./routes/(auth)/password/forgot";
+import { Route as authOnboardingProfileRouteImport } from "./routes/(auth)/onboarding/profile";
+import { Route as authOnboardingIntroRouteImport } from "./routes/(auth)/onboarding/intro";
+import { Route as authOnboardingCategoryRouteImport } from "./routes/(auth)/onboarding/category";
+import { Route as accountAccountProfileRouteImport } from "./routes/(account)/account.profile";
+import { Route as authAuthNaverCallbackRouteImport } from "./routes/(auth)/auth.naver.callback";
+import { Route as authAuthGoogleCallbackRouteImport } from "./routes/(auth)/auth.google.callback";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const authSignupRoute = authSignupRouteImport.update({
-  id: '/(auth)/signup',
-  path: '/signup',
+  id: "/(auth)/signup",
+  path: "/signup",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const authPasswordRoute = authPasswordRouteImport.update({
-  id: '/(auth)/password',
-  path: '/password',
+  id: "/(auth)/password",
+  path: "/password",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const authOnboardingRoute = authOnboardingRouteImport.update({
-  id: '/(auth)/onboarding',
-  path: '/onboarding',
+  id: "/(auth)/onboarding",
+  path: "/onboarding",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const authLoginRoute = authLoginRouteImport.update({
-  id: '/(auth)/login',
-  path: '/login',
+  id: "/(auth)/login",
+  path: "/login",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const accountAccountRoute = accountAccountRouteImport.update({
-  id: '/(account)/account',
-  path: '/account',
+  id: "/(account)/account",
+  path: "/account",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const authSignupTermsRoute = authSignupTermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+  id: "/terms",
+  path: "/terms",
   getParentRoute: () => authSignupRoute,
-} as any)
+} as any);
 const authSignupPasswordRoute = authSignupPasswordRouteImport.update({
-  id: '/password',
-  path: '/password',
+  id: "/password",
+  path: "/password",
   getParentRoute: () => authSignupRoute,
-} as any)
+} as any);
 const authSignupEmailVerificationRoute =
   authSignupEmailVerificationRouteImport.update({
-    id: '/emailVerification',
-    path: '/emailVerification',
+    id: "/emailVerification",
+    path: "/emailVerification",
     getParentRoute: () => authSignupRoute,
-  } as any)
+  } as any);
 const authSignupEmailRoute = authSignupEmailRouteImport.update({
-  id: '/email',
-  path: '/email',
+  id: "/email",
+  path: "/email",
   getParentRoute: () => authSignupRoute,
-} as any)
+} as any);
 const authPasswordVerifyRoute = authPasswordVerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
+  id: "/verify",
+  path: "/verify",
   getParentRoute: () => authPasswordRoute,
-} as any)
+} as any);
 const authPasswordResetRoute = authPasswordResetRouteImport.update({
-  id: '/reset',
-  path: '/reset',
+  id: "/reset",
+  path: "/reset",
   getParentRoute: () => authPasswordRoute,
-} as any)
+} as any);
 const authPasswordForgotRoute = authPasswordForgotRouteImport.update({
-  id: '/forgot',
-  path: '/forgot',
+  id: "/forgot",
+  path: "/forgot",
   getParentRoute: () => authPasswordRoute,
-} as any)
+} as any);
 const authOnboardingProfileRoute = authOnboardingProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+  id: "/profile",
+  path: "/profile",
   getParentRoute: () => authOnboardingRoute,
-} as any)
+} as any);
 const authOnboardingIntroRoute = authOnboardingIntroRouteImport.update({
-  id: '/intro',
-  path: '/intro',
+  id: "/intro",
+  path: "/intro",
   getParentRoute: () => authOnboardingRoute,
-} as any)
+} as any);
 const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
-  id: '/category',
-  path: '/category',
+  id: "/category",
+  path: "/category",
   getParentRoute: () => authOnboardingRoute,
-} as any)
+} as any);
 const accountAccountProfileRoute = accountAccountProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+  id: "/profile",
+  path: "/profile",
   getParentRoute: () => accountAccountRoute,
-} as any)
+} as any);
+const authAuthNaverCallbackRoute = authAuthNaverCallbackRouteImport.update({
+  id: "/(auth)/auth/naver/callback",
+  path: "/auth/naver/callback",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const authAuthGoogleCallbackRoute = authAuthGoogleCallbackRouteImport.update({
+  id: "/(auth)/auth/google/callback",
+  path: "/auth/google/callback",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/account': typeof accountAccountRouteWithChildren
-  '/login': typeof authLoginRoute
-  '/onboarding': typeof authOnboardingRouteWithChildren
-  '/password': typeof authPasswordRouteWithChildren
-  '/signup': typeof authSignupRouteWithChildren
-  '/account/profile': typeof accountAccountProfileRoute
-  '/onboarding/category': typeof authOnboardingCategoryRoute
-  '/onboarding/intro': typeof authOnboardingIntroRoute
-  '/onboarding/profile': typeof authOnboardingProfileRoute
-  '/password/forgot': typeof authPasswordForgotRoute
-  '/password/reset': typeof authPasswordResetRoute
-  '/password/verify': typeof authPasswordVerifyRoute
-  '/signup/email': typeof authSignupEmailRoute
-  '/signup/emailVerification': typeof authSignupEmailVerificationRoute
-  '/signup/password': typeof authSignupPasswordRoute
-  '/signup/terms': typeof authSignupTermsRoute
+  "/": typeof IndexRoute;
+  "/account": typeof accountAccountRouteWithChildren;
+  "/login": typeof authLoginRoute;
+  "/onboarding": typeof authOnboardingRouteWithChildren;
+  "/password": typeof authPasswordRouteWithChildren;
+  "/signup": typeof authSignupRouteWithChildren;
+  "/account/profile": typeof accountAccountProfileRoute;
+  "/onboarding/category": typeof authOnboardingCategoryRoute;
+  "/onboarding/intro": typeof authOnboardingIntroRoute;
+  "/onboarding/profile": typeof authOnboardingProfileRoute;
+  "/password/forgot": typeof authPasswordForgotRoute;
+  "/password/reset": typeof authPasswordResetRoute;
+  "/password/verify": typeof authPasswordVerifyRoute;
+  "/signup/email": typeof authSignupEmailRoute;
+  "/signup/emailVerification": typeof authSignupEmailVerificationRoute;
+  "/signup/password": typeof authSignupPasswordRoute;
+  "/signup/terms": typeof authSignupTermsRoute;
+  "/auth/google/callback": typeof authAuthGoogleCallbackRoute;
+  "/auth/naver/callback": typeof authAuthNaverCallbackRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/account': typeof accountAccountRouteWithChildren
-  '/login': typeof authLoginRoute
-  '/onboarding': typeof authOnboardingRouteWithChildren
-  '/password': typeof authPasswordRouteWithChildren
-  '/signup': typeof authSignupRouteWithChildren
-  '/account/profile': typeof accountAccountProfileRoute
-  '/onboarding/category': typeof authOnboardingCategoryRoute
-  '/onboarding/intro': typeof authOnboardingIntroRoute
-  '/onboarding/profile': typeof authOnboardingProfileRoute
-  '/password/forgot': typeof authPasswordForgotRoute
-  '/password/reset': typeof authPasswordResetRoute
-  '/password/verify': typeof authPasswordVerifyRoute
-  '/signup/email': typeof authSignupEmailRoute
-  '/signup/emailVerification': typeof authSignupEmailVerificationRoute
-  '/signup/password': typeof authSignupPasswordRoute
-  '/signup/terms': typeof authSignupTermsRoute
+  "/": typeof IndexRoute;
+  "/account": typeof accountAccountRouteWithChildren;
+  "/login": typeof authLoginRoute;
+  "/onboarding": typeof authOnboardingRouteWithChildren;
+  "/password": typeof authPasswordRouteWithChildren;
+  "/signup": typeof authSignupRouteWithChildren;
+  "/account/profile": typeof accountAccountProfileRoute;
+  "/onboarding/category": typeof authOnboardingCategoryRoute;
+  "/onboarding/intro": typeof authOnboardingIntroRoute;
+  "/onboarding/profile": typeof authOnboardingProfileRoute;
+  "/password/forgot": typeof authPasswordForgotRoute;
+  "/password/reset": typeof authPasswordResetRoute;
+  "/password/verify": typeof authPasswordVerifyRoute;
+  "/signup/email": typeof authSignupEmailRoute;
+  "/signup/emailVerification": typeof authSignupEmailVerificationRoute;
+  "/signup/password": typeof authSignupPasswordRoute;
+  "/signup/terms": typeof authSignupTermsRoute;
+  "/auth/google/callback": typeof authAuthGoogleCallbackRoute;
+  "/auth/naver/callback": typeof authAuthNaverCallbackRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/(account)/account': typeof accountAccountRouteWithChildren
-  '/(auth)/login': typeof authLoginRoute
-  '/(auth)/onboarding': typeof authOnboardingRouteWithChildren
-  '/(auth)/password': typeof authPasswordRouteWithChildren
-  '/(auth)/signup': typeof authSignupRouteWithChildren
-  '/(account)/account/profile': typeof accountAccountProfileRoute
-  '/(auth)/onboarding/category': typeof authOnboardingCategoryRoute
-  '/(auth)/onboarding/intro': typeof authOnboardingIntroRoute
-  '/(auth)/onboarding/profile': typeof authOnboardingProfileRoute
-  '/(auth)/password/forgot': typeof authPasswordForgotRoute
-  '/(auth)/password/reset': typeof authPasswordResetRoute
-  '/(auth)/password/verify': typeof authPasswordVerifyRoute
-  '/(auth)/signup/email': typeof authSignupEmailRoute
-  '/(auth)/signup/emailVerification': typeof authSignupEmailVerificationRoute
-  '/(auth)/signup/password': typeof authSignupPasswordRoute
-  '/(auth)/signup/terms': typeof authSignupTermsRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/(account)/account": typeof accountAccountRouteWithChildren;
+  "/(auth)/login": typeof authLoginRoute;
+  "/(auth)/onboarding": typeof authOnboardingRouteWithChildren;
+  "/(auth)/password": typeof authPasswordRouteWithChildren;
+  "/(auth)/signup": typeof authSignupRouteWithChildren;
+  "/(account)/account/profile": typeof accountAccountProfileRoute;
+  "/(auth)/onboarding/category": typeof authOnboardingCategoryRoute;
+  "/(auth)/onboarding/intro": typeof authOnboardingIntroRoute;
+  "/(auth)/onboarding/profile": typeof authOnboardingProfileRoute;
+  "/(auth)/password/forgot": typeof authPasswordForgotRoute;
+  "/(auth)/password/reset": typeof authPasswordResetRoute;
+  "/(auth)/password/verify": typeof authPasswordVerifyRoute;
+  "/(auth)/signup/email": typeof authSignupEmailRoute;
+  "/(auth)/signup/emailVerification": typeof authSignupEmailVerificationRoute;
+  "/(auth)/signup/password": typeof authSignupPasswordRoute;
+  "/(auth)/signup/terms": typeof authSignupTermsRoute;
+  "/(auth)/auth/google/callback": typeof authAuthGoogleCallbackRoute;
+  "/(auth)/auth/naver/callback": typeof authAuthNaverCallbackRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/account'
-    | '/login'
-    | '/onboarding'
-    | '/password'
-    | '/signup'
-    | '/account/profile'
-    | '/onboarding/category'
-    | '/onboarding/intro'
-    | '/onboarding/profile'
-    | '/password/forgot'
-    | '/password/reset'
-    | '/password/verify'
-    | '/signup/email'
-    | '/signup/emailVerification'
-    | '/signup/password'
-    | '/signup/terms'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/account"
+    | "/login"
+    | "/onboarding"
+    | "/password"
+    | "/signup"
+    | "/account/profile"
+    | "/onboarding/category"
+    | "/onboarding/intro"
+    | "/onboarding/profile"
+    | "/password/forgot"
+    | "/password/reset"
+    | "/password/verify"
+    | "/signup/email"
+    | "/signup/emailVerification"
+    | "/signup/password"
+    | "/signup/terms"
+    | "/auth/google/callback"
+    | "/auth/naver/callback";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/account'
-    | '/login'
-    | '/onboarding'
-    | '/password'
-    | '/signup'
-    | '/account/profile'
-    | '/onboarding/category'
-    | '/onboarding/intro'
-    | '/onboarding/profile'
-    | '/password/forgot'
-    | '/password/reset'
-    | '/password/verify'
-    | '/signup/email'
-    | '/signup/emailVerification'
-    | '/signup/password'
-    | '/signup/terms'
+    | "/"
+    | "/account"
+    | "/login"
+    | "/onboarding"
+    | "/password"
+    | "/signup"
+    | "/account/profile"
+    | "/onboarding/category"
+    | "/onboarding/intro"
+    | "/onboarding/profile"
+    | "/password/forgot"
+    | "/password/reset"
+    | "/password/verify"
+    | "/signup/email"
+    | "/signup/emailVerification"
+    | "/signup/password"
+    | "/signup/terms"
+    | "/auth/google/callback"
+    | "/auth/naver/callback";
   id:
-    | '__root__'
-    | '/'
-    | '/(account)/account'
-    | '/(auth)/login'
-    | '/(auth)/onboarding'
-    | '/(auth)/password'
-    | '/(auth)/signup'
-    | '/(account)/account/profile'
-    | '/(auth)/onboarding/category'
-    | '/(auth)/onboarding/intro'
-    | '/(auth)/onboarding/profile'
-    | '/(auth)/password/forgot'
-    | '/(auth)/password/reset'
-    | '/(auth)/password/verify'
-    | '/(auth)/signup/email'
-    | '/(auth)/signup/emailVerification'
-    | '/(auth)/signup/password'
-    | '/(auth)/signup/terms'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/(account)/account"
+    | "/(auth)/login"
+    | "/(auth)/onboarding"
+    | "/(auth)/password"
+    | "/(auth)/signup"
+    | "/(account)/account/profile"
+    | "/(auth)/onboarding/category"
+    | "/(auth)/onboarding/intro"
+    | "/(auth)/onboarding/profile"
+    | "/(auth)/password/forgot"
+    | "/(auth)/password/reset"
+    | "/(auth)/password/verify"
+    | "/(auth)/signup/email"
+    | "/(auth)/signup/emailVerification"
+    | "/(auth)/signup/password"
+    | "/(auth)/signup/terms"
+    | "/(auth)/auth/google/callback"
+    | "/(auth)/auth/naver/callback";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  accountAccountRoute: typeof accountAccountRouteWithChildren
-  authLoginRoute: typeof authLoginRoute
-  authOnboardingRoute: typeof authOnboardingRouteWithChildren
-  authPasswordRoute: typeof authPasswordRouteWithChildren
-  authSignupRoute: typeof authSignupRouteWithChildren
+  IndexRoute: typeof IndexRoute;
+  accountAccountRoute: typeof accountAccountRouteWithChildren;
+  authLoginRoute: typeof authLoginRoute;
+  authOnboardingRoute: typeof authOnboardingRouteWithChildren;
+  authPasswordRoute: typeof authPasswordRouteWithChildren;
+  authSignupRoute: typeof authSignupRouteWithChildren;
+  authAuthGoogleCallbackRoute: typeof authAuthGoogleCallbackRoute;
+  authAuthNaverCallbackRoute: typeof authAuthNaverCallbackRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/signup': {
-      id: '/(auth)/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof authSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/password': {
-      id: '/(auth)/password'
-      path: '/password'
-      fullPath: '/password'
-      preLoaderRoute: typeof authPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/onboarding': {
-      id: '/(auth)/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof authOnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/login': {
-      id: '/(auth)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(account)/account': {
-      id: '/(account)/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof accountAccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/signup/terms': {
-      id: '/(auth)/signup/terms'
-      path: '/terms'
-      fullPath: '/signup/terms'
-      preLoaderRoute: typeof authSignupTermsRouteImport
-      parentRoute: typeof authSignupRoute
-    }
-    '/(auth)/signup/password': {
-      id: '/(auth)/signup/password'
-      path: '/password'
-      fullPath: '/signup/password'
-      preLoaderRoute: typeof authSignupPasswordRouteImport
-      parentRoute: typeof authSignupRoute
-    }
-    '/(auth)/signup/emailVerification': {
-      id: '/(auth)/signup/emailVerification'
-      path: '/emailVerification'
-      fullPath: '/signup/emailVerification'
-      preLoaderRoute: typeof authSignupEmailVerificationRouteImport
-      parentRoute: typeof authSignupRoute
-    }
-    '/(auth)/signup/email': {
-      id: '/(auth)/signup/email'
-      path: '/email'
-      fullPath: '/signup/email'
-      preLoaderRoute: typeof authSignupEmailRouteImport
-      parentRoute: typeof authSignupRoute
-    }
-    '/(auth)/password/verify': {
-      id: '/(auth)/password/verify'
-      path: '/verify'
-      fullPath: '/password/verify'
-      preLoaderRoute: typeof authPasswordVerifyRouteImport
-      parentRoute: typeof authPasswordRoute
-    }
-    '/(auth)/password/reset': {
-      id: '/(auth)/password/reset'
-      path: '/reset'
-      fullPath: '/password/reset'
-      preLoaderRoute: typeof authPasswordResetRouteImport
-      parentRoute: typeof authPasswordRoute
-    }
-    '/(auth)/password/forgot': {
-      id: '/(auth)/password/forgot'
-      path: '/forgot'
-      fullPath: '/password/forgot'
-      preLoaderRoute: typeof authPasswordForgotRouteImport
-      parentRoute: typeof authPasswordRoute
-    }
-    '/(auth)/onboarding/profile': {
-      id: '/(auth)/onboarding/profile'
-      path: '/profile'
-      fullPath: '/onboarding/profile'
-      preLoaderRoute: typeof authOnboardingProfileRouteImport
-      parentRoute: typeof authOnboardingRoute
-    }
-    '/(auth)/onboarding/intro': {
-      id: '/(auth)/onboarding/intro'
-      path: '/intro'
-      fullPath: '/onboarding/intro'
-      preLoaderRoute: typeof authOnboardingIntroRouteImport
-      parentRoute: typeof authOnboardingRoute
-    }
-    '/(auth)/onboarding/category': {
-      id: '/(auth)/onboarding/category'
-      path: '/category'
-      fullPath: '/onboarding/category'
-      preLoaderRoute: typeof authOnboardingCategoryRouteImport
-      parentRoute: typeof authOnboardingRoute
-    }
-    '/(account)/account/profile': {
-      id: '/(account)/account/profile'
-      path: '/profile'
-      fullPath: '/account/profile'
-      preLoaderRoute: typeof accountAccountProfileRouteImport
-      parentRoute: typeof accountAccountRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/signup": {
+      id: "/(auth)/signup";
+      path: "/signup";
+      fullPath: "/signup";
+      preLoaderRoute: typeof authSignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/password": {
+      id: "/(auth)/password";
+      path: "/password";
+      fullPath: "/password";
+      preLoaderRoute: typeof authPasswordRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/onboarding": {
+      id: "/(auth)/onboarding";
+      path: "/onboarding";
+      fullPath: "/onboarding";
+      preLoaderRoute: typeof authOnboardingRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/login": {
+      id: "/(auth)/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof authLoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(account)/account": {
+      id: "/(account)/account";
+      path: "/account";
+      fullPath: "/account";
+      preLoaderRoute: typeof accountAccountRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/signup/terms": {
+      id: "/(auth)/signup/terms";
+      path: "/terms";
+      fullPath: "/signup/terms";
+      preLoaderRoute: typeof authSignupTermsRouteImport;
+      parentRoute: typeof authSignupRoute;
+    };
+    "/(auth)/signup/password": {
+      id: "/(auth)/signup/password";
+      path: "/password";
+      fullPath: "/signup/password";
+      preLoaderRoute: typeof authSignupPasswordRouteImport;
+      parentRoute: typeof authSignupRoute;
+    };
+    "/(auth)/signup/emailVerification": {
+      id: "/(auth)/signup/emailVerification";
+      path: "/emailVerification";
+      fullPath: "/signup/emailVerification";
+      preLoaderRoute: typeof authSignupEmailVerificationRouteImport;
+      parentRoute: typeof authSignupRoute;
+    };
+    "/(auth)/signup/email": {
+      id: "/(auth)/signup/email";
+      path: "/email";
+      fullPath: "/signup/email";
+      preLoaderRoute: typeof authSignupEmailRouteImport;
+      parentRoute: typeof authSignupRoute;
+    };
+    "/(auth)/password/verify": {
+      id: "/(auth)/password/verify";
+      path: "/verify";
+      fullPath: "/password/verify";
+      preLoaderRoute: typeof authPasswordVerifyRouteImport;
+      parentRoute: typeof authPasswordRoute;
+    };
+    "/(auth)/password/reset": {
+      id: "/(auth)/password/reset";
+      path: "/reset";
+      fullPath: "/password/reset";
+      preLoaderRoute: typeof authPasswordResetRouteImport;
+      parentRoute: typeof authPasswordRoute;
+    };
+    "/(auth)/password/forgot": {
+      id: "/(auth)/password/forgot";
+      path: "/forgot";
+      fullPath: "/password/forgot";
+      preLoaderRoute: typeof authPasswordForgotRouteImport;
+      parentRoute: typeof authPasswordRoute;
+    };
+    "/(auth)/onboarding/profile": {
+      id: "/(auth)/onboarding/profile";
+      path: "/profile";
+      fullPath: "/onboarding/profile";
+      preLoaderRoute: typeof authOnboardingProfileRouteImport;
+      parentRoute: typeof authOnboardingRoute;
+    };
+    "/(auth)/onboarding/intro": {
+      id: "/(auth)/onboarding/intro";
+      path: "/intro";
+      fullPath: "/onboarding/intro";
+      preLoaderRoute: typeof authOnboardingIntroRouteImport;
+      parentRoute: typeof authOnboardingRoute;
+    };
+    "/(auth)/onboarding/category": {
+      id: "/(auth)/onboarding/category";
+      path: "/category";
+      fullPath: "/onboarding/category";
+      preLoaderRoute: typeof authOnboardingCategoryRouteImport;
+      parentRoute: typeof authOnboardingRoute;
+    };
+    "/(account)/account/profile": {
+      id: "/(account)/account/profile";
+      path: "/profile";
+      fullPath: "/account/profile";
+      preLoaderRoute: typeof accountAccountProfileRouteImport;
+      parentRoute: typeof accountAccountRoute;
+    };
+    "/(auth)/auth/naver/callback": {
+      id: "/(auth)/auth/naver/callback";
+      path: "/auth/naver/callback";
+      fullPath: "/auth/naver/callback";
+      preLoaderRoute: typeof authAuthNaverCallbackRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/(auth)/auth/google/callback": {
+      id: "/(auth)/auth/google/callback";
+      path: "/auth/google/callback";
+      fullPath: "/auth/google/callback";
+      preLoaderRoute: typeof authAuthGoogleCallbackRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 interface accountAccountRouteChildren {
-  accountAccountProfileRoute: typeof accountAccountProfileRoute
+  accountAccountProfileRoute: typeof accountAccountProfileRoute;
 }
 
 const accountAccountRouteChildren: accountAccountRouteChildren = {
   accountAccountProfileRoute: accountAccountProfileRoute,
-}
+};
 
 const accountAccountRouteWithChildren = accountAccountRoute._addFileChildren(
-  accountAccountRouteChildren,
-)
+  accountAccountRouteChildren
+);
 
 interface authOnboardingRouteChildren {
-  authOnboardingCategoryRoute: typeof authOnboardingCategoryRoute
-  authOnboardingIntroRoute: typeof authOnboardingIntroRoute
-  authOnboardingProfileRoute: typeof authOnboardingProfileRoute
+  authOnboardingCategoryRoute: typeof authOnboardingCategoryRoute;
+  authOnboardingIntroRoute: typeof authOnboardingIntroRoute;
+  authOnboardingProfileRoute: typeof authOnboardingProfileRoute;
 }
 
 const authOnboardingRouteChildren: authOnboardingRouteChildren = {
   authOnboardingCategoryRoute: authOnboardingCategoryRoute,
   authOnboardingIntroRoute: authOnboardingIntroRoute,
   authOnboardingProfileRoute: authOnboardingProfileRoute,
-}
+};
 
 const authOnboardingRouteWithChildren = authOnboardingRoute._addFileChildren(
-  authOnboardingRouteChildren,
-)
+  authOnboardingRouteChildren
+);
 
 interface authPasswordRouteChildren {
-  authPasswordForgotRoute: typeof authPasswordForgotRoute
-  authPasswordResetRoute: typeof authPasswordResetRoute
-  authPasswordVerifyRoute: typeof authPasswordVerifyRoute
+  authPasswordForgotRoute: typeof authPasswordForgotRoute;
+  authPasswordResetRoute: typeof authPasswordResetRoute;
+  authPasswordVerifyRoute: typeof authPasswordVerifyRoute;
 }
 
 const authPasswordRouteChildren: authPasswordRouteChildren = {
   authPasswordForgotRoute: authPasswordForgotRoute,
   authPasswordResetRoute: authPasswordResetRoute,
   authPasswordVerifyRoute: authPasswordVerifyRoute,
-}
+};
 
 const authPasswordRouteWithChildren = authPasswordRoute._addFileChildren(
-  authPasswordRouteChildren,
-)
+  authPasswordRouteChildren
+);
 
 interface authSignupRouteChildren {
-  authSignupEmailRoute: typeof authSignupEmailRoute
-  authSignupEmailVerificationRoute: typeof authSignupEmailVerificationRoute
-  authSignupPasswordRoute: typeof authSignupPasswordRoute
-  authSignupTermsRoute: typeof authSignupTermsRoute
+  authSignupEmailRoute: typeof authSignupEmailRoute;
+  authSignupEmailVerificationRoute: typeof authSignupEmailVerificationRoute;
+  authSignupPasswordRoute: typeof authSignupPasswordRoute;
+  authSignupTermsRoute: typeof authSignupTermsRoute;
 }
 
 const authSignupRouteChildren: authSignupRouteChildren = {
@@ -421,11 +461,11 @@ const authSignupRouteChildren: authSignupRouteChildren = {
   authSignupEmailVerificationRoute: authSignupEmailVerificationRoute,
   authSignupPasswordRoute: authSignupPasswordRoute,
   authSignupTermsRoute: authSignupTermsRoute,
-}
+};
 
 const authSignupRouteWithChildren = authSignupRoute._addFileChildren(
-  authSignupRouteChildren,
-)
+  authSignupRouteChildren
+);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -434,7 +474,9 @@ const rootRouteChildren: RootRouteChildren = {
   authOnboardingRoute: authOnboardingRouteWithChildren,
   authPasswordRoute: authPasswordRouteWithChildren,
   authSignupRoute: authSignupRouteWithChildren,
-}
+  authAuthGoogleCallbackRoute: authAuthGoogleCallbackRoute,
+  authAuthNaverCallbackRoute: authAuthNaverCallbackRoute,
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

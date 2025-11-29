@@ -11,6 +11,7 @@ type State = {
   category: string;
   nickname: string;
   profileImgUrl: string;
+  isSocialSignup: boolean;
 };
 
 type Action = {
@@ -22,6 +23,7 @@ type Action = {
   updateCategory: (category: State["category"]) => void;
   updateNickname: (nickname: State["nickname"]) => void;
   updateProfileImgUrl: (url: State["profileImgUrl"]) => void;
+  setIsSocialSignup: () => void;
   reset: () => void;
 };
 
@@ -36,6 +38,7 @@ const useSignupStoreBase = create<State & Action>()(
       category: "",
       nickname: "",
       profileImgUrl: "",
+      isSocialSignup: false,
       updateIsTermsAgreed: () => set({ isTermsAgreed: true }),
       updateEmail: (email) => set(() => ({ email: email })),
       updateIsEmailVerified: () => set({ isEmailVerified: true }),
@@ -45,6 +48,7 @@ const useSignupStoreBase = create<State & Action>()(
       updateNickname: (nickname) => set(() => ({ nickname: nickname })),
       updateProfileImgUrl: (profileImgUrl) =>
         set(() => ({ profileImgUrl: profileImgUrl })),
+      setIsSocialSignup: () => set({ isSocialSignup: true }),
       reset: () => set(store.getInitialState),
     }),
     {

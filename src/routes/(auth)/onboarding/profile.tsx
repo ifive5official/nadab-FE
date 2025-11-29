@@ -1,7 +1,7 @@
 import BlockButton from "@/components/BlockButton";
 import { InputFieldWithButton } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import BottomModal from "@/components/BottomModal";
@@ -11,6 +11,13 @@ import useSignupStore from "@/store/signupStore";
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
+  beforeLoad: () => {
+    // 이전 단계 건너뛰는 것 방지
+    const { category } = useSignupStore.getState();
+    if (!category) {
+      throw redirect({ to: "/signup/terms" });
+    }
+  },
 });
 
 function Profile() {

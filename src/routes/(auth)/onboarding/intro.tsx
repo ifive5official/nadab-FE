@@ -20,9 +20,9 @@ export const Route = createFileRoute("/(auth)/onboarding/intro")({
   component: FeatureDescription,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { password } = useSignupStore.getState();
-    // Todo: 소셜 로그인 확인 필요
-    if (!password) {
+    const { password, isSocialSignup } = useSignupStore.getState();
+    // 소셜 회원가입 시 여기로 바로 이동
+    if (!password && !isSocialSignup) {
       throw redirect({ to: "/signup/terms" });
     }
   },
@@ -162,11 +162,7 @@ function FeatureDescription() {
           }
           updateHasSeenIntro();
           const nextStep = getNextStepPath("intro");
-          // 모바일 freeze 이슈때문에 넣음
-          // 더 나은 해결방법 나올 때까지 지우지 말 것
-          Promise.resolve().then(() => {
-            navigate({ to: nextStep });
-          });
+          navigate({ to: nextStep });
         }}
       >
         시작하기
