@@ -3,7 +3,7 @@ import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
 import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
 import { ColoredMainLogo, ColoredTextLogo } from "@/components/Logos";
-import { instance } from "@/lib/axios";
+import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
 export function LandingPage() {
@@ -11,32 +11,20 @@ export function LandingPage() {
   const { data: socialLoginUrls } = useQuery({
     queryKey: ["socialLoginUrls"],
     queryFn: async () => {
-      const isDev = import.meta.env.DEV;
       const [naverRes, googleRes] = await Promise.all([
-        instance.get("/api/v1/auth/naver/url"),
-        instance.get("/api/v1/auth/google/url"),
+        api.get("/api/v1/auth/naver/url"),
+        api.get("/api/v1/auth/google/url"),
       ]);
       const naverUrl = naverRes.data.data.authorizationUrl;
       const googleUrl = googleRes.data.data.authorizationUrl;
+      const REDIRECT_BASE = import.meta.env.VITE_REDIRECT_BASE;
       return {
-        naver: isDev
-          ? naverUrl.replace(
-              "https://nadab-fe.vercel.app/",
-              "http://localhost:3000/"
-            )
-          : naverUrl,
-
-        google: isDev
-          ? googleUrl.replaceAll(
-              "https://nadab-fe.vercel.app/",
-              "http://localhost:3000/"
-            )
-          : googleUrl,
+        naver: naverUrl.replace("https://nadab-fe.vercel.app/", REDIRECT_BASE),
+        google: googleUrl.replaceAll(
+          "https://nadab-fe.vercel.app/",
+          REDIRECT_BASE
+        ),
       };
-    },
-    initialData: {
-      naver: "",
-      google: "",
     },
     // Todo: 에러 처리
   });

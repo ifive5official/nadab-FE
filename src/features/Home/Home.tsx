@@ -1,4 +1,4 @@
-import { instance } from "@/lib/axios";
+import { api } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
@@ -9,7 +9,7 @@ export default function Home() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await instance.post("/api/v1/auth/logout");
+      await api.post("/api/v1/auth/logout");
     },
     onSuccess: () => {
       clearAuth();

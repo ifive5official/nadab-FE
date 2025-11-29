@@ -1,4 +1,4 @@
-import { instance } from "@/lib/axios";
+import { api } from "@/lib/axios";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { redirect } from "@tanstack/react-router";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
   }),
   loaderDeps: ({ search: { code, state } }) => ({ code, state }),
   loader: async ({ deps: { code, state } }) => {
-    const res = await instance.post("/api/v1/auth/google/login", {
+    const res = await api.post("/api/v1/auth/google/login", {
       code,
       state,
     });
