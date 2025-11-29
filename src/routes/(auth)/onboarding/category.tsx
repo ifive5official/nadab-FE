@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import useSignupStore from "@/store/signupStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import { CategoryCircleCheckFilledIcon } from "@/components/Icons";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
@@ -71,7 +72,10 @@ function Category() {
                 )}
               >
                 <Icon />{" "}
-                <p className="text-title-3 text-text-primary">{item.title}</p>
+                <p className="text-title-3 text-text-primary mr-auto">
+                  {item.title}
+                </p>
+                {item.isSelected && <CategoryCircleCheckFilledIcon />}
               </li>
             );
           })}

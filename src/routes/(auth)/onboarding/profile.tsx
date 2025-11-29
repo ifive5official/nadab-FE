@@ -96,7 +96,7 @@ function Profile() {
           {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
           <button
             type="button"
-            className="text-interactive-text-primary text-label-m underline"
+            className="text-text-primary text-label-m underline"
             onClick={() => setIsModalOpen(true)}
           >
             사진 추가
