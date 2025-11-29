@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import useAuthStore from "@/store/authStore";
 
 export const Route = createFileRoute("/(auth)/auth/google/callback")({
   component: RouteComponent,
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
 
 function RouteComponent() {
   const { code, state } = Route.useSearch();
+  const navigate = useNavigate();
+  const setAccessToken = useAuthStore.use.setAccessToken();
 
   const { mutate } = useMutation({
     mutationFn: async () => {
@@ -24,6 +28,20 @@ function RouteComponent() {
       return res.data;
     },
     // Todo: 성공 시 처리
+    onSuccess: (data) => {
+      const { accessToken, signupStatus } = data.data;
+      setAccessToken(accessToken);
+      switch (signupStatus) {
+        case "PROFILE_INCOMPLETE":
+          navigate({ to: "/onboarding/intro", replace: true });
+          break;
+        case "WITHDRAWN":
+          // Todo: 회원탈퇴시 처리
+          break;
+        default: // COMPLETED
+          navigate({ to: "/", replace: true });
+      }
+    },
   });
 
   useEffect(() => {

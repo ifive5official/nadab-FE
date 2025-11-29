@@ -5,7 +5,6 @@ import { instance } from "@/lib/axios";
 export const Route = createRootRoute({
   beforeLoad: async () => {
     const { accessToken, setAccessToken } = useAuthStore.getState();
-    console.log(accessToken);
     if (!accessToken) {
       try {
         const res = await instance.post("/api/v1/auth/refresh");
