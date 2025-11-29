@@ -16,9 +16,9 @@ export const Route = createRootRoute({
         );
         const newAccessToken = res.data.data?.accessToken ?? null;
         setAccessToken(newAccessToken!);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // Todo: 아무 처리도 안 하는 게 제일 나은가...
-        console.log(err);
       }
     }
   },
