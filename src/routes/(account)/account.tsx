@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import BlockButton from "@/components/BlockButton";
 import initialCategories from "@/constants/categories";
@@ -6,6 +6,9 @@ import { useState } from "react";
 import clsx from "clsx";
 import { ChevronRightIcon, MenuIcon } from "@/components/Icons";
 import Switch from "@/components/Switch";
+import { api } from "@/lib/axios";
+import { useMutation } from "@tanstack/react-query";
+import useAuthStore from "@/store/authStore";
 
 export const Route = createFileRoute("/(account)/account")({
   component: RouteComponent,
@@ -19,6 +22,21 @@ function RouteComponent() {
     isSelected: category.title === "내면 탐색" ? true : false,
   }));
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore.use.clearAuth();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await api.post("/api/v1/auth/logout");
+    },
+    onSuccess: () => {
+      clearAuth();
+      //   Todo: 사용자 관련 캐시 제거
+      navigate({ to: "/" });
+    },
+    // Todo: 에러 처리
+  });
 
   return (
     <div>
@@ -98,7 +116,11 @@ function RouteComponent() {
                 rightElement={<ChevronRightIcon />}
               />
             </Link>
-            <SectionItem title="로그아웃" rightElement={<ChevronRightIcon />} />
+            <SectionItem
+              onClick={() => logoutMutation.mutate()}
+              title="로그아웃"
+              rightElement={<ChevronRightIcon />}
+            />
             <SectionItem title="회원탈퇴" rightElement={<ChevronRightIcon />} />
           </Section>
         </ul>
@@ -134,11 +156,15 @@ function Section({ title, info, Icon, children }: SectionProps) {
 type SectionItemProps = {
   title: string;
   rightElement?: React.ReactNode;
+  onClick?: () => void;
 };
 
-function SectionItem({ title, rightElement }: SectionItemProps) {
+function SectionItem({ title, rightElement, onClick }: SectionItemProps) {
   return (
-    <div className="py-padding-y-xs flex justify-between items-center">
+    <div
+      onClick={onClick}
+      className="py-padding-y-xs flex justify-between items-center cursor-pointer"
+    >
       <p className=" text-caption-l">{title}</p>
       {rightElement}
     </div>
