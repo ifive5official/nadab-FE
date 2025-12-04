@@ -1,16 +1,12 @@
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
-import {
-  BarChartSquareFilledIcon,
-  CoffeeFilledIcon,
-  HappyFilledIcon,
-  UsersFilledIcon,
-} from "@/components/Icons";
+import categories from "@/constants/categories";
 import StepTitle from "@/features/auth/StepTitle";
 import clsx from "clsx";
 import { useState } from "react";
 import useSignupStore from "@/store/signupStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import { CategoryCircleCheckFilledIcon } from "@/components/Icons";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
@@ -25,29 +21,9 @@ export const Route = createFileRoute("/(auth)/onboarding/category")({
 
 function Category() {
   const updateCategory = useSignupStore.use.updateCategory();
-  const initialItems = [
-    {
-      icon: <BarChartSquareFilledIcon />,
-      title: "일과 성장",
-      isSelected: false,
-    },
-    {
-      icon: <HappyFilledIcon />,
-      title: "내면 탐색",
-      isSelected: false,
-    },
-    {
-      icon: <CoffeeFilledIcon />,
-      title: "일상의 균형",
-      isSelected: false,
-    },
-    {
-      icon: <UsersFilledIcon />,
-      title: "사람과 관계",
-      isSelected: false,
-    },
-  ];
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState(
+    categories.map((category) => ({ ...category, isSelected: false }))
+  );
   const selectedItem = items.find((item) => item.isSelected);
   const navigate = useNavigate();
 
@@ -67,6 +43,7 @@ function Category() {
         </div>
         <ul className="py-padding-y-m flex flex-col gap-padding-y-m">
           {items.map((item, i) => {
+            const Icon = item.icon;
             return (
               <li
                 onClick={() => {
@@ -94,8 +71,11 @@ function Category() {
                   }
                 )}
               >
-                {item.icon}{" "}
-                <p className="text-title-3 text-text-primary">{item.title}</p>
+                <Icon />{" "}
+                <p className="text-title-3 text-text-primary mr-auto">
+                  {item.title}
+                </p>
+                {item.isSelected && <CategoryCircleCheckFilledIcon />}
               </li>
             );
           })}

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LandingPage } from "@/features/LandingPage";
-import Home from "@/features/Home/Home";
+import Home from "@/features/home/Home";
 import useAuthStore from "@/store/authStore";
 
 export const Route = createFileRoute("/")({
