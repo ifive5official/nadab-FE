@@ -7,6 +7,10 @@ import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/generated/api";
+import useErrorStore from "@/store/errorStore";
 
 export const Route = createFileRoute("/(auth)/signup/emailVerification")({
   component: EmailVerification,
@@ -31,22 +35,28 @@ function EmailVerification() {
 
   const resendCodeMutation = useMutation({
     mutationFn: async ({ email }: { email: string }) => {
-      // Todo: 인증번호 전송 백엔드 api 연동
-      alert(email + "로 인증번호 재전송: 123456");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { email };
+      await api.post("/api/v1/email/code", {
+        email,
+        verificationType: "SIGNUP",
+      });
     },
-    // Todo: 에러 처리(토스트 보여줄 예정)
+    onError: (err: AxiosError<ApiResponse<null>>) => {
+      useErrorStore.getState().showError(
+        // Todo: 에러 메시지 변경
+        err.message,
+        err.response?.data?.message ??
+          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+      );
+    },
   });
 
   const verifyCodeMutation = useMutation({
     mutationFn: async ({ enteredCode }: { enteredCode: string }) => {
-      // Todo: 인증번호 확인 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      if (enteredCode !== "123456") {
-        throw new Error("인증번호 확인 실패");
-      }
-      return { enteredCode };
+      await api.post("/api/v1/email/code/verification", {
+        email,
+        code: enteredCode,
+        verificationType: "SIGNUP",
+      });
     },
     onSuccess: () => {
       updateIsEmailVerified();
@@ -56,11 +66,16 @@ function EmailVerification() {
       });
     },
 
-    onError: (error) => {
-      if (error.message === "인증번호 확인 실패") {
+    onError: (err: AxiosError<ApiResponse<null>>) => {
+      if (err.status === 400) {
         setError("입력한 정보를 한번 더 확인해주세요.");
       } else {
-        // Todo: 에러 처리(토스트 보여줄 예정)
+        useErrorStore.getState().showError(
+          // Todo: 에러 메시지 변경
+          err.message,
+          err.response?.data?.message ??
+            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+        );
       }
     },
   });
@@ -84,7 +99,7 @@ function EmailVerification() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  });
+  }, []);
 
   function handleResend() {
     setTimeLeft(180);
@@ -134,7 +149,11 @@ function EmailVerification() {
       </BlockButton>
       <p className="text-center text-label-m text-text-primary">
         인증번호가 오지 않았나요?{" "}
-        <button onClick={handleResend} className="text-brand-primary underline">
+        <button
+          type="button"
+          onClick={handleResend}
+          className="text-brand-primary underline"
+        >
           재발송
         </button>
       </p>

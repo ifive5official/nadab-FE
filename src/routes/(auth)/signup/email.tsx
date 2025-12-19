@@ -43,6 +43,7 @@ export default function Email() {
       });
     },
     onSuccess: () => {
+      // 이메일 중복 없으면 다음 단계로
       updateEmail(email);
       const nextStep = getNextStepPath("email");
       navigate({ to: nextStep });
