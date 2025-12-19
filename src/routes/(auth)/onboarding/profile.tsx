@@ -8,6 +8,13 @@ import BottomModal from "@/components/BottomModal";
 import { useMutation } from "@tanstack/react-query";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useSignupStore from "@/store/signupStore";
+import { api } from "@/lib/axios";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/generated/api";
+import useErrorStore from "@/store/errorStore";
+import type { components } from "@/generated/api-types";
+
+type NicknameRes = components["schemas"]["CheckNicknameResponse"];
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
@@ -26,6 +33,7 @@ function Profile() {
   const {
     value: nickname,
     error: nicknameError,
+    setError: setNicknameError,
     onChange: onNicknameChange,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
@@ -41,15 +49,31 @@ function Profile() {
 
   const checkNicknameMutation = useMutation({
     mutationFn: async ({ nickname }: { nickname: string }) => {
-      // Todo: 닉네임 중복 확인 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { nickname };
+      const res = await api.get<ApiResponse<NicknameRes>>(
+        `/api/v1/user/check-nickname?nickname=${nickname}`
+      );
+      return res;
     },
-    onSuccess: () => {
-      setIsNicknameOk(true);
+    onSuccess: (res) => {
+      if (res.data.data?.isAvailable) {
+        setIsNicknameOk(true);
+      } else {
+        setNicknameError(res.data.data?.reason ?? "");
+      }
     },
 
-    // Todo: 에러 처리
+    onError: (err: AxiosError<ApiResponse<null>>) => {
+      if (err.status === 409) {
+        setNicknameError("이미 가입한 회원이에요.");
+      } else {
+        useErrorStore.getState().showError(
+          // Todo: 에러 메시지 변경
+          err.message,
+          err.response?.data?.message ??
+            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+        );
+      }
+    },
   });
 
   const signupMutation = useMutation({

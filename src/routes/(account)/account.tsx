@@ -19,7 +19,7 @@ function RouteComponent() {
   // Todo: 백엔드 연동해서 내 정보 받아와 초기값 설정
   const categories = initialCategories.map((category) => ({
     ...category,
-    isSelected: category.title === "내면 탐색" ? true : false,
+    isSelected: category.title === "취향" ? true : false,
   }));
   const [isDarkMode, setIsDarkMode] = useState(false);
 
