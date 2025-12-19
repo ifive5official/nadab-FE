@@ -6,7 +6,6 @@ import clsx from "clsx";
 import { useState } from "react";
 import useSignupStore from "@/store/signupStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
-import { CategoryCircleCheckFilledIcon } from "@/components/Icons";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
@@ -28,8 +27,8 @@ function Category() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 flex flex-col gap-gap-y-l">
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         <div className="py-padding-y-m flex flex-col gap-gap-y-l">
           <StepTitle>
             당신의 어떤 이야기부터
@@ -41,7 +40,7 @@ function Category() {
             선택한 주제에 맞춰, 나답이 질문들을 준비할게요.
           </p>
         </div>
-        <ul className="py-padding-y-m flex flex-col gap-padding-y-m">
+        <ul className="flex-1 my-padding-y-m grid grid-cols-2 gap-x-padding-x-m gap-y-padding-y-m min-h-0 overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {items.map((item, i) => {
             const Icon = item.icon;
             return (
@@ -62,19 +61,23 @@ function Category() {
                 }}
                 key={i}
                 className={clsx(
-                  "py-padding-y-xl px-padding-x-xl flex items-center gap-gap-x-l border rounded-xl cursor-pointer",
+                  "py-padding-y-m px-padding-x-m flex flex-col items-start gap-gap-y-l border rounded-xl cursor-pointer",
                   {
                     "border-neutral-200": !item.isSelected,
-                    "border-brand-primary bg-interactive-bg-muted":
+                    "border-brand-primary bg-interactive-bg-hover":
                       item.isSelected,
+                    "opacity-50":
+                      !item.isSelected && items.some((item) => item.isSelected),
                   }
                 )}
               >
-                <Icon />{" "}
-                <p className="text-title-3 text-text-primary mr-auto">
-                  {item.title}
+                <div className="px-padding-x-s py-padding-y-xs flex items-center gap-x-gap-x-xs bg-surface-base border border-button-tertiary-border-default text-text-primary rounded-lg">
+                  <Icon />
+                  <p className="text-label-l">{item.title}</p>
+                </div>
+                <p className="text-text-primary text-body-2">
+                  {item.description}
                 </p>
-                {item.isSelected && <CategoryCircleCheckFilledIcon />}
               </li>
             );
           })}

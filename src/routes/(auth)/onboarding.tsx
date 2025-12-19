@@ -17,7 +17,7 @@ function OnboardingLayout() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-[calc(100dvh-var(--spacing-padding-y-m))] flex flex-col">
       {currentStep.header}
       <Outlet />
     </div>
