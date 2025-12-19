@@ -30,6 +30,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/report/daily/generate/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 오늘의 리포트 생성 API
+         * @description 유저의 오늘의 리포트를 생성합니다.
+         */
+        post: operations["generateDailyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/email/code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 이메일 인증 코드 발송
+         * @description 회원가입 또는 비밀번호 재설정을 위한 이메일 인증 코드를 발송합니다.<br>
+         *     6자리 숫자 인증 코드가 이메일로 전송되며, 유효기간은 3분입니다.<br>
+         *     동일한 이메일과 인증 타입으로 재요청 시, 기존 인증 코드는 제거되고 새로운 코드가 생성됩니다.<br>
+         *     <br>
+         *     **검증 사항:**<br>
+         *     - SIGNUP: 이메일 중복 확인 (이미 사용 중인 이메일은 발송 불가)<br>
+         *     - PASSWORD_RESET: 사용자 존재 확인 + 탈퇴한 계정 차단 + 소셜 로그인 계정 차단<br>
+         *     <br>
+         *     <b>주의:</b> 이메일 발송은 비동기로 처리되며, SMTP 실패 시에도 200 응답이 반환됩니다.
+         *     이메일을 받지 못한 경우 동일한 API를 재호출하여 새로운 인증 코드를 발급받을 수 있습니다.
+         */
+        post: operations["sendVerificationCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/email/code/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 이메일 인증 코드 검증
+         * @description 이메일로 받은 6자리 인증 코드를 검증합니다.<br>
+         *     인증 성공 시, 이후 회원가입 또는 비밀번호 재설정을 진행할 수 있습니다.<br>
+         *     인증 코드는 3분 후 자동 만료되며, 만료된 코드는 재발송이 필요합니다.
+         */
+        post: operations["verifyCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/{provider}/login": {
         parameters: {
             query?: never;
@@ -46,11 +117,36 @@ export interface paths {
          *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
          *     <br>
          *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (닉네임 미입력 상태, 신규 가입자)<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자)<br>
          *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
          *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
          */
         post: operations["oauth2Login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 일반 회원가입
+         * @description 이메일 인증 완료 후 회원가입을 진행합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     회원가입 완료 후 signupStatus가 PROFILE_INCOMPLETE 상태이므로, 이 후 온보딩에서 프로필을 완성해야 합니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요
+         */
+        post: operations["signup"];
         delete?: never;
         options?: never;
         head?: never;
@@ -79,6 +175,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/password/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 비밀번호 찾기
+         * @description 이메일 인증 완료 후 비밀번호를 재설정합니다.<br>
+         *     - 이메일 인증(PASSWORD_RESET)을 먼저 완료해야 합니다
+         *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다
+         *     - 재설정 후 모든 기기에서 자동 로그아웃됩니다
+         */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/logout": {
         parameters: {
             query?: never;
@@ -95,6 +214,32 @@ export interface paths {
          *     Access Token은 Bearer 형식으로 Authorization 헤더에 포함하여 요청해야 합니다.
          */
         post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 일반 로그인
+         * @description 이메일과 비밀번호로 로그인합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (온보딩 필요)<br>
+         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+         */
+        post: operations["login"];
         delete?: never;
         options?: never;
         head?: never;
@@ -133,6 +278,87 @@ export interface paths {
          *     해당 엔드포인트에서 반환된 objectKey를 이 요청에 포함시켜야 합니다.
          */
         patch: operations["updateUserProfile"];
+        trace?: never;
+    };
+    "/api/v1/user/interest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 유저 관심 주제 업데이트
+         * @description 유저의 관심 주제를 업데이트합니다. 하나만 선택 가능합니다. 온보딩 시에도 사용됩니다.
+         *
+         *     선택 가능한 관심 주제 코드는 다음과 같습니다.
+         *
+         *     - **PREFERENCE** : 취향
+         *     - **EMOTION** : 감정
+         *     - **ROUTINE** : 루틴
+         *     - **RELATIONSHIP** : 인간관계
+         *     - **LOVE** : 사랑
+         *     - **VALUES** : 가치관
+         *     - **DREAM** : 꿈
+         */
+        patch: operations["updateUserInterests"];
+        trace?: never;
+    };
+    "/api/v1/auth/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 비밀번호 변경
+         * @description 로그인 상태(마이페이지)에서 비밀번호를 변경합니다.<br>
+         *     - 현재 비밀번호 확인이 필수입니다<br>
+         *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다<br>
+         *     - 변경 후 다른 기기에서는 자동 로그아웃됩니다<br>
+         *     - 현재 기기는 새로운 Access Token과 Refresh Token이 자동으로 발급되어 로그인 상태가 유지됩니다
+         */
+        patch: operations["changePassword"];
+        trace?: never;
+    };
+    "/api/v1/user/check-nickname": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 닉네임 사용 가능 여부 조회
+         * @description 닉네임이 사용 가능한지 종합적으로 검사합니다.
+         *     - 닉네임은 2자 이상 10자 이하이어야 합니다.
+         *     - 한글과 영어 대소문자만 허용됩니다.
+         *     - 닉네임은 공백으로 시작하거나 끝날 수 없습니다.
+         *     - 이미 사용 중인 닉네임은 사용할 수 없습니다.
+         *     - 예약어(admin, root 등)는 사용할 수 없습니다.
+         *     - 비속어 및 부적절한 단어가 포함된 닉네임은 사용할 수 없습니다.
+         *     - 로그인 상태에서 자신의 현재 닉네임을 보내면 사용 불가로 처리됩니다.
+         */
+        get: operations["checkNickname"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/auth/{provider}/url": {
@@ -202,31 +428,19 @@ export interface components {
              */
             contentType: string;
         };
-        /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
-        TokenResponse: {
-            /**
-             * @description JWT Access Token (유효기간: 1시간)
-             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-             */
-            accessToken?: string;
-            /**
-             * @description 계정 상태
-             * @example PROFILE_INCOMPLETE
-             */
-            signupStatus?: string;
+        /** @description 오늘의 리포트 생성 응답 */
+        DailyReportResponse: {
+            message?: string;
+            emotion?: string;
+            /** Format: int32 */
+            length?: number;
         };
-        /** @description OAuth2 로그인 요청 */
-        OAuth2LoginRequest: {
-            /**
-             * @description OAuth2 제공자로부터 받은 Authorization Code
-             * @example MsabWEWdhBgKrZk
-             */
-            code: string;
-            /**
-             * @description CSRF 방지를 위한 State 파라미터
-             * @example 0328973a-f474f-413a-be5d
-             */
-            state: string;
+        /** @description 오늘의 리포트 생성 요청 */
+        DailyReportRequest: {
+            /** @example 질문 */
+            question: string;
+            /** @example 답변 */
+            answer: string;
         };
         /** @description 공통 API 응답 형식 */
         ApiResponseDto: {
@@ -243,6 +457,107 @@ export interface components {
             message?: string;
             /** @description 응답 데이터 */
             data?: unknown;
+        };
+        /** @description 이메일 인증 코드 발송 요청 */
+        SendVerificationCodeRequest: {
+            /**
+             * Format: email
+             * @description 이메일 주소
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
+             * @example SIGNUP
+             */
+            verificationType: string;
+        };
+        /** @description 이메일 인증 코드 검증 요청 */
+        VerifyCodeRequest: {
+            /**
+             * Format: email
+             * @description 이메일 주소
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 6자리 인증 코드
+             * @example 123456
+             */
+            code: string;
+            /**
+             * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
+             * @example SIGNUP
+             */
+            verificationType: string;
+        };
+        /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
+        TokenResponse: {
+            /**
+             * @description JWT Access Token (유효기간: 1시간)
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+             */
+            accessToken?: string;
+            /**
+             * @description 계정 상태
+             * @example PROFILE_INCOMPLETE
+             */
+            signupStatus?: string;
+        };
+        /** @description OAuth2 소셜 로그인 요청 */
+        SocialLoginRequest: {
+            /**
+             * @description OAuth2 제공자로부터 받은 Authorization Code
+             * @example MsabWEWdhBgKrZk
+             */
+            code: string;
+            /**
+             * @description CSRF 방지를 위한 State 파라미터
+             * @example 0328973a-f474f-413a-be5d
+             */
+            state: string;
+        };
+        /** @description 회원가입 요청 */
+        SignupRequest: {
+            /**
+             * Format: email
+             * @description 이메일 (이메일 인증 완료 필수)
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+             * @example password123!
+             */
+            password: string;
+        };
+        /** @description 비밀번호 재설정 요청 (비밀번호 찾기에서 이메일 인증 완료 후) */
+        ResetPasswordRequest: {
+            /**
+             * Format: email
+             * @description 이메일
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+             * @example newPassword123!
+             */
+            newPassword: string;
+        };
+        /** @description 일반 로그인 요청 */
+        LoginRequest: {
+            /**
+             * Format: email
+             * @description 이메일
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 비밀번호
+             * @example password123!
+             */
+            password: string;
         };
         /** @description 유저 프로필 수정 응답 */
         UpdateUserProfileResponse: {
@@ -263,13 +578,48 @@ export interface components {
              */
             objectKey?: string;
         };
+        /** @description 유저 관심 주제 업데이트 요청 */
+        UpdateUserInterestRequest: {
+            /**
+             * @description 유저가 설정하고자 하는 새로운 관심 주제 코드입니다.
+             * @example RELATIONSHIP
+             */
+            interestCode: string;
+        };
+        /** @description 비밀번호 변경 요청 (마이페이지) */
+        ChangePasswordRequest: {
+            /**
+             * @description 현재 비밀번호
+             * @example currentPassword123!
+             */
+            currentPassword: string;
+            /**
+             * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+             * @example newPassword123!
+             */
+            newPassword: string;
+        };
         /** @description 유저 프로필 정보 응답 */
         UserProfileResponse: {
             nickname?: string;
             email?: string;
             profileImageUrl?: string;
+            interestCode?: string;
             /** Format: date */
             registeredDate?: string;
+        };
+        /** @description 닉네임 사용 가능 여부 확인 응답 */
+        CheckNicknameResponse: {
+            /**
+             * @description 닉네임 사용 가능 여부
+             * @example true
+             */
+            isAvailable?: boolean;
+            /**
+             * @description 닉네임 사용 불가 사유 (사용 가능한 경우 null)
+             * @example 이미 사용 중인 닉네임입니다.
+             */
+            reason?: string;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -326,6 +676,125 @@ export interface operations {
             };
         };
     };
+    generateDailyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyReportRequest"];
+            };
+        };
+        responses: {
+            /** @description 테스트용 오늘의 리포트 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReportResponse"];
+                };
+            };
+            /** @description 잘못된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+        };
+    };
+    sendVerificationCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendVerificationCodeRequest"];
+            };
+        };
+        responses: {
+            /** @description 인증 코드 발송 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /**
+             * @description - 이메일 형식 오류, 인증 타입 누락
+             *     - PASSWORD_RESET: 탈퇴한 계정 또는 소셜 로그인 계정은 비밀번호 찾기를 위한 이메일 인증 불가
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description PASSWORD_RESET: 등록되지 않은 이메일 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description SIGNUP: 이미 사용 중인 이메일 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    verifyCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyCodeRequest"];
+            };
+        };
+        responses: {
+            /** @description 인증 코드 검증 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 이메일/인증 코드 형식 오류, 코드 불일치, 만료된 코드, 이미 인증 완료 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 요청을 찾을 수 없음 - 발송 이력이 없거나 코드가 존재하지 않는 경우 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     oauth2Login: {
         parameters: {
             query?: never;
@@ -339,10 +808,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        /** @description OAuth2 로그인 요청 (code, state) */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["OAuth2LoginRequest"];
+                "application/json": components["schemas"]["SocialLoginRequest"];
             };
         };
         responses: {
@@ -391,6 +859,52 @@ export interface operations {
             };
         };
     };
+    signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignupRequest"];
+            };
+        };
+        responses: {
+            /** @description 회원가입 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /**
+             * @description 잘못된 요청
+             *     - 이메일 인증이 완료되지 않은 경우
+             *     - 이메일 형식이 올바르지 않은 경우
+             *     - 비밀번호 형식이 올바르지 않은 경우 (영문, 숫자, 특수문자 포함 8자 이상)
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 이메일 중복
+             *     - 이미 사용 중인 이메일입니다
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     refresh: {
         parameters: {
             query?: never;
@@ -423,6 +937,53 @@ export interface operations {
             };
         };
     };
+    resetPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description 비밀번호 재설정 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /**
+             * @description 잘못된 요청
+             *     - 이메일 인증 미완료
+             *     - 소셜 로그인 계정
+             *     - 탈퇴한 계정
+             *     - 이전 비밀번호와 동일
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 사용자를 찾을 수 없음
+             *     - 등록되지 않은 이메일일 경우
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     logout: {
         parameters: {
             query?: never;
@@ -448,6 +1009,60 @@ export interface operations {
              *     - JWT Access Token이 유효하지 않은 경우 (변조, 잘못된 서명)
              */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description 로그인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /**
+             * @description 잘못된 요청
+             *     - 이메일 형식이 올바르지 않은 경우
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 인증 실패
+             *     - 비밀번호가 일치하지 않는 경우
+             */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 사용자를 찾을 수 없습니다
+             *     - 등록되지 않은 이메일일 경우
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -513,6 +1128,116 @@ export interface operations {
             };
             /** @description 인증 실패 */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateUserInterests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserInterestRequest"];
+            };
+        };
+        responses: {
+            /** @description 관심 주제 업데이트 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 잘못된 요청 (예: 지원하지 않는 관심 주제) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    changePassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangePasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description 비밀번호 변경 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /**
+             * @description 잘못된 요청
+             *     - 소셜 로그인 계정이 비밀번호를 변경하려는 경우
+             *     - 이전 비밀번호와 동일한 비밀번호를 사용하려는 경우
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 인증 실패
+             *     - 현재 비밀번호가 불일치할 경우
+             */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    checkNickname: {
+        parameters: {
+            query: {
+                nickname: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 - 사용 가능 여부는 응답 내용으로 판단 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckNicknameResponse"];
+                };
+            };
+            /** @description 잘못된 요청 - 닉네임 누락 또는 빈 문자열 */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -7,6 +7,10 @@ import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useSignupStore from "@/store/signupStore";
 import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import useErrorStore from "@/store/errorStore";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/generated/api";
 
 export const Route = createFileRoute("/(auth)/signup/email")({
   component: Email,
@@ -21,27 +25,40 @@ export const Route = createFileRoute("/(auth)/signup/email")({
 
 export default function Email() {
   const updateEmail = useSignupStore.use.updateEmail();
+
   const {
     value: email,
     error: emailError,
     onChange: onEmailChange,
+    setError: setEmailError,
   } = useInputValidation("email");
   const navigate = useNavigate();
 
+  // 중복 확인 + 인증 코드 전송
   const emailMutation = useMutation({
     mutationFn: async ({ email }: { email: string }) => {
-      // Todo: 중복 확인 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      alert(email + "로 인증번호 발송: 123456");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { email };
+      await api.post("/api/v1/email/code", {
+        email,
+        verificationType: "SIGNUP",
+      });
     },
     onSuccess: () => {
       updateEmail(email);
       const nextStep = getNextStepPath("email");
       navigate({ to: nextStep });
     },
-    // Todo: 에러 처리(토스트 보여줄 예정)
+    onError: (err: AxiosError<ApiResponse<null>>) => {
+      if (err.status === 409) {
+        setEmailError("이미 가입한 회원이에요.");
+      } else {
+        useErrorStore.getState().showError(
+          // Todo: 에러 메시지 변경
+          err.message,
+          err.response?.data?.message ??
+            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+        );
+      }
+    },
   });
 
   return (
@@ -55,7 +72,6 @@ export default function Email() {
         onSubmit={(e) => {
           e.preventDefault();
           if (!emailError) {
-            // Todo: 중복 확인 api 호출 + 로딩 상태 UI 반영
             emailMutation.mutate({ email });
           }
         }}

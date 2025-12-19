@@ -25,7 +25,7 @@ export function useInputValidation(field: keyof z.input<typeof UserSchema>) {
     validate(v);
   }
 
-  return { value, error, onChange, validate };
+  return { value, error, onChange, validate, setError };
 }
 
 export function useConfirmPasswordValidation(password: string) {
