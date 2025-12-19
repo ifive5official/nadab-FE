@@ -23,11 +23,11 @@ export default function BlockButton({
       className={clsx(
         "relative w-full text-center text-button-1 rounded-lg py-padding-y-m",
         {
-          "bg-button-primary-bg-default hover:bg-button-primary-bg-hover text-button-primary-text-default":
+          "bg-button-primary-bg-default text-button-primary-text-default":
             variant === "primary" && !disabled,
-          "bg-button-secondary-bg-default hover:bg-button-secondary-bg-hover text-button-secondary-text-default":
+          "bg-button-secondary-bg-default text-button-secondary-text-default":
             variant === "secondary" && !disabled,
-          "bg-button-tertiary-bg-default border border-button-tertiary-border-default hover:bg-button-tertiary-bg-hover hover:border-button-tertiary-border-hover text-button-tertiary-text-default":
+          "bg-button-tertiary-bg-default border border-button-tertiary-border-default text-button-tertiary-text-default":
             variant === "tertiary" && !disabled,
         },
         disabled && "bg-button-disabled-bg text-button-disabled-text",

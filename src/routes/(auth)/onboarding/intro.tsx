@@ -41,7 +41,7 @@ function FeatureDescription() {
       imgSrc: "/onboarding1.png",
     },
     {
-      category: "분석",
+      category: "리포트",
       title: `흩어진 기록 속에서
 '나'를 발견해요.`,
       content: `당신의 소중한 이야기들이 쌓이면, 연결고리를 찾아낼 거예요. 
@@ -59,6 +59,14 @@ function FeatureDescription() {
 공유하고 싶은 기록이 생겼다면, 공유하기로 함께 나눠보세요.
 ㅤ`,
       imgSrc: "/onboarding3.png",
+    },
+    {
+      category: "크리스탈",
+      title: `답을 통해 크리스탈을 쌓고
+크리스탈로 리포트를 받아요.`,
+      content: `매일 도착하는 질문에 답변을 남기면 10개의 크리스탈을 받아요.
+차곡차곡 쌓은 크리스탈을 사용해 주간, 월간, 전체 리포트를 받아볼 수 있어요. 리포트를 통해 당신의 기록 속에 담긴 내면의 깊은 모습을 발견해보세요.`,
+      imgSrc: "/onboarding4.png",
     },
   ];
   const swiperRef = useRef<SwiperType>(null);

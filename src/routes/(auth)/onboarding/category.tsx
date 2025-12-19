@@ -64,8 +64,7 @@ function Category() {
                 className={clsx(
                   "py-padding-y-xl px-padding-x-xl flex items-center gap-gap-x-l border rounded-xl cursor-pointer",
                   {
-                    "border-neutral-200 hover:bg-interactive-bg-hover hover:border-interactive-border-hover":
-                      !item.isSelected,
+                    "border-neutral-200": !item.isSelected,
                     "border-brand-primary bg-interactive-bg-muted":
                       item.isSelected,
                   }
