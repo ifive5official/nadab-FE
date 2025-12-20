@@ -1,42 +1,28 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import BlockButton from "@/components/BlockButton";
 import initialCategories from "@/constants/categories";
 import { useState } from "react";
 import clsx from "clsx";
-import { ChevronRightIcon, MenuIcon } from "@/components/Icons";
+import { ChevronRightIcon } from "@/components/Icons";
 import Switch from "@/components/Switch";
-import { api } from "@/lib/axios";
-import { useMutation } from "@tanstack/react-query";
-import useAuthStore from "@/store/authStore";
+import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 
 export const Route = createFileRoute("/_main/(account)/account")({
   component: RouteComponent,
-  //   Todo: 비로그인 사용자 접근 막기
 });
 
 function RouteComponent() {
-  // Todo: 백엔드 연동해서 내 정보 받아와 초기값 설정
+  const { currentUser } = Route.useRouteContext();
+
   const categories = initialCategories.map((category) => ({
     ...category,
-    isSelected: category.title === "취향" ? true : false,
+    isSelected: category.code === currentUser?.interestCode ? true : false,
   }));
+  // Todo: 로컬스토리지에 저장
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const navigate = useNavigate();
-  const clearAuth = useAuthStore.use.clearAuth();
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      await api.post("/api/v1/auth/logout");
-    },
-    onSuccess: () => {
-      clearAuth();
-      //   Todo: 사용자 관련 캐시 제거
-      navigate({ to: "/" });
-    },
-    // Todo: 에러 처리
-  });
+  const logoutMutation = useLogoutMutation();
 
   return (
     <div>
@@ -44,13 +30,15 @@ function RouteComponent() {
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         <div className="flex items-center gap-gap-x-l">
           <img
-            src="/default-profile.png"
-            className="rounded-full aspect-square h-[53px]"
+            src={currentUser?.profileImageUrl ?? "/default-profile.png"}
+            className="rounded-full aspect-square h-[53px] object-cover"
           ></img>
           <div className="flex flex-col gap-y-xs">
-            <p className="text-text-primary text-title-3">알케르닉스</p>
+            <p className="text-text-primary text-title-3">
+              {currentUser?.nickname}
+            </p>
             <p className="text-neutral-600 text-caption-l">
-              alchernix149@naver.com
+              {currentUser?.email}
             </p>
           </div>
         </div>
@@ -67,7 +55,7 @@ function RouteComponent() {
 
       <div className="bg-surface-layer-1 rounded-xl my-margin-y-s">
         <ul className="text-text-primary flex flex-col">
-          <Section title="관심 주제" Icon={MenuIcon}>
+          <Section title="관심 주제">
             <ul className="grid grid-cols-2 gap-margin-y-s py-padding-y-xs">
               {categories.map((category) => {
                 return (
@@ -94,7 +82,6 @@ function RouteComponent() {
                 08 : 00 AM
               </div>
             }
-            Icon={MenuIcon}
           />
           <SectionDivider />
           <Section title="테마">

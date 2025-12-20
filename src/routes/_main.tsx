@@ -1,11 +1,9 @@
-// 인증 체크
+// 온보딩 과정까지 다 마친 유저인지 추가 확인
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
 import { api } from "@/lib/axios";
-import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
-
-type Res = components["schemas"]["UserProfileResponse"];
+import type { CurrentUser } from "@/types/currentUser";
 
 export const Route = createFileRoute("/_main")({
   component: RouteComponent,
@@ -15,14 +13,18 @@ export const Route = createFileRoute("/_main")({
       throw redirect({ to: "/" });
     }
     try {
-      const data = await context.queryClient.ensureQueryData({
+      const userData = await context.queryClient.ensureQueryData({
         queryKey: ["currentUser"],
         queryFn: async () => {
-          const res = await api.get<ApiResponse<Res>>("/api/v1/user/me");
+          const res = await api.get<ApiResponse<CurrentUser>>(
+            "/api/v1/user/me"
+          );
           return res.data;
         },
       });
-      console.log(data);
+      return {
+        currentUser: userData.data,
+      };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // 온보딩 미완료 시 온보딩 진행

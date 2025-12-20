@@ -7,10 +7,11 @@ import ErrorModal from "@/components/ErrorModal";
 import type { QueryClient } from "@tanstack/react-query";
 
 type TokenRes = components["schemas"]["TokenResponse"];
+type User = components["schemas"]["UserProfileResponse"];
 
 type RouterContext = {
   queryClient: QueryClient;
-  currentUser: any;
+  currentUser: User;
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
