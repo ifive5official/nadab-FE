@@ -6,11 +6,8 @@ import { OtpInput } from "@/components/InputFields";
 import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
-import useErrorStore from "@/store/errorStore";
+import { useSendEmailCodeMutation } from "@/features/auth/hooks/useSendEmailCodeMutation";
+import { useVerifyEmailCodeMutation } from "@/features/auth/hooks/useVerifyEmailCodeMutation";
 
 export const Route = createFileRoute("/(auth)/signup/emailVerification")({
   component: EmailVerification,
@@ -33,31 +30,8 @@ function EmailVerification() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3분
 
-  const resendCodeMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
-      await api.post("/api/v1/email/code", {
-        email,
-        verificationType: "SIGNUP",
-      });
-    },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      useErrorStore.getState().showError(
-        // Todo: 에러 메시지 변경
-        err.message,
-        err.response?.data?.message ??
-          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-      );
-    },
-  });
-
-  const verifyCodeMutation = useMutation({
-    mutationFn: async ({ enteredCode }: { enteredCode: string }) => {
-      await api.post("/api/v1/email/code/verification", {
-        email,
-        code: enteredCode,
-        verificationType: "SIGNUP",
-      });
-    },
+  const resendCodeMutation = useSendEmailCodeMutation({});
+  const verifyCodeMutation = useVerifyEmailCodeMutation({
     onSuccess: () => {
       updateIsEmailVerified();
       const nextStep = getNextStepPath("emailVerification");
@@ -65,19 +39,7 @@ function EmailVerification() {
         to: nextStep,
       });
     },
-
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (err.status === 400) {
-        setError("입력한 정보를 한번 더 확인해주세요.");
-      } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
-      }
-    },
+    onCodeInvalid: (message: string) => setError(message),
   });
 
   function startTimer() {
@@ -104,7 +66,7 @@ function EmailVerification() {
   function handleResend() {
     setTimeLeft(180);
     startTimer();
-    resendCodeMutation.mutate({ email });
+    resendCodeMutation.mutate({ email, verificationType: "SIGNUP" });
   }
 
   return (
@@ -113,7 +75,11 @@ function EmailVerification() {
       action=""
       onSubmit={(e) => {
         e.preventDefault();
-        verifyCodeMutation.mutate({ enteredCode });
+        verifyCodeMutation.mutate({
+          email,
+          code: enteredCode,
+          verificationType: "SIGNUP",
+        });
       }}
     >
       <StepTitle>

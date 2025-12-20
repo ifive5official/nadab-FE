@@ -1,4 +1,3 @@
-// 이메일 인증 코드 발송 + 중복 확인
 // 회원가입 및 비밀번호 변경 시 사용
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
@@ -9,30 +8,30 @@ import type { components } from "@/generated/api-types";
 
 type Props = {
   // input field 밑에 뜨는 에러
-  onEmailInvalid?: (message: string) => void;
-  onSuccess?: (email: string) => void;
+  onCodeInvalid: (message: string) => void;
+  onSuccess: () => void;
 };
 
-type Req = components["schemas"]["SendVerificationCodeRequest"];
+type Req = components["schemas"]["VerifyCodeRequest"];
 
-export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
+export function useVerifyEmailCodeMutation({
+  onCodeInvalid,
+  onSuccess,
+}: Props) {
   return useMutation({
-    mutationFn: async ({ email, verificationType }: Req) => {
-      await api.post("/api/v1/email/code", {
+    mutationFn: async ({ email, code, verificationType }: Req) => {
+      await api.post("/api/v1/email/code/verification", {
         email,
+        code,
         verificationType,
       });
     },
-    onSuccess: (_, { email }) => {
-      onSuccess?.(email);
+    onSuccess: () => {
+      onSuccess();
     },
     onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (err.response?.status === 409) {
-        // 회원가입 시
-        onEmailInvalid?.("이미 가입한 회원이에요.");
-      } else if (err.response?.status === 404) {
-        // 비밀번호 변경 시
-        onEmailInvalid?.("해당 이메일로 가입된 계정이 없습니다.");
+      if (err.response?.status === 400) {
+        onCodeInvalid("입력한 정보를 한번 더 확인해주세요.");
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경

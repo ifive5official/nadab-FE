@@ -8,15 +8,7 @@ import {
   useInputValidation,
   useConfirmPasswordValidation,
 } from "@/hooks/useInputValidation";
-import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
-import useErrorStore from "@/store/errorStore";
-import { api } from "@/lib/axios";
-import type { components } from "@/generated/api-types";
-import useAuthStore from "@/store/authStore";
-
-type TokenRes = components["schemas"]["TokenResponse"];
+import { useSignupMutation } from "@/features/auth/hooks/useSignupMutation";
 
 export const Route = createFileRoute("/(auth)/signup/password")({
   component: Password,
@@ -30,7 +22,6 @@ export const Route = createFileRoute("/(auth)/signup/password")({
 });
 
 export default function Password() {
-  const updatePassword = useSignupStore.use.updatePassword();
   const {
     value: password,
     error: passwordError,
@@ -42,32 +33,15 @@ export default function Password() {
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
   } = useConfirmPasswordValidation(password);
+
   const navigate = useNavigate();
 
-  const signupMutation = useMutation({
-    mutationFn: async ({ password }: { password: string }) => {
-      const res = await api.post<ApiResponse<TokenRes>>("/api/v1/auth/signup", {
-        email: useSignupStore.getState().email,
-        password: password,
-      });
-      return res.data;
-    },
-    onSuccess: (res) => {
-      const { accessToken } = res.data!;
-      useAuthStore.getState().setAccessToken(accessToken!);
-      updatePassword(password);
+  const signupMutation = useSignupMutation({
+    onSuccess: () => {
       const nextStep = getNextStepPath("password");
       navigate({
         to: nextStep,
       });
-    },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      useErrorStore.getState().showError(
-        // Todo: 에러 메시지 변경
-        err.message,
-        err.response?.data?.message ??
-          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-      );
     },
   });
 
@@ -82,7 +56,10 @@ export default function Password() {
         onSubmit={(e) => {
           e.preventDefault();
           if (!passwordError && !confirmPasswordError) {
-            signupMutation.mutate({ password });
+            signupMutation.mutate({
+              email: useSignupStore.getState().email,
+              password,
+            });
           }
         }}
       >
