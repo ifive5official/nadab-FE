@@ -6,6 +6,7 @@ import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
+import Toast from "@/components/Toast";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -21,6 +22,7 @@ export default function ProfileImageUploader({
 }: Props) {
   const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [istoastopen, setIsToastOpen] = useState(false);
 
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
@@ -78,6 +80,7 @@ export default function ProfileImageUploader({
         file,
       });
       onSuccess(res.data?.uploadUrl ?? "");
+      setIsToastOpen(true);
     } catch (e) {
       console.error(e);
       alert("이미지 업로드에 실패했습니다.");
@@ -146,6 +149,12 @@ export default function ProfileImageUploader({
           },
         ]}
         onClose={() => setIsModalOpen(false)}
+      />
+      <Toast
+        isOpen={istoastopen}
+        bottom="bottom-margin-y-xxxl"
+        onClose={() => setIsToastOpen(false)}
+        message="프로필 사진이 추가되었습니다."
       />
     </div>
   );
