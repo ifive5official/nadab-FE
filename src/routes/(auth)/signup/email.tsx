@@ -6,11 +6,7 @@ import { useNavigate } from "@tanstack/react-router";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useSignupStore from "@/store/signupStore";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import { useSendEmailCodeMutation } from "@/features/auth/hooks/useSendEmailCodeMutation";
 
 export const Route = createFileRoute("/(auth)/signup/email")({
   component: Email,
@@ -34,32 +30,13 @@ export default function Email() {
   } = useInputValidation("email");
   const navigate = useNavigate();
 
-  // 중복 확인 + 인증 코드 전송
-  const emailMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
-      await api.post("/api/v1/email/code", {
-        email,
-        verificationType: "SIGNUP",
-      });
-    },
-    onSuccess: () => {
-      // 이메일 중복 없으면 다음 단계로
+  const emailMutation = useSendEmailCodeMutation({
+    onSuccess: (email: string) => {
       updateEmail(email);
       const nextStep = getNextStepPath("email");
       navigate({ to: nextStep });
     },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (err.status === 409) {
-        setEmailError("이미 가입한 회원이에요.");
-      } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
-      }
-    },
+    onEmailInvalid: (message: string) => setEmailError(message),
   });
 
   return (
@@ -73,7 +50,7 @@ export default function Email() {
         onSubmit={(e) => {
           e.preventDefault();
           if (!emailError) {
-            emailMutation.mutate({ email });
+            emailMutation.mutate({ email, verificationType: "SIGNUP" });
           }
         }}
       >
