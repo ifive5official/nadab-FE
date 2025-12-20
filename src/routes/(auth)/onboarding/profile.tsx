@@ -2,17 +2,17 @@ import BlockButton from "@/components/BlockButton";
 import { InputFieldWithButton } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
-import BottomModal from "@/components/BottomModal";
 import { useMutation } from "@tanstack/react-query";
 import { getNextStepPath } from "@/features/auth/signupSteps";
-import useSignupStore from "@/store/signupStore";
+import useOnboardingStore from "@/store/onboardingStore";
 import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiResponse } from "@/generated/api";
 import useErrorStore from "@/store/errorStore";
 import type { components } from "@/generated/api-types";
+import ProfileImageUploader from "@/features/user/ProfileImageUploader";
 
 type NicknameRes = components["schemas"]["CheckNicknameResponse"];
 
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { category } = useSignupStore.getState();
+    const { category } = useOnboardingStore.getState();
     if (!category) {
       throw redirect({ to: "/signup/terms" });
     }
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/(auth)/onboarding/profile")({
 });
 
 function Profile() {
-  const signupStore = useSignupStore.getState();
+  const onboardingStore = useOnboardingStore.getState();
 
   const {
     value: nickname,
@@ -37,13 +37,6 @@ function Profile() {
     onChange: onNicknameChange,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
-  // Todo: 이미지 업로드
-  const [profileImgUrl] = useState("");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const albumInputRef = useRef<HTMLInputElement | null>(null);
-  const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const navigate = useNavigate();
 
@@ -76,21 +69,14 @@ function Profile() {
     },
   });
 
+  // Todo: 수정
   const signupMutation = useMutation({
-    mutationFn: async ({
-      nickname,
-      profileImgUrl,
-    }: {
-      nickname: string;
-      profileImgUrl: string;
-    }) => {
+    mutationFn: async ({ nickname }: { nickname: string }) => {
       // Todo: 회원가입 백엔드 api 연동
       const user = {
-        email: signupStore.email,
-        password: signupStore.password,
-        category: signupStore.category,
+        category: onboardingStore.category,
         nickname,
-        profileImgUrl,
+        profileImgUrl: onboardingStore.profileImgUrl,
       };
       alert(`${JSON.stringify(user)} 회원가입`);
       await new Promise((resolve) => setTimeout(resolve, 300));
@@ -107,7 +93,7 @@ function Profile() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        signupMutation.mutate({ nickname, profileImgUrl });
+        signupMutation.mutate({ nickname });
       }}
       className="h-full flex flex-col"
     >
@@ -115,54 +101,13 @@ function Profile() {
         <div className="py-padding-y-m">
           <StepTitle>프로필을 설정해주세요.</StepTitle>
         </div>
-        <div className="py-padding-y-xl flex flex-col items-center gap-gap-y-s">
-          <img src="/default-profile.png" className="h-16 w-16 rounded-full" />
-          {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
-          <button
-            type="button"
-            className="text-text-primary text-label-m underline"
-            onClick={() => setIsModalOpen(true)}
-          >
-            사진 추가
-          </button>
-          <input
-            ref={albumInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-          />
-          <input
-            ref={cameraInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            capture="environment"
-          />
-
-          <BottomModal
-            isOpen={isModalOpen}
-            title="프로필 사진 추가"
-            items={[
-              {
-                label: "앨범에서 사진 선택",
-                onClick: () => {
-                  albumInputRef.current?.click();
-                },
-              },
-              {
-                label: "사진 찍기",
-                onClick: () => {
-                  cameraInputRef.current?.click();
-                },
-              },
-              {
-                label: "취소",
-                onClick: () => setIsModalOpen(false),
-              },
-            ]}
-            onClose={() => setIsModalOpen(false)}
-          />
-        </div>
+        <ProfileImageUploader
+          onSuccess={(url: string) => {
+            const setProfileImgUrl =
+              useOnboardingStore.use.updateProfileImgUrl();
+            setProfileImgUrl(url);
+          }}
+        />
         <div className="flex flex-col py-padding-y-m gap-gap-y-l">
           <InputFieldWithButton
             value={nickname}
@@ -187,9 +132,9 @@ function Profile() {
           </p>
         </div>
       </div>
-      {/* Todo: 중복 검사 결과 disabled 조건에 포함 */}
+
       <BlockButton
-        isLoading={signupMutation.isPending}
+        // isLoading={signupMutation.isPending}
         disabled={!(nickname && !nicknameError && isNicknameOk)}
       >
         완료

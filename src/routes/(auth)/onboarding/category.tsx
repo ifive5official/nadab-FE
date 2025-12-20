@@ -4,14 +4,14 @@ import categories from "@/constants/categories";
 import StepTitle from "@/features/auth/StepTitle";
 import clsx from "clsx";
 import { useState } from "react";
-import useSignupStore from "@/store/signupStore";
+import useOnboardingStore from "@/store/onboardingStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { hasSeenIntro } = useSignupStore.getState();
+    const { hasSeenIntro } = useOnboardingStore.getState();
     if (!hasSeenIntro) {
       throw redirect({ to: "/signup/terms" });
     }
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/(auth)/onboarding/category")({
 });
 
 function Category() {
-  const updateCategory = useSignupStore.use.updateCategory();
+  const updateCategory = useOnboardingStore.use.updateCategory();
   const [items, setItems] = useState(
     categories.map((category) => ({ ...category, isSelected: false }))
   );
