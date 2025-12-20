@@ -14,16 +14,30 @@ import { LeftCarousel, RightCarousel } from "@/components/Carousels";
 import clsx from "clsx";
 import { useNavigate } from "@tanstack/react-router";
 import { getNextStepPath } from "@/features/auth/signupSteps";
-import useSignupStore from "@/store/signupStore";
+import useOnboardingStore from "@/store/onboardingStore";
+import useAuthStore from "@/store/authStore";
+import { api } from "@/lib/axios";
+import type { ApiResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
+
+type TokenRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/(auth)/onboarding/intro")({
   component: FeatureDescription,
-  beforeLoad: () => {
-    // 이전 단계 건너뛰는 것 방지
-    const { password, isSocialSignup } = useSignupStore.getState();
-    // 소셜 회원가입 시 여기로 바로 이동
-    if (!password && !isSocialSignup) {
-      throw redirect({ to: "/signup/terms" });
+  beforeLoad: async () => {
+    // 회원가입 미완료 시 진입 금지
+    const { accessToken, setAccessToken } = useAuthStore.getState();
+    if (!accessToken) {
+      try {
+        const res = await api.post<ApiResponse<TokenRes>>(
+          "/api/v1/auth/refresh"
+        );
+        const newAccessToken = res.data.data?.accessToken ?? null;
+        setAccessToken(newAccessToken!);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err) {
+        throw redirect({ to: "/signup/terms" });
+      }
     }
   },
 });
@@ -41,7 +55,7 @@ function FeatureDescription() {
       imgSrc: "/onboarding1.png",
     },
     {
-      category: "분석",
+      category: "리포트",
       title: `흩어진 기록 속에서
 '나'를 발견해요.`,
       content: `당신의 소중한 이야기들이 쌓이면, 연결고리를 찾아낼 거예요. 
@@ -60,13 +74,21 @@ function FeatureDescription() {
 ㅤ`,
       imgSrc: "/onboarding3.png",
     },
+    {
+      category: "크리스탈",
+      title: `답을 통해 크리스탈을 쌓고
+크리스탈로 리포트를 받아요.`,
+      content: `매일 도착하는 질문에 답변을 남기면 10개의 크리스탈을 받아요.
+차곡차곡 쌓은 크리스탈을 사용해 주간, 월간, 전체 리포트를 받아볼 수 있어요. 리포트를 통해 당신의 기록 속에 담긴 내면의 깊은 모습을 발견해보세요.`,
+      imgSrc: "/onboarding4.png",
+    },
   ];
   const swiperRef = useRef<SwiperType>(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const paginationRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const updateHasSeenIntro = useSignupStore.use.updateHasSeenIntro();
+  const updateHasSeenIntro = useOnboardingStore.use.updateHasSeenIntro();
   const navigate = useNavigate();
 
   return (
@@ -157,9 +179,6 @@ function FeatureDescription() {
       <BlockButton
         disabled={activeIndex !== contents.length - 1}
         onClick={() => {
-          if (swiperRef.current) {
-            swiperRef.current.destroy(true, false);
-          }
           updateHasSeenIntro();
           const nextStep = getNextStepPath("intro");
           navigate({ to: nextStep });

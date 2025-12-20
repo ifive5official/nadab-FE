@@ -8,6 +8,7 @@ import {
   useInputValidation,
   useConfirmPasswordValidation,
 } from "@/hooks/useInputValidation";
+import { useSignupMutation } from "@/features/auth/hooks/useSignupMutation";
 
 export const Route = createFileRoute("/(auth)/signup/password")({
   component: Password,
@@ -21,7 +22,6 @@ export const Route = createFileRoute("/(auth)/signup/password")({
 });
 
 export default function Password() {
-  const updatePassword = useSignupStore.use.updatePassword();
   const {
     value: password,
     error: passwordError,
@@ -33,7 +33,17 @@ export default function Password() {
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
   } = useConfirmPasswordValidation(password);
+
   const navigate = useNavigate();
+
+  const signupMutation = useSignupMutation({
+    onSuccess: () => {
+      const nextStep = getNextStepPath("password");
+      navigate({
+        to: nextStep,
+      });
+    },
+  });
 
   return (
     <div>
@@ -46,10 +56,13 @@ export default function Password() {
         onSubmit={(e) => {
           e.preventDefault();
           if (!passwordError && !confirmPasswordError) {
-            updatePassword(password);
-            const nextStep = getNextStepPath("password");
-            navigate({
-              to: nextStep,
+            signupMutation.mutate({
+              email: useSignupStore.getState().email,
+              password,
+              service: true,
+              privacy: true,
+              ageVerification: true,
+              marketing: useSignupStore.getState().isMarketingTermsAgreed,
             });
           }
         }}
@@ -92,6 +105,7 @@ export default function Password() {
               confirmPassword
             )
           }
+          isLoading={signupMutation.isPending}
         >
           완료
         </BlockButton>

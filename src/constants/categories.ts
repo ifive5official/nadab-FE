@@ -1,26 +1,55 @@
 import {
-  BarChartSquareFilledIcon,
+  Deco4FilledIcon,
   CoffeeFilledIcon,
   HappyFilledIcon,
   UsersFilledIcon,
+  HeartFilledIcon,
+  BookOpenedFilledIcon,
+  MoonFilledIcon,
 } from "@/components/Icons";
 
 const categories = [
   {
-    icon: BarChartSquareFilledIcon,
-    title: "일과 성장",
+    icon: Deco4FilledIcon,
+    code: "PREFERENCE",
+    title: "취향",
+    description: "내가 좋아하는 것, 끌리는 것들을 모아봐요",
   },
   {
     icon: HappyFilledIcon,
-    title: "내면 탐색",
+    code: "EMOTION",
+    title: "감정",
+    description: "기쁨, 슬픔, 불안이 언제 찾아오는지 살펴봐요",
   },
   {
     icon: CoffeeFilledIcon,
-    title: "일상의 균형",
+    code: "ROUTINE",
+    title: "루틴",
+    description: "나의 일상 규칙과 에너지에 대해 들여다봐요",
   },
   {
     icon: UsersFilledIcon,
-    title: "사람과 관계",
+    code: "RELATIONSHIP",
+    title: "인간관계",
+    description: "누군가와 함께할 때 나는 어떤지 알아봐요",
+  },
+  {
+    icon: HeartFilledIcon,
+    code: "LOVE",
+    title: "사랑",
+    description: "나의 사랑 방식을 알아가요",
+  },
+  {
+    icon: BookOpenedFilledIcon,
+    code: "VALUES",
+    title: "가치관",
+    description: "선택의 순간, 무엇을 우선하는지 찾아봐요",
+  },
+  {
+    icon: MoonFilledIcon,
+    code: "DREAM",
+    title: "꿈",
+    description: "앞으로 어떤 삶을 살고 싶은지 그려봐요",
   },
 ] as const;
 

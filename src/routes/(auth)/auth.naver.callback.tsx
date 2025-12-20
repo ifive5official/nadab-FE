@@ -3,7 +3,6 @@ import { createFileRoute, isRedirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { redirect } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
-import useSignupStore from "@/store/signupStore";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 
@@ -28,11 +27,14 @@ export const Route = createFileRoute("/(auth)/auth/naver/callback")({
       const { accessToken, signupStatus } = res.data.data!;
 
       useAuthStore.getState().setAccessToken(accessToken!);
-      useSignupStore.getState().setIsSocialSignup(); // 불필요한 스탭 스킵 플래그
 
       switch (signupStatus) {
         case "PROFILE_INCOMPLETE":
-          throw redirect({ to: "/onboarding/intro", replace: true });
+          throw redirect({
+            to: "/signup/terms",
+            replace: true,
+            search: { type: "social" },
+          });
         case "WITHDRAWN":
           // Todo: 회원탈퇴시 처리
           break;

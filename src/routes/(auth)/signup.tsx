@@ -1,8 +1,17 @@
 import { useLocation, createFileRoute, Outlet } from "@tanstack/react-router";
 import { GetCurrentStep, type StepId } from "@/features/auth/signupSteps";
+// import useAuthStore from "@/store/authStore";
+// import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(auth)/signup")({
   component: SignupLayout,
+  // beforeLoad: async () => {
+  //   // 로그인 시 진입 불가
+  //   const { accessToken } = useAuthStore.getState();
+  //   if (accessToken) {
+  //     throw redirect({ to: "/" });
+  //   }
+  // },
 });
 
 function SignupLayout() {
