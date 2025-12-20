@@ -12,8 +12,8 @@ export const Route = createFileRoute("/(auth)/signup/email")({
   component: Email,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { isTermsAgreed } = useSignupStore.getState();
-    if (!isTermsAgreed) {
+    const { isRequiredTermsAgreed } = useSignupStore.getState();
+    if (!isRequiredTermsAgreed) {
       throw redirect({ to: "/signup/terms" });
     }
   },

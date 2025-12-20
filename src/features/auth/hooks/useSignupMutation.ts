@@ -15,10 +15,21 @@ type Props = {
 
 export function useSignupMutation({ onSuccess }: Props) {
   return useMutation({
-    mutationFn: async ({ email, password }: Req) => {
+    mutationFn: async ({
+      email,
+      password,
+      service,
+      privacy,
+      ageVerification,
+      marketing,
+    }: Req) => {
       const res = await api.post("/api/v1/auth/signup", {
         email,
         password,
+        service,
+        privacy,
+        ageVerification,
+        marketing,
       });
       return res.data;
     },

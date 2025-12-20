@@ -30,6 +30,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/terms/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 약관 동의 상태 확인
+         * @description 현재 사용자가 모든 활성 약관에 동의했는지 확인합니다.
+         *
+         *     - requiresConsent가 true이면 재동의가 필요합니다.
+         *     - missingTerms에 재동의가 필요한 약관 타입이 반환됩니다 (필수/선택 약관 모두 포함).
+         *     - 홈화면 진입 시 호출하여 약관 업데이트 알림을 표시할 수 있습니다.
+         *     - 선택 약관(MARKETING)도 버전 업데이트 시 재동의가 필요하며, 사용자는 동의/거부를 선택할 수 있습니다.
+         *
+         *     **응답 필드 사용 가이드:**
+         *
+         *     1. **재동의 여부 확인 (홈화면)**
+         *     - requiresConsent: true이면 재동의 페이지로 이동
+         *     - missingTerms: 어떤 약관이 필요한지 확인
+         *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태
+         *
+         *     2. **재동의 페이지 구현**
+         *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태이므로 초기값으로 사용
+         *     - 사용자가 이미 동의한 약관은 그대로 표시하고 missingTerms에 포함된 새로 동의를 받아야할 약관만 다르게 표시하여 사용자에게 안내
+         */
+        get: operations["checkTermsConsent"];
+        put?: never;
+        /**
+         * 약관 동의
+         * @description 약관에 동의합니다.
+         *
+         *     - 소셜 로그인 온보딩(PROFILE_INCOMPLETE 상태): 로그인 후 약관 동의 필수
+         *     - 약관 재동의: 약관 업데이트 시 재동의
+         *     - 일반 회원가입은 POST /auth/signup에서 약관 동의를 함께 처리하므로, 이 API를 사용하지 않습니다.
+         *
+         *     필수 약관(SERVICE, PRIVACY, AGE_VERIFICATION)에 모두 동의해야 합니다.
+         *     마케팅 약관(MARKETING)은 선택 사항입니다.
+         */
+        post: operations["agreeToTerms"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/report/daily/generate/test": {
         parameters: {
             query?: never;
@@ -116,8 +163,10 @@ export interface paths {
          *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
          *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
          *     <br>
+         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+         *     <br>
          *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자)<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
          *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
          *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
          */
@@ -140,6 +189,8 @@ export interface paths {
         /**
          * 일반 회원가입
          * @description 이메일 인증 완료 후 회원가입을 진행합니다.<br>
+         *     일반 회원가입 시 약관 동의를 함께 처리합니다. 필수 약관(서비스 이용약관, 개인정보 처리방침, 만 14세 이상 확인)에 모두 동의해야 합니다.<br>
+         *     <br>
          *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
          *     회원가입 완료 후 signupStatus가 PROFILE_INCOMPLETE 상태이므로, 이 후 온보딩에서 프로필을 완성해야 합니다.<br>
          *     <br>
@@ -310,6 +361,30 @@ export interface paths {
         patch: operations["updateUserInterests"];
         trace?: never;
     };
+    "/api/v1/terms/consent/marketing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 마케팅 동의 상태 조회
+         * @description 현재 사용자의 마케팅 수신 동의 여부를 조회합니다.
+         */
+        get: operations["getMarketingConsent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 마케팅 동의 변경
+         * @description 마케팅 수신 동의를 변경합니다.
+         */
+        patch: operations["updateMarketingConsent"];
+        trace?: never;
+    };
     "/api/v1/auth/password": {
         parameters: {
             query?: never;
@@ -428,6 +503,29 @@ export interface components {
              */
             contentType: string;
         };
+        /** @description 약관 동의 요청 */
+        TermsConsentRequest: {
+            /**
+             * @description 서비스 이용약관 동의
+             * @example true
+             */
+            service: boolean;
+            /**
+             * @description 개인정보 처리방침 동의
+             * @example true
+             */
+            privacy: boolean;
+            /**
+             * @description 만 14세 이상 확인
+             * @example true
+             */
+            ageVerification: boolean;
+            /**
+             * @description 마케팅 정보 수신 동의 (true 또는 false)
+             * @example false
+             */
+            marketing: boolean;
+        };
         /** @description 오늘의 리포트 생성 응답 */
         DailyReportResponse: {
             message?: string;
@@ -530,6 +628,26 @@ export interface components {
              * @example password123!
              */
             password: string;
+            /**
+             * @description 서비스 이용약관 동의
+             * @example true
+             */
+            service: boolean;
+            /**
+             * @description 개인정보 처리방침 동의
+             * @example true
+             */
+            privacy: boolean;
+            /**
+             * @description 만 14세 이상 확인
+             * @example true
+             */
+            ageVerification: boolean;
+            /**
+             * @description 마케팅 정보 수신 동의 (선택)
+             * @example false
+             */
+            marketing: boolean;
         };
         /** @description 비밀번호 재설정 요청 (비밀번호 찾기에서 이메일 인증 완료 후) */
         ResetPasswordRequest: {
@@ -586,6 +704,14 @@ export interface components {
              */
             interestCode: string;
         };
+        /** @description 마케팅 동의 변경 요청 */
+        UpdateMarketingConsentRequest: {
+            /**
+             * @description 마케팅 정보 수신 동의 (true 또는 false)
+             * @example true
+             */
+            agreed: boolean;
+        };
         /** @description 비밀번호 변경 요청 (마이페이지) */
         ChangePasswordRequest: {
             /**
@@ -620,6 +746,44 @@ export interface components {
              * @example 이미 사용 중인 닉네임입니다.
              */
             reason?: string;
+        };
+        /** @description 약관 동의 상태 확인 응답 */
+        TermsCheckResponse: {
+            /**
+             * @description 재동의 필요 여부
+             * @example false
+             */
+            requiresConsent?: boolean;
+            /** @description 재동의가 필요한 약관 타입 목록 */
+            missingTerms?: ("SERVICE" | "PRIVACY" | "AGE_VERIFICATION" | "MARKETING")[];
+            /**
+             * @description 현재 서비스 이용약관 동의 여부
+             * @example true
+             */
+            service?: boolean;
+            /**
+             * @description 현재 개인정보 처리방침 동의 여부
+             * @example true
+             */
+            privacy?: boolean;
+            /**
+             * @description 현재 만 14세 이상 확인 여부
+             * @example true
+             */
+            ageVerification?: boolean;
+            /**
+             * @description 현재 마케팅 수신 동의 여부
+             * @example true
+             */
+            marketing?: boolean;
+        };
+        /** @description 마케팅 동의 상태 응답 */
+        MarketingConsentResponse: {
+            /**
+             * @description 마케팅 동의 여부
+             * @example true
+             */
+            agreed?: boolean;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -661,6 +825,69 @@ export interface operations {
                 };
             };
             /** @description 잘못된 요청 (예: 지원하지 않는 확장자) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    checkTermsConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TermsCheckResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    agreeToTerms: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TermsConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 필수 약관 미동의 */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -884,6 +1111,7 @@ export interface operations {
             /**
              * @description 잘못된 요청
              *     - 이메일 인증이 완료되지 않은 경우
+             *     - 필수 약관 미동의한 경우
              *     - 이메일 형식이 올바르지 않은 경우
              *     - 비밀번호 형식이 올바르지 않은 경우 (영문, 숫자, 특수문자 포함 8자 이상)
              */
@@ -1157,6 +1385,62 @@ export interface operations {
             };
             /** @description 잘못된 요청 (예: 지원하지 않는 관심 주제) */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMarketingConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MarketingConsentResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateMarketingConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMarketingConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description 성공 */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };

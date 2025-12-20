@@ -59,6 +59,10 @@ export default function Password() {
             signupMutation.mutate({
               email: useSignupStore.getState().email,
               password,
+              service: true,
+              privacy: true,
+              ageVerification: true,
+              marketing: useSignupStore.getState().isMarketingTermsAgreed,
             });
           }
         }}
@@ -101,6 +105,7 @@ export default function Password() {
               confirmPassword
             )
           }
+          isLoading={signupMutation.isPending}
         >
           완료
         </BlockButton>

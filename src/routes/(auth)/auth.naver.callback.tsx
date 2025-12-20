@@ -30,7 +30,11 @@ export const Route = createFileRoute("/(auth)/auth/naver/callback")({
 
       switch (signupStatus) {
         case "PROFILE_INCOMPLETE":
-          throw redirect({ to: "/onboarding/intro", replace: true });
+          throw redirect({
+            to: "/signup/terms",
+            replace: true,
+            search: { type: "social" },
+          });
         case "WITHDRAWN":
           // Todo: 회원탈퇴시 처리
           break;

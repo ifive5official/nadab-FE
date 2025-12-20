@@ -3,14 +3,16 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import createSelectors from "./createSelectors";
 
 type State = {
-  isTermsAgreed: boolean;
+  isRequiredTermsAgreed: boolean;
+  isMarketingTermsAgreed: boolean;
   email: string;
   isEmailVerified: boolean;
   password: string;
 };
 
 type Action = {
-  updateIsTermsAgreed: () => void;
+  updateIsRequiredTermsAgreed: () => void;
+  updateIsMarketingTermsAgreed: () => void;
   updateEmail: (email: State["email"]) => void;
   updateIsEmailVerified: () => void;
   updatePassword: (password: State["password"]) => void;
@@ -20,11 +22,13 @@ type Action = {
 const useSignupStoreBase = create<State & Action>()(
   persist(
     (set, _get, store) => ({
-      isTermsAgreed: false,
+      isRequiredTermsAgreed: false,
+      isMarketingTermsAgreed: false,
       email: "",
       isEmailVerified: false,
       password: "",
-      updateIsTermsAgreed: () => set({ isTermsAgreed: true }),
+      updateIsRequiredTermsAgreed: () => set({ isRequiredTermsAgreed: true }),
+      updateIsMarketingTermsAgreed: () => set({ isMarketingTermsAgreed: true }),
       updateEmail: (email) => set(() => ({ email: email })),
       updateIsEmailVerified: () => set({ isEmailVerified: true }),
       updatePassword: (password) => set(() => ({ password: password })),
@@ -36,7 +40,8 @@ const useSignupStoreBase = create<State & Action>()(
       // 이메일 인증코드 확인하러 다른 앱 갈 때 상태 리셋되지 않도록
       // 이 둘만 세션스토리지에 별도 저장
       partialize: (state) => ({
-        isTermsAgreed: state.isTermsAgreed,
+        isRequiredTermsAgreed: state.isRequiredTermsAgreed,
+        isMarketingTermsAgreed: state.isMarketingTermsAgreed,
         email: state.email,
       }),
     }
