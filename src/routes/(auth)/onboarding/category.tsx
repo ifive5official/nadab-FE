@@ -1,59 +1,43 @@
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
-import {
-  BarChartSquareFilledIcon,
-  CoffeeFilledIcon,
-  HappyFilledIcon,
-  UsersFilledIcon,
-} from "@/components/Icons";
+import categories from "@/constants/categories";
 import StepTitle from "@/features/auth/StepTitle";
 import clsx from "clsx";
 import { useState } from "react";
-import useSignupStore from "@/store/signupStore";
+import useOnboardingStore from "@/store/onboardingStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
   beforeLoad: () => {
     // 이전 단계 건너뛰는 것 방지
-    const { hasSeenIntro } = useSignupStore.getState();
+    const { hasSeenIntro } = useOnboardingStore.getState();
     if (!hasSeenIntro) {
-      throw redirect({ to: "/signup/terms" });
+      throw redirect({ to: "/onboarding/intro" });
     }
   },
 });
 
 function Category() {
-  const updateCategory = useSignupStore.use.updateCategory();
-  const initialItems = [
-    {
-      icon: <BarChartSquareFilledIcon />,
-      title: "일과 성장",
-      isSelected: false,
-    },
-    {
-      icon: <HappyFilledIcon />,
-      title: "내면 탐색",
-      isSelected: false,
-    },
-    {
-      icon: <CoffeeFilledIcon />,
-      title: "일상의 균형",
-      isSelected: false,
-    },
-    {
-      icon: <UsersFilledIcon />,
-      title: "사람과 관계",
-      isSelected: false,
-    },
-  ];
-  const [items, setItems] = useState(initialItems);
+  const updateCategory = useOnboardingStore.use.updateCategory();
+  const [items, setItems] = useState(
+    categories.map((category) => ({ ...category, isSelected: false }))
+  );
   const selectedItem = items.find((item) => item.isSelected);
   const navigate = useNavigate();
 
+  const categoryMutation = useUpdateInterestMutation({
+    onSuccess: (interestCode: string) => {
+      updateCategory(interestCode);
+      const nextStep = getNextStepPath("category");
+      navigate({ to: nextStep });
+    },
+  });
+
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 flex flex-col gap-gap-y-l">
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         <div className="py-padding-y-m flex flex-col gap-gap-y-l">
           <StepTitle>
             당신의 어떤 이야기부터
@@ -65,8 +49,9 @@ function Category() {
             선택한 주제에 맞춰, 나답이 질문들을 준비할게요.
           </p>
         </div>
-        <ul className="py-padding-y-m flex flex-col gap-padding-y-m">
+        <ul className="flex-1 my-padding-y-m grid grid-cols-2 gap-x-padding-x-m gap-y-padding-y-m min-h-0 overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {items.map((item, i) => {
+            const Icon = item.icon;
             return (
               <li
                 onClick={() => {
@@ -85,17 +70,23 @@ function Category() {
                 }}
                 key={i}
                 className={clsx(
-                  "py-padding-y-xl px-padding-x-xl flex items-center gap-gap-x-l border rounded-xl cursor-pointer",
+                  "py-padding-y-m px-padding-x-m flex flex-col items-start gap-gap-y-l border rounded-xl cursor-pointer",
                   {
-                    "border-neutral-200 hover:bg-interactive-bg-hover hover:border-interactive-border-hover":
-                      !item.isSelected,
-                    "border-brand-primary bg-interactive-bg-muted":
+                    "border-neutral-200": !item.isSelected,
+                    "border-brand-primary bg-interactive-bg-hover":
                       item.isSelected,
+                    "opacity-50":
+                      !item.isSelected && items.some((item) => item.isSelected),
                   }
                 )}
               >
-                {item.icon}{" "}
-                <p className="text-title-3 text-text-primary">{item.title}</p>
+                <div className="px-padding-x-s py-padding-y-xs flex items-center gap-x-gap-x-xs bg-surface-base border border-button-tertiary-border-default text-text-primary rounded-lg">
+                  <Icon />
+                  <p className="text-label-l">{item.title}</p>
+                </div>
+                <p className="text-text-primary text-body-2">
+                  {item.description}
+                </p>
               </li>
             );
           })}
@@ -103,10 +94,9 @@ function Category() {
       </div>
       <BlockButton
         disabled={!selectedItem}
+        isLoading={categoryMutation.isPending}
         onClick={() => {
-          updateCategory(selectedItem!.title);
-          const nextStep = getNextStepPath("category");
-          navigate({ to: nextStep });
+          categoryMutation.mutate({ interestCode: selectedItem!.code });
         }}
       >
         다음

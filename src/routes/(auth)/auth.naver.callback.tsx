@@ -1,10 +1,12 @@
-import { instance } from "@/lib/axios";
-import { createFileRoute } from "@tanstack/react-router";
+import { api } from "@/lib/axios";
+import { createFileRoute, isRedirect } from "@tanstack/react-router";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { redirect } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
+import type { components } from "@/generated/api-types";
+import type { ApiResponse } from "@/generated/api";
+
+type LoginRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/(auth)/auth/naver/callback")({
   component: RouteComponent,
@@ -12,44 +14,43 @@ export const Route = createFileRoute("/(auth)/auth/naver/callback")({
     code: z.string(),
     state: z.string(),
   }),
-});
+  loaderDeps: ({ search: { code, state } }) => ({ code, state }),
+  loader: async ({ deps: { code, state } }) => {
+    try {
+      const res = await api.post<ApiResponse<LoginRes>>(
+        "/api/v1/auth/naver/login",
+        {
+          code,
+          state,
+        }
+      );
+      const { accessToken, signupStatus } = res.data.data!;
 
-function RouteComponent() {
-  const { code, state } = Route.useSearch();
-  const navigate = useNavigate();
-  const setAccessToken = useAuthStore.use.setAccessToken();
+      useAuthStore.getState().setAccessToken(accessToken!);
 
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      const res = await instance.post("/api/v1/auth/naver/login", {
-        code,
-        state,
-      });
-      return res.data;
-    },
-    // Todo: 성공 시 처리
-    onSuccess: (data) => {
-      const { accessToken, signupStatus } = data.data;
-      setAccessToken(accessToken);
       switch (signupStatus) {
         case "PROFILE_INCOMPLETE":
-          navigate({ to: "/onboarding/intro", replace: true });
-          break;
+          throw redirect({
+            to: "/signup/terms",
+            replace: true,
+            search: { type: "social" },
+          });
         case "WITHDRAWN":
           // Todo: 회원탈퇴시 처리
           break;
         default: // COMPLETED
-          navigate({ to: "/", replace: true });
+          throw redirect({ to: "/", replace: true });
       }
-    },
-  });
-
-  useEffect(() => {
-    // code 있을 때 자동 실행
-    if (code && state) {
-      mutate();
+    } catch (err) {
+      // 리다이렉트면 넘어가기
+      if (isRedirect(err)) {
+        throw err;
+      }
+      console.error("소셜 로그인 중 에러 발생", err);
     }
-  }, [code, state, mutate]);
+  },
+});
 
-  return <div>로그인 처리중...</div>;
+function RouteComponent() {
+  return null;
 }

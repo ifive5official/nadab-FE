@@ -9,13 +9,29 @@ import {
   SelectAllCheckboxIcon,
 } from "@/components/Icons";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import { useTermsConsentMutation } from "@/features/auth/hooks/useTermsConsentMutation";
+
+type SignupSearch = {
+  type?: "social";
+};
 
 export const Route = createFileRoute("/(auth)/signup/terms")({
   component: Terms,
+  validateSearch: (search: Record<string, unknown>): SignupSearch => {
+    return {
+      type: (search.type as "social") || undefined,
+    };
+  },
 });
 
 function Terms() {
-  const updateIsTermsAgreed = useSignupStore.use.updateIsTermsAgreed();
+  const { type } = Route.useSearch();
+
+  const updateIsRequiredTermsAgreed =
+    useSignupStore.use.updateIsRequiredTermsAgreed();
+  const updateIsMarketingTermsAgreed =
+    useSignupStore.use.updateIsMarketingTermsAgreed();
+
   const initialItems = [
     {
       isRequired: true,
@@ -62,6 +78,7 @@ function Terms() {
       isRequired: false,
       title: "마케팅 정보 수신에 동의해요.",
       isAgreed: false,
+      onclick: () => updateIsMarketingTermsAgreed(),
     },
   ];
   const [items, setItems] = useState(initialItems);
@@ -73,7 +90,10 @@ function Terms() {
       return true;
     }
   });
+
   const navigate = useNavigate();
+
+  const termsconsentMutation = useTermsConsentMutation({});
 
   return (
     <div>
@@ -144,10 +164,20 @@ function Terms() {
         <BlockButton
           disabled={!isAllRequiredAgreed}
           onClick={() => {
-            updateIsTermsAgreed();
-            const nextStep = getNextStepPath("terms");
-            navigate({ to: nextStep });
+            // 소셜 로그인일 경우 약관 동의 api 호출 + 온보딩으로 바로 이동
+            if (type === "social") {
+              termsconsentMutation.mutate({
+                isMarketingTermsAgreed:
+                  useSignupStore.getState().isMarketingTermsAgreed,
+              });
+              navigate({ to: "/onboarding/intro" });
+            } else {
+              updateIsRequiredTermsAgreed();
+              const nextStep = getNextStepPath("terms");
+              navigate({ to: nextStep });
+            }
           }}
+          isLoading={termsconsentMutation.isPending}
         >
           완료
         </BlockButton>

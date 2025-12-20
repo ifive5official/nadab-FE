@@ -21,9 +21,11 @@ export default function BottomModal({ isOpen, title, items, onClose }: Props) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
     }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   return createPortal(

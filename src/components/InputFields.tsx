@@ -101,7 +101,7 @@ export function InputFieldWithButton({
             className={clsx(
               "absolute right-0 h-full px-padding-x-s text-button-3",
               {
-                "bg-button-primary-bg-default text-field-text-inverse hover:bg-button-primary-bg-hover":
+                "bg-button-primary-bg-default text-field-text-inverse":
                   !buttonDisabled,
                 "bg-button-disabled-bg text-text-disabled": buttonDisabled,
               }

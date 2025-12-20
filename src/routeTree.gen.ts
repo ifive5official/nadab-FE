@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MainRouteImport } from './routes/_main'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as MainaccountAccountRouteImport } from './routes/_main/(account)/account'
 import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
 import { Route as authSignupPasswordRouteImport } from './routes/(auth)/signup/password'
 import { Route as authSignupEmailVerificationRouteImport } from './routes/(auth)/signup/emailVerification'
@@ -24,9 +26,14 @@ import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password
 import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
+import { Route as MainaccountAccountProfileRouteImport } from './routes/_main/(account)/account.profile'
 import { Route as authAuthNaverCallbackRouteImport } from './routes/(auth)/auth.naver.callback'
 import { Route as authAuthGoogleCallbackRouteImport } from './routes/(auth)/auth.google.callback'
 
+const MainRoute = MainRouteImport.update({
+  id: '/_main',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -51,6 +58,11 @@ const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MainaccountAccountRoute = MainaccountAccountRouteImport.update({
+  id: '/(account)/account',
+  path: '/account',
+  getParentRoute: () => MainRoute,
 } as any)
 const authSignupTermsRoute = authSignupTermsRouteImport.update({
   id: '/terms',
@@ -103,6 +115,12 @@ const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
   path: '/category',
   getParentRoute: () => authOnboardingRoute,
 } as any)
+const MainaccountAccountProfileRoute =
+  MainaccountAccountProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => MainaccountAccountRoute,
+  } as any)
 const authAuthNaverCallbackRoute = authAuthNaverCallbackRouteImport.update({
   id: '/(auth)/auth/naver/callback',
   path: '/auth/naver/callback',
@@ -130,8 +148,10 @@ export interface FileRoutesByFullPath {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
+  '/account': typeof MainaccountAccountRouteWithChildren
   '/auth/google/callback': typeof authAuthGoogleCallbackRoute
   '/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,12 +169,15 @@ export interface FileRoutesByTo {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
+  '/account': typeof MainaccountAccountRouteWithChildren
   '/auth/google/callback': typeof authAuthGoogleCallbackRoute
   '/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_main': typeof MainRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/onboarding': typeof authOnboardingRouteWithChildren
   '/(auth)/password': typeof authPasswordRouteWithChildren
@@ -169,8 +192,10 @@ export interface FileRoutesById {
   '/(auth)/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/(auth)/signup/password': typeof authSignupPasswordRoute
   '/(auth)/signup/terms': typeof authSignupTermsRoute
+  '/_main/(account)/account': typeof MainaccountAccountRouteWithChildren
   '/(auth)/auth/google/callback': typeof authAuthGoogleCallbackRoute
   '/(auth)/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/_main/(account)/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,8 +215,10 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account'
     | '/auth/google/callback'
     | '/auth/naver/callback'
+    | '/account/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,11 +236,14 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account'
     | '/auth/google/callback'
     | '/auth/naver/callback'
+    | '/account/profile'
   id:
     | '__root__'
     | '/'
+    | '/_main'
     | '/(auth)/login'
     | '/(auth)/onboarding'
     | '/(auth)/password'
@@ -228,12 +258,15 @@ export interface FileRouteTypes {
     | '/(auth)/signup/emailVerification'
     | '/(auth)/signup/password'
     | '/(auth)/signup/terms'
+    | '/_main/(account)/account'
     | '/(auth)/auth/google/callback'
     | '/(auth)/auth/naver/callback'
+    | '/_main/(account)/account/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MainRoute: typeof MainRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   authOnboardingRoute: typeof authOnboardingRouteWithChildren
   authPasswordRoute: typeof authPasswordRouteWithChildren
@@ -244,6 +277,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_main': {
+      id: '/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -278,6 +318,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_main/(account)/account': {
+      id: '/_main/(account)/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof MainaccountAccountRouteImport
+      parentRoute: typeof MainRoute
     }
     '/(auth)/signup/terms': {
       id: '/(auth)/signup/terms'
@@ -349,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authOnboardingCategoryRouteImport
       parentRoute: typeof authOnboardingRoute
     }
+    '/_main/(account)/account/profile': {
+      id: '/_main/(account)/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof MainaccountAccountProfileRouteImport
+      parentRoute: typeof MainaccountAccountRoute
+    }
     '/(auth)/auth/naver/callback': {
       id: '/(auth)/auth/naver/callback'
       path: '/auth/naver/callback'
@@ -365,6 +419,27 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface MainaccountAccountRouteChildren {
+  MainaccountAccountProfileRoute: typeof MainaccountAccountProfileRoute
+}
+
+const MainaccountAccountRouteChildren: MainaccountAccountRouteChildren = {
+  MainaccountAccountProfileRoute: MainaccountAccountProfileRoute,
+}
+
+const MainaccountAccountRouteWithChildren =
+  MainaccountAccountRoute._addFileChildren(MainaccountAccountRouteChildren)
+
+interface MainRouteChildren {
+  MainaccountAccountRoute: typeof MainaccountAccountRouteWithChildren
+}
+
+const MainRouteChildren: MainRouteChildren = {
+  MainaccountAccountRoute: MainaccountAccountRouteWithChildren,
+}
+
+const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 
 interface authOnboardingRouteChildren {
   authOnboardingCategoryRoute: typeof authOnboardingCategoryRoute
@@ -418,6 +493,7 @@ const authSignupRouteWithChildren = authSignupRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MainRoute: MainRouteWithChildren,
   authLoginRoute: authLoginRoute,
   authOnboardingRoute: authOnboardingRouteWithChildren,
   authPasswordRoute: authPasswordRouteWithChildren,

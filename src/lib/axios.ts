@@ -2,13 +2,13 @@
 import useAuthStore from "@/store/authStore";
 import axios from "axios";
 
-export const instance = axios.create({
-  baseURL: "https://nadab-dev.n-e.kr",
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // refresh token 쿠키 포함
 });
 
 // 항상 access token을 요청 헤더에 붙임
-instance.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
 
   if (accessToken) {
@@ -22,7 +22,7 @@ let isRefreshing = false;
 let queue: ((token: string) => void)[] = []; // 요청 재시도 함수들의 큐
 
 // 401 처리 + 자동 리프레시
-instance.interceptors.response.use(
+api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
         return new Promise((resolve) => {
           queue.push((token: string) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(instance(originalRequest));
+            resolve(api(originalRequest));
           });
         });
       }
@@ -49,7 +49,7 @@ instance.interceptors.response.use(
 
       try {
         // Refresh Token은 HttpOnly 쿠키로 자동 전송
-        const res = await instance.post("/api/v1/auth/refresh");
+        const res = await api.post("/api/v1/auth/refresh");
 
         // access token 재설정
         const newAccessToken = res.data.data.accessToken;
@@ -61,13 +61,14 @@ instance.interceptors.response.use(
 
         // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return instance(originalRequest);
+        return api(originalRequest);
       } catch (err) {
+        console.log(err);
         queue = [];
 
         // Refresh Token도 만료되면, 강제 로그아웃
         useAuthStore.getState().clearAuth();
-        window.location.href = "/";
+        // window.location.href = "/";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
