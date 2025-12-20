@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(auth)/onboarding/category")({
     // 이전 단계 건너뛰는 것 방지
     const { hasSeenIntro } = useOnboardingStore.getState();
     if (!hasSeenIntro) {
-      throw redirect({ to: "/signup/terms" });
+      throw redirect({ to: "/onboarding/intro" });
     }
   },
 });

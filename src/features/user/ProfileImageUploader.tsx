@@ -11,7 +11,7 @@ type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
 
 type Props = {
-  initialProfileImgUrl?: string | null;
+  initialProfileImgUrl: string | undefined;
   onSuccess: (url: string) => void;
 };
 
@@ -19,7 +19,6 @@ export default function ProfileImageUploader({
   initialProfileImgUrl,
   onSuccess,
 }: Props) {
-  // Todo: 이미지 업로드
   const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,10 +55,6 @@ export default function ProfileImageUploader({
 
       return presignedUrl.split("?")[0];
     },
-    onSuccess: (imageUrl) => {
-      setProfileImgUrl(imageUrl);
-      onSuccess(imageUrl);
-    },
   });
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -71,13 +66,20 @@ export default function ProfileImageUploader({
       return;
     }
 
+    setIsModalOpen(false);
+
+    const previewUrl = URL.createObjectURL(file);
+    setProfileImgUrl(previewUrl);
+
     try {
       const res = await getPresignedUrlMutation.mutateAsync(file.type);
       uploadToS3Mutation.mutate({
         presignedUrl: res.data?.objectKey ?? "",
         file,
       });
-      setIsModalOpen(false);
+      if (uploadToS3Mutation.isSuccess) {
+        onSuccess(res.data?.uploadUrl ?? "");
+      }
     } catch (e) {
       console.error(e);
       alert("이미지 업로드에 실패했습니다.");
@@ -91,11 +93,15 @@ export default function ProfileImageUploader({
 
   return (
     <div className="py-padding-y-xl flex flex-col items-center gap-gap-y-s">
-      <img
-        src={profileImgUrl || "/default-profile.png"}
-        className="h-16 w-16 rounded-full"
-      />
-      {/* <div className="bg-neutral-300 h-16 w-16 rounded-full" /> */}
+      {!isUploading && (
+        <img
+          src={profileImgUrl || "/default-profile.png"}
+          className="h-16 w-16 rounded-full object-cover"
+        />
+      )}
+      {isUploading && (
+        <div className="bg-neutral-300 h-16 w-16 rounded-full animate-pulse" />
+      )}
       <button
         type="button"
         className="text-text-primary text-label-m underline"
@@ -108,14 +114,14 @@ export default function ProfileImageUploader({
         ref={albumInputRef}
         type="file"
         className="hidden"
-        accept="image/*"
+        accept="image/jpeg,image/png"
         onChange={handleFileChange}
       />
       <input
         ref={cameraInputRef}
         type="file"
         className="hidden"
-        accept="image/*"
+        accept="image/jpeg,image/png"
         capture="environment"
         onChange={handleFileChange}
       />

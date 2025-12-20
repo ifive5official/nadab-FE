@@ -4,17 +4,11 @@ import StepTitle from "@/features/auth/StepTitle";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
-import { useMutation } from "@tanstack/react-query";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useOnboardingStore from "@/store/onboardingStore";
-import { api } from "@/lib/axios";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
-import useErrorStore from "@/store/errorStore";
-import type { components } from "@/generated/api-types";
 import ProfileImageUploader from "@/features/user/ProfileImageUploader";
-
-type NicknameRes = components["schemas"]["CheckNicknameResponse"];
+import { useUpdateProfileMutation } from "@/features/user/hooks/useUpdateProfileMutation";
+import { useCheckNicknameMutation } from "@/features/user/hooks/useCheckNicknameMutation";
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
@@ -22,14 +16,12 @@ export const Route = createFileRoute("/(auth)/onboarding/profile")({
     // 이전 단계 건너뛰는 것 방지
     const { category } = useOnboardingStore.getState();
     if (!category) {
-      throw redirect({ to: "/signup/terms" });
+      throw redirect({ to: "/onboarding/intro" });
     }
   },
 });
 
 function Profile() {
-  const onboardingStore = useOnboardingStore.getState();
-
   const {
     value: nickname,
     error: nicknameError,
@@ -37,63 +29,38 @@ function Profile() {
     onChange: onNicknameChange,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
+  const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
+    undefined
+  );
 
   const navigate = useNavigate();
 
-  const checkNicknameMutation = useMutation({
-    mutationFn: async ({ nickname }: { nickname: string }) => {
-      const res = await api.get<ApiResponse<NicknameRes>>(
-        `/api/v1/user/check-nickname?nickname=${nickname}`
-      );
-      return res;
-    },
-    onSuccess: (res) => {
-      if (res.data.data?.isAvailable) {
+  const checkNicknameMutation = useCheckNicknameMutation({
+    onSuccess: (data) => {
+      if (data.isAvailable) {
         setIsNicknameOk(true);
       } else {
-        setNicknameError(res.data.data?.reason ?? "");
+        setNicknameError(data.reason ?? "");
       }
     },
-
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (err.status === 409) {
-        setNicknameError("이미 가입한 회원이에요.");
-      } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
-      }
-    },
+    onNicknameInvalid: (message: string) => setNicknameError(message),
   });
 
-  // Todo: 수정
-  const signupMutation = useMutation({
-    mutationFn: async ({ nickname }: { nickname: string }) => {
-      // Todo: 회원가입 백엔드 api 연동
-      const user = {
-        category: onboardingStore.category,
-        nickname,
-        profileImgUrl: onboardingStore.profileImgUrl,
-      };
-      alert(`${JSON.stringify(user)} 회원가입`);
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { nickname };
-    },
+  const updateProfileMutation = useUpdateProfileMutation({
     onSuccess: () => {
       const nextStep = getNextStepPath("profile");
       navigate({ to: nextStep });
     },
-    // Todo: 에러 처리(토스트 보여줄 예정)
   });
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        signupMutation.mutate({ nickname });
+        updateProfileMutation.mutate({
+          nickname,
+          objectKey: profileImgUrl,
+        });
       }}
       className="h-full flex flex-col"
     >
@@ -102,9 +69,8 @@ function Profile() {
           <StepTitle>프로필을 설정해주세요.</StepTitle>
         </div>
         <ProfileImageUploader
+          initialProfileImgUrl={undefined}
           onSuccess={(url: string) => {
-            const setProfileImgUrl =
-              useOnboardingStore.use.updateProfileImgUrl();
             setProfileImgUrl(url);
           }}
         />
