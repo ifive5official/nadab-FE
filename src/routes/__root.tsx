@@ -1,13 +1,19 @@
 import useAuthStore from "@/store/authStore";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import ErrorModal from "@/components/ErrorModal";
+import type { QueryClient } from "@tanstack/react-query";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
-export const Route = createRootRoute({
+type RouterContext = {
+  queryClient: QueryClient;
+  currentUser: any;
+};
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
     const { accessToken, setAccessToken } = useAuthStore.getState();
     if (!accessToken) {

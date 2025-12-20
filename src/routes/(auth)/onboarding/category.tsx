@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import useOnboardingStore from "@/store/onboardingStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
+import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
@@ -25,6 +26,14 @@ function Category() {
   );
   const selectedItem = items.find((item) => item.isSelected);
   const navigate = useNavigate();
+
+  const categoryMutation = useUpdateInterestMutation({
+    onSuccess: (interestCode: string) => {
+      updateCategory(interestCode);
+      const nextStep = getNextStepPath("category");
+      navigate({ to: nextStep });
+    },
+  });
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -85,10 +94,9 @@ function Category() {
       </div>
       <BlockButton
         disabled={!selectedItem}
+        isLoading={categoryMutation.isPending}
         onClick={() => {
-          updateCategory(selectedItem!.title);
-          const nextStep = getNextStepPath("category");
-          navigate({ to: nextStep });
+          categoryMutation.mutate({ interestCode: selectedItem!.code });
         }}
       >
         다음

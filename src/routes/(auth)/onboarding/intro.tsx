@@ -179,9 +179,6 @@ function FeatureDescription() {
       <BlockButton
         disabled={activeIndex !== contents.length - 1}
         onClick={() => {
-          if (swiperRef.current) {
-            swiperRef.current.destroy(true, false);
-          }
           updateHasSeenIntro();
           const nextStep = getNextStepPath("intro");
           navigate({ to: nextStep });

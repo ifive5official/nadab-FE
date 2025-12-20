@@ -10,7 +10,7 @@ import { api } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import useAuthStore from "@/store/authStore";
 
-export const Route = createFileRoute("/(account)/account")({
+export const Route = createFileRoute("/_main/(account)/account")({
   component: RouteComponent,
   //   Todo: 비로그인 사용자 접근 막기
 });

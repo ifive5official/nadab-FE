@@ -63,11 +63,12 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (err) {
+        console.log(err);
         queue = [];
 
         // Refresh Token도 만료되면, 강제 로그아웃
         useAuthStore.getState().clearAuth();
-        window.location.href = "/";
+        // window.location.href = "/";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

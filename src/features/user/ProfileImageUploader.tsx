@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
+import axios from "axios";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -47,7 +48,7 @@ export default function ProfileImageUploader({
       presignedUrl: string;
       file: File;
     }) => {
-      await api.put(presignedUrl, file, {
+      await axios.put(presignedUrl, file, {
         headers: {
           "Content-Type": file.type,
         },
@@ -72,12 +73,10 @@ export default function ProfileImageUploader({
 
     try {
       const res = await getPresignedUrlMutation.mutateAsync(file.type);
-      console.log(res);
       uploadToS3Mutation.mutate({
-        presignedUrl: res.data?.uploadUrl ?? "",
+        presignedUrl: res.data?.objectKey ?? "",
         file,
       });
-
       setIsModalOpen(false);
     } catch (e) {
       console.error(e);
