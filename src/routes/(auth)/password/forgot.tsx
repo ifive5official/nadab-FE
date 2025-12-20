@@ -3,7 +3,7 @@ import { InputFieldWithButton } from "@/components/InputFields";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import useResetPasswordStore from "@/store/resetPasswordStore";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
-import { useMutation } from "@tanstack/react-query";
+import { useSendEmailCodeMutation } from "@/features/auth/hooks/useSendEmailCodeMutation";
 
 export const Route = createFileRoute("/(auth)/password/forgot")({
   component: Forgot,
@@ -13,36 +13,24 @@ function Forgot() {
   const {
     value: email,
     error: emailError,
+    setError: setEmailError,
     onChange: onEmailChange,
   } = useInputValidation("email");
   const updateEmail = useResetPasswordStore.use.updateEmail();
 
   const navigate = useNavigate();
 
-  const emailMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
-      // Todo: 가입 여부 확인 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      alert(email + "로 인증번호 발송: 123456");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { email };
-    },
+  const emailMutation = useSendEmailCodeMutation({
     onSuccess: () => {
       updateEmail(email);
       const nextStep = getNextStepPath("forgot");
       navigate({ to: nextStep });
     },
-    // Todo: 에러 처리(토스트 보여줄 예정)
+    onEmailInvalid: (message: string) => setEmailError(message),
   });
 
   return (
-    <form
-      className="py-padding-y-m flex flex-col gap-gap-y-l"
-      onSubmit={(e) => {
-        e.preventDefault();
-        emailMutation.mutate({ email });
-      }}
-    >
+    <form className="py-padding-y-m flex flex-col gap-gap-y-l">
       <p className="text-caption-m text-neutral-800">
         가입한 이메일 주소를 입력해주세요.
         <br />
@@ -59,7 +47,9 @@ function Forgot() {
         onChange={(e) => onEmailChange(e.target.value)}
         buttonLabel="인증"
         buttonDisabled={!email || !!emailError}
-        onButtonClick={() => emailMutation.mutate({ email })}
+        onButtonClick={() =>
+          emailMutation.mutate({ email, verificationType: "PASSWORD_RESET" })
+        }
       />
     </form>
   );
