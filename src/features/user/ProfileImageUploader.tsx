@@ -73,13 +73,11 @@ export default function ProfileImageUploader({
 
     try {
       const res = await getPresignedUrlMutation.mutateAsync(file.type);
-      uploadToS3Mutation.mutate({
+      await uploadToS3Mutation.mutateAsync({
         presignedUrl: res.data?.objectKey ?? "",
         file,
       });
-      if (uploadToS3Mutation.isSuccess) {
-        onSuccess(res.data?.uploadUrl ?? "");
-      }
+      onSuccess(res.data?.uploadUrl ?? "");
     } catch (e) {
       console.error(e);
       alert("이미지 업로드에 실패했습니다.");

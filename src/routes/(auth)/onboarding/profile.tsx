@@ -57,7 +57,6 @@ function Profile() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(nickname, profileImgUrl);
         updateProfileMutation.mutate({
           nickname,
           objectKey: profileImgUrl,
