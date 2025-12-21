@@ -1,16 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import { useState } from "react";
-import { ChevronRightIcon } from "@/components/Icons";
-import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 import Toast from "@/components/Toast";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import {
-  Section,
-  SectionItem,
-  SectionDivider,
-} from "@/features/user/components/AccountSectionComponents";
+import { SectionDivider } from "@/features/user/components/AccountSectionComponents";
 import InterestSection from "@/features/user/components/InterestSection";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
@@ -21,6 +15,7 @@ import ThemeSection from "@/features/user/components/ThemeSection";
 import useThemeStore from "@/store/useThemeStore";
 import ProfileSection from "@/features/user/components/ProfileSection";
 import { currentUserOptions } from "@/features/user/quries";
+import AccountSection from "@/features/user/components/AccountSection";
 
 const notificationOptions = queryOptions({
   queryKey: ["notification"],
@@ -62,7 +57,6 @@ function RouteComponent() {
       }
     },
   });
-  const logoutMutation = useLogoutMutation();
 
   return (
     <div>
@@ -92,20 +86,7 @@ function RouteComponent() {
           <SectionDivider />
           <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
           <SectionDivider />
-          <Section title="계정 관리">
-            <Link to="/password/forgot">
-              <SectionItem
-                title="비밀번호 변경"
-                rightElement={<ChevronRightIcon />}
-              />
-            </Link>
-            <SectionItem
-              onClick={() => logoutMutation.mutate()}
-              title="로그아웃"
-              rightElement={<ChevronRightIcon />}
-            />
-            <SectionItem title="회원탈퇴" rightElement={<ChevronRightIcon />} />
-          </Section>
+          <AccountSection />
         </ul>
       </div>
       <Toast

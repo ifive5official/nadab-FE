@@ -17,6 +17,7 @@ import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as MainAccountIndexRouteImport } from './routes/_main/account/index'
 import { Route as MainAccountProfileRouteImport } from './routes/_main/account/profile'
+import { Route as MainAccountPasswordRouteImport } from './routes/_main/account/password'
 import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
 import { Route as authSignupPasswordRouteImport } from './routes/(auth)/signup/password'
 import { Route as authSignupEmailVerificationRouteImport } from './routes/(auth)/signup/emailVerification'
@@ -66,6 +67,11 @@ const MainAccountIndexRoute = MainAccountIndexRouteImport.update({
 const MainAccountProfileRoute = MainAccountProfileRouteImport.update({
   id: '/account/profile',
   path: '/account/profile',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainAccountPasswordRoute = MainAccountPasswordRouteImport.update({
+  id: '/account/password',
+  path: '/account/password',
   getParentRoute: () => MainRoute,
 } as any)
 const authSignupTermsRoute = authSignupTermsRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
+  '/account/password': typeof MainAccountPasswordRoute
   '/account/profile': typeof MainAccountProfileRoute
   '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
+  '/account/password': typeof MainAccountPasswordRoute
   '/account/profile': typeof MainAccountProfileRoute
   '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/(auth)/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/(auth)/signup/password': typeof authSignupPasswordRoute
   '/(auth)/signup/terms': typeof authSignupTermsRoute
+  '/_main/account/password': typeof MainAccountPasswordRoute
   '/_main/account/profile': typeof MainAccountProfileRoute
   '/_main/account/': typeof MainAccountIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account/password'
     | '/account/profile'
     | '/account'
     | '/auth/$provider/callback'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account/password'
     | '/account/profile'
     | '/account'
     | '/auth/$provider/callback'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup/emailVerification'
     | '/(auth)/signup/password'
     | '/(auth)/signup/terms'
+    | '/_main/account/password'
     | '/_main/account/profile'
     | '/_main/account/'
     | '/(auth)/auth/$provider/callback'
@@ -318,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/account/profile'
       fullPath: '/account/profile'
       preLoaderRoute: typeof MainAccountProfileRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/account/password': {
+      id: '/_main/account/password'
+      path: '/account/password'
+      fullPath: '/account/password'
+      preLoaderRoute: typeof MainAccountPasswordRouteImport
       parentRoute: typeof MainRoute
     }
     '/(auth)/signup/terms': {
@@ -401,11 +420,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface MainRouteChildren {
+  MainAccountPasswordRoute: typeof MainAccountPasswordRoute
   MainAccountProfileRoute: typeof MainAccountProfileRoute
   MainAccountIndexRoute: typeof MainAccountIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainAccountPasswordRoute: MainAccountPasswordRoute,
   MainAccountProfileRoute: MainAccountProfileRoute,
   MainAccountIndexRoute: MainAccountIndexRoute,
 }
