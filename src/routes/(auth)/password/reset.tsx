@@ -8,10 +8,10 @@ import StepTitle from "@/features/auth/StepTitle";
 import InputField from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import { CircleCheckFilledIcon } from "@/components/Icons";
+import { useFindPasswordMutation } from "@/features/auth/hooks/useFindPasswordMutation";
 
 export const Route = createFileRoute("/(auth)/password/reset")({
   component: Reset,
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/(auth)/password/reset")({
 });
 
 function Reset() {
+  const email = useResetPasswordStore.use.email();
   const updatePassword = useResetPasswordStore.use.updatePassword();
   const {
     value: password,
@@ -42,16 +43,10 @@ function Reset() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const resetPasswordMutation = useMutation({
-    mutationFn: async ({ password }: { password: string }) => {
-      // Todo: 비밀번호 변경 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { password };
-    },
+  const resetPasswordMutation = useFindPasswordMutation({
     onSuccess: () => {
       setIsModalOpen(true);
     },
-    // Todo: 에러 처리(토스트 보여줄 예정)
   });
 
   return (
@@ -64,7 +59,7 @@ function Reset() {
         className="flex flex-col gap-gap-y-m py-padding-y-m"
         onSubmit={(e) => {
           e.preventDefault();
-          resetPasswordMutation.mutate({ password });
+          resetPasswordMutation.mutate({ email, newPassword: password });
         }}
       >
         <InputField

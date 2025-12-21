@@ -85,6 +85,7 @@ function RouteComponent() {
           name="id"
           type="password"
           onChange={(e) => {
+            setPasswordError("");
             setPassword(e.target.value);
           }}
           error={passwordError}

@@ -5,7 +5,8 @@ import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import StepTitle from "@/features/auth/StepTitle";
 import { OtpInput } from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
-import { useMutation } from "@tanstack/react-query";
+import { useSendEmailCodeMutation } from "@/features/auth/hooks/useSendEmailCodeMutation";
+import { useVerifyEmailCodeMutation } from "@/features/auth/hooks/useVerifyEmailCodeMutation";
 
 export const Route = createFileRoute("/(auth)/password/verify")({
   component: Verify,
@@ -29,25 +30,8 @@ function Verify() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3분
 
-  const resendCodeMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
-      // Todo: 인증번호 전송 백엔드 api 연동
-      alert(email + "로 인증번호 재전송: 123456");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return { email };
-    },
-    // Todo: 에러 처리(토스트 보여줄 예정)
-  });
-
-  const verifyCodeMutation = useMutation({
-    mutationFn: async ({ enteredCode }: { enteredCode: string }) => {
-      // Todo: 인증번호 확인 백엔드 api 연동
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      if (enteredCode !== "123456") {
-        throw new Error("인증번호 확인 실패");
-      }
-      return { enteredCode };
-    },
+  const resendCodeMutation = useSendEmailCodeMutation({});
+  const verifyCodeMutation = useVerifyEmailCodeMutation({
     onSuccess: () => {
       updateIsEmailVerified();
       const nextStep = getNextStepPath("verify");
@@ -55,17 +39,9 @@ function Verify() {
         to: nextStep,
       });
     },
-
-    onError: (error) => {
-      if (error.message === "인증번호 확인 실패") {
-        setError("입력한 정보를 한번 더 확인해주세요.");
-      } else {
-        // Todo: 에러 처리(토스트 보여줄 예정)
-      }
-    },
+    onCodeInvalid: (message: string) => setError(message),
   });
 
-  // Todo: 중복 로직 추출 고려
   function startTimer() {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
@@ -85,12 +61,12 @@ function Verify() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  });
+  }, []);
 
   function handleResend() {
     setTimeLeft(180);
     startTimer();
-    resendCodeMutation.mutate({ email });
+    resendCodeMutation.mutate({ email, verificationType: "PASSWORD_RESET" });
   }
 
   return (
@@ -99,7 +75,11 @@ function Verify() {
       action=""
       onSubmit={(e) => {
         e.preventDefault();
-        verifyCodeMutation.mutate({ enteredCode });
+        verifyCodeMutation.mutate({
+          email,
+          code: enteredCode,
+          verificationType: "PASSWORD_RESET",
+        });
       }}
     >
       <StepTitle>
@@ -135,7 +115,11 @@ function Verify() {
       </BlockButton>
       <p className="text-center text-label-m text-text-primary">
         인증번호가 오지 않았나요?{" "}
-        <button onClick={handleResend} className="text-brand-primary underline">
+        <button
+          type="button"
+          onClick={handleResend}
+          className="text-brand-primary underline"
+        >
           재발송
         </button>
       </p>

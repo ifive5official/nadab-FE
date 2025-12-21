@@ -1,5 +1,6 @@
 // 네이밍 규칙: 아이콘 이름(카멜케이스) + Icon
 
+// 랜딩페이지===================================
 export function NaverIcon() {
   return (
     <svg
@@ -66,31 +67,7 @@ export function RoundEmailIcon() {
   );
 }
 
-export function ArrowLeftIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M5.06055 10.7803H20.0605V12.2803H5.06055V10.7803Z"
-        fill="var(--color-icon-default)"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M6.12132 11.5303L12.591 5.06066L11.5303 4L4 11.5303L11.5303 19.0607L12.591 18L6.12132 11.5303Z"
-        fill="var(--color-icon-default)"
-      />
-    </svg>
-  );
-}
-
+//==============================================
 export function SelectAllCheckboxIcon() {
   return (
     <svg
@@ -435,7 +412,75 @@ export function WarningFilledIcon() {
   );
 }
 
-// 마이페이지===========================
+export function ToastCircleCheckFilledIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 1C5.935 1 1 5.935 1 12C1 18.065 5.935 23 12 23C18.065 23 23 18.065 23 12C23 5.935 18.065 1 12 1ZM10.309 16.751L6.288 12.674L7.712 11.27L10.32 13.915L16.294 7.958L17.706 9.374L10.309 16.751Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+export function CloseBigIcon() {
+  return (
+    <svg
+      width="36"
+      height="36"
+      viewBox="0 0 36 36"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="cursor-pointer"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.875 22.375L22.375 11.875L23.3031 12.8031L12.8031 23.3031L11.875 22.375Z"
+        fill="white"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12.8031 11.875L23.3031 22.375L22.375 23.3031L11.875 12.8031L12.8031 11.875Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+// 헤더===========================
+export function ArrowLeftIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5.06055 10.7803H20.0605V12.2803H5.06055V10.7803Z"
+        fill="var(--color-icon-default)"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.12132 11.5303L12.591 5.06066L11.5303 4L4 11.5303L11.5303 19.0607L12.591 18L6.12132 11.5303Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}
+
 export function MenuIcon() {
   return (
     <svg
