@@ -24,6 +24,7 @@ function RouteComponent() {
     error: nicknameError,
     setError: setNicknameError,
     onChange: onNicknameChange,
+    isValidating: isNicknameValidating,
   } = useInputValidation("nickname", initialNickname);
   const [isNicknameOk, setIsNicknameOk] = useState(false);
 
@@ -93,7 +94,8 @@ function RouteComponent() {
               id="nickname"
               buttonLabel="중복 검사"
               buttonDisabled={
-                !(nickname && !nicknameError && isNicknameChanged)
+                !(nickname && !nicknameError && isNicknameChanged) ||
+                isNicknameValidating
               }
               onButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();

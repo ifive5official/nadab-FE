@@ -10,6 +10,7 @@ export function useInputValidation(
 ) {
   const [value, setValue] = useState(initialValue ?? "");
   const [error, setError] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
 
   // 입력 후 일정 시간이 지나고 검증
   const validate = useDebouncedCallback((v: string) => {
@@ -20,20 +21,23 @@ export function useInputValidation(
     } else {
       setError("");
     }
+    setIsValidating(false);
   }, 300);
 
   function onChange(v: string) {
     setValue(v);
     setError(""); // 입력 중 에러 문구 X
+    setIsValidating(true);
     validate(v);
   }
 
-  return { value, error, onChange, validate, setError };
+  return { value, error, onChange, validate, isValidating, setError };
 }
 
 export function useConfirmPasswordValidation(password: string) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
 
   const validate = useDebouncedCallback(() => {
     if (value !== password) {
@@ -41,13 +45,15 @@ export function useConfirmPasswordValidation(password: string) {
     } else {
       setError("");
     }
+    setIsValidating(false);
   }, 300);
 
   function onChange(v: string) {
     setValue(v);
     setError(""); // 입력 중 에러 문구 X
+    setIsValidating(true);
     validate();
   }
 
-  return { value, error, onChange, validate };
+  return { value, error, onChange, validate, isValidating };
 }

@@ -32,12 +32,14 @@ function Reset() {
     error: passwordError,
     onChange: onPasswordChange,
     setError: setPasswordError,
+    isValidating: isPasswordValidating,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
     error: confirmPasswordError,
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
+    isValidating: isConfirmpasswordValidating,
   } = useConfirmPasswordValidation(password);
 
   const navigate = useNavigate();
@@ -103,7 +105,9 @@ function Reset() {
               !confirmPasswordError &&
               password &&
               confirmPassword
-            )
+            ) ||
+            isPasswordValidating ||
+            isConfirmpasswordValidating
           }
         >
           완료

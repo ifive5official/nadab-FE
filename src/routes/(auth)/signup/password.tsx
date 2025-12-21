@@ -26,12 +26,14 @@ export default function Password() {
     value: password,
     error: passwordError,
     onChange: onPasswordChange,
+    isValidating: isPasswordValidating,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
     error: confirmPasswordError,
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
+    isValidating: isConfirmPasswordValidating,
   } = useConfirmPasswordValidation(password);
 
   const navigate = useNavigate();
@@ -103,7 +105,9 @@ export default function Password() {
               !confirmPasswordError &&
               password &&
               confirmPassword
-            )
+            ) ||
+            isPasswordValidating ||
+            isConfirmPasswordValidating
           }
           isLoading={signupMutation.isPending}
         >

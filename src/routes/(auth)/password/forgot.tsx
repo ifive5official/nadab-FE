@@ -15,6 +15,7 @@ function Forgot() {
     error: emailError,
     setError: setEmailError,
     onChange: onEmailChange,
+    isValidating: isEmailValidating,
   } = useInputValidation("email");
   const updateEmail = useResetPasswordStore.use.updateEmail();
 
@@ -46,7 +47,7 @@ function Forgot() {
         isLoading={emailMutation.isPending}
         onChange={(e) => onEmailChange(e.target.value)}
         buttonLabel="인증"
-        buttonDisabled={!email || !!emailError}
+        buttonDisabled={!email || !!emailError || isEmailValidating}
         onButtonClick={() =>
           emailMutation.mutate({ email, verificationType: "PASSWORD_RESET" })
         }

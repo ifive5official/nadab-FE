@@ -27,6 +27,7 @@ function Profile() {
     error: nicknameError,
     setError: setNicknameError,
     onChange: onNicknameChange,
+    isValidating: isNicknameValidating,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
   const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
@@ -88,7 +89,9 @@ function Profile() {
             label="닉네임"
             id="nickname"
             buttonLabel="중복 검사"
-            buttonDisabled={!(nickname && !nicknameError)}
+            buttonDisabled={
+              !(nickname && !nicknameError) || isNicknameValidating
+            }
             onButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.stopPropagation();
               checkNicknameMutation.mutate({ nickname });

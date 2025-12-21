@@ -23,18 +23,21 @@ export function RouteComponent() {
     error: prevPasswordError,
     onChange: onPrevPasswrodChange,
     setError: setPrevPasswordError,
+    isValidating: isPrevPasswordValidating,
   } = useInputValidation("password");
   const {
     value: newPassword,
     error: newPasswordError,
     onChange: onNewPasswordChange,
     setError: setNewPasswordError,
+    isValidating: isNewPasswordValidating,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
     error: confirmPasswordError,
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
+    isValidating: isConfirmPasswordValidating,
   } = useConfirmPasswordValidation(newPassword);
 
   const navigate = useNavigate();
@@ -134,7 +137,10 @@ export function RouteComponent() {
               prevPassword &&
               newPassword &&
               confirmPassword
-            )
+            ) ||
+            isPrevPasswordValidating ||
+            isNewPasswordValidating ||
+            isConfirmPasswordValidating
           }
           isLoading={changePasswordMutation.isPending}
         >
