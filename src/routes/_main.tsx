@@ -13,17 +13,17 @@ export const Route = createFileRoute("/_main")({
       throw redirect({ to: "/" });
     }
     try {
-      const userData = await context.queryClient.ensureQueryData({
+      const user = await context.queryClient.ensureQueryData({
         queryKey: ["currentUser"],
         queryFn: async () => {
           const res = await api.get<ApiResponse<CurrentUser>>(
             "/api/v1/user/me"
           );
-          return res.data;
+          return res.data.data!;
         },
       });
       return {
-        currentUser: userData.data,
+        currentUser: user,
       };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {

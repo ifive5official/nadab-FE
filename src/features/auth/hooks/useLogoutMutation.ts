@@ -1,14 +1,11 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiResponse } from "@/generated/api";
 import useAuthStore from "@/store/authStore";
-import { useNavigate } from "@tanstack/react-router";
 
 export function useLogoutMutation() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const clearAuth = useAuthStore.use.clearAuth();
 
   return useMutation({
@@ -17,8 +14,7 @@ export function useLogoutMutation() {
     },
     onSuccess: () => {
       clearAuth();
-      queryClient.clear();
-      navigate({ to: "/" });
+      window.location.href = "/";
     },
     onError: (err: AxiosError<ApiResponse<null>>) => {
       useErrorStore.getState().showError(

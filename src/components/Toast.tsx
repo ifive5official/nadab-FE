@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { CloseBigIcon, ToastCircleCheckFilledIcon } from "./Icons";
 import clsx from "clsx";
@@ -13,15 +13,15 @@ type Props = {
 
 export default function Toast({ isOpen, bottom, message, onClose }: Props) {
   // 하단에서 올라오는 애니메이션으로 인한 스크롤 방지
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    }
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     document.body.style.overflow = "hidden";
+  //   }
 
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  //   return () => {
+  //     document.body.style.overflow = "";
+  //   };
+  // }, [isOpen]);
 
   return createPortal(
     <AnimatePresence>
@@ -42,7 +42,9 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
           >
             <ToastCircleCheckFilledIcon />
             <p className="mr-auto text-label-m">{message}</p>
-            <CloseBigIcon />
+            <button onClick={onClose}>
+              <CloseBigIcon />
+            </button>
           </motion.div>
         </>
       )}
