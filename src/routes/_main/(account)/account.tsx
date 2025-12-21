@@ -6,7 +6,11 @@ import { ChevronRightIcon } from "@/components/Icons";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 import Toast from "@/components/Toast";
-import { useQuery } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import {
   Section,
   SectionItem,
@@ -21,8 +25,20 @@ import { useToggleNotificationMutation } from "@/features/user/hooks/useToggleNo
 import ThemeSection from "@/features/user/components/ThemeSection";
 import useThemeStore from "@/store/useThemeStore";
 
+const notificationOptions = queryOptions({
+  queryKey: ["notification"],
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<NotificationRes>>(
+      "/api/v1/terms/consent/marketing"
+    );
+    return res.data.data!.agreed!;
+  },
+});
+
 export const Route = createFileRoute("/_main/(account)/account")({
   component: RouteComponent,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(notificationOptions),
 });
 
 type NotificationRes = components["schemas"]["MarketingConsentResponse"];
@@ -36,18 +52,7 @@ function RouteComponent() {
     queryKey: ["currentUser"],
     initialData: context.currentUser,
   });
-  const { data: isNotificationon, isPending: isNotificationPending } = useQuery(
-    {
-      queryKey: ["notification"],
-      queryFn: async () => {
-        const res = await api.get<ApiResponse<NotificationRes>>(
-          "/api/v1/terms/consent/marketing"
-        );
-        return res.data.data!.agreed!;
-      },
-      // Todo: 에러 처리
-    }
-  );
+  const { data: isNotificationon } = useSuspenseQuery(notificationOptions);
   const { isDarkMode, toggleTheme } = useThemeStore();
 
   const updateInterestMutation = useUpdateInterestMutation({
@@ -110,7 +115,6 @@ function RouteComponent() {
             onToggle={(prev: boolean) =>
               toggleNotificationMutation.mutate({ agreed: !prev })
             }
-            isPending={isNotificationPending}
           />
           <SectionDivider />
           <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />

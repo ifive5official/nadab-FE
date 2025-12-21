@@ -9,14 +9,9 @@ import clsx from "clsx";
 type Props = {
   isOn: boolean;
   onToggle: (prev: boolean) => void;
-  isPending: boolean;
 };
 
-export default function NotificationSection({
-  isOn,
-  onToggle,
-  isPending,
-}: Props) {
+export default function NotificationSection({ isOn, onToggle }: Props) {
   return (
     <Section title="알림 설정">
       <SectionItem
@@ -25,9 +20,7 @@ export default function NotificationSection({
           <Switch
             isOn={isOn}
             onClick={() => {
-              if (!isPending) {
-                onToggle(isOn);
-              }
+              onToggle(isOn);
             }}
           />
         }
