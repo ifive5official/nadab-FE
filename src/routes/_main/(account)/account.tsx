@@ -19,6 +19,7 @@ function RouteComponent() {
     ...category,
     isSelected: category.code === currentUser?.interestCode ? true : false,
   }));
+  const [isNotificationOn, setIsNotificationOn] = useState(false);
   // Todo: 로컬스토리지에 저장
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -56,33 +57,52 @@ function RouteComponent() {
       <div className="bg-surface-layer-1 rounded-xl my-margin-y-s">
         <ul className="text-text-primary flex flex-col">
           <Section title="관심 주제">
-            <ul className="grid grid-cols-2 gap-margin-y-s py-padding-y-xs">
+            <ul className="flex flex-wrap gap-gap-x-s py-padding-y-xs">
               {categories.map((category) => {
+                const Icon = category.icon;
                 return (
-                  <div
+                  <li
                     key={category.title}
                     className={clsx(
-                      "text-label-m rounded-xl border py-padding-y-xs text-center",
+                      "flex items-center gap-gap-x-xs text-label-m rounded-xl border border-button-tertiary-border-default px-2.5 py-[5px] bg-button-tertiary-bg-default cursor-pointer",
                       category.isSelected
-                        ? "text-interactive-text-default bg-interactive-bg-muted border-interactive-border-hover"
-                        : "text-text-disabled bg-surface-base border-interactive-border-muted"
+                        ? "text-button-tertiary-text-default"
+                        : "text-button-disabled-text"
                     )}
                   >
-                    {category.title}
-                  </div>
+                    <Icon
+                      fill={
+                        category.isSelected
+                          ? "var(--color-icon-primary)"
+                          : "var(--color-icon-disabled)"
+                      }
+                    />
+                    <p>{category.title}</p>
+                  </li>
                 );
               })}
             </ul>
           </Section>
           <SectionDivider />
-          <Section
-            title="알림 시간"
-            info={
-              <div className="text-caption-m text-brand-primary border border-brand-primary rounded-full px-padding-x-xs py-padding-y-xxs mr-gap-x-s">
-                08 : 00 AM
-              </div>
-            }
-          />
+          <Section title="알림 설정">
+            <SectionItem
+              title="알림"
+              rightElement={
+                <Switch
+                  isOn={isNotificationOn}
+                  onClick={() => setIsNotificationOn((prev) => !prev)}
+                />
+              }
+            />
+            <SectionItem
+              title="알림 시간"
+              rightElement={
+                <div className="text-caption-m text-brand-primary border border-brand-primary rounded-full px-padding-x-xs py-padding-y-xxs">
+                  08 : 00 AM
+                </div>
+              }
+            />
+          </Section>
           <SectionDivider />
           <Section title="테마">
             <SectionItem
@@ -118,22 +138,14 @@ function RouteComponent() {
 
 type SectionProps = {
   title: string;
-  info?: React.ReactNode;
-  Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   children?: React.ReactNode;
 };
 
-function Section({ title, info, Icon, children }: SectionProps) {
+function Section({ title, children }: SectionProps) {
   return (
     <li className="py-padding-y-xs px-padding-x-m">
       <div className="flex items-center">
         <p className="text-title-3 py-padding-y-xs mr-auto">{title}</p>
-        {info}
-        {Icon && (
-          <button>
-            <Icon />
-          </button>
-        )}
       </div>
       {children}
     </li>
