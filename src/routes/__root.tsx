@@ -9,11 +9,9 @@ import useThemeStore from "@/store/useThemeStore";
 import { useEffect } from "react";
 
 type TokenRes = components["schemas"]["TokenResponse"];
-type User = components["schemas"]["UserProfileResponse"];
 
 type RouterContext = {
   queryClient: QueryClient;
-  currentUser: User;
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({

@@ -15,7 +15,8 @@ import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
-import { Route as MainaccountAccountRouteImport } from './routes/_main/(account)/account'
+import { Route as MainAccountIndexRouteImport } from './routes/_main/account/index'
+import { Route as MainAccountProfileRouteImport } from './routes/_main/account/profile'
 import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
 import { Route as authSignupPasswordRouteImport } from './routes/(auth)/signup/password'
 import { Route as authSignupEmailVerificationRouteImport } from './routes/(auth)/signup/emailVerification'
@@ -26,7 +27,6 @@ import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password
 import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
-import { Route as MainaccountAccountProfileRouteImport } from './routes/_main/(account)/account.profile'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
 
 const MainRoute = MainRouteImport.update({
@@ -58,9 +58,14 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MainaccountAccountRoute = MainaccountAccountRouteImport.update({
-  id: '/(account)/account',
-  path: '/account',
+const MainAccountIndexRoute = MainAccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainAccountProfileRoute = MainAccountProfileRouteImport.update({
+  id: '/account/profile',
+  path: '/account/profile',
   getParentRoute: () => MainRoute,
 } as any)
 const authSignupTermsRoute = authSignupTermsRouteImport.update({
@@ -114,12 +119,6 @@ const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
   path: '/category',
   getParentRoute: () => authOnboardingRoute,
 } as any)
-const MainaccountAccountProfileRoute =
-  MainaccountAccountProfileRouteImport.update({
-    id: '/profile',
-    path: '/profile',
-    getParentRoute: () => MainaccountAccountRoute,
-  } as any)
 const authAuthProviderCallbackRoute =
   authAuthProviderCallbackRouteImport.update({
     id: '/(auth)/auth/$provider/callback',
@@ -143,9 +142,9 @@ export interface FileRoutesByFullPath {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
-  '/account': typeof MainaccountAccountRouteWithChildren
+  '/account/profile': typeof MainAccountProfileRoute
+  '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
-  '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -163,9 +162,9 @@ export interface FileRoutesByTo {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
-  '/account': typeof MainaccountAccountRouteWithChildren
+  '/account/profile': typeof MainAccountProfileRoute
+  '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
-  '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,9 +184,9 @@ export interface FileRoutesById {
   '/(auth)/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/(auth)/signup/password': typeof authSignupPasswordRoute
   '/(auth)/signup/terms': typeof authSignupTermsRoute
-  '/_main/(account)/account': typeof MainaccountAccountRouteWithChildren
+  '/_main/account/profile': typeof MainAccountProfileRoute
+  '/_main/account/': typeof MainAccountIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
-  '/_main/(account)/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -207,9 +206,9 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account/profile'
     | '/account'
     | '/auth/$provider/callback'
-    | '/account/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -227,9 +226,9 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/account/profile'
     | '/account'
     | '/auth/$provider/callback'
-    | '/account/profile'
   id:
     | '__root__'
     | '/'
@@ -248,9 +247,9 @@ export interface FileRouteTypes {
     | '/(auth)/signup/emailVerification'
     | '/(auth)/signup/password'
     | '/(auth)/signup/terms'
-    | '/_main/(account)/account'
+    | '/_main/account/profile'
+    | '/_main/account/'
     | '/(auth)/auth/$provider/callback'
-    | '/_main/(account)/account/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -307,11 +306,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_main/(account)/account': {
-      id: '/_main/(account)/account'
+    '/_main/account/': {
+      id: '/_main/account/'
       path: '/account'
       fullPath: '/account'
-      preLoaderRoute: typeof MainaccountAccountRouteImport
+      preLoaderRoute: typeof MainAccountIndexRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/account/profile': {
+      id: '/_main/account/profile'
+      path: '/account/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof MainAccountProfileRouteImport
       parentRoute: typeof MainRoute
     }
     '/(auth)/signup/terms': {
@@ -384,13 +390,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authOnboardingCategoryRouteImport
       parentRoute: typeof authOnboardingRoute
     }
-    '/_main/(account)/account/profile': {
-      id: '/_main/(account)/account/profile'
-      path: '/profile'
-      fullPath: '/account/profile'
-      preLoaderRoute: typeof MainaccountAccountProfileRouteImport
-      parentRoute: typeof MainaccountAccountRoute
-    }
     '/(auth)/auth/$provider/callback': {
       id: '/(auth)/auth/$provider/callback'
       path: '/auth/$provider/callback'
@@ -401,23 +400,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface MainaccountAccountRouteChildren {
-  MainaccountAccountProfileRoute: typeof MainaccountAccountProfileRoute
-}
-
-const MainaccountAccountRouteChildren: MainaccountAccountRouteChildren = {
-  MainaccountAccountProfileRoute: MainaccountAccountProfileRoute,
-}
-
-const MainaccountAccountRouteWithChildren =
-  MainaccountAccountRoute._addFileChildren(MainaccountAccountRouteChildren)
-
 interface MainRouteChildren {
-  MainaccountAccountRoute: typeof MainaccountAccountRouteWithChildren
+  MainAccountProfileRoute: typeof MainAccountProfileRoute
+  MainAccountIndexRoute: typeof MainAccountIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainaccountAccountRoute: MainaccountAccountRouteWithChildren,
+  MainAccountProfileRoute: MainAccountProfileRoute,
+  MainAccountIndexRoute: MainAccountIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

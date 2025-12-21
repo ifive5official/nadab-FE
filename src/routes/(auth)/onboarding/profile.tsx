@@ -73,6 +73,7 @@ function Profile() {
           onSuccess={(url: string) => {
             setProfileImgUrl(url);
           }}
+          className="py-padding-y-xl"
         />
         <div className="flex flex-col py-padding-y-m gap-gap-y-l">
           <InputFieldWithButton
@@ -100,7 +101,7 @@ function Profile() {
       </div>
 
       <BlockButton
-        // isLoading={signupMutation.isPending}
+        isLoading={updateProfileMutation.isPending}
         disabled={!(nickname && !nicknameError && isNicknameOk)}
       >
         완료

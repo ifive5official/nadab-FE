@@ -1,0 +1,123 @@
+import { SubHeader } from "@/components/Headers";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useInputValidation } from "@/hooks/useInputValidation";
+import { useCheckNicknameMutation } from "@/features/user/hooks/useCheckNicknameMutation";
+import { useState } from "react";
+import { useUpdateProfileMutation } from "@/features/user/hooks/useUpdateProfileMutation";
+import ProfileImageUploader from "@/features/user/components/ProfileImageUploader";
+import BlockButton from "@/components/BlockButton";
+import InputField, { InputFieldWithButton } from "@/components/InputFields";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { currentUserOptions } from "@/features/user/quries";
+
+export const Route = createFileRoute("/_main/account/profile")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const navigate = useNavigate();
+  const { data: currentUser } = useSuspenseQuery(currentUserOptions);
+  const initialNickname = currentUser.nickname;
+  const initialProfileImgUrl = currentUser.profileImageUrl;
+  const {
+    value: nickname,
+    error: nicknameError,
+    setError: setNicknameError,
+    onChange: onNicknameChange,
+  } = useInputValidation("nickname", initialNickname);
+  const [isNicknameOk, setIsNicknameOk] = useState(false);
+
+  const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
+    initialProfileImgUrl
+  );
+
+  const isNicknameChanged = nickname !== initialNickname;
+  const isProfileImgChanged = profileImgUrl !== initialProfileImgUrl;
+  // 닉네임 중복 체크 통과 여부 - 닉네임 변경 여부 고려
+  const isNicknameReady = isNicknameChanged ? isNicknameOk : true;
+  const checkNicknameMutation = useCheckNicknameMutation({
+    onSuccess: (data) => {
+      if (data.isAvailable) {
+        setIsNicknameOk(true);
+      } else {
+        setNicknameError(data.reason ?? "");
+      }
+    },
+    onNicknameInvalid: (message: string) => setNicknameError(message),
+  });
+
+  const updateProfileMutation = useUpdateProfileMutation({
+    onSuccess: () => {
+      navigate({ to: "/account" });
+    },
+  });
+
+  return (
+    <div className="h-full flex flex-col">
+      <SubHeader>프로필 수정</SubHeader>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          // 변경했으면 변경한 값, 변경하지 않았을 시 비워서 보냄
+          updateProfileMutation.mutate({
+            nickname: isNicknameChanged ? nickname : undefined,
+            objectKey: isProfileImgChanged ? profileImgUrl : undefined,
+          });
+        }}
+        className="flex-1 flex flex-col"
+      >
+        <div className="flex-1">
+          <ProfileImageUploader
+            initialProfileImgUrl={initialProfileImgUrl}
+            onSuccess={(url: string) => {
+              setProfileImgUrl(url);
+            }}
+            className="py-padding-y-m"
+          />
+          <div className="flex flex-col py-padding-y-m gap-gap-y-l">
+            <InputField
+              label="이메일"
+              disabled
+              placeholder={currentUser.email}
+            />
+            <InputFieldWithButton
+              value={nickname}
+              onChange={(e) => {
+                setIsNicknameOk(false);
+                onNicknameChange(e.target.value);
+              }}
+              error={nicknameError}
+              isOk={isNicknameOk}
+              isLoading={checkNicknameMutation.isPending}
+              label="닉네임"
+              id="nickname"
+              buttonLabel="중복 검사"
+              buttonDisabled={
+                !(nickname && !nicknameError && isNicknameChanged)
+              }
+              onButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                checkNicknameMutation.mutate({ nickname });
+              }}
+            />
+            <p className="text-caption-m text-text-secondary">
+              2자 이상 10자 이하의 한글, 영문으로 구성된 닉네임을 작성해주세요.
+              <br />
+              닉네임 변경은 14일 내에 최대 2번까지 가능해요.
+            </p>
+          </div>
+        </div>
+
+        <BlockButton
+          isLoading={updateProfileMutation.isPending}
+          disabled={
+            !(isNicknameChanged || isProfileImgChanged) ||
+            !(nickname && !nicknameError && isNicknameReady)
+          }
+        >
+          저장
+        </BlockButton>
+      </form>
+    </div>
+  );
+}

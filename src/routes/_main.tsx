@@ -33,9 +33,6 @@ export const Route = createFileRoute("/_main")({
         // 온보딩 미완료 시 온보딩 진행
         throw redirect({ to: "/onboarding/intro" });
       }
-      return {
-        currentUser: user,
-      };
     } catch (err: unknown) {
       if (isRedirect(err)) throw err;
       if (axios.isAxiosError(err)) {

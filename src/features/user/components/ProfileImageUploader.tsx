@@ -7,6 +7,7 @@ import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
 import Toast from "@/components/Toast";
+import clsx from "clsx";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -14,11 +15,13 @@ type UploadUrlRes =
 type Props = {
   initialProfileImgUrl: string | undefined;
   onSuccess: (url: string) => void;
+  className?: string;
 };
 
 export default function ProfileImageUploader({
   initialProfileImgUrl,
   onSuccess,
+  className,
 }: Props) {
   const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,7 +96,7 @@ export default function ProfileImageUploader({
     getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
 
   return (
-    <div className="py-padding-y-xl flex flex-col items-center gap-gap-y-s">
+    <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
       {!isUploading && (
         <img
           src={profileImgUrl || "/default-profile.png"}

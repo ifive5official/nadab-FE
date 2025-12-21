@@ -1,16 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
-import BlockButton from "@/components/BlockButton";
 import { useState } from "react";
 import { ChevronRightIcon } from "@/components/Icons";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 import Toast from "@/components/Toast";
-import {
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
   Section,
   SectionItem,
@@ -24,6 +19,8 @@ import NotificationSection from "@/features/user/components/NotificationSection"
 import { useToggleNotificationMutation } from "@/features/user/hooks/useToggleNotificationMutation";
 import ThemeSection from "@/features/user/components/ThemeSection";
 import useThemeStore from "@/store/useThemeStore";
+import ProfileSection from "@/features/user/components/ProfileSection";
+import { currentUserOptions } from "@/features/user/quries";
 
 const notificationOptions = queryOptions({
   queryKey: ["notification"],
@@ -35,7 +32,7 @@ const notificationOptions = queryOptions({
   },
 });
 
-export const Route = createFileRoute("/_main/(account)/account")({
+export const Route = createFileRoute("/_main/account/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(notificationOptions),
@@ -47,11 +44,7 @@ function RouteComponent() {
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  const context = Route.useRouteContext();
-  const { data: currentUser } = useQuery({
-    queryKey: ["currentUser"],
-    initialData: context.currentUser,
-  });
+  const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { data: isNotificationon } = useSuspenseQuery(notificationOptions);
   const { isDarkMode, toggleTheme } = useThemeStore();
 
@@ -74,28 +67,8 @@ function RouteComponent() {
   return (
     <div>
       <SubHeader>마이페이지</SubHeader>
-      <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-        <div className="flex items-center gap-gap-x-l">
-          <img
-            src={currentUser?.profileImageUrl ?? "/default-profile.png"}
-            className="rounded-full aspect-square h-[53px] object-cover"
-          ></img>
-          <div className="flex flex-col gap-y-xs">
-            <p className="text-text-primary text-title-3">
-              {currentUser?.nickname}
-            </p>
-            <p className="text-neutral-600 text-caption-l">
-              {currentUser?.email}
-            </p>
-          </div>
-        </div>
-        <BlockButton
-          variant="tertiary"
-          className="py-padding-y-s text-button-2"
-        >
-          프로필 수정
-        </BlockButton>
-      </div>
+      <ProfileSection currentUser={currentUser} />
+
       <div className="relative -mx-padding-x-m py-gap-y-s">
         <div className="bg-surface-layer-1 w-full h-gap-y-s " />
       </div>

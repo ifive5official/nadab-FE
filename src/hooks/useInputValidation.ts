@@ -4,8 +4,11 @@ import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 import { UserSchema } from "@/features/user/userSchema";
 
-export function useInputValidation(field: keyof z.input<typeof UserSchema>) {
-  const [value, setValue] = useState("");
+export function useInputValidation(
+  field: keyof z.input<typeof UserSchema>,
+  initialValue?: string
+) {
+  const [value, setValue] = useState(initialValue ?? "");
   const [error, setError] = useState("");
 
   // 입력 후 일정 시간이 지나고 검증
