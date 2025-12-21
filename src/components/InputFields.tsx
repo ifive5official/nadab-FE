@@ -36,7 +36,7 @@ export default function InputField({
         id={id}
         {...props}
         className={clsx(
-          "w-full rounded-lg text-caption-m text-field-text-default bg-field-bg-default border border-border-base placeholder:text-text-disabled  px-padding-x-xs py-padding-y-s focus:outline-none focus:shadow-1 focus:border-border-layer-1",
+          "w-full rounded-[20px] text-caption-m text-field-text-default bg-field-bg-default border border-border-base placeholder:text-text-disabled  px-padding-x-xs py-padding-y-s focus:outline-none focus:shadow-1 focus:border-border-layer-1",
           {
             "border-border-base": variant === "basic" && !error,
           },
@@ -76,7 +76,7 @@ export function InputFieldWithButton({
       )}
       <div
         className={clsx(
-          "relative rounded-lg border overflow-hidden focus-within:shadow-1 focus-within:border-border-layer-1",
+          "relative rounded-[20px] border overflow-hidden focus-within:shadow-1 focus-within:border-border-layer-1",
           {
             "border-border-base": !error,
             "border-feedback-error-fg!": error,

@@ -102,7 +102,7 @@ function Terms() {
 
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         <button
-          className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-lg"
+          className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-[20px]"
           onClick={() => {
             setItems((prev) =>
               prev.map((item) => ({ ...item, isAgreed: !isAllAgreed }))
