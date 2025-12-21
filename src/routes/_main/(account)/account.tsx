@@ -1,27 +1,69 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import BlockButton from "@/components/BlockButton";
-import initialCategories from "@/constants/categories";
 import { useState } from "react";
-import clsx from "clsx";
 import { ChevronRightIcon } from "@/components/Icons";
-import Switch from "@/components/Switch";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
+import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
+import Toast from "@/components/Toast";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Section,
+  SectionItem,
+  SectionDivider,
+} from "@/features/user/components/AccountSectionComponents";
+import InterestSection from "@/features/user/components/InterestSection";
+import { api } from "@/lib/axios";
+import type { ApiResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
+import NotificationSection from "@/features/user/components/NotificationSection";
+import { useToggleNotificationMutation } from "@/features/user/hooks/useToggleNotificationMutation";
+import ThemeSection from "@/features/user/components/ThemeSection";
+import useThemeStore from "@/store/useThemeStore";
 
 export const Route = createFileRoute("/_main/(account)/account")({
   component: RouteComponent,
 });
 
+type NotificationRes = components["schemas"]["MarketingConsentResponse"];
+
 function RouteComponent() {
-  const { currentUser } = Route.useRouteContext();
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  const categories = initialCategories.map((category) => ({
-    ...category,
-    isSelected: category.code === currentUser?.interestCode ? true : false,
-  }));
-  // Todo: 로컬스토리지에 저장
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const context = Route.useRouteContext();
+  const { data: currentUser } = useQuery({
+    queryKey: ["currentUser"],
+    initialData: context.currentUser,
+  });
+  const { data: isNotificationon, isPending: isNotificationPending } = useQuery(
+    {
+      queryKey: ["notification"],
+      queryFn: async () => {
+        const res = await api.get<ApiResponse<NotificationRes>>(
+          "/api/v1/terms/consent/marketing"
+        );
+        return res.data.data!.agreed!;
+      },
+      // Todo: 에러 처리
+    }
+  );
+  const { isDarkMode, toggleTheme } = useThemeStore();
 
+  const updateInterestMutation = useUpdateInterestMutation({
+    onSuccess: () => {
+      setToastMessage("관심 주제 변경이 완료되었습니다.");
+      setIsToastOpen(true);
+    },
+  });
+  const toggleNotificationMutation = useToggleNotificationMutation({
+    onSuccess: (newSetting: boolean) => {
+      if (newSetting) {
+        setToastMessage("알림이 설정되었습니다.");
+        setIsToastOpen(true);
+      }
+    },
+  });
   const logoutMutation = useLogoutMutation();
 
   return (
@@ -55,46 +97,23 @@ function RouteComponent() {
 
       <div className="bg-surface-layer-1 rounded-xl my-margin-y-s">
         <ul className="text-text-primary flex flex-col">
-          <Section title="관심 주제">
-            <ul className="grid grid-cols-2 gap-margin-y-s py-padding-y-xs">
-              {categories.map((category) => {
-                return (
-                  <div
-                    key={category.title}
-                    className={clsx(
-                      "text-label-m rounded-xl border py-padding-y-xs text-center",
-                      category.isSelected
-                        ? "text-interactive-text-default bg-interactive-bg-muted border-interactive-border-hover"
-                        : "text-text-disabled bg-surface-base border-interactive-border-muted"
-                    )}
-                  >
-                    {category.title}
-                  </div>
-                );
-              })}
-            </ul>
-          </Section>
-          <SectionDivider />
-          <Section
-            title="알림 시간"
-            info={
-              <div className="text-caption-m text-brand-primary border border-brand-primary rounded-full px-padding-x-xs py-padding-y-xxs mr-gap-x-s">
-                08 : 00 AM
-              </div>
+          <InterestSection
+            currentUser={currentUser}
+            onSelectInterest={(code) =>
+              updateInterestMutation.mutate({ interestCode: code })
             }
+            isPending={updateInterestMutation.isPending}
           />
           <SectionDivider />
-          <Section title="테마">
-            <SectionItem
-              title="다크 모드"
-              rightElement={
-                <Switch
-                  isOn={isDarkMode}
-                  onClick={() => setIsDarkMode((prev) => !prev)}
-                />
-              }
-            />
-          </Section>
+          <NotificationSection
+            isOn={isNotificationon ?? false}
+            onToggle={(prev: boolean) =>
+              toggleNotificationMutation.mutate({ agreed: !prev })
+            }
+            isPending={isNotificationPending}
+          />
+          <SectionDivider />
+          <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
           <SectionDivider />
           <Section title="계정 관리">
             <Link to="/password/forgot">
@@ -112,54 +131,11 @@ function RouteComponent() {
           </Section>
         </ul>
       </div>
+      <Toast
+        isOpen={isToastOpen}
+        message={toastMessage}
+        onClose={() => setIsToastOpen(false)}
+      />
     </div>
-  );
-}
-
-type SectionProps = {
-  title: string;
-  info?: React.ReactNode;
-  Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  children?: React.ReactNode;
-};
-
-function Section({ title, info, Icon, children }: SectionProps) {
-  return (
-    <li className="py-padding-y-xs px-padding-x-m">
-      <div className="flex items-center">
-        <p className="text-title-3 py-padding-y-xs mr-auto">{title}</p>
-        {info}
-        {Icon && (
-          <button>
-            <Icon />
-          </button>
-        )}
-      </div>
-      {children}
-    </li>
-  );
-}
-
-type SectionItemProps = {
-  title: string;
-  rightElement?: React.ReactNode;
-  onClick?: () => void;
-};
-
-function SectionItem({ title, rightElement, onClick }: SectionItemProps) {
-  return (
-    <div
-      onClick={onClick}
-      className="py-padding-y-xs flex justify-between items-center cursor-pointer"
-    >
-      <p className=" text-caption-l">{title}</p>
-      {rightElement}
-    </div>
-  );
-}
-
-function SectionDivider() {
-  return (
-    <div className="border-b border-interactive-border-default my-gap-y-s" />
   );
 }

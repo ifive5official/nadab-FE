@@ -42,6 +42,7 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
           throw redirect({ to: "/", replace: true });
       }
     } catch (err) {
+      console.log(err);
       // 리다이렉트면 넘어가기
       if (isRedirect(err)) {
         throw err;

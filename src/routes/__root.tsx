@@ -5,6 +5,8 @@ import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import ErrorModal from "@/components/ErrorModal";
 import type { QueryClient } from "@tanstack/react-query";
+import useThemeStore from "@/store/useThemeStore";
+import { useEffect } from "react";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 type User = components["schemas"]["UserProfileResponse"];
@@ -34,6 +36,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  // 다크모드 적용
+  const isDarkMode = useThemeStore.use.isDarkMode();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
   return (
     <>
       <div className="h-dvh w-vw flex bg-surface-base">

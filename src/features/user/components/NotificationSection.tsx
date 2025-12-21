@@ -1,0 +1,53 @@
+// 마이페이지 알림 섹션
+import {
+  Section,
+  SectionItem,
+} from "@/features/user/components/AccountSectionComponents";
+import Switch from "@/components/Switch";
+import clsx from "clsx";
+
+type Props = {
+  isOn: boolean;
+  onToggle: (prev: boolean) => void;
+  isPending: boolean;
+};
+
+export default function NotificationSection({
+  isOn,
+  onToggle,
+  isPending,
+}: Props) {
+  return (
+    <Section title="알림 설정">
+      <SectionItem
+        title="알림"
+        rightElement={
+          <Switch
+            isOn={isOn}
+            onClick={() => {
+              if (!isPending) {
+                onToggle(isOn);
+              }
+            }}
+          />
+        }
+      />
+      <SectionItem
+        title="알림 시간"
+        rightElement={
+          <div
+            className={clsx(
+              "text-caption-m rounded-full border px-padding-x-xs py-padding-y-xxs",
+              isOn
+                ? "text-brand-primary border-brand-primary"
+                : "text-field-text-disabled border-field-text-disabled"
+            )}
+          >
+            08 : 00 AM
+          </div>
+        }
+        disabled={!isOn}
+      />
+    </Section>
+  );
+}

@@ -8,7 +8,14 @@ import {
   MoonFilledIcon,
 } from "@/components/Icons";
 
-const categories = [
+type Category = {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  code: string;
+  title: string;
+  description: string;
+};
+
+const categories: Category[] = [
   {
     icon: Deco4FilledIcon,
     code: "PREFERENCE",
@@ -28,6 +35,12 @@ const categories = [
     description: "나의 일상 규칙과 에너지에 대해 들여다봐요",
   },
   {
+    icon: MoonFilledIcon,
+    code: "DREAM",
+    title: "꿈",
+    description: "앞으로 어떤 삶을 살고 싶은지 그려봐요",
+  },
+  {
     icon: UsersFilledIcon,
     code: "RELATIONSHIP",
     title: "인간관계",
@@ -44,12 +57,6 @@ const categories = [
     code: "VALUES",
     title: "가치관",
     description: "선택의 순간, 무엇을 우선하는지 찾아봐요",
-  },
-  {
-    icon: MoonFilledIcon,
-    code: "DREAM",
-    title: "꿈",
-    description: "앞으로 어떤 삶을 살고 싶은지 그려봐요",
   },
 ] as const;
 

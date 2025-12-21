@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useOnboardingStore from "@/store/onboardingStore";
-import ProfileImageUploader from "@/features/user/ProfileImageUploader";
+import ProfileImageUploader from "@/features/user/components/ProfileImageUploader";
 import { useUpdateProfileMutation } from "@/features/user/hooks/useUpdateProfileMutation";
 import { useCheckNicknameMutation } from "@/features/user/hooks/useCheckNicknameMutation";
 
