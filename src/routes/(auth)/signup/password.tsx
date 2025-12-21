@@ -93,7 +93,7 @@ export default function Password() {
           error={confirmPasswordError}
         />
 
-        <p className="text-caption-m text-neutral-800">
+        <p className="text-caption-m text-text-secondary">
           영문, 숫자, 특수문자가 포함된 8자 이상의 비밀번호를 입력해주세요.
         </p>
         <BlockButton

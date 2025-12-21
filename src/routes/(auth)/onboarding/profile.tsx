@@ -93,7 +93,7 @@ function Profile() {
               checkNicknameMutation.mutate({ nickname });
             }}
           />
-          <p className="text-caption-m text-neutral-800">
+          <p className="text-caption-m text-text-secondary">
             2자 이상 10자 이하의 한글, 영문으로 구성된 닉네임을 작성해주세요.
           </p>
         </div>

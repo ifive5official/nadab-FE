@@ -31,6 +31,7 @@ function Reset() {
     value: password,
     error: passwordError,
     onChange: onPasswordChange,
+    setError: setPasswordError,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
@@ -46,6 +47,9 @@ function Reset() {
   const resetPasswordMutation = useFindPasswordMutation({
     onSuccess: () => {
       setIsModalOpen(true);
+    },
+    onPasswordInvalid: (message: string) => {
+      setPasswordError(message);
     },
   });
 

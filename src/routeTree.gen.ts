@@ -27,8 +27,7 @@ import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboa
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
 import { Route as MainaccountAccountProfileRouteImport } from './routes/_main/(account)/account.profile'
-import { Route as authAuthNaverCallbackRouteImport } from './routes/(auth)/auth.naver.callback'
-import { Route as authAuthGoogleCallbackRouteImport } from './routes/(auth)/auth.google.callback'
+import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -121,16 +120,12 @@ const MainaccountAccountProfileRoute =
     path: '/profile',
     getParentRoute: () => MainaccountAccountRoute,
   } as any)
-const authAuthNaverCallbackRoute = authAuthNaverCallbackRouteImport.update({
-  id: '/(auth)/auth/naver/callback',
-  path: '/auth/naver/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authAuthGoogleCallbackRoute = authAuthGoogleCallbackRouteImport.update({
-  id: '/(auth)/auth/google/callback',
-  path: '/auth/google/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const authAuthProviderCallbackRoute =
+  authAuthProviderCallbackRouteImport.update({
+    id: '/(auth)/auth/$provider/callback',
+    path: '/auth/$provider/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -149,8 +144,7 @@ export interface FileRoutesByFullPath {
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
   '/account': typeof MainaccountAccountRouteWithChildren
-  '/auth/google/callback': typeof authAuthGoogleCallbackRoute
-  '/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesByTo {
@@ -170,8 +164,7 @@ export interface FileRoutesByTo {
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
   '/account': typeof MainaccountAccountRouteWithChildren
-  '/auth/google/callback': typeof authAuthGoogleCallbackRoute
-  '/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRoutesById {
@@ -193,8 +186,7 @@ export interface FileRoutesById {
   '/(auth)/signup/password': typeof authSignupPasswordRoute
   '/(auth)/signup/terms': typeof authSignupTermsRoute
   '/_main/(account)/account': typeof MainaccountAccountRouteWithChildren
-  '/(auth)/auth/google/callback': typeof authAuthGoogleCallbackRoute
-  '/(auth)/auth/naver/callback': typeof authAuthNaverCallbackRoute
+  '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/_main/(account)/account/profile': typeof MainaccountAccountProfileRoute
 }
 export interface FileRouteTypes {
@@ -216,8 +208,7 @@ export interface FileRouteTypes {
     | '/signup/password'
     | '/signup/terms'
     | '/account'
-    | '/auth/google/callback'
-    | '/auth/naver/callback'
+    | '/auth/$provider/callback'
     | '/account/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -237,8 +228,7 @@ export interface FileRouteTypes {
     | '/signup/password'
     | '/signup/terms'
     | '/account'
-    | '/auth/google/callback'
-    | '/auth/naver/callback'
+    | '/auth/$provider/callback'
     | '/account/profile'
   id:
     | '__root__'
@@ -259,8 +249,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup/password'
     | '/(auth)/signup/terms'
     | '/_main/(account)/account'
-    | '/(auth)/auth/google/callback'
-    | '/(auth)/auth/naver/callback'
+    | '/(auth)/auth/$provider/callback'
     | '/_main/(account)/account/profile'
   fileRoutesById: FileRoutesById
 }
@@ -271,8 +260,7 @@ export interface RootRouteChildren {
   authOnboardingRoute: typeof authOnboardingRouteWithChildren
   authPasswordRoute: typeof authPasswordRouteWithChildren
   authSignupRoute: typeof authSignupRouteWithChildren
-  authAuthGoogleCallbackRoute: typeof authAuthGoogleCallbackRoute
-  authAuthNaverCallbackRoute: typeof authAuthNaverCallbackRoute
+  authAuthProviderCallbackRoute: typeof authAuthProviderCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -403,18 +391,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainaccountAccountProfileRouteImport
       parentRoute: typeof MainaccountAccountRoute
     }
-    '/(auth)/auth/naver/callback': {
-      id: '/(auth)/auth/naver/callback'
-      path: '/auth/naver/callback'
-      fullPath: '/auth/naver/callback'
-      preLoaderRoute: typeof authAuthNaverCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/auth/google/callback': {
-      id: '/(auth)/auth/google/callback'
-      path: '/auth/google/callback'
-      fullPath: '/auth/google/callback'
-      preLoaderRoute: typeof authAuthGoogleCallbackRouteImport
+    '/(auth)/auth/$provider/callback': {
+      id: '/(auth)/auth/$provider/callback'
+      path: '/auth/$provider/callback'
+      fullPath: '/auth/$provider/callback'
+      preLoaderRoute: typeof authAuthProviderCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -498,8 +479,7 @@ const rootRouteChildren: RootRouteChildren = {
   authOnboardingRoute: authOnboardingRouteWithChildren,
   authPasswordRoute: authPasswordRouteWithChildren,
   authSignupRoute: authSignupRouteWithChildren,
-  authAuthGoogleCallbackRoute: authAuthGoogleCallbackRoute,
-  authAuthNaverCallbackRoute: authAuthNaverCallbackRoute,
+  authAuthProviderCallbackRoute: authAuthProviderCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

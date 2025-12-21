@@ -105,7 +105,7 @@ export default function ProfileImageUploader({
       )}
       <button
         type="button"
-        className="text-text-primary text-label-m underline"
+        className="text-button-tertiary-text-default text-label-m underline"
         onClick={() => setIsModalOpen(true)}
         disabled={isUploading}
       >

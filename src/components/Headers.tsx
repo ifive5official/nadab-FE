@@ -33,7 +33,7 @@ export function ProgressHeader({ progress }: { progress: number }) {
         </button>
         ㅤ
       </header>
-      <div className="h-1 bg-neutral-200 -mx-padding-x-m">
+      <div className="h-1 bg-surface-layer-1 -mx-padding-x-m">
         <motion.div
           className="h-full bg-brand-primary"
           initial={{ width: 0 }}

@@ -26,13 +26,18 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
     onSuccess: (_, { email }) => {
       onSuccess?.(email);
     },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
+    onError: (err: AxiosError<ApiResponse<null>>, { verificationType }) => {
       if (err.response?.status === 409) {
         // 회원가입 시
         onEmailInvalid?.("이미 가입한 회원이에요.");
       } else if (err.response?.status === 404) {
         // 비밀번호 변경 시
         onEmailInvalid?.("해당 이메일로 가입된 계정이 없습니다.");
+      } else if (
+        err.response?.status === 400 &&
+        verificationType === "PASSWORD_RESET"
+      ) {
+        onEmailInvalid?.("소셜 로그인 계정은 비밀번호 찾기를 할 수 없어요.");
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경

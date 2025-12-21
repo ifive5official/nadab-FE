@@ -10,17 +10,17 @@ import useErrorStore from "@/store/errorStore";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 
-export const Route = createFileRoute("/(auth)/auth/google/callback")({
+export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
   component: RouteComponent,
   validateSearch: z.object({
     code: z.string(),
     state: z.string(),
   }),
   loaderDeps: ({ search: { code, state } }) => ({ code, state }),
-  loader: async ({ deps: { code, state } }) => {
+  loader: async ({ deps: { code, state }, params: { provider } }) => {
     try {
       const res = await api.post<ApiResponse<LoginRes>>(
-        "/api/v1/auth/google/login",
+        `/api/v1/auth/${provider}/login`,
         {
           code,
           state,
@@ -50,12 +50,9 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
       }
       if (axios.isAxiosError(err) && err.status === 409) {
         // 이미 일반 로그인으로 가입한 계정일 시
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
+        useErrorStore
+          .getState()
+          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
       }
       throw redirect({
         to: "/",
