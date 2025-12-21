@@ -31,7 +31,7 @@ function Forgot() {
 
   return (
     <form className="py-padding-y-m flex flex-col gap-gap-y-l">
-      <p className="text-caption-m text-neutral-800">
+      <p className="text-caption-m text-text-secondary">
         가입한 이메일 주소를 입력해주세요.
         <br />
         비밀번호 재설정을 위한 이메일을 보내드리겠습니다.

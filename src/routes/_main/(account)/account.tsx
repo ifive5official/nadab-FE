@@ -3,7 +3,6 @@ import { SubHeader } from "@/components/Headers";
 import BlockButton from "@/components/BlockButton";
 import { useState } from "react";
 import { ChevronRightIcon } from "@/components/Icons";
-import Switch from "@/components/Switch";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
 import Toast from "@/components/Toast";
@@ -19,6 +18,8 @@ import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import NotificationSection from "@/features/user/components/NotificationSection";
 import { useToggleNotificationMutation } from "@/features/user/hooks/useToggleNotificationMutation";
+import ThemeSection from "@/features/user/components/ThemeSection";
+import useThemeStore from "@/store/useThemeStore";
 
 export const Route = createFileRoute("/_main/(account)/account")({
   component: RouteComponent,
@@ -47,8 +48,7 @@ function RouteComponent() {
       // Todo: 에러 처리
     }
   );
-  // Todo: 로컬스토리지에 저장
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useThemeStore();
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
@@ -113,17 +113,7 @@ function RouteComponent() {
             isPending={isNotificationPending}
           />
           <SectionDivider />
-          <Section title="테마">
-            <SectionItem
-              title="다크 모드"
-              rightElement={
-                <Switch
-                  isOn={isDarkMode}
-                  onClick={() => setIsDarkMode((prev) => !prev)}
-                />
-              }
-            />
-          </Section>
+          <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
           <SectionDivider />
           <Section title="계정 관리">
             <Link to="/password/forgot">
