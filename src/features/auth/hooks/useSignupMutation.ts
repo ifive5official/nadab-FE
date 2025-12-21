@@ -8,6 +8,7 @@ import type { components } from "@/generated/api-types";
 import useAuthStore from "@/store/authStore";
 
 type Req = components["schemas"]["SignupRequest"];
+type Res = components["schemas"]["TokenResponse"];
 
 type Props = {
   onSuccess: () => void;
@@ -23,7 +24,7 @@ export function useSignupMutation({ onSuccess }: Props) {
       ageVerification,
       marketing,
     }: Req) => {
-      const res = await api.post("/api/v1/auth/signup", {
+      const res = await api.post<ApiResponse<Res>>("/api/v1/auth/signup", {
         email,
         password,
         service,

@@ -43,6 +43,7 @@ export const Route = createFileRoute("/(auth)/onboarding/intro")({
 });
 
 function FeatureDescription() {
+  // Todo: 시간 날 때 이미지 처리하지 말고 직접 만들자....
   const contents = [
     {
       category: "오늘의 질문",
@@ -150,7 +151,7 @@ function FeatureDescription() {
                   }}
                 >
                   <div className="h-full flex flex-col gap-padding-y-xl">
-                    <div className="flex-1 bg-surface-layer-3 rounded-[20px] relative overflow-hidden">
+                    <div className="flex-1 bg-[#bbc5cc] rounded-[20px] relative overflow-hidden">
                       <img
                         src={contents[i].imgSrc}
                         className="absolute inset-0 w-full h-full object-contain"

@@ -1,6 +1,6 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
-import InputField from "@/components/InputFields";
+import InputField, { PasswordInputField } from "@/components/InputFields";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -79,7 +79,7 @@ function RouteComponent() {
           value={email}
           placeholder="이메일을 입력해주세요."
         />
-        <InputField
+        <PasswordInputField
           label="비밀번호"
           id="password"
           name="id"

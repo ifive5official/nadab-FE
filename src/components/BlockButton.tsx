@@ -21,7 +21,7 @@ export default function BlockButton({
     <button
       disabled={disabled || isLoading}
       className={clsx(
-        "relative w-full text-center text-button-1 rounded-lg py-padding-y-m",
+        "relative w-full text-center text-button-1 rounded-full py-padding-y-m",
         {
           "bg-button-primary-bg-default text-button-primary-text-default":
             variant === "primary" && !disabled,

@@ -1,4 +1,4 @@
-// import { StrictMode } from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -13,9 +13,9 @@ const queryClient = new QueryClient();
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { queryClient, currentUser: {} },
+  context: { queryClient },
   defaultPreload: "intent",
-  scrollRestoration: true,
+  scrollRestoration: false,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
 });
@@ -32,11 +32,11 @@ const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    // <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-    // </StrictMode>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
 

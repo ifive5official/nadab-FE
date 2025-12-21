@@ -5,20 +5,22 @@ import { redirect } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
+import axios from "axios";
+import useErrorStore from "@/store/errorStore";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 
-export const Route = createFileRoute("/(auth)/auth/google/callback")({
+export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
   component: RouteComponent,
   validateSearch: z.object({
     code: z.string(),
     state: z.string(),
   }),
   loaderDeps: ({ search: { code, state } }) => ({ code, state }),
-  loader: async ({ deps: { code, state } }) => {
+  loader: async ({ deps: { code, state }, params: { provider } }) => {
     try {
       const res = await api.post<ApiResponse<LoginRes>>(
-        "/api/v1/auth/google/login",
+        `/api/v1/auth/${provider}/login`,
         {
           code,
           state,
@@ -41,13 +43,21 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
         default: // COMPLETED
           throw redirect({ to: "/", replace: true });
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
       // 리다이렉트면 넘어가기
       if (isRedirect(err)) {
         throw err;
       }
-      console.error("소셜 로그인 중 에러 발생", err);
+      if (axios.isAxiosError(err) && err.status === 409) {
+        // 이미 일반 로그인으로 가입한 계정일 시
+        useErrorStore
+          .getState()
+          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+      }
+      throw redirect({
+        to: "/",
+        replace: true,
+      });
     }
   },
 });

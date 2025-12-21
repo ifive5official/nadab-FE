@@ -78,7 +78,6 @@ function Terms() {
       isRequired: false,
       title: "마케팅 정보 수신에 동의해요.",
       isAgreed: false,
-      onclick: () => updateIsMarketingTermsAgreed(),
     },
   ];
   const [items, setItems] = useState(initialItems);
@@ -103,7 +102,7 @@ function Terms() {
 
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         <button
-          className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-lg"
+          className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-[20px]"
           onClick={() => {
             setItems((prev) =>
               prev.map((item) => ({ ...item, isAgreed: !isAllAgreed }))
@@ -164,15 +163,20 @@ function Terms() {
         <BlockButton
           disabled={!isAllRequiredAgreed}
           onClick={() => {
+            const isMarketingTermsAgreed = items.find(
+              (item) => item.title === "마케팅 정보 수신에 동의해요."
+            )!.isAgreed;
             // 소셜 로그인일 경우 약관 동의 api 호출 + 온보딩으로 바로 이동
             if (type === "social") {
               termsconsentMutation.mutate({
-                isMarketingTermsAgreed:
-                  useSignupStore.getState().isMarketingTermsAgreed,
+                isMarketingTermsAgreed,
               });
               navigate({ to: "/onboarding/intro" });
             } else {
               updateIsRequiredTermsAgreed();
+              if (isMarketingTermsAgreed) {
+                updateIsMarketingTermsAgreed();
+              }
               const nextStep = getNextStepPath("terms");
               navigate({ to: nextStep });
             }

@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import clsx from "clsx";
-import { LoadingIcon, SuccessIcon } from "./Icons";
+import { LoadingIcon, ShowIcon, SuccessIcon } from "./Icons";
 
 type Props = {
   variant?: "basic";
@@ -15,6 +15,7 @@ type Props = {
   label?: string;
   error?: string;
   className?: string;
+  rightElement?: React.ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function InputField({
@@ -23,6 +24,7 @@ export default function InputField({
   label,
   error,
   className,
+  rightElement,
   ...props
 }: Props) {
   return (
@@ -32,21 +34,44 @@ export default function InputField({
           {label}
         </label>
       )}
-      <input
-        id={id}
-        {...props}
-        className={clsx(
-          "w-full rounded-lg text-caption-m text-field-text-default bg-field-bg-default border border-border-base placeholder:text-text-disabled  px-padding-x-xs py-padding-y-s focus:outline-none focus:shadow-1 focus:border-border-layer-1",
-          {
-            "border-border-base": variant === "basic" && !error,
-          },
-          error && "text-feedback-error-fg! border-feedback-error-fg!"
+      <div className="relative">
+        <input
+          id={id}
+          {...props}
+          className={clsx(
+            "w-full rounded-[20px] text-caption-m text-field-text-default bg-field-bg-default border border-border-base placeholder:text-text-disabled  px-padding-x-xs py-padding-y-s focus:outline-none focus:shadow-1 focus:border-border-layer-1",
+            {
+              "border-border-base": variant === "basic" && !error,
+            },
+            error && "text-feedback-error-fg! border-feedback-error-fg!"
+          )}
+        />
+        {rightElement && (
+          <div className="absolute inset-y-0 right-padding-x-s flex items-center">
+            {rightElement}
+          </div>
         )}
-      />
+      </div>
+
       {error && (
         <p className="text-feedback-error-fg text-caption-s">{error}</p>
       )}
     </div>
+  );
+}
+
+export function PasswordInputField({ ...props }: Props) {
+  const [isVisible, setIsVisible] = useState(false);
+  return (
+    <InputField
+      {...props}
+      type={isVisible ? "text" : "password"}
+      rightElement={
+        <button type="button" onClick={() => setIsVisible((prev) => !prev)}>
+          <ShowIcon />
+        </button>
+      }
+    />
   );
 }
 
@@ -76,7 +101,7 @@ export function InputFieldWithButton({
       )}
       <div
         className={clsx(
-          "relative rounded-lg border overflow-hidden focus-within:shadow-1 focus-within:border-border-layer-1",
+          "relative rounded-[20px] border overflow-hidden focus-within:shadow-1 focus-within:border-border-layer-1",
           {
             "border-border-base": !error,
             "border-feedback-error-fg!": error,

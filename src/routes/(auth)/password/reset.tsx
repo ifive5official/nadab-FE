@@ -5,7 +5,7 @@ import {
   useConfirmPasswordValidation,
 } from "@/hooks/useInputValidation";
 import StepTitle from "@/features/auth/StepTitle";
-import InputField from "@/components/InputFields";
+import { PasswordInputField } from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import { useState } from "react";
@@ -31,12 +31,15 @@ function Reset() {
     value: password,
     error: passwordError,
     onChange: onPasswordChange,
+    setError: setPasswordError,
+    isValidating: isPasswordValidating,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
     error: confirmPasswordError,
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
+    isValidating: isConfirmpasswordValidating,
   } = useConfirmPasswordValidation(password);
 
   const navigate = useNavigate();
@@ -46,6 +49,9 @@ function Reset() {
   const resetPasswordMutation = useFindPasswordMutation({
     onSuccess: () => {
       setIsModalOpen(true);
+    },
+    onPasswordInvalid: (message: string) => {
+      setPasswordError(message);
     },
   });
 
@@ -62,7 +68,7 @@ function Reset() {
           resetPasswordMutation.mutate({ email, newPassword: password });
         }}
       >
-        <InputField
+        <PasswordInputField
           label="비밀번호"
           id="password"
           name="password"
@@ -77,7 +83,7 @@ function Reset() {
           type="password"
           error={passwordError}
         />
-        <InputField
+        <PasswordInputField
           label="비밀번호 재확인"
           id="confirmPassword"
           name="confirmPassword"
@@ -99,7 +105,9 @@ function Reset() {
               !confirmPasswordError &&
               password &&
               confirmPassword
-            )
+            ) ||
+            isPasswordValidating ||
+            isConfirmpasswordValidating
           }
         >
           완료

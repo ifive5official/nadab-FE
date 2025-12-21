@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
 import useSignupStore from "@/store/signupStore";
-import InputField from "@/components/InputFields";
+import { PasswordInputField } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import {
@@ -26,12 +26,14 @@ export default function Password() {
     value: password,
     error: passwordError,
     onChange: onPasswordChange,
+    isValidating: isPasswordValidating,
   } = useInputValidation("password");
   const {
     value: confirmPassword,
     error: confirmPasswordError,
     onChange: onConfirmPasswordChange,
     validate: validateConfirmPassword,
+    isValidating: isConfirmPasswordValidating,
   } = useConfirmPasswordValidation(password);
 
   const navigate = useNavigate();
@@ -67,7 +69,7 @@ export default function Password() {
           }
         }}
       >
-        <InputField
+        <PasswordInputField
           label="비밀번호"
           id="password"
           name="password"
@@ -82,7 +84,7 @@ export default function Password() {
           type="password"
           error={passwordError}
         />
-        <InputField
+        <PasswordInputField
           label="비밀번호 재확인"
           id="confirmPassword"
           name="confirmPassword"
@@ -93,7 +95,7 @@ export default function Password() {
           error={confirmPasswordError}
         />
 
-        <p className="text-caption-m text-neutral-800">
+        <p className="text-caption-m text-text-secondary">
           영문, 숫자, 특수문자가 포함된 8자 이상의 비밀번호를 입력해주세요.
         </p>
         <BlockButton
@@ -103,7 +105,9 @@ export default function Password() {
               !confirmPasswordError &&
               password &&
               confirmPassword
-            )
+            ) ||
+            isPasswordValidating ||
+            isConfirmPasswordValidating
           }
           isLoading={signupMutation.isPending}
         >

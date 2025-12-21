@@ -27,6 +27,7 @@ export default function Email() {
     error: emailError,
     onChange: onEmailChange,
     setError: setEmailError,
+    isValidating: isEmailValidating,
   } = useInputValidation("email");
   const navigate = useNavigate();
 
@@ -68,7 +69,7 @@ export default function Email() {
 
         <BlockButton
           isLoading={emailMutation.isPending}
-          disabled={!!emailError || !email}
+          disabled={!!emailError || !email || isEmailValidating}
         >
           완료
         </BlockButton>

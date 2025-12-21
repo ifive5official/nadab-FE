@@ -27,6 +27,7 @@ function Profile() {
     error: nicknameError,
     setError: setNicknameError,
     onChange: onNicknameChange,
+    isValidating: isNicknameValidating,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
   const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
@@ -73,6 +74,7 @@ function Profile() {
           onSuccess={(url: string) => {
             setProfileImgUrl(url);
           }}
+          className="py-padding-y-xl"
         />
         <div className="flex flex-col py-padding-y-m gap-gap-y-l">
           <InputFieldWithButton
@@ -87,20 +89,22 @@ function Profile() {
             label="닉네임"
             id="nickname"
             buttonLabel="중복 검사"
-            buttonDisabled={!(nickname && !nicknameError)}
+            buttonDisabled={
+              !(nickname && !nicknameError) || isNicknameValidating
+            }
             onButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.stopPropagation();
               checkNicknameMutation.mutate({ nickname });
             }}
           />
-          <p className="text-caption-m text-neutral-800">
+          <p className="text-caption-m text-text-secondary">
             2자 이상 10자 이하의 한글, 영문으로 구성된 닉네임을 작성해주세요.
           </p>
         </div>
       </div>
 
       <BlockButton
-        // isLoading={signupMutation.isPending}
+        isLoading={updateProfileMutation.isPending}
         disabled={!(nickname && !nicknameError && isNicknameOk)}
       >
         완료

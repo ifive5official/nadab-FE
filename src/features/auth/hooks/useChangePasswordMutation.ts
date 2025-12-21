@@ -1,42 +1,42 @@
-// 비밀번호 찾기(비로그인) 시 사용
+// 비밀번호 변경(로그인)시 사용
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
+import useAuthStore from "@/store/authStore";
 
-type Req = components["schemas"]["ResetPasswordRequest"];
+type Req = components["schemas"]["ChangePasswordRequest"];
+type Res = components["schemas"]["TokenResponse"];
 
 type Props = {
   onSuccess: () => void;
   onPasswordInvalid: (message: string) => void;
 };
 
-export function useFindPasswordMutation({
+export function useChangePasswordMutation({
   onSuccess,
   onPasswordInvalid,
 }: Props) {
   return useMutation({
-    mutationFn: async ({ email, newPassword }: Req) => {
-      const res = await api.post("/api/v1/auth/password/reset", {
-        email,
+    mutationFn: async ({ currentPassword, newPassword }: Req) => {
+      const res = await api.patch<ApiResponse<Res>>("/api/v1/auth/password", {
+        currentPassword,
         newPassword,
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
+      const { accessToken } = res.data!;
+      useAuthStore.getState().setAccessToken(accessToken!);
       onSuccess();
     },
     onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (
-        err.response?.status === 400 &&
-        err.response?.data?.message ===
-          "이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다"
-      ) {
-        onPasswordInvalid(
-          "이전 비밀번호와 동일한 비밀번호는 사용할 수 없어요."
-        );
+      if (err.response?.status === 400) {
+        onPasswordInvalid(err.response?.data.message ?? "");
+      } else if (err.response?.status === 401) {
+        onPasswordInvalid(err.response?.data.message ?? "");
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경
