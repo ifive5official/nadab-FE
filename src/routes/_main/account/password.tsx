@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
-import InputField from "@/components/InputFields";
+import { PasswordInputField } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import {
   useInputValidation,
@@ -84,7 +84,7 @@ export function RouteComponent() {
           }
         }}
       >
-        <InputField
+        <PasswordInputField
           label="현재 비밀번호"
           id="password"
           name="password"
@@ -99,7 +99,7 @@ export function RouteComponent() {
           type="password"
           error={prevPasswordError}
         />
-        <InputField
+        <PasswordInputField
           label="새로운 비밀번호"
           id="password"
           name="password"
@@ -114,7 +114,7 @@ export function RouteComponent() {
           type="password"
           error={newPasswordError}
         />
-        <InputField
+        <PasswordInputField
           label="새로운 비밀번호 재입력"
           id="confirmPassword"
           name="confirmPassword"

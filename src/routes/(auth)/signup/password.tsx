@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import BlockButton from "@/components/BlockButton";
 import useSignupStore from "@/store/signupStore";
-import InputField from "@/components/InputFields";
+import { PasswordInputField } from "@/components/InputFields";
 import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import {
@@ -69,7 +69,7 @@ export default function Password() {
           }
         }}
       >
-        <InputField
+        <PasswordInputField
           label="비밀번호"
           id="password"
           name="password"
@@ -84,7 +84,7 @@ export default function Password() {
           type="password"
           error={passwordError}
         />
-        <InputField
+        <PasswordInputField
           label="비밀번호 재확인"
           id="confirmPassword"
           name="confirmPassword"

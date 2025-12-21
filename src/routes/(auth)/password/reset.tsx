@@ -5,7 +5,7 @@ import {
   useConfirmPasswordValidation,
 } from "@/hooks/useInputValidation";
 import StepTitle from "@/features/auth/StepTitle";
-import InputField from "@/components/InputFields";
+import { PasswordInputField } from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
 import { useState } from "react";
@@ -68,7 +68,7 @@ function Reset() {
           resetPasswordMutation.mutate({ email, newPassword: password });
         }}
       >
-        <InputField
+        <PasswordInputField
           label="비밀번호"
           id="password"
           name="password"
@@ -83,7 +83,7 @@ function Reset() {
           type="password"
           error={passwordError}
         />
-        <InputField
+        <PasswordInputField
           label="비밀번호 재확인"
           id="confirmPassword"
           name="confirmPassword"
