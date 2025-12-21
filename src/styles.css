@@ -5,6 +5,12 @@
   font-family: Pretendard, -apple-system;
 }
 
+html,
+body {
+  overflow: hidden; /* 전체 페이지 스크롤 방지 */
+  height: 100%; /* 화면 높이 고정 */
+}
+
 @layer base {
   /* 디폴트 버튼 스타일 */
   button {
