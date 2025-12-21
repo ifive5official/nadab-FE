@@ -5,6 +5,8 @@ import { redirect } from "@tanstack/react-router";
 import useAuthStore from "@/store/authStore";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
+import axios from "axios";
+import useErrorStore from "@/store/errorStore";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 
@@ -41,13 +43,24 @@ export const Route = createFileRoute("/(auth)/auth/google/callback")({
         default: // COMPLETED
           throw redirect({ to: "/", replace: true });
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
       // 리다이렉트면 넘어가기
       if (isRedirect(err)) {
         throw err;
       }
-      console.error("소셜 로그인 중 에러 발생", err);
+      if (axios.isAxiosError(err) && err.status === 409) {
+        // 이미 일반 로그인으로 가입한 계정일 시
+        useErrorStore.getState().showError(
+          // Todo: 에러 메시지 변경
+          err.message,
+          err.response?.data?.message ??
+            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+        );
+      }
+      throw redirect({
+        to: "/",
+        replace: true,
+      });
     }
   },
 });
