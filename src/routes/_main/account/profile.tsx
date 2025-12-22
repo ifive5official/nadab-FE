@@ -9,6 +9,7 @@ import BlockButton from "@/components/BlockButton";
 import InputField, { InputFieldWithButton } from "@/components/InputFields";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "@/features/user/quries";
+import { useDeleteProfileMutation } from "@/features/user/hooks/useDeleteProfileImageMutation";
 
 export const Route = createFileRoute("/_main/account/profile")({
   component: RouteComponent,
@@ -18,7 +19,7 @@ function RouteComponent() {
   const navigate = useNavigate();
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const initialNickname = currentUser.nickname;
-  const initialProfileImgUrl = currentUser.profileImageUrl;
+  const initialProfileImgUrl = currentUser.profileImageUrl!;
   const {
     value: nickname,
     error: nicknameError,
@@ -28,12 +29,13 @@ function RouteComponent() {
   } = useInputValidation("nickname", initialNickname);
   const [isNicknameOk, setIsNicknameOk] = useState(false);
 
-  const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
-    initialProfileImgUrl
-  );
+  // 프로필 이미지 삭제 시 빈 문자열("") 들어옴
+  const [profileImgUrl, setProfileImgUrl] =
+    useState<string>(initialProfileImgUrl);
 
   const isNicknameChanged = nickname !== initialNickname;
   const isProfileImgChanged = profileImgUrl !== initialProfileImgUrl;
+  const isProfileImgDeleted = profileImgUrl === "";
   // 닉네임 중복 체크 통과 여부 - 닉네임 변경 여부 고려
   const isNicknameReady = isNicknameChanged ? isNicknameOk : true;
   const checkNicknameMutation = useCheckNicknameMutation({
@@ -47,28 +49,48 @@ function RouteComponent() {
     onNicknameInvalid: (message: string) => setNicknameError(message),
   });
 
-  const updateProfileMutation = useUpdateProfileMutation({
-    onSuccess: () => {
-      navigate({ to: "/account" });
-    },
-  });
+  const deleteProfileImageMutation = useDeleteProfileMutation();
+  const updateProfileMutation = useUpdateProfileMutation({});
 
   return (
     <div className="h-full flex flex-col">
       <SubHeader>프로필 수정</SubHeader>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          // 변경했으면 변경한 값, 변경하지 않았을 시 비워서 보냄
-          updateProfileMutation.mutate({
-            nickname: isNicknameChanged ? nickname : undefined,
-            objectKey: isProfileImgChanged ? profileImgUrl : undefined,
-          });
+          const tasks = [];
+          // 프로필 이미지 삭제했으면 삭제 api 먼저 호출
+          if (isProfileImgDeleted) {
+            tasks.push(deleteProfileImageMutation.mutateAsync());
+          }
+          if (
+            isNicknameChanged ||
+            (isProfileImgChanged && !isProfileImgDeleted)
+          ) {
+            // 변경했으면 변경한 값, 변경하지 않았을 시 비워서 보냄
+            tasks.push(
+              updateProfileMutation.mutateAsync({
+                nickname: isNicknameChanged ? nickname : undefined,
+                objectKey:
+                  isProfileImgChanged && !isProfileImgDeleted
+                    ? profileImgUrl
+                    : undefined,
+              })
+            );
+          }
+          try {
+            await Promise.all(tasks);
+            navigate({ to: "/account" });
+          } catch (err) {
+            // 이미 각 뮤테이션 훅에서 처리했으므로 아무것도 하지 않음
+            console.error(err);
+          }
         }}
         className="flex-1 flex flex-col"
       >
         <div className="flex-1">
           <ProfileImageUploader
+            mode="edit"
             initialProfileImgUrl={initialProfileImgUrl}
             onSuccess={(url: string) => {
               setProfileImgUrl(url);
@@ -111,7 +133,10 @@ function RouteComponent() {
         </div>
 
         <BlockButton
-          isLoading={updateProfileMutation.isPending}
+          isLoading={
+            updateProfileMutation.isPending ||
+            deleteProfileImageMutation.isPending
+          }
           disabled={
             !(isNicknameChanged || isProfileImgChanged) ||
             !(nickname && !nicknameError && isNicknameReady)

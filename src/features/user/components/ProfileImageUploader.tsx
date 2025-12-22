@@ -8,18 +8,21 @@ import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
 import Toast from "@/components/Toast";
 import clsx from "clsx";
+import { defaultProfileImgUrl } from "@/constants/defaultprofileImgUrl";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
 
 type Props = {
-  initialProfileImgUrl: string | undefined;
+  mode: "create" | "edit";
+  initialProfileImgUrl?: string | undefined;
   onSuccess: (url: string) => void;
   className?: string;
 };
 
 export default function ProfileImageUploader({
-  initialProfileImgUrl,
+  mode,
+  initialProfileImgUrl = undefined,
   onSuccess,
   className,
 }: Props) {
@@ -29,6 +32,51 @@ export default function ProfileImageUploader({
 
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const baseModalItems = [
+    {
+      label: "앨범에서 사진 선택",
+      onClick: () => {
+        albumInputRef.current?.click();
+      },
+    },
+    {
+      label: "사진 찍기",
+      onClick: () => {
+        cameraInputRef.current?.click();
+      },
+    },
+  ];
+
+  const uiConfig = {
+    create: {
+      buttonText: "사진 추가",
+      modalTitle: "프로필 사진 추가",
+      modalItems: [
+        ...baseModalItems,
+        {
+          label: "취소",
+          onClick: () => setIsModalOpen(false),
+        },
+      ],
+    },
+    edit: {
+      buttonText: "사진 변경",
+      modalTitle: "프로필 사진 변경",
+      modalItems: [
+        {
+          label: "기본 프로필로 변경",
+          onClick: () => {
+            setProfileImgUrl(undefined);
+            onSuccess("");
+            setIsModalOpen(false);
+          },
+        },
+        ...baseModalItems,
+      ],
+    },
+  };
+
+  const { buttonText, modalTitle, modalItems } = uiConfig[mode];
 
   // presigned url 생성
   const getPresignedUrlMutation = useMutation({
@@ -99,7 +147,7 @@ export default function ProfileImageUploader({
     <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
       {!isUploading && (
         <img
-          src={profileImgUrl || "/default-profile.png"}
+          src={profileImgUrl || defaultProfileImgUrl}
           className="h-16 w-16 rounded-full object-cover"
         />
       )}
@@ -112,7 +160,7 @@ export default function ProfileImageUploader({
         onClick={() => setIsModalOpen(true)}
         disabled={isUploading}
       >
-        사진 추가
+        {buttonText}
       </button>
       <input
         ref={albumInputRef}
@@ -132,25 +180,8 @@ export default function ProfileImageUploader({
 
       <BottomModal
         isOpen={isModalOpen}
-        title="프로필 사진 추가"
-        items={[
-          {
-            label: "앨범에서 사진 선택",
-            onClick: () => {
-              albumInputRef.current?.click();
-            },
-          },
-          {
-            label: "사진 찍기",
-            onClick: () => {
-              cameraInputRef.current?.click();
-            },
-          },
-          {
-            label: "취소",
-            onClick: () => setIsModalOpen(false),
-          },
-        ]}
+        title={modalTitle}
+        items={modalItems}
         onClose={() => setIsModalOpen(false)}
       />
       <Toast
