@@ -29,13 +29,17 @@ export const Route = createFileRoute("/_main")({
           return res.data.data!;
         },
       });
-      if (!user.nickname || !user.interestCode) {
+      if (!user.nickname) {
         // 온보딩 미완료 시 온보딩 진행
         throw redirect({ to: "/onboarding/intro" });
       }
     } catch (err: unknown) {
       if (isRedirect(err)) throw err;
       if (axios.isAxiosError(err)) {
+        if (err.response?.status === 404) {
+          // 관심 주제 없음(온보딩 미완료)
+          throw redirect({ to: "/onboarding/intro" });
+        }
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경
           err.message,

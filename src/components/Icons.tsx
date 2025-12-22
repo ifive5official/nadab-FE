@@ -402,6 +402,25 @@ export function ShowIcon() {
   );
 }
 
+export function DoneIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.33967 10.3116L12.669 4L13.3751 4.70809L6.33372 11.7298L2.66602 8.01045L3.37805 7.30831L6.33967 10.3116Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
 // 모달============================
 export function CircleCheckFilledIcon() {
   return (
@@ -509,28 +528,28 @@ export function ArrowLeftIcon() {
 export function MenuIcon() {
   return (
     <svg
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M24.5 14.5834L3.5 14.5834V12.8334L24.5 12.8334V14.5834Z"
+        d="M21 12.5H3V11H21V12.5Z"
         fill="var(--color-icon-default)"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M24.5 7.58337L3.5 7.58337L3.5 5.83337L24.5 5.83337V7.58337Z"
+        d="M21 6.5H3V5H21V6.5Z"
         fill="var(--color-icon-default)"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M24.5 21.5834L3.5 21.5834L3.5 19.8334L24.5 19.8334V21.5834Z"
+        d="M21 18.5H3V17H21V18.5Z"
         fill="var(--color-icon-default)"
       />
     </svg>

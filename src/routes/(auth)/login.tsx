@@ -60,7 +60,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <SubHeader>로그인</SubHeader>
+      <SubHeader showMenuButton={false}>로그인</SubHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();

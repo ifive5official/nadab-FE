@@ -19,7 +19,9 @@ export default function AccountSection() {
         title="로그아웃"
         rightElement={<ChevronRightIcon />}
       />
-      <SectionItem title="회원탈퇴" rightElement={<ChevronRightIcon />} />
+      <Link to="/account/withdraw">
+        <SectionItem title="회원탈퇴" rightElement={<ChevronRightIcon />} />
+      </Link>
     </Section>
   );
 }

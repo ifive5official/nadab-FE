@@ -4,22 +4,22 @@ export const signupSteps = [
   {
     id: "terms",
     path: "/signup/terms",
-    header: <SubHeader>약관 동의</SubHeader>,
+    header: <SubHeader showMenuButton={false}>약관 동의</SubHeader>,
   },
   {
     id: "email",
     path: "/signup/email",
-    header: <SubHeader>본인인증</SubHeader>,
+    header: <SubHeader showMenuButton={false}>본인인증</SubHeader>,
   },
   {
     id: "emailVerification",
     path: "/signup/emailVerification",
-    header: <SubHeader>인증번호 확인</SubHeader>,
+    header: <SubHeader showMenuButton={false}>인증번호 확인</SubHeader>,
   },
   {
     id: "password",
     path: "/signup/password",
-    header: <SubHeader>비밀번호 설정</SubHeader>,
+    header: <SubHeader showMenuButton={false}>비밀번호 설정</SubHeader>,
   },
   {
     id: "intro",

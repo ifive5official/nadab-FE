@@ -63,7 +63,7 @@ export function RouteComponent() {
 
   return (
     <div>
-      <SubHeader>비밀번호 변경</SubHeader>
+      <SubHeader showMenuButton={false}>비밀번호 변경</SubHeader>
       <div className="py-padding-y-m">
         <StepTitle>비밀번호를 재설정해주세요.</StepTitle>
       </div>
