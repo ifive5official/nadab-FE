@@ -53,6 +53,14 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
         useErrorStore
           .getState()
           .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+      } else if (axios.isAxiosError(err)) {
+        useErrorStore
+          .getState()
+          .showError(
+            err.message,
+            err.response?.data?.message ??
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          );
       }
       throw redirect({
         to: "/",
