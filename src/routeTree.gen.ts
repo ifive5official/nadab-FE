@@ -12,10 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
+import { Route as authRestoreRouteImport } from './routes/(auth)/restore'
 import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authByeRouteImport } from './routes/(auth)/bye'
 import { Route as MainAccountIndexRouteImport } from './routes/_main/account/index'
+import { Route as MainAccountWithdrawRouteImport } from './routes/_main/account/withdraw'
 import { Route as MainAccountProfileRouteImport } from './routes/_main/account/profile'
 import { Route as MainAccountPasswordRouteImport } from './routes/_main/account/password'
 import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
@@ -44,6 +47,11 @@ const authSignupRoute = authSignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authRestoreRoute = authRestoreRouteImport.update({
+  id: '/(auth)/restore',
+  path: '/restore',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const authPasswordRoute = authPasswordRouteImport.update({
   id: '/(auth)/password',
   path: '/password',
@@ -59,9 +67,19 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authByeRoute = authByeRouteImport.update({
+  id: '/(auth)/bye',
+  path: '/bye',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MainAccountIndexRoute = MainAccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainAccountWithdrawRoute = MainAccountWithdrawRouteImport.update({
+  id: '/account/withdraw',
+  path: '/account/withdraw',
   getParentRoute: () => MainRoute,
 } as any)
 const MainAccountProfileRoute = MainAccountProfileRouteImport.update({
@@ -134,9 +152,11 @@ const authAuthProviderCallbackRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bye': typeof authByeRoute
   '/login': typeof authLoginRoute
   '/onboarding': typeof authOnboardingRouteWithChildren
   '/password': typeof authPasswordRouteWithChildren
+  '/restore': typeof authRestoreRoute
   '/signup': typeof authSignupRouteWithChildren
   '/onboarding/category': typeof authOnboardingCategoryRoute
   '/onboarding/intro': typeof authOnboardingIntroRoute
@@ -150,14 +170,17 @@ export interface FileRoutesByFullPath {
   '/signup/terms': typeof authSignupTermsRoute
   '/account/password': typeof MainAccountPasswordRoute
   '/account/profile': typeof MainAccountProfileRoute
+  '/account/withdraw': typeof MainAccountWithdrawRoute
   '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bye': typeof authByeRoute
   '/login': typeof authLoginRoute
   '/onboarding': typeof authOnboardingRouteWithChildren
   '/password': typeof authPasswordRouteWithChildren
+  '/restore': typeof authRestoreRoute
   '/signup': typeof authSignupRouteWithChildren
   '/onboarding/category': typeof authOnboardingCategoryRoute
   '/onboarding/intro': typeof authOnboardingIntroRoute
@@ -171,6 +194,7 @@ export interface FileRoutesByTo {
   '/signup/terms': typeof authSignupTermsRoute
   '/account/password': typeof MainAccountPasswordRoute
   '/account/profile': typeof MainAccountProfileRoute
+  '/account/withdraw': typeof MainAccountWithdrawRoute
   '/account': typeof MainAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
@@ -178,9 +202,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_main': typeof MainRouteWithChildren
+  '/(auth)/bye': typeof authByeRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/onboarding': typeof authOnboardingRouteWithChildren
   '/(auth)/password': typeof authPasswordRouteWithChildren
+  '/(auth)/restore': typeof authRestoreRoute
   '/(auth)/signup': typeof authSignupRouteWithChildren
   '/(auth)/onboarding/category': typeof authOnboardingCategoryRoute
   '/(auth)/onboarding/intro': typeof authOnboardingIntroRoute
@@ -194,6 +220,7 @@ export interface FileRoutesById {
   '/(auth)/signup/terms': typeof authSignupTermsRoute
   '/_main/account/password': typeof MainAccountPasswordRoute
   '/_main/account/profile': typeof MainAccountProfileRoute
+  '/_main/account/withdraw': typeof MainAccountWithdrawRoute
   '/_main/account/': typeof MainAccountIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
@@ -201,9 +228,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/bye'
     | '/login'
     | '/onboarding'
     | '/password'
+    | '/restore'
     | '/signup'
     | '/onboarding/category'
     | '/onboarding/intro'
@@ -217,14 +246,17 @@ export interface FileRouteTypes {
     | '/signup/terms'
     | '/account/password'
     | '/account/profile'
+    | '/account/withdraw'
     | '/account'
     | '/auth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bye'
     | '/login'
     | '/onboarding'
     | '/password'
+    | '/restore'
     | '/signup'
     | '/onboarding/category'
     | '/onboarding/intro'
@@ -238,15 +270,18 @@ export interface FileRouteTypes {
     | '/signup/terms'
     | '/account/password'
     | '/account/profile'
+    | '/account/withdraw'
     | '/account'
     | '/auth/$provider/callback'
   id:
     | '__root__'
     | '/'
     | '/_main'
+    | '/(auth)/bye'
     | '/(auth)/login'
     | '/(auth)/onboarding'
     | '/(auth)/password'
+    | '/(auth)/restore'
     | '/(auth)/signup'
     | '/(auth)/onboarding/category'
     | '/(auth)/onboarding/intro'
@@ -260,6 +295,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup/terms'
     | '/_main/account/password'
     | '/_main/account/profile'
+    | '/_main/account/withdraw'
     | '/_main/account/'
     | '/(auth)/auth/$provider/callback'
   fileRoutesById: FileRoutesById
@@ -267,9 +303,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MainRoute: typeof MainRouteWithChildren
+  authByeRoute: typeof authByeRoute
   authLoginRoute: typeof authLoginRoute
   authOnboardingRoute: typeof authOnboardingRouteWithChildren
   authPasswordRoute: typeof authPasswordRouteWithChildren
+  authRestoreRoute: typeof authRestoreRoute
   authSignupRoute: typeof authSignupRouteWithChildren
   authAuthProviderCallbackRoute: typeof authAuthProviderCallbackRoute
 }
@@ -297,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/restore': {
+      id: '/(auth)/restore'
+      path: '/restore'
+      fullPath: '/restore'
+      preLoaderRoute: typeof authRestoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(auth)/password': {
       id: '/(auth)/password'
       path: '/password'
@@ -318,11 +363,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/bye': {
+      id: '/(auth)/bye'
+      path: '/bye'
+      fullPath: '/bye'
+      preLoaderRoute: typeof authByeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_main/account/': {
       id: '/_main/account/'
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof MainAccountIndexRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/account/withdraw': {
+      id: '/_main/account/withdraw'
+      path: '/account/withdraw'
+      fullPath: '/account/withdraw'
+      preLoaderRoute: typeof MainAccountWithdrawRouteImport
       parentRoute: typeof MainRoute
     }
     '/_main/account/profile': {
@@ -422,12 +481,14 @@ declare module '@tanstack/react-router' {
 interface MainRouteChildren {
   MainAccountPasswordRoute: typeof MainAccountPasswordRoute
   MainAccountProfileRoute: typeof MainAccountProfileRoute
+  MainAccountWithdrawRoute: typeof MainAccountWithdrawRoute
   MainAccountIndexRoute: typeof MainAccountIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainAccountPasswordRoute: MainAccountPasswordRoute,
   MainAccountProfileRoute: MainAccountProfileRoute,
+  MainAccountWithdrawRoute: MainAccountWithdrawRoute,
   MainAccountIndexRoute: MainAccountIndexRoute,
 }
 
@@ -486,9 +547,11 @@ const authSignupRouteWithChildren = authSignupRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MainRoute: MainRouteWithChildren,
+  authByeRoute: authByeRoute,
   authLoginRoute: authLoginRoute,
   authOnboardingRoute: authOnboardingRouteWithChildren,
   authPasswordRoute: authPasswordRouteWithChildren,
+  authRestoreRoute: authRestoreRoute,
   authSignupRoute: authSignupRouteWithChildren,
   authAuthProviderCallbackRoute: authAuthProviderCallbackRoute,
 }

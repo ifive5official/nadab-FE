@@ -17,7 +17,7 @@ export const Route = createFileRoute("/(auth)/password")({
 function PasswordLayout() {
   return (
     <div className="h-full flex flex-col">
-      <SubHeader>비밀번호 변경</SubHeader>
+      <SubHeader showMenuButton={false}>비밀번호 변경</SubHeader>
       <Outlet />
     </div>
   );

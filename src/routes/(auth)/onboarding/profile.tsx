@@ -70,7 +70,7 @@ function Profile() {
           <StepTitle>프로필을 설정해주세요.</StepTitle>
         </div>
         <ProfileImageUploader
-          initialProfileImgUrl={undefined}
+          mode="create"
           onSuccess={(url: string) => {
             setProfileImgUrl(url);
           }}
