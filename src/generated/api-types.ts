@@ -177,6 +177,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/withdrawal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 회원 탈퇴
+         * @description 회원 탈퇴를 진행합니다.<br>
+         *     - 탈퇴 후 14일 동안 복구 가능합니다.<br>
+         *     - 모든 기기에서 자동 로그아웃됩니다.<br>
+         *     - 14일 후 자동으로 완전 삭제됩니다.
+         */
+        post: operations["withdrawUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/signup": {
         parameters: {
             query?: never;
@@ -198,6 +221,33 @@ export interface paths {
          *     - PROFILE_INCOMPLETE: 프로필 입력 필요
          */
         post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 회원 복구 (일반 로그인)
+         * @description 탈퇴한 일반 계정을 복구합니다.<br>
+         *     - 이메일과 비밀번호로 본인 확인을 합니다.<br>
+         *     - 14일 이내에만 복구 가능합니다.<br>
+         *     - 복구 후 자동으로 로그인됩니다.<br>
+         *     <br>
+         *     **소셜 로그인 계정의 경우:**<br>
+         *     - 별도 복구 API가 필요 없습니다.<br>
+         *     - 소셜 로그인(POST /naver/login 또는 POST /google/login)을 시도하면 자동으로 복구됩니다.
+         */
+        post: operations["restoreBasicAccount"];
         delete?: never;
         options?: never;
         head?: never;
@@ -649,6 +699,19 @@ export interface components {
              */
             marketing: boolean;
         };
+        RestoreRequest: {
+            /**
+             * Format: email
+             * @description 이메일
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+             * @example password123!
+             */
+            password: string;
+        };
         /** @description 비밀번호 재설정 요청 (비밀번호 찾기에서 이메일 인증 완료 후) */
         ResetPasswordRequest: {
             /**
@@ -662,6 +725,20 @@ export interface components {
              * @example newPassword123!
              */
             newPassword: string;
+        };
+        /** @description 탈퇴 계정 정보 */
+        WithdrawnInfoResponse: {
+            /**
+             * @description 사용자 닉네임
+             * @example 홍길동
+             */
+            nickname?: string;
+            /**
+             * Format: date
+             * @description 완전 삭제 예정일 (탈퇴 일시 + 14일)
+             * @example 2024-01-29
+             */
+            deletionDate?: string;
         };
         /** @description 일반 로그인 요청 */
         LoginRequest: {
@@ -1086,6 +1163,40 @@ export interface operations {
             };
         };
     };
+    withdrawUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 탈퇴 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 이미 탈퇴한 계정 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     signup: {
         parameters: {
             query?: never;
@@ -1126,6 +1237,56 @@ export interface operations {
              *     - 이미 사용 중인 이메일입니다
              */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    restoreBasicAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestoreRequest"];
+            };
+        };
+        responses: {
+            /** @description 복구 성공 및 로그인 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /**
+             * @description 잘못된 요청
+             *     - 탈퇴하지 않은 계정
+             *     - 소셜 로그인 계정
+             *     - 복구 가능 기간(14일) 초과
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 비밀번호 불일치 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 사용자를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1269,12 +1430,17 @@ export interface operations {
             /**
              * @description 잘못된 요청
              *     - 이메일 형식이 올바르지 않은 경우
+             *     - 탈퇴한 계정 (message: "탈퇴한 계정입니다. 계정 복구를 진행해주세요.")
+             *       → data 필드에 탈퇴 계정 정보 포함 (닉네임, 완전 삭제 예정일)
+             *       → 프론트엔드: 복구 선택 화면으로 이동 (POST /auth/restore 안내)
              */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["WithdrawnInfoResponse"];
+                };
             };
             /**
              * @description 인증 실패

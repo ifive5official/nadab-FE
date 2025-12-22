@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
+import { Route as authRestoreRouteImport } from './routes/(auth)/restore'
 import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
@@ -44,6 +45,11 @@ const IndexRoute = IndexRouteImport.update({
 const authSignupRoute = authSignupRouteImport.update({
   id: '/(auth)/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRestoreRoute = authRestoreRouteImport.update({
+  id: '/(auth)/restore',
+  path: '/restore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authPasswordRoute = authPasswordRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/onboarding': typeof authOnboardingRouteWithChildren
   '/password': typeof authPasswordRouteWithChildren
+  '/restore': typeof authRestoreRoute
   '/signup': typeof authSignupRouteWithChildren
   '/onboarding/category': typeof authOnboardingCategoryRoute
   '/onboarding/intro': typeof authOnboardingIntroRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/onboarding': typeof authOnboardingRouteWithChildren
   '/password': typeof authPasswordRouteWithChildren
+  '/restore': typeof authRestoreRoute
   '/signup': typeof authSignupRouteWithChildren
   '/onboarding/category': typeof authOnboardingCategoryRoute
   '/onboarding/intro': typeof authOnboardingIntroRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/onboarding': typeof authOnboardingRouteWithChildren
   '/(auth)/password': typeof authPasswordRouteWithChildren
+  '/(auth)/restore': typeof authRestoreRoute
   '/(auth)/signup': typeof authSignupRouteWithChildren
   '/(auth)/onboarding/category': typeof authOnboardingCategoryRoute
   '/(auth)/onboarding/intro': typeof authOnboardingIntroRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/password'
+    | '/restore'
     | '/signup'
     | '/onboarding/category'
     | '/onboarding/intro'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/password'
+    | '/restore'
     | '/signup'
     | '/onboarding/category'
     | '/onboarding/intro'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/onboarding'
     | '/(auth)/password'
+    | '/(auth)/restore'
     | '/(auth)/signup'
     | '/(auth)/onboarding/category'
     | '/(auth)/onboarding/intro'
@@ -295,6 +307,7 @@ export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authOnboardingRoute: typeof authOnboardingRouteWithChildren
   authPasswordRoute: typeof authPasswordRouteWithChildren
+  authRestoreRoute: typeof authRestoreRoute
   authSignupRoute: typeof authSignupRouteWithChildren
   authAuthProviderCallbackRoute: typeof authAuthProviderCallbackRoute
 }
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof authSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/restore': {
+      id: '/(auth)/restore'
+      path: '/restore'
+      fullPath: '/restore'
+      preLoaderRoute: typeof authRestoreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/password': {
@@ -531,6 +551,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authOnboardingRoute: authOnboardingRouteWithChildren,
   authPasswordRoute: authPasswordRouteWithChildren,
+  authRestoreRoute: authRestoreRoute,
   authSignupRoute: authSignupRouteWithChildren,
   authAuthProviderCallbackRoute: authAuthProviderCallbackRoute,
 }
