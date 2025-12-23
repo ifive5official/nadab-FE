@@ -1,36 +1,15 @@
-import useAuthStore from "@/store/authStore";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import { api } from "@/lib/axios";
-import type { components } from "@/generated/api-types";
-import type { ApiResponse } from "@/generated/api";
 import ErrorModal from "@/components/ErrorModal";
 import type { QueryClient } from "@tanstack/react-query";
 import useThemeStore from "@/store/useThemeStore";
 import { useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 
-type TokenRes = components["schemas"]["TokenResponse"];
-
 type RouterContext = {
   queryClient: QueryClient;
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async () => {
-    const { accessToken, setAccessToken } = useAuthStore.getState();
-    if (!accessToken) {
-      try {
-        const res = await api.post<ApiResponse<TokenRes>>(
-          "/api/v1/auth/refresh"
-        );
-        const newAccessToken = res.data.data?.accessToken ?? null;
-        setAccessToken(newAccessToken!);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
-        // Todo: 아무 처리도 안 하는 게 제일 나은가...
-      }
-    }
-  },
   component: RootComponent,
 });
 
