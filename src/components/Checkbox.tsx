@@ -19,10 +19,15 @@ export default function CheckBox({ label, checked, onCheck }: Props) {
         )}
         onClick={() => onCheck()}
       >
-        <DoneIcon />
+        {checked && <DoneIcon />}
       </div>
       <label
-        className="text-interactive-text-default text-label-m cursor-pointer"
+        className={clsx(
+          "text-label-m cursor-pointer",
+          checked
+            ? "text-interactive-text-default"
+            : "text-interactive-text-mute"
+        )}
         onClick={() => onCheck()}
       >
         {label}
