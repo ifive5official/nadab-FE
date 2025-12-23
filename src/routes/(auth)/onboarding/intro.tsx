@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
@@ -15,31 +15,9 @@ import clsx from "clsx";
 import { useNavigate } from "@tanstack/react-router";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useOnboardingStore from "@/store/onboardingStore";
-import useAuthStore from "@/store/authStore";
-import { api } from "@/lib/axios";
-import type { ApiResponse } from "@/generated/api";
-import type { components } from "@/generated/api-types";
-
-type TokenRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/(auth)/onboarding/intro")({
   component: FeatureDescription,
-  beforeLoad: async () => {
-    // 회원가입 미완료 시 진입 금지
-    const { accessToken, setAccessToken } = useAuthStore.getState();
-    if (!accessToken) {
-      try {
-        const res = await api.post<ApiResponse<TokenRes>>(
-          "/api/v1/auth/refresh"
-        );
-        const newAccessToken = res.data.data?.accessToken ?? null;
-        setAccessToken(newAccessToken!);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
-        throw redirect({ to: "/signup/terms" });
-      }
-    }
-  },
 });
 
 function FeatureDescription() {

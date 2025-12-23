@@ -1,17 +1,20 @@
 import { useLocation, createFileRoute, Outlet } from "@tanstack/react-router";
 import { GetCurrentStep, type StepId } from "@/features/auth/signupSteps";
-// import useAuthStore from "@/store/authStore";
-// import { redirect } from "@tanstack/react-router";
+import useAuthStore from "@/store/authStore";
+import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(auth)/signup")({
   component: SignupLayout,
-  // beforeLoad: async () => {
-  //   // 로그인 시 진입 불가
-  //   const { accessToken } = useAuthStore.getState();
-  //   if (accessToken) {
-  //     throw redirect({ to: "/" });
-  //   }
-  // },
+  beforeLoad: async ({ location }) => {
+    // 소셜 로그인 시 토큰 있는 상태로 약관 보여줘야 해서 예외처리
+    if (location.pathname !== "/terms") {
+      // 로그인 시 진입 불가
+      const { accessToken } = useAuthStore.getState();
+      if (accessToken) {
+        throw redirect({ to: "/" });
+      }
+    }
+  },
 });
 
 function SignupLayout() {

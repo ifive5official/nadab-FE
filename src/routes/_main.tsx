@@ -11,13 +11,25 @@ import type { ApiResponse } from "@/generated/api";
 import type { CurrentUser } from "@/types/currentUser";
 import useErrorStore from "@/store/errorStore";
 import axios from "axios";
+import type { components } from "@/generated/api-types";
+
+type TokenRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/_main")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const { accessToken } = useAuthStore.getState();
+    const { accessToken, setAccessToken } = useAuthStore.getState();
     if (!accessToken) {
-      throw redirect({ to: "/" });
+      try {
+        const res = await api.post<ApiResponse<TokenRes>>(
+          "/api/v1/auth/refresh"
+        );
+        const newAccessToken = res.data.data?.accessToken ?? null;
+        setAccessToken(newAccessToken!);
+      } catch (err) {
+        if (isRedirect(err)) throw err;
+        throw redirect({ to: "/" });
+      }
     }
     try {
       const user = await context.queryClient.ensureQueryData({

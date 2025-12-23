@@ -1,9 +1,9 @@
 import { motion } from "motion/react";
-
-// 뒤로가기 버튼과 타이틀이 있는 헤더
 import { useRouter } from "@tanstack/react-router";
 import { ArrowLeftIcon, MenuIcon } from "./Icons";
+import useSidebarStore from "@/store/sidebarStore";
 
+// 뒤로가기 버튼과 타이틀이 있는 헤더
 type SubHeaderProps = {
   showBackButton?: boolean;
   showMenuButton?: boolean;
@@ -16,9 +16,11 @@ export function SubHeader({
   children,
 }: SubHeaderProps) {
   const router = useRouter();
+  const openSidebar = useSidebarStore.use.openSidebar();
+
   return (
     // 음수 마진으로 본문 패딩 무시
-    <header className="relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base border-b border-b-border-base text-label-l text-text-secondary">
+    <header className="z-1 relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base border-b border-b-border-base text-label-l text-text-secondary">
       {showBackButton && (
         <button
           className="absolute left-padding-x-s"
@@ -28,7 +30,7 @@ export function SubHeader({
         </button>
       )}
       {showMenuButton && (
-        <button className="absolute right-padding-x-s">
+        <button onClick={openSidebar} className="absolute right-padding-x-s">
           <MenuIcon />
         </button>
       )}
