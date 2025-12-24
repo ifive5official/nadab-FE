@@ -40,7 +40,9 @@ function OnboardingLayout() {
   }
 
   return (
-    <div className="h-[calc(100dvh-var(--spacing-padding-y-m))] flex flex-col">
+    // 주제 선택 스크롤 동작 때문에 높이 설정함
+    // Todo: 더 좋은 방법이 없나...
+    <div className="h-[calc(100svh-var(--spacing-padding-y-m)-var(--spacing-header-height))] flex flex-col">
       {currentStep.header}
       <Outlet />
     </div>

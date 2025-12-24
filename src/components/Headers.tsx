@@ -12,6 +12,7 @@ import { ColoredTextLogo } from "./Logos";
 import ProfileImg from "./ProfileImg";
 import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
+import clsx from "clsx";
 
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
@@ -23,7 +24,13 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   return (
     <>
       {/* 음수 마진으로 본문 패딩 무시 */}
-      <header className="flex items-center gap-gap-x-m z-1 relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base border-b border-b-border-base text-label-l text-text-secondary">
+      <header
+        className={clsx(
+          "fixed top-0 z-1 flex items-center gap-gap-x-m",
+          "-mx-padding-x-m px-padding-x-m w-full sm:w-[412px] h-header-height",
+          "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+        )}
+      >
         <ColoredTextLogo width={54.3} />
         <button onClick={openSidebar} className="ml-auto">
           <MenuIcon />
@@ -52,9 +59,8 @@ function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
       {isOpen && (
         <>
           <div className="z-2 fixed inset-0" onClick={onClose} />
-          {/* 헤더 영역만큼 비워두기...
-          Todo: 더 좋은 방법이 없나... */}
-          <div className="z-3 fixed top-[calc(var(--spacing-padding-y-xl)+32px)] right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
+          {/* 헤더 영역만큼 비워두기...*/}
+          <div className="z-3 fixed top-header-height right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
             <div className=" grid grid-cols-1 auto-rows-fr top-0 w-fit px-padding-x-s py-padding-y-xs bg-surface-base rounded-lg shadow-4">
               <div className="flex items-center gap-gap-x-s border-b border-b-border-base">
                 <span className="text-caption-s text-text-tertiary">
@@ -105,7 +111,13 @@ export function SubHeader({
 
   return (
     // 음수 마진으로 본문 패딩 무시
-    <header className="z-1 relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base border-b border-b-border-base text-label-l text-text-secondary">
+    <header
+      className={clsx(
+        "fixed top-0 z-1 flex items-center",
+        "-mx-padding-x-m w-full sm:w-[412px] h-header-height",
+        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+      )}
+    >
       {showBackButton && (
         <button
           className="absolute left-padding-x-s"
@@ -114,12 +126,13 @@ export function SubHeader({
           <ArrowLeftIcon />
         </button>
       )}
+      <span className="mx-auto">{children}</span>
+
       {showMenuButton && (
-        <button onClick={openSidebar} className="absolute right-padding-x-s">
+        <button className="absolute right-padding-x-s" onClick={openSidebar}>
           <MenuIcon />
         </button>
       )}
-      {children}
     </header>
   );
 }
@@ -128,14 +141,19 @@ export function ProgressHeader({ progress }: { progress: number }) {
   const router = useRouter();
   return (
     <>
-      <header className="relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base text-label-l text-text-secondary">
+      <header
+        className={clsx(
+          "fixed top-0 z-1 flex items-center text-center",
+          "-mx-padding-x-m w-full sm:w-[412px] h-header-height",
+          "bg-surface-base text-label-l text-text-secondary"
+        )}
+      >
         <button
           className="absolute left-padding-x-s"
           onClick={() => router.history.back()}
         >
           <ArrowLeftIcon />
         </button>
-        ㅤ
       </header>
       <div className="h-1 bg-surface-layer-1 -mx-padding-x-m">
         <motion.div

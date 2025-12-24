@@ -176,6 +176,12 @@
 }
 
 @theme {
+  /* 헤더 높이 토큰화 */
+  --spacing-header-height: clamp(
+    calc(48px * 0.8),
+    calc((48 / 796) * 100svh),
+    calc(48px * 1.2)
+  );
   /* margin */
   /* spacing-1 */
   --spacing-margin-x-xs: clamp(
