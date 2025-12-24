@@ -12,7 +12,6 @@ type Props = {
 };
 
 export default function Toast({ isOpen, bottom, message, onClose }: Props) {
-  // 하단에서 올라오는 애니메이션으로 인한 스크롤 방지
   // useEffect(() => {
   //   if (isOpen) {
   //     document.body.style.overflow = "hidden";
@@ -27,10 +26,10 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <div className="z-2 absolute inset-0" onClick={onClose} />
+          <div className="z-2 fixed inset-0" onClick={onClose} />
           <motion.div
             className={clsx(
-              "absolute inset-x-padding-x-m sm:mx-auto sm:w-[412px]",
+              "fixed inset-x-padding-x-m sm:mx-auto sm:w-[412px]",
               bottom ?? "bottom-padding-y-m",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
               "bg-surface-alpha-inverse border border-border-alpha-inverse rounded-full text-text-inverse-primary backdrop-blur-sm"

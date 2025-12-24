@@ -68,7 +68,7 @@ export function ColoredTextLogo({
   width = 64,
 }: {
   style?: React.CSSProperties;
-  width: number;
+  width?: number;
 }) {
   return (
     <svg

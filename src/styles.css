@@ -5,13 +5,6 @@
   font-family: Pretendard, -apple-system;
 }
 
-html,
-body {
-  overflow: hidden; /* 전체 페이지 스크롤 방지 */
-  height: 100%; /* 화면 높이 고정 */
-  color: var(--color-text-primary);
-}
-
 @layer base {
   /* 디폴트 버튼 스타일 */
   button {
@@ -192,7 +185,7 @@ body {
   );
   --spacing-margin-y-xs: clamp(
     calc(4px * 0.5),
-    calc((4 / 796) * 100dvh),
+    calc((4 / 796) * 100svh),
     calc(4px * 1.2)
   );
 
@@ -204,7 +197,7 @@ body {
   );
   --spacing-margin-y-s: clamp(
     calc(8px * 0.5),
-    calc((8 / 796) * 100dvh),
+    calc((8 / 796) * 100svh),
     calc(8px * 1.2)
   );
 
@@ -216,7 +209,7 @@ body {
   );
   --spacing-margin-y-m: clamp(
     calc(12px * 0.5),
-    calc((12 / 796) * 100dvh),
+    calc((12 / 796) * 100svh),
     calc(12px * 1.2)
   );
 
@@ -228,7 +221,7 @@ body {
   );
   --spacing-margin-y-l: clamp(
     calc(16px * 0.5),
-    calc((16 / 796) * 100dvh),
+    calc((16 / 796) * 100svh),
     calc(16px * 1.2)
   );
 
@@ -240,7 +233,7 @@ body {
   );
   --spacing-margin-y-xl: clamp(
     calc(24px * 0.5),
-    calc((24 / 796) * 100dvh),
+    calc((24 / 796) * 100svh),
     calc(24px * 1.2)
   );
 
@@ -252,7 +245,7 @@ body {
   );
   --spacing-margin-y-xxl: clamp(
     calc(48px * 0.5),
-    calc((48 / 796) * 100dvh),
+    calc((48 / 796) * 100svh),
     calc(48px * 1.2)
   );
 
@@ -264,7 +257,7 @@ body {
   );
   --spacing-margin-y-xxxl: clamp(
     calc(80px * 0.5),
-    calc((80 / 796) * 100dvh),
+    calc((80 / 796) * 100svh),
     calc(80px * 1.2)
   );
 
@@ -277,7 +270,7 @@ body {
   );
   --spacing-gap-y-xs: clamp(
     calc(4px * 0.5),
-    calc((4 / 796) * 100dvh),
+    calc((4 / 796) * 100svh),
     calc(4px * 1.2)
   );
 
@@ -289,7 +282,7 @@ body {
   );
   --spacing-gap-y-s: clamp(
     calc(8px * 0.5),
-    calc((8 / 796) * 100dvh),
+    calc((8 / 796) * 100svh),
     calc(8px * 1.2)
   );
 
@@ -301,7 +294,7 @@ body {
   );
   --spacing-gap-y-m: clamp(
     calc(12px * 0.5),
-    calc((12 / 796) * 100dvh),
+    calc((12 / 796) * 100svh),
     calc(12px * 1.2)
   );
 
@@ -313,7 +306,7 @@ body {
   );
   --spacing-gap-y-l: clamp(
     calc(16px * 0.5),
-    calc((16 / 796) * 100dvh),
+    calc((16 / 796) * 100svh),
     calc(16px * 1.2)
   );
 
@@ -325,7 +318,7 @@ body {
   );
   --spacing-gap-y-xl: clamp(
     calc(24px * 0.5),
-    calc((24 / 796) * 100dvh),
+    calc((24 / 796) * 100svh),
     calc(24px * 1.2)
   );
 
@@ -338,7 +331,7 @@ body {
   );
   --spacing-padding-y-xxs: clamp(
     calc(4px * 0.5),
-    calc((4 / 796) * 100dvh),
+    calc((4 / 796) * 100svh),
     calc(4px * 1.2)
   );
 
@@ -350,7 +343,7 @@ body {
   );
   --spacing-padding-y-xs: clamp(
     calc(8px * 0.5),
-    calc((8 / 796) * 100dvh),
+    calc((8 / 796) * 100svh),
     calc(8px * 1.2)
   );
 
@@ -362,7 +355,7 @@ body {
   );
   --spacing-padding-y-s: clamp(
     calc(12px * 0.5),
-    calc((12 / 796) * 100dvh),
+    calc((12 / 796) * 100svh),
     calc(12px * 1.2)
   );
 
@@ -374,7 +367,7 @@ body {
   );
   --spacing-padding-y-m: clamp(
     calc(16px * 0.5),
-    calc((16 / 796) * 100dvh),
+    calc((16 / 796) * 100svh),
     calc(16px * 1.2)
   );
 
@@ -386,7 +379,7 @@ body {
   );
   --spacing-padding-y-l: clamp(
     calc(20px * 0.5),
-    calc((20 / 796) * 100dvh),
+    calc((20 / 796) * 100svh),
     calc(20px * 1.2)
   );
 
@@ -398,7 +391,7 @@ body {
   );
   --spacing-padding-y-xl: clamp(
     calc(24px * 0.5),
-    calc((24 / 796) * 100dvh),
+    calc((24 / 796) * 100svh),
     calc(24px * 1.2)
   );
 
@@ -410,7 +403,7 @@ body {
   );
   --spacing-padding-y-xxl: clamp(
     calc(32px * 0.5),
-    calc((32 / 796) * 100dvh),
+    calc((32 / 796) * 100svh),
     calc(32px * 1.2)
   );
 
