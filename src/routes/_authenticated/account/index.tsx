@@ -27,7 +27,7 @@ const notificationOptions = queryOptions({
   },
 });
 
-export const Route = createFileRoute("/_main/account/")({
+export const Route = createFileRoute("/_authenticated/account/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(notificationOptions),

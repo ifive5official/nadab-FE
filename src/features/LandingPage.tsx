@@ -36,8 +36,9 @@ export function LandingPage() {
   });
 
   return (
+    // 헤더 높이 뺌
     // pt - 전체 레이아웃 하단 패딩때문에 중앙정렬 맞추려고 넣음..
-    <div className="w-full h-full flex flex-col items-center pt-padding-y-m">
+    <div className="w-full h-[calc(100svh-var(--spacing-padding-y-m))] -mt-header-height pt-padding-y-m flex flex-col items-center">
       {/* 위 절반 */}
       <div className="flex-1 flex flex-col justify-center items-center">
         <ColoredMainLogo style={{ height: `${(104.5 / 796) * 100}dvh` }} />

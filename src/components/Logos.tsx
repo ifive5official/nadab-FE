@@ -63,12 +63,18 @@ export function ColoredMainLogo({ style }: { style: React.CSSProperties }) {
   );
 }
 
-export function ColoredTextLogo({ style }: { style: React.CSSProperties }) {
+export function ColoredTextLogo({
+  style,
+  width = 64,
+}: {
+  style?: React.CSSProperties;
+  width?: number;
+}) {
   return (
     <svg
       style={style}
-      width="64"
-      height="31"
+      width={width}
+      height="auto"
       viewBox="0 0 64 31"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

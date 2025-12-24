@@ -50,21 +50,19 @@ export default function Sidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="absolute inset-0 bg-neutral-dark-50"
+              className="fixed inset-0 bg-neutral-dark-50"
               onClick={closeSidebar}
             />
             {/* 사이드바 */}
             <motion.div
-              className="absolute inset-y-0 right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base px-padding-x-m flex flex-col"
+              className="fixed inset-y-0 right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base px-padding-x-m flex flex-col"
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 100, opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              {/* 헤더 영역만큼 비워두기
-                // Todo: 더 좋은 방법이 없냐.... */}
-              <div className="p-padding-y-s text-label-l">ㅤ</div>
-              <nav className="flex-1 py-padding-y-xl flex flex-col gap-gap-y-xs">
+              {/* 헤더 영역만큼 비워두기*/}
+              <nav className="flex-1 mt-header-height py-padding-y-xl flex flex-col gap-gap-y-xs">
                 {MENU_ITEMS.map((item) => (
                   <MenuItem key={item.to} {...item}>
                     {item.label}

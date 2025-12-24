@@ -2,7 +2,7 @@
 import type { CurrentUser } from "@/types/currentUser";
 import BlockButton from "@/components/BlockButton";
 import { Link } from "@tanstack/react-router";
-import { defaultProfileImgUrl } from "@/constants/defaultprofileImgUrl";
+import ProfileImg from "@/components/ProfileImg";
 
 type Props = {
   currentUser: CurrentUser;
@@ -12,10 +12,7 @@ export default function ProfileSection({ currentUser }: Props) {
   return (
     <div className="py-padding-y-m flex flex-col gap-gap-y-l">
       <div className="flex items-center gap-gap-x-l">
-        <img
-          src={currentUser?.profileImageUrl ?? defaultProfileImgUrl}
-          className="rounded-full aspect-square h-[53px] object-cover"
-        ></img>
+        <ProfileImg width={53} src={currentUser?.profileImageUrl} />
         <div className="flex flex-col gap-y-xs">
           <p className="text-text-primary text-title-3">
             {currentUser?.nickname}

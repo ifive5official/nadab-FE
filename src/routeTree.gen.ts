@@ -9,18 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MainRouteImport } from './routes/_main'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedMainRouteImport } from './routes/_authenticated/_main'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authRestoreRouteImport } from './routes/(auth)/restore'
 import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authByeRouteImport } from './routes/(auth)/bye'
-import { Route as MainAccountIndexRouteImport } from './routes/_main/account/index'
-import { Route as MainAccountWithdrawRouteImport } from './routes/_main/account/withdraw'
-import { Route as MainAccountProfileRouteImport } from './routes/_main/account/profile'
-import { Route as MainAccountPasswordRouteImport } from './routes/_main/account/password'
+import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
+import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
+import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
+import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_authenticated/account/password'
+import { Route as AuthenticatedMainSocialRouteImport } from './routes/_authenticated/_main/social'
+import { Route as AuthenticatedMainReportRouteImport } from './routes/_authenticated/_main/report'
+import { Route as AuthenticatedMainCalendarRouteImport } from './routes/_authenticated/_main/calendar'
 import { Route as authSignupTermsRouteImport } from './routes/(auth)/signup/terms'
 import { Route as authSignupPasswordRouteImport } from './routes/(auth)/signup/password'
 import { Route as authSignupEmailVerificationRouteImport } from './routes/(auth)/signup/emailVerification'
@@ -33,14 +37,18 @@ import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboard
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
 
-const MainRoute = MainRouteImport.update({
-  id: '/_main',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMainRoute = AuthenticatedMainRouteImport.update({
+  id: '/_main',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const authSignupRoute = authSignupRouteImport.update({
   id: '/(auth)/signup',
@@ -72,26 +80,46 @@ const authByeRoute = authByeRouteImport.update({
   path: '/bye',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MainAccountIndexRoute = MainAccountIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
-  getParentRoute: () => MainRoute,
+const AuthenticatedAccountIndexRoute =
+  AuthenticatedAccountIndexRouteImport.update({
+    id: '/account/',
+    path: '/account/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountWithdrawRoute =
+  AuthenticatedAccountWithdrawRouteImport.update({
+    id: '/account/withdraw',
+    path: '/account/withdraw',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountProfileRoute =
+  AuthenticatedAccountProfileRouteImport.update({
+    id: '/account/profile',
+    path: '/account/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountPasswordRoute =
+  AuthenticatedAccountPasswordRouteImport.update({
+    id: '/account/password',
+    path: '/account/password',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMainSocialRoute = AuthenticatedMainSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => AuthenticatedMainRoute,
 } as any)
-const MainAccountWithdrawRoute = MainAccountWithdrawRouteImport.update({
-  id: '/account/withdraw',
-  path: '/account/withdraw',
-  getParentRoute: () => MainRoute,
+const AuthenticatedMainReportRoute = AuthenticatedMainReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => AuthenticatedMainRoute,
 } as any)
-const MainAccountProfileRoute = MainAccountProfileRouteImport.update({
-  id: '/account/profile',
-  path: '/account/profile',
-  getParentRoute: () => MainRoute,
-} as any)
-const MainAccountPasswordRoute = MainAccountPasswordRouteImport.update({
-  id: '/account/password',
-  path: '/account/password',
-  getParentRoute: () => MainRoute,
-} as any)
+const AuthenticatedMainCalendarRoute =
+  AuthenticatedMainCalendarRouteImport.update({
+    id: '/calendar',
+    path: '/calendar',
+    getParentRoute: () => AuthenticatedMainRoute,
+  } as any)
 const authSignupTermsRoute = authSignupTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -168,10 +196,13 @@ export interface FileRoutesByFullPath {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
-  '/account/password': typeof MainAccountPasswordRoute
-  '/account/profile': typeof MainAccountProfileRoute
-  '/account/withdraw': typeof MainAccountWithdrawRoute
-  '/account': typeof MainAccountIndexRoute
+  '/calendar': typeof AuthenticatedMainCalendarRoute
+  '/report': typeof AuthenticatedMainReportRoute
+  '/social': typeof AuthenticatedMainSocialRoute
+  '/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/account': typeof AuthenticatedAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -192,22 +223,26 @@ export interface FileRoutesByTo {
   '/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/signup/password': typeof authSignupPasswordRoute
   '/signup/terms': typeof authSignupTermsRoute
-  '/account/password': typeof MainAccountPasswordRoute
-  '/account/profile': typeof MainAccountProfileRoute
-  '/account/withdraw': typeof MainAccountWithdrawRoute
-  '/account': typeof MainAccountIndexRoute
+  '/calendar': typeof AuthenticatedMainCalendarRoute
+  '/report': typeof AuthenticatedMainReportRoute
+  '/social': typeof AuthenticatedMainSocialRoute
+  '/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/account': typeof AuthenticatedAccountIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_main': typeof MainRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/(auth)/bye': typeof authByeRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/onboarding': typeof authOnboardingRouteWithChildren
   '/(auth)/password': typeof authPasswordRouteWithChildren
   '/(auth)/restore': typeof authRestoreRoute
   '/(auth)/signup': typeof authSignupRouteWithChildren
+  '/_authenticated/_main': typeof AuthenticatedMainRouteWithChildren
   '/(auth)/onboarding/category': typeof authOnboardingCategoryRoute
   '/(auth)/onboarding/intro': typeof authOnboardingIntroRoute
   '/(auth)/onboarding/profile': typeof authOnboardingProfileRoute
@@ -218,10 +253,13 @@ export interface FileRoutesById {
   '/(auth)/signup/emailVerification': typeof authSignupEmailVerificationRoute
   '/(auth)/signup/password': typeof authSignupPasswordRoute
   '/(auth)/signup/terms': typeof authSignupTermsRoute
-  '/_main/account/password': typeof MainAccountPasswordRoute
-  '/_main/account/profile': typeof MainAccountProfileRoute
-  '/_main/account/withdraw': typeof MainAccountWithdrawRoute
-  '/_main/account/': typeof MainAccountIndexRoute
+  '/_authenticated/_main/calendar': typeof AuthenticatedMainCalendarRoute
+  '/_authenticated/_main/report': typeof AuthenticatedMainReportRoute
+  '/_authenticated/_main/social': typeof AuthenticatedMainSocialRoute
+  '/_authenticated/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRouteTypes {
@@ -244,6 +282,9 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/calendar'
+    | '/report'
+    | '/social'
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
@@ -268,6 +309,9 @@ export interface FileRouteTypes {
     | '/signup/emailVerification'
     | '/signup/password'
     | '/signup/terms'
+    | '/calendar'
+    | '/report'
+    | '/social'
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
@@ -276,13 +320,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_main'
+    | '/_authenticated'
     | '/(auth)/bye'
     | '/(auth)/login'
     | '/(auth)/onboarding'
     | '/(auth)/password'
     | '/(auth)/restore'
     | '/(auth)/signup'
+    | '/_authenticated/_main'
     | '/(auth)/onboarding/category'
     | '/(auth)/onboarding/intro'
     | '/(auth)/onboarding/profile'
@@ -293,16 +338,19 @@ export interface FileRouteTypes {
     | '/(auth)/signup/emailVerification'
     | '/(auth)/signup/password'
     | '/(auth)/signup/terms'
-    | '/_main/account/password'
-    | '/_main/account/profile'
-    | '/_main/account/withdraw'
-    | '/_main/account/'
+    | '/_authenticated/_main/calendar'
+    | '/_authenticated/_main/report'
+    | '/_authenticated/_main/social'
+    | '/_authenticated/account/password'
+    | '/_authenticated/account/profile'
+    | '/_authenticated/account/withdraw'
+    | '/_authenticated/account/'
     | '/(auth)/auth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MainRoute: typeof MainRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   authByeRoute: typeof authByeRoute
   authLoginRoute: typeof authLoginRoute
   authOnboardingRoute: typeof authOnboardingRouteWithChildren
@@ -314,11 +362,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_main': {
-      id: '/_main'
+    '/_authenticated': {
+      id: '/_authenticated'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof MainRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -327,6 +375,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_main': {
+      id: '/_authenticated/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedMainRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/(auth)/signup': {
       id: '/(auth)/signup'
@@ -370,33 +425,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authByeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_main/account/': {
-      id: '/_main/account/'
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
       path: '/account'
       fullPath: '/account'
-      preLoaderRoute: typeof MainAccountIndexRouteImport
-      parentRoute: typeof MainRoute
+      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_main/account/withdraw': {
-      id: '/_main/account/withdraw'
+    '/_authenticated/account/withdraw': {
+      id: '/_authenticated/account/withdraw'
       path: '/account/withdraw'
       fullPath: '/account/withdraw'
-      preLoaderRoute: typeof MainAccountWithdrawRouteImport
-      parentRoute: typeof MainRoute
+      preLoaderRoute: typeof AuthenticatedAccountWithdrawRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_main/account/profile': {
-      id: '/_main/account/profile'
+    '/_authenticated/account/profile': {
+      id: '/_authenticated/account/profile'
       path: '/account/profile'
       fullPath: '/account/profile'
-      preLoaderRoute: typeof MainAccountProfileRouteImport
-      parentRoute: typeof MainRoute
+      preLoaderRoute: typeof AuthenticatedAccountProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_main/account/password': {
-      id: '/_main/account/password'
+    '/_authenticated/account/password': {
+      id: '/_authenticated/account/password'
       path: '/account/password'
       fullPath: '/account/password'
-      preLoaderRoute: typeof MainAccountPasswordRouteImport
-      parentRoute: typeof MainRoute
+      preLoaderRoute: typeof AuthenticatedAccountPasswordRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_main/social': {
+      id: '/_authenticated/_main/social'
+      path: '/social'
+      fullPath: '/social'
+      preLoaderRoute: typeof AuthenticatedMainSocialRouteImport
+      parentRoute: typeof AuthenticatedMainRoute
+    }
+    '/_authenticated/_main/report': {
+      id: '/_authenticated/_main/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof AuthenticatedMainReportRouteImport
+      parentRoute: typeof AuthenticatedMainRoute
+    }
+    '/_authenticated/_main/calendar': {
+      id: '/_authenticated/_main/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AuthenticatedMainCalendarRouteImport
+      parentRoute: typeof AuthenticatedMainRoute
     }
     '/(auth)/signup/terms': {
       id: '/(auth)/signup/terms'
@@ -478,21 +554,40 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface MainRouteChildren {
-  MainAccountPasswordRoute: typeof MainAccountPasswordRoute
-  MainAccountProfileRoute: typeof MainAccountProfileRoute
-  MainAccountWithdrawRoute: typeof MainAccountWithdrawRoute
-  MainAccountIndexRoute: typeof MainAccountIndexRoute
+interface AuthenticatedMainRouteChildren {
+  AuthenticatedMainCalendarRoute: typeof AuthenticatedMainCalendarRoute
+  AuthenticatedMainReportRoute: typeof AuthenticatedMainReportRoute
+  AuthenticatedMainSocialRoute: typeof AuthenticatedMainSocialRoute
 }
 
-const MainRouteChildren: MainRouteChildren = {
-  MainAccountPasswordRoute: MainAccountPasswordRoute,
-  MainAccountProfileRoute: MainAccountProfileRoute,
-  MainAccountWithdrawRoute: MainAccountWithdrawRoute,
-  MainAccountIndexRoute: MainAccountIndexRoute,
+const AuthenticatedMainRouteChildren: AuthenticatedMainRouteChildren = {
+  AuthenticatedMainCalendarRoute: AuthenticatedMainCalendarRoute,
+  AuthenticatedMainReportRoute: AuthenticatedMainReportRoute,
+  AuthenticatedMainSocialRoute: AuthenticatedMainSocialRoute,
 }
 
-const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
+const AuthenticatedMainRouteWithChildren =
+  AuthenticatedMainRoute._addFileChildren(AuthenticatedMainRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedMainRoute: typeof AuthenticatedMainRouteWithChildren
+  AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
+  AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
+  AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
+  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedMainRoute: AuthenticatedMainRouteWithChildren,
+  AuthenticatedAccountPasswordRoute: AuthenticatedAccountPasswordRoute,
+  AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
+  AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
+  AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 interface authOnboardingRouteChildren {
   authOnboardingCategoryRoute: typeof authOnboardingCategoryRoute
@@ -546,7 +641,7 @@ const authSignupRouteWithChildren = authSignupRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MainRoute: MainRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   authByeRoute: authByeRoute,
   authLoginRoute: authLoginRoute,
   authOnboardingRoute: authOnboardingRouteWithChildren,

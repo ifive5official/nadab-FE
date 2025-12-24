@@ -15,7 +15,7 @@ import type { components } from "@/generated/api-types";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
-export const Route = createFileRoute("/_main")({
+export const Route = createFileRoute("/_authenticated")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
     const { accessToken, setAccessToken } = useAuthStore.getState();

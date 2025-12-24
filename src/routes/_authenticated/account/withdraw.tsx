@@ -8,7 +8,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "@/features/user/quries";
 import { useWithDrawMutation } from "@/features/auth/hooks/useWithDrawMutation";
 
-export const Route = createFileRoute("/_main/account/withdraw")({
+export const Route = createFileRoute("/_authenticated/account/withdraw")({
   component: RouteComponent,
 });
 
