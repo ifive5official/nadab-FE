@@ -8,7 +8,7 @@ import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
 import Toast from "@/components/Toast";
 import clsx from "clsx";
-import { defaultProfileImgUrl } from "@/constants/defaultprofileImgUrl";
+import ProfileImg from "@/components/ProfileImg";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -145,12 +145,7 @@ export default function ProfileImageUploader({
 
   return (
     <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
-      {!isUploading && (
-        <img
-          src={profileImgUrl || defaultProfileImgUrl}
-          className="h-16 w-16 rounded-full object-cover"
-        />
-      )}
+      {!isUploading && <ProfileImg width={64} src={profileImgUrl} />}
       {isUploading && (
         <div className="bg-neutral-300 h-16 w-16 rounded-full animate-pulse" />
       )}

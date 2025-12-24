@@ -2,7 +2,28 @@ import { motion } from "motion/react";
 import { useRouter } from "@tanstack/react-router";
 import { ArrowLeftIcon, MenuIcon } from "./Icons";
 import useSidebarStore from "@/store/sidebarStore";
+import { ColoredTextLogo } from "./Logos";
+import ProfileImg from "./ProfileImg";
 
+type MainHeaderProps = {
+  profileImgUrl: string | undefined;
+};
+
+export function MainHeader({ profileImgUrl }: MainHeaderProps) {
+  const openSidebar = useSidebarStore.use.openSidebar();
+  return (
+    // 음수 마진으로 본문 패딩 무시
+    <header className="flex items-center gap-gap-x-m z-1 relative text-center -mx-padding-x-m p-padding-y-s bg-surface-base border-b border-b-border-base text-label-l text-text-secondary">
+      <ColoredTextLogo width={54.3} />
+      <button onClick={openSidebar} className="ml-auto">
+        <MenuIcon />
+      </button>
+      <button>
+        <ProfileImg width={32} src={profileImgUrl} />
+      </button>
+    </header>
+  );
+}
 // 뒤로가기 버튼과 타이틀이 있는 헤더
 type SubHeaderProps = {
   showBackButton?: boolean;
