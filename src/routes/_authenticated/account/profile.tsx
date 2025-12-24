@@ -11,7 +11,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "@/features/user/quries";
 import { useDeleteProfileMutation } from "@/features/user/hooks/useDeleteProfileImageMutation";
 
-export const Route = createFileRoute("/_main/account/profile")({
+export const Route = createFileRoute("/_authenticated/account/profile")({
   component: RouteComponent,
 });
 

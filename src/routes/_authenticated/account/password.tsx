@@ -12,7 +12,7 @@ import { useState } from "react";
 import Modal from "@/components/Modal";
 import { CircleCheckFilledIcon } from "@/components/Icons";
 
-export const Route = createFileRoute("/_main/account/password")({
+export const Route = createFileRoute("/_authenticated/account/password")({
   component: RouteComponent,
 });
 
