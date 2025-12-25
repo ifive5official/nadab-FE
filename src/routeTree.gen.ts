@@ -18,7 +18,9 @@ import { Route as authPasswordRouteImport } from './routes/(auth)/password'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authByeRouteImport } from './routes/(auth)/bye'
+import { Route as AuthenticatedTodayIndexRouteImport } from './routes/_authenticated/today/index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
+import { Route as AuthenticatedTodayWriteRouteImport } from './routes/_authenticated/today/write'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
 import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
 import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_authenticated/account/password'
@@ -80,12 +82,22 @@ const authByeRoute = authByeRouteImport.update({
   path: '/bye',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTodayIndexRoute = AuthenticatedTodayIndexRouteImport.update({
+  id: '/today/',
+  path: '/today/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAccountIndexRoute =
   AuthenticatedAccountIndexRouteImport.update({
     id: '/account/',
     path: '/account/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedTodayWriteRoute = AuthenticatedTodayWriteRouteImport.update({
+  id: '/today/write',
+  path: '/today/write',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAccountWithdrawRoute =
   AuthenticatedAccountWithdrawRouteImport.update({
     id: '/account/withdraw',
@@ -202,7 +214,9 @@ export interface FileRoutesByFullPath {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/today': typeof AuthenticatedTodayIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -229,7 +243,9 @@ export interface FileRoutesByTo {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/today': typeof AuthenticatedTodayIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRoutesById {
@@ -259,7 +275,9 @@ export interface FileRoutesById {
   '/_authenticated/account/password': typeof AuthenticatedAccountPasswordRoute
   '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/_authenticated/today/write': typeof AuthenticatedTodayWriteRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
+  '/_authenticated/today/': typeof AuthenticatedTodayIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
 export interface FileRouteTypes {
@@ -288,7 +306,9 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/today/write'
     | '/account'
+    | '/today'
     | '/auth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -315,7 +335,9 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/today/write'
     | '/account'
+    | '/today'
     | '/auth/$provider/callback'
   id:
     | '__root__'
@@ -344,7 +366,9 @@ export interface FileRouteTypes {
     | '/_authenticated/account/password'
     | '/_authenticated/account/profile'
     | '/_authenticated/account/withdraw'
+    | '/_authenticated/today/write'
     | '/_authenticated/account/'
+    | '/_authenticated/today/'
     | '/(auth)/auth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
@@ -425,11 +449,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authByeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/today/': {
+      id: '/_authenticated/today/'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof AuthenticatedTodayIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/': {
       id: '/_authenticated/account/'
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/today/write': {
+      id: '/_authenticated/today/write'
+      path: '/today/write'
+      fullPath: '/today/write'
+      preLoaderRoute: typeof AuthenticatedTodayWriteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/withdraw': {
@@ -574,7 +612,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
   AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
+  AuthenticatedTodayWriteRoute: typeof AuthenticatedTodayWriteRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+  AuthenticatedTodayIndexRoute: typeof AuthenticatedTodayIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -582,7 +622,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountPasswordRoute: AuthenticatedAccountPasswordRoute,
   AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
+  AuthenticatedTodayWriteRoute: AuthenticatedTodayWriteRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+  AuthenticatedTodayIndexRoute: AuthenticatedTodayIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -5,6 +5,10 @@
   font-family: Pretendard, -apple-system;
 }
 
+body {
+  color: var(--color-text-primary);
+}
+
 @layer base {
   /* 디폴트 버튼 스타일 */
   button {
