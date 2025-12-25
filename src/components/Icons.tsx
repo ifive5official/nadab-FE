@@ -143,11 +143,11 @@ export function ChevronLeftIcon() {
   );
 }
 
-export function ChevronRightIcon() {
+export function ChevronRightIcon({ size = 24 }: { size?: number }) {
   return (
     <svg
-      width="24"
-      height="24"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -811,6 +811,24 @@ export function NoticeMenuIcon() {
         clipRule="evenodd"
         d="M20 10.75C20 9.46421 19.0358 8.5 17.75 8.5V7C19.8642 7 21.5 8.63579 21.5 10.75C21.5 12.8642 19.8642 14.5 17.75 14.5V13C19.0358 13 20 12.0358 20 10.75Z"
         fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+// 홈 ===================
+export function DayCheckIcon() {
+  return (
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 38 38"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19 0C8.52409 0 0 8.52409 0 19C0 29.4759 8.52409 38 19 38C29.4759 38 38 29.4759 38 19C38 8.52409 29.4759 0 19 0ZM16.0792 27.2063L9.13382 20.1642L11.5935 17.7391L16.0982 22.3077L26.4169 12.0184L28.8558 14.4642L16.0792 27.2063Z"
+        fill="var(--color-icon-primary)"
       />
     </svg>
   );
