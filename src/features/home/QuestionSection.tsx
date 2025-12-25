@@ -2,6 +2,7 @@
 import ProfileImg from "@/components/ProfileImg";
 import BlockButton from "@/components/BlockButton";
 import clsx from "clsx";
+import { Link } from "@tanstack/react-router";
 
 export default function QuestionSection() {
   const friends = Array(7).fill(0); // 임시
@@ -12,12 +13,8 @@ export default function QuestionSection() {
   return (
     <section className="-mx-padding-x-m px-padding-x-m py-padding-y-xl bg-surface-layer-2">
       <div className="flex flex-col gap-gap-y-l">
-        <div
-          className={
-            "w-fit text-caption-m rounded-3xl border px-padding-x-xs py-padding-y-xxs text-brand-primary border-brand-primary"
-          }
-        >
-          08 : 00 AM
+        <div className="w-fit text-caption-m rounded-3xl border px-padding-x-xs py-padding-y-xxs text-brand-primary border-brand-primary">
+          오늘의 질문
         </div>
         <h2 className="text-title-1">
           가나다라님의
@@ -52,7 +49,9 @@ export default function QuestionSection() {
           )}
         >
           <BlockButton variant="tertiary">새로운 질문 받기</BlockButton>
-          <BlockButton>쓰러가기</BlockButton>
+          <Link to="/today" className="block w-full">
+            <BlockButton>쓰러가기</BlockButton>
+          </Link>
         </div>
       </div>
     </section>

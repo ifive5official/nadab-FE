@@ -833,3 +833,26 @@ export function DayCheckIcon() {
     </svg>
   );
 }
+
+// 글쓰기 ==================
+export function ChatVerificationReceptionIcon({
+  className,
+}: {
+  className?: string;
+}) {
+  return (
+    <svg
+      width="8"
+      height="15"
+      viewBox="0 0 8 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M0.648615 0.00353634C0.188615 -0.0464637 -0.151385 0.443536 0.0686152 0.853536C1.70862 3.87354 2.56862 8.33354 3.01862 13.3735C3.51862 18.9435 7.51862 3.94354 7.51862 3.94354C7.51862 3.94354 4.96862 0.533536 0.648615 0.00353634Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
