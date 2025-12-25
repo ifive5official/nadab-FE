@@ -7,6 +7,7 @@ import { useState } from "react";
 import useOnboardingStore from "@/store/onboardingStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
+import QuestionBadge from "@/components/QuestionBadge";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,
@@ -51,7 +52,6 @@ function Category() {
         </div>
         <ul className="flex-1 my-padding-y-m grid grid-cols-2 gap-x-padding-x-m gap-y-padding-y-m min-h-0 overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {items.map((item, i) => {
-            const Icon = item.icon;
             return (
               <li
                 onClick={() => {
@@ -80,10 +80,7 @@ function Category() {
                   }
                 )}
               >
-                <div className="px-padding-x-s py-padding-y-xs flex items-center gap-x-gap-x-xs bg-surface-base border border-button-tertiary-border-default text-text-primary rounded-lg">
-                  <Icon />
-                  <p className="text-label-l">{item.title}</p>
-                </div>
+                <QuestionBadge category={item.title} height={36.4} />
                 <p className="text-text-primary text-body-2">
                   {item.description}
                 </p>

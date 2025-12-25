@@ -1,7 +1,7 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
 import { ChatVerificationReceptionIcon } from "@/components/Icons";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 // Todo: 라우팅 구조 변경
 export const Route = createFileRoute("/_authenticated/today/")({
@@ -31,7 +31,9 @@ function RouteComponent() {
           </div>
         </div>
         <div className="px-padding-x-m">
-          <BlockButton className="mb-padding-x-m">답변하기</BlockButton>
+          <Link to="/today/write">
+            <BlockButton className="mb-padding-x-m">답변하기</BlockButton>
+          </Link>
         </div>
       </main>
     </>

@@ -15,6 +15,7 @@ export const Route = createFileRoute("/")({
   // Todo: 중복 코드 제거
   beforeLoad: async ({ context }) => {
     const { accessToken, setAccessToken } = useAuthStore.getState();
+    let currentToken = accessToken;
     if (!accessToken) {
       try {
         const res = await api.post<ApiResponse<TokenRes>>(
@@ -22,12 +23,13 @@ export const Route = createFileRoute("/")({
         );
         const newAccessToken = res.data.data?.accessToken ?? null;
         setAccessToken(newAccessToken!);
+        currentToken = newAccessToken;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // 아무 처리 안 함
       }
     }
-    if (accessToken) {
+    if (currentToken) {
       try {
         const user = await context.queryClient.ensureQueryData({
           queryKey: ["currentUser"],

@@ -5,7 +5,7 @@ import {
   UsersFilledIcon,
   HeartFilledIcon,
   BookOpenedFilledIcon,
-  MoonFilledIcon,
+  // MoonFilledIcon,
 } from "@/components/Icons";
 
 type Category = {
@@ -34,12 +34,12 @@ const categories: Category[] = [
     title: "루틴",
     description: "나의 일상 규칙과 에너지에 대해 들여다봐요",
   },
-  {
-    icon: MoonFilledIcon,
-    code: "DREAM",
-    title: "꿈",
-    description: "앞으로 어떤 삶을 살고 싶은지 그려봐요",
-  },
+  // {
+  //   icon: MoonFilledIcon,
+  //   code: "DREAM",
+  //   title: "꿈",
+  //   description: "앞으로 어떤 삶을 살고 싶은지 그려봐요",
+  // },
   {
     icon: UsersFilledIcon,
     code: "RELATIONSHIP",
