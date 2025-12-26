@@ -1,12 +1,18 @@
 import { SubHeader } from "@/components/Headers";
 import StepTitle from "@/features/auth/StepTitle";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useBlocker } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(auth)/bye")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  useBlocker({
+    shouldBlockFn: ({ action }) => {
+      return action === "BACK";
+    },
+  });
+
   return (
     <div>
       <SubHeader showBackButton={false} showMenuButton={false}>

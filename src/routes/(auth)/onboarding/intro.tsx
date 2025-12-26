@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 import BlockButton from "@/components/BlockButton";
 import { LeftCarousel, RightCarousel } from "@/components/Carousels";
 import clsx from "clsx";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useBlocker } from "@tanstack/react-router";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useOnboardingStore from "@/store/onboardingStore";
 
@@ -21,6 +21,12 @@ export const Route = createFileRoute("/(auth)/onboarding/intro")({
 });
 
 function FeatureDescription() {
+  useBlocker({
+    shouldBlockFn: ({ action }) => {
+      return action === "BACK";
+    },
+  });
+
   // Todo: 시간 날 때 이미지 처리하지 말고 직접 만들자....
   const contents = [
     {
