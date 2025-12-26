@@ -13,9 +13,8 @@ export function QuestionSection() {
           {formatDate(new Date())}
         </span>
       </div>
-      <h2 className="text-title-2">
-        당신의 가장 어두운 면을 아는 사람 앞에서, 당신은 여전히 그 면을 숨기려
-        하나요 아니면 온전히 받아들여졌다고 느끼나요?
+      <h2 className="text-title-2 break-keep">
+        인생의 마지막 날, 되돌아본다면 나에게 어떤 말을 할까요?
       </h2>
     </div>
   );

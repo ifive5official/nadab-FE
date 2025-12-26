@@ -2,6 +2,8 @@ import { EmotionBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
 import { QuestionSection } from "@/features/today/QuestionSection";
+import { currentUserOptions } from "@/features/user/quries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useBlocker } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/today/report")({
@@ -16,6 +18,8 @@ function RouteComponent() {
     },
   });
 
+  const { data: currentUser } = useSuspenseQuery(currentUserOptions);
+
   return (
     <>
       <SubHeader showBackButton={false}>오늘의 분석</SubHeader>
@@ -26,7 +30,7 @@ function RouteComponent() {
           <div>
             <EmotionBadge emotion="기쁨" />
             <p className="text-title-2 mt-gap-y-s mb-margin-y-l">
-              오늘의 기록 속 가나다라님은
+              오늘의 기록 속 {currentUser.nickname}님은
             </p>
             {/* eslint-disable react/no-unescaped-entities */}
             <div>

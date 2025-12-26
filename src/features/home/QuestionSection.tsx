@@ -16,9 +16,8 @@ export default function QuestionSection() {
         <div className="w-fit text-caption-m rounded-3xl border px-padding-x-xs py-padding-y-xxs text-brand-primary border-brand-primary">
           오늘의 질문
         </div>
-        <h2 className="text-title-1">
-          가나다라님의
-          <br /> 설렘의 순간은 언제였나요?
+        <h2 className="text-title-1 break-keep">
+          인생의 마지막 날, 되돌아본다면 나에게 어떤 말을 할까요?
         </h2>
         {hasFriends && (
           <div className="mt-margin-y-xxl mb-gap-y-xl flex flex-col gap-gap-y-s">
