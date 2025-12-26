@@ -13,6 +13,12 @@ import ProfileImg from "./ProfileImg";
 import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import type { ApiResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
+
+type CrystalsRes = components["schemas"]["WalletBalanceResponse"];
 
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
@@ -21,6 +27,18 @@ type MainHeaderProps = {
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["crystals", "currentUser"],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<CrystalsRes>>(
+        "/api/v1/wallet/balance"
+      );
+      return res.data.data!;
+    },
+    // Todo: 에러 처리
+  });
+  const crystals = data?.crystalBalance ?? 0;
+
   return (
     <>
       {/* 음수 마진으로 본문 패딩 무시 */}
@@ -41,6 +59,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         <AccountMenu
           isOpen={isAccountMenuOpen}
           onClose={() => setIsAccountMenuOpen(false)}
+          crystals={crystals}
         />
       </header>
     </>
@@ -51,8 +70,9 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
 type AccountMenuProps = {
   isOpen: boolean;
   onClose: () => void;
+  crystals: number;
 };
-function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
+function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
   const logoutMutation = useLogoutMutation();
   return (
     <>
@@ -68,7 +88,7 @@ function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                 </span>
                 <div className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs">
                   <GemFilledIcon />
-                  <span className="text-caption-s">100</span>
+                  <span className="text-caption-s">{crystals}</span>
                 </div>
               </div>
               <nav className="contents">
