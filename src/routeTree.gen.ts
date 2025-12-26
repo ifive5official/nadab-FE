@@ -21,6 +21,7 @@ import { Route as authByeRouteImport } from './routes/(auth)/bye'
 import { Route as AuthenticatedTodayIndexRouteImport } from './routes/_authenticated/today/index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedTodayWriteRouteImport } from './routes/_authenticated/today/write'
+import { Route as AuthenticatedTodayReportRouteImport } from './routes/_authenticated/today/report'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
 import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
 import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_authenticated/account/password'
@@ -98,6 +99,12 @@ const AuthenticatedTodayWriteRoute = AuthenticatedTodayWriteRouteImport.update({
   path: '/today/write',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedTodayReportRoute =
+  AuthenticatedTodayReportRouteImport.update({
+    id: '/today/report',
+    path: '/today/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountWithdrawRoute =
   AuthenticatedAccountWithdrawRouteImport.update({
     id: '/account/withdraw',
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/today': typeof AuthenticatedTodayIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesByTo {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/today': typeof AuthenticatedTodayIndexRoute
@@ -275,6 +284,7 @@ export interface FileRoutesById {
   '/_authenticated/account/password': typeof AuthenticatedAccountPasswordRoute
   '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/_authenticated/today/report': typeof AuthenticatedTodayReportRoute
   '/_authenticated/today/write': typeof AuthenticatedTodayWriteRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/today/': typeof AuthenticatedTodayIndexRoute
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/today/report'
     | '/today/write'
     | '/account'
     | '/today'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/today/report'
     | '/today/write'
     | '/account'
     | '/today'
@@ -366,6 +378,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/password'
     | '/_authenticated/account/profile'
     | '/_authenticated/account/withdraw'
+    | '/_authenticated/today/report'
     | '/_authenticated/today/write'
     | '/_authenticated/account/'
     | '/_authenticated/today/'
@@ -468,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/today/write'
       fullPath: '/today/write'
       preLoaderRoute: typeof AuthenticatedTodayWriteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/today/report': {
+      id: '/_authenticated/today/report'
+      path: '/today/report'
+      fullPath: '/today/report'
+      preLoaderRoute: typeof AuthenticatedTodayReportRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/withdraw': {
@@ -612,6 +632,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
   AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
+  AuthenticatedTodayReportRoute: typeof AuthenticatedTodayReportRoute
   AuthenticatedTodayWriteRoute: typeof AuthenticatedTodayWriteRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
   AuthenticatedTodayIndexRoute: typeof AuthenticatedTodayIndexRoute
@@ -622,6 +643,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountPasswordRoute: AuthenticatedAccountPasswordRoute,
   AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
+  AuthenticatedTodayReportRoute: AuthenticatedTodayReportRoute,
   AuthenticatedTodayWriteRoute: AuthenticatedTodayWriteRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
   AuthenticatedTodayIndexRoute: AuthenticatedTodayIndexRoute,
