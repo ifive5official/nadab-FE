@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
 import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
-import { ColoredMainLogo, ColoredTextLogo } from "@/components/Logos";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
@@ -41,9 +40,15 @@ export function LandingPage() {
     <div className="w-full h-[calc(100svh-var(--spacing-padding-y-m))] -mt-header-height pt-padding-y-m flex flex-col items-center">
       {/* 위 절반 */}
       <div className="flex-1 flex flex-col justify-center items-center">
-        <ColoredMainLogo style={{ height: `${(104.5 / 796) * 100}dvh` }} />
+        <img
+          src="/mainLogo.png"
+          className="h-[calc((104.5/796)*100dvh)] w-auto"
+        />
         <div className="mt-padding-y-xxl mb-margin-y-m">
-          <ColoredTextLogo style={{ height: `${(30.4 / 796) * 100}dvh` }} />
+          <img
+            src="/textLogo.png"
+            className="h-[calc((30.4/796)*100dvh)] w-auto"
+          />
         </div>
         <p className="text-label-m text-brand-primary-alpha-60">
           나에게 답하다

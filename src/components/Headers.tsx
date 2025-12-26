@@ -7,7 +7,6 @@ import {
   MyPageMenuIcon,
 } from "./Icons";
 import useSidebarStore from "@/store/sidebarStore";
-import { ColoredTextLogo } from "./Logos";
 import ProfileImg from "./ProfileImg";
 import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
@@ -49,7 +48,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
           "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
         )}
       >
-        <ColoredTextLogo width={54.3} />
+        <img src="/textLogo.png" className="w-[54.3px]" />
         <button onClick={openSidebar} className="ml-auto">
           <MenuIcon />
         </button>
