@@ -2,7 +2,6 @@ import { motion } from "motion/react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
-  GemFilledIcon,
   LogoutMenuIcon,
   MenuIcon,
   MyPageMenuIcon,
@@ -17,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
+import { CrystalBadge } from "./Badges";
 
 type CrystalsRes = components["schemas"]["WalletBalanceResponse"];
 
@@ -86,10 +86,7 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
                 <span className="text-caption-s text-text-tertiary">
                   크리스탈 개수
                 </span>
-                <div className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs">
-                  <GemFilledIcon />
-                  <span className="text-caption-s">{crystals}</span>
-                </div>
+                <CrystalBadge crystals={crystals} />
               </div>
               <nav className="contents">
                 <Link to="/account">

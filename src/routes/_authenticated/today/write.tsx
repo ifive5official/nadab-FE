@@ -1,8 +1,10 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
-import QuestionBadge from "@/components/QuestionBadge";
+import { PlusIcon } from "@/components/Icons";
+import Modal from "@/components/Modal";
+import { QuestionBadge, CrystalBadge } from "@/components/Badges";
 import { formatDate } from "@/lib/formatDate";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
@@ -10,7 +12,10 @@ export const Route = createFileRoute("/_authenticated/today/write")({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const [answer, setAnswer] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
@@ -46,8 +51,34 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
-        <BlockButton disabled={!answer.trim()}>완료</BlockButton>
+        <BlockButton
+          disabled={!answer.trim()}
+          onClick={() => setIsModalOpen(true)}
+        >
+          완료
+        </BlockButton>
       </main>
+      <Modal
+        title={`오늘의 답변으로\n크리스탈을 획득했어요.`}
+        icon={() => (
+          <div className="flex items-center mb-margin-y-s">
+            <PlusIcon />
+            <CrystalBadge height={32.5} crystals={10} />
+          </div>
+        )}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        buttons={[
+          {
+            label: "홈으로",
+            onClick: () => navigate({ to: "/" }),
+          },
+          {
+            label: "분석보기",
+            onClick: () => navigate({ to: "/" }),
+          },
+        ]}
+      />
     </>
   );
 }

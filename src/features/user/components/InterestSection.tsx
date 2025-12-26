@@ -2,7 +2,7 @@
 import { Section } from "@/features/user/components/AccountSectionComponents";
 import initialCategories from "@/constants/categories";
 import type { CurrentUser } from "@/types/currentUser";
-import QuestionBadge from "@/components/QuestionBadge";
+import { QuestionBadge } from "@/components/Badges";
 
 type Props = {
   currentUser: CurrentUser;

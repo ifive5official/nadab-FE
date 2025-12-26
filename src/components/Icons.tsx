@@ -499,6 +499,31 @@ export function CloseBigIcon() {
   );
 }
 
+export function PlusIcon() {
+  return (
+    <svg
+      width="25"
+      height="25"
+      viewBox="0 0 25 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6 11.5125H18.6V13.0875H6V11.5125Z"
+        fill="var(--color-icon-default)"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M13.0875 6V18.6H11.5125V6H13.0875Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}
+
 // 헤더===========================
 export function ArrowLeftIcon() {
   return (
