@@ -5,7 +5,7 @@ import BlockButton from "./BlockButton";
 
 type Props = {
   isOpen: boolean;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: React.ComponentType;
   title: string;
   children?: React.ReactNode; // 콘텐츠
   buttons: Button[];
@@ -31,6 +31,9 @@ Props) {
     } else {
       document.body.style.overflow = "";
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   return createPortal(
@@ -54,7 +57,9 @@ Props) {
           >
             <div className="flex flex-col items-center gap-margin-y-s">
               <Icon />
-              <p className="text-label-l">{title}</p>
+              <p className="text-label-l whitespace-pre-line text-center">
+                {title}
+              </p>
               <p className="text-caption-m">{children}</p>
             </div>
             <div className="w-full flex gap-gap-x-s mt-gap-y-xl">

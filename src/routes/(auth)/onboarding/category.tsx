@@ -7,7 +7,7 @@ import { useState } from "react";
 import useOnboardingStore from "@/store/onboardingStore";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
-import QuestionBadge from "@/components/QuestionBadge";
+import { QuestionBadge } from "@/components/Badges";
 
 export const Route = createFileRoute("/(auth)/onboarding/category")({
   component: Category,

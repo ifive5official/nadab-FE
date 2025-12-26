@@ -17,16 +17,19 @@ function RouteComponent() {
         <div className="relative mt-header-height flex-1 flex flex-col gap-margin-y-xxl justify-center items-center">
           <div className="text-center">
             <p className="text-label-l text-text-secondary">가나다라님의</p>
-            <p className="text-title-1">설렘의 순간은 언제였나요?</p>
+            <p className="text-title-1 break-keep">
+              인생의 마지막 날, 되돌아본다면 나에게 어떤 말을 할까요?
+            </p>
           </div>
           <div className="flex flex-col gap-gap-y-xl">
-            <SpeechBalloon>설렘이란 뭘까요?</SpeechBalloon>
             <SpeechBalloon>
-              굳이 인생 최고의 순간일 필요는 없어요.
+              미래에 지금의 나를 되돌아본다면 해주고 싶은 말이 분명 있을거에요.
             </SpeechBalloon>
             <SpeechBalloon>
-              플레이리스트에서 좋은 노래를 발견했을 때처럼 최근 설렜던 순간을
-              꺼내봐요!
+              지나온 시간에서 가장 가치 있는 것을 골라보세요.
+            </SpeechBalloon>
+            <SpeechBalloon>
+              그 대답 속에 담긴 내 진짜 마음은 무엇인가요?
             </SpeechBalloon>
           </div>
         </div>

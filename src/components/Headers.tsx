@@ -2,17 +2,22 @@ import { motion } from "motion/react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
-  GemFilledIcon,
   LogoutMenuIcon,
   MenuIcon,
   MyPageMenuIcon,
 } from "./Icons";
 import useSidebarStore from "@/store/sidebarStore";
-import { ColoredTextLogo } from "./Logos";
 import ProfileImg from "./ProfileImg";
 import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import type { ApiResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
+import { CrystalBadge } from "./Badges";
+
+type CrystalsRes = components["schemas"]["WalletBalanceResponse"];
 
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
@@ -21,6 +26,18 @@ type MainHeaderProps = {
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["crystals", "currentUser"],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<CrystalsRes>>(
+        "/api/v1/wallet/balance"
+      );
+      return res.data.data!;
+    },
+    // Todo: 에러 처리
+  });
+  const crystals = data?.crystalBalance ?? 0;
+
   return (
     <>
       {/* 음수 마진으로 본문 패딩 무시 */}
@@ -31,7 +48,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
           "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
         )}
       >
-        <ColoredTextLogo width={54.3} />
+        <img src="/textLogo.png" className="w-[54.3px]" />
         <button onClick={openSidebar} className="ml-auto">
           <MenuIcon />
         </button>
@@ -41,6 +58,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         <AccountMenu
           isOpen={isAccountMenuOpen}
           onClose={() => setIsAccountMenuOpen(false)}
+          crystals={crystals}
         />
       </header>
     </>
@@ -51,8 +69,9 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
 type AccountMenuProps = {
   isOpen: boolean;
   onClose: () => void;
+  crystals: number;
 };
-function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
+function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
   const logoutMutation = useLogoutMutation();
   return (
     <>
@@ -66,10 +85,7 @@ function AccountMenu({ isOpen, onClose }: AccountMenuProps) {
                 <span className="text-caption-s text-text-tertiary">
                   크리스탈 개수
                 </span>
-                <div className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs">
-                  <GemFilledIcon />
-                  <span className="text-caption-s">100</span>
-                </div>
+                <CrystalBadge crystals={crystals} />
               </div>
               <nav className="contents">
                 <Link to="/account">

@@ -1,33 +1,27 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
-import QuestionBadge from "@/components/QuestionBadge";
-import { formatDate } from "@/lib/formatDate";
-import { createFileRoute } from "@tanstack/react-router";
+import { PlusIcon } from "@/components/Icons";
+import Modal from "@/components/Modal";
+import { CrystalBadge } from "@/components/Badges";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { QuestionSection } from "@/features/today/QuestionSection";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const [answer, setAnswer] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
       <main className="flex flex-col h-full">
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
-          <div className="flex flex-col gap-gap-y-s">
-            <div className="flex justify-between">
-              <QuestionBadge category="취향" />
-              <span className="text-caption-s text-text-tertiary">
-                {formatDate(new Date())}
-              </span>
-            </div>
-            <h2 className="text-title-2">
-              당신의 가장 어두운 면을 아는 사람 앞에서, 당신은 여전히 그 면을
-              숨기려 하나요 아니면 온전히 받아들여졌다고 느끼나요?
-            </h2>
-          </div>
+          <QuestionSection />
           <div>
             <div className="border-b border-interactive-border-default" />
             <textarea
@@ -46,8 +40,34 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
-        <BlockButton disabled={!answer.trim()}>완료</BlockButton>
+        <BlockButton
+          disabled={!answer.trim()}
+          onClick={() => setIsModalOpen(true)}
+        >
+          완료
+        </BlockButton>
       </main>
+      <Modal
+        title={`오늘의 답변으로\n크리스탈을 획득했어요.`}
+        icon={() => (
+          <div className="flex items-center mb-margin-y-s">
+            <PlusIcon />
+            <CrystalBadge height={32.5} crystals={10} />
+          </div>
+        )}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        buttons={[
+          {
+            label: "홈으로",
+            onClick: () => navigate({ to: "/" }),
+          },
+          {
+            label: "분석보기",
+            onClick: () => navigate({ to: "/today/report" }),
+          },
+        ]}
+      />
     </>
   );
 }
