@@ -15,7 +15,11 @@ function RouteComponent() {
 
   return (
     <div>
-      <SubHeader showBackButton={false} showMenuButton={false}>
+      <SubHeader
+        showBackButton={false}
+        showMenuButton={false}
+        showCloseButton={true}
+      >
         탈퇴완료
       </SubHeader>
       <div className="flex flex-col gap-gap-y-l py-padding-y-m">

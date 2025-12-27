@@ -78,6 +78,7 @@ function Profile() {
         />
         <div className="flex flex-col py-padding-y-m gap-gap-y-l">
           <InputFieldWithButton
+            placeholder="닉네임을 입력해주세요."
             value={nickname}
             onChange={(e) => {
               setIsNicknameOk(false);

@@ -104,6 +104,7 @@ function RouteComponent() {
               placeholder={currentUser.email}
             />
             <InputFieldWithButton
+              placeholder="닉네임을 입력해주세요."
               value={nickname}
               onChange={(e) => {
                 setIsNicknameOk(false);

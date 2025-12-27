@@ -32,7 +32,7 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
         onEmailInvalid?.("이미 가입한 회원이에요.");
       } else if (err.response?.status === 404) {
         // 비밀번호 변경 시
-        onEmailInvalid?.("해당 이메일로 가입된 계정이 없습니다.");
+        onEmailInvalid?.("해당 이메일로 가입한 계정이 없어요.");
       } else if (
         err.response?.status === 400 &&
         verificationType === "PASSWORD_RESET"

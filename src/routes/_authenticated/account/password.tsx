@@ -150,7 +150,7 @@ export function RouteComponent() {
       <Modal
         isOpen={isModalOpen}
         icon={CircleCheckFilledIcon}
-        title={`비밀번호 변경에\n성공했어요!`}
+        title={`비밀번호 변경에\n성공했어요.`}
         buttons={[
           {
             label: "확인",

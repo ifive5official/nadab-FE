@@ -85,7 +85,7 @@ function EmailVerification() {
       <StepTitle>
         메일로 전송된
         <br />
-        인증번호 6자리를 입력해 주세요
+        인증번호 6자리를 입력해 주세요.
       </StepTitle>
       <div className="flex flex-col gap-gap-y-l">
         <OtpInput
@@ -103,7 +103,7 @@ function EmailVerification() {
               .padStart(2, "0")}
             :{(timeLeft % 60).toString().padStart(2, "0")}
           </span>{" "}
-          내에 입력해주세요
+          내에 입력해주세요.
         </p>
       </div>
 
