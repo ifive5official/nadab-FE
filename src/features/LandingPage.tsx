@@ -105,7 +105,7 @@ export function LandingPage() {
           </Link>
           <p className="text-center text-label-s text-text-tertiary">
             가입을 진행할 경우, 이용약관과 개인정보 수집 및 이용
-            <br />에 대해 동의한 것으로 간주됩니다.
+            <br />에 대해 동의한 것으로 간주돼요.
           </p>
         </div>
       </div>

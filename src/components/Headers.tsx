@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
+  CloseIcon,
   LogoutMenuIcon,
   MenuIcon,
   MyPageMenuIcon,
@@ -114,12 +115,14 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
 type SubHeaderProps = {
   showBackButton?: boolean;
   showMenuButton?: boolean;
+  showCloseButton?: boolean;
   children: React.ReactNode;
 };
 
 export function SubHeader({
   showBackButton = true,
   showMenuButton = true,
+  showCloseButton = false,
   children,
 }: SubHeaderProps) {
   const router = useRouter();
@@ -148,6 +151,11 @@ export function SubHeader({
         <button className="absolute right-padding-x-s" onClick={openSidebar}>
           <MenuIcon />
         </button>
+      )}
+      {showCloseButton && (
+        <Link className="absolute right-padding-x-s" to="/">
+          <CloseIcon />
+        </Link>
       )}
     </header>
   );

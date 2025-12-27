@@ -45,18 +45,20 @@ function RouteComponent() {
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
-      setToastMessage("관심 주제 변경이 완료되었습니다.");
+      setToastMessage("관심 주제 변경이 완료되었어요.");
       setIsToastOpen(true);
     },
   });
   const toggleNotificationMutation = useToggleNotificationMutation({
     onSuccess: (newSetting: boolean) => {
       if (newSetting) {
-        setToastMessage("알림이 설정되었습니다.");
+        setToastMessage("알림이 설정되었어요.");
         setIsToastOpen(true);
       }
     },
   });
+
+  // Todo: 알림 시간 변경 시 완료 토스트 띄우기
 
   return (
     <div>

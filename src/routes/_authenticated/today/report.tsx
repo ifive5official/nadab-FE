@@ -29,16 +29,25 @@ function RouteComponent() {
           <div className="border-b border-interactive-border-default" />
           <div>
             <EmotionBadge emotion="기쁨" />
-            <p className="text-title-2 mt-gap-y-s mb-margin-y-l">
+            <p className="text-title-2 mt-gap-y-s mb-gap-y-l">
               오늘의 기록 속 {currentUser.nickname}님은
             </p>
-            {/* eslint-disable react/no-unescaped-entities */}
-            <div>
-              오늘의 이야기는 그 영광이 단순히 '결과'가 아니라, 수많은 고민과
-              노력을 거쳐 '나는 해낼 수 있다'는 믿음을 스스로 증명해낸 '과정' 그
-              자체였음을 보여줘요. 당신 안에 잠재된 힘을 다시 한번 발견한 소중한
-              기록입니다. 이 기록은 미래의 당신과 연결될 첫 번째 조각이 될
-              거예요.오늘의 이야기는 그 영광이 단순히 '결과'가 아니라,
+            <div className="flex flex-col gap-gap-y-m">
+              <p className="w-fit px-padding-x-s py-padding-y-m font-medium text-[13px]/[160%] text-text-secondary bg-[#FFEF91]/14 rounded-2xl">
+                우리는 변화를 원하지만 정작 실천에 옮기는 것에는 서툴어요.
+              </p>
+              <p className="w-fit px-padding-x-s py-padding-y-m font-medium text-[13px]/[160%] text-text-secondary bg-[#FFEF91]/14 rounded-2xl">
+                거창한 계획보다는 지금 당장 할 수 있는 작은 일부터 찾아보는 것이
+                중요해요.
+              </p>
+              <p className="w-fit px-padding-x-s py-padding-y-m font-medium text-[13px]/[160%] text-text-secondary bg-[#FFEF91]/14 rounded-2xl">
+                작은 성공의 경험이 쌓여야 결국 큰 목표를 이룰 수 있는 힘이
+                생기기 때문이에요.
+              </p>
+              <p className="w-fit px-padding-x-s py-padding-y-m font-medium text-[13px]/[160%] text-text-secondary bg-[#FFEF91]/14 rounded-2xl">
+                오늘부터 나만의 작은 루틴을 만들어 하나씩 실천해 보는 것은
+                어떨까요?
+              </p>
             </div>
           </div>
         </div>

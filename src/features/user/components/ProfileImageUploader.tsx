@@ -183,7 +183,7 @@ export default function ProfileImageUploader({
         isOpen={istoastopen}
         bottom="bottom-margin-y-xxxl"
         onClose={() => setIsToastOpen(false)}
-        message="프로필 사진이 추가되었습니다."
+        message="프로필 사진이 추가되었어요."
       />
     </div>
   );

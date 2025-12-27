@@ -191,14 +191,14 @@ function Terms() {
           <p className="text-label-s text-center text-text-tertiary">
             '선택' 항목에 동의를 해주시면
             <br />
-            나답이 매일 '오늘의 질문을 잊지 않도록 알려드릴게요!
+            나답이 매일 오늘의 질문을 잊지 않도록 알려드릴게요.
           </p>
           <p className="text-caption-s text-text-disabled text-center">
-            '선택' 항목에 동의하지 않아도 서비스 이용이 가능합니다.
+            '선택' 항목에 동의하지 않아도 서비스 이용이 가능해요.
             <br />
             개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있으며,
             <br />
-            동의 거부시 회원제 서비스 이용이 제한됩니다.
+            동의 거부시 회원제 서비스 이용이 제한돼요.
           </p>
         </div>
       </div>

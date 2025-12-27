@@ -45,7 +45,7 @@ function RouteComponent() {
           <CheckBox
             checked={hasConfirmed}
             onCheck={() => setHasConfirmed((prev) => !prev)}
-            label="모두 확인했어요"
+            label="모두 확인했어요."
           />
         </div>
         <BlockButton
@@ -68,7 +68,7 @@ function Item({ title, content }: Props) {
   return (
     <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1">
       <p className="text-label-l">{title}</p>
-      <p className="text-text-secondary break-keep whitespace-pre-line">
+      <p className="text-caption-m text-text-secondary break-keep whitespace-pre-line">
         {content}
       </p>
     </div>

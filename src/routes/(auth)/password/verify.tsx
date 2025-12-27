@@ -85,7 +85,7 @@ function Verify() {
       <StepTitle>
         메일로 전송된
         <br />
-        인증번호 6자리를 입력해 주세요
+        인증번호 6자리를 입력해 주세요.
       </StepTitle>
       <div className="flex flex-col gap-gap-y-l">
         <OtpInput
@@ -103,7 +103,7 @@ function Verify() {
               .padStart(2, "0")}
             :{(timeLeft % 60).toString().padStart(2, "0")}
           </span>{" "}
-          내에 입력해주세요
+          내에 입력해주세요.
         </p>
       </div>
 
@@ -111,7 +111,7 @@ function Verify() {
         isLoading={verifyCodeMutation.isPending}
         disabled={enteredCode.length !== 6}
       >
-        완료
+        다음
       </BlockButton>
       <p className="text-center text-label-m text-text-primary">
         인증번호가 오지 않았나요?{" "}

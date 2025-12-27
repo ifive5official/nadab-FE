@@ -58,7 +58,7 @@ function Reset() {
   return (
     <div>
       <div className="py-padding-y-m">
-        <StepTitle>비밀번호를 설정해주세요.</StepTitle>
+        <StepTitle>비밀번호를 재설정해주세요.</StepTitle>
       </div>
 
       <form
@@ -69,7 +69,7 @@ function Reset() {
         }}
       >
         <PasswordInputField
-          label="비밀번호"
+          label="새로운 비밀번호"
           id="password"
           name="password"
           onChange={(e) => {
@@ -84,7 +84,7 @@ function Reset() {
           error={passwordError}
         />
         <PasswordInputField
-          label="비밀번호 재확인"
+          label="새로운 비밀번호 재입력"
           id="confirmPassword"
           name="confirmPassword"
           onChange={(e) => onConfirmPasswordChange(e.target.value)}
@@ -116,7 +116,7 @@ function Reset() {
       <Modal
         isOpen={isModalOpen}
         icon={CircleCheckFilledIcon}
-        title={`비밀번호 변경에\n성공했어요!`}
+        title={`비밀번호 변경에\n성공했어요.`}
         buttons={[
           {
             label: "확인",

@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import clsx from "clsx";
-import { LoadingIcon, ShowIcon, SuccessIcon } from "./Icons";
+import { HideFilledIcon, LoadingIcon, ShowIcon, SuccessIcon } from "./Icons";
 
 type Props = {
   variant?: "basic";
@@ -68,7 +68,7 @@ export function PasswordInputField({ ...props }: Props) {
       type={isVisible ? "text" : "password"}
       rightElement={
         <button type="button" onClick={() => setIsVisible((prev) => !prev)}>
-          <ShowIcon />
+          {isVisible ? <HideFilledIcon /> : <ShowIcon />}
         </button>
       }
     />
