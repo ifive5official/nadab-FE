@@ -1,5 +1,6 @@
 import { EmotionBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
+import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { QuestionSection } from "@/features/today/QuestionSection";
 import { currentUserOptions } from "@/features/user/quries";
@@ -23,7 +24,7 @@ function RouteComponent() {
   return (
     <>
       <SubHeader showBackButton={false}>오늘의 분석</SubHeader>
-      <main className="flex flex-col h-full">
+      <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection />
           <div className="border-b border-interactive-border-default" />
@@ -54,7 +55,7 @@ function RouteComponent() {
         <Link to="/">
           <BlockButton>홈으로 돌아가기</BlockButton>
         </Link>
-      </main>
+      </Container>
     </>
   );
 }

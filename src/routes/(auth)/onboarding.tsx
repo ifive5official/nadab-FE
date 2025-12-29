@@ -5,6 +5,7 @@ import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { redirect } from "@tanstack/react-router";
+import Container from "@/components/Container";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
@@ -42,9 +43,11 @@ function OnboardingLayout() {
   return (
     // 주제 선택 스크롤 동작 때문에 높이 설정함
     // Todo: 더 좋은 방법이 없나...
-    <div className="h-[calc(100svh-var(--spacing-padding-y-m)-var(--spacing-header-height))] flex flex-col">
+    <div className="w-dvw sm:w-[412px] sm:mx-auto absolute inset-0 flex flex-col">
       {currentStep.header}
-      <Outlet />
+      <Container hasHeader={!!currentStep.header}>
+        <Outlet />
+      </Container>
     </div>
   );
 }

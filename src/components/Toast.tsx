@@ -26,7 +26,7 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <div className="z-2 fixed inset-0" onClick={onClose} />
+          <div className="z-20 fixed inset-0" onClick={onClose} />
           <motion.div
             className={clsx(
               "fixed inset-x-padding-x-m sm:mx-auto sm:w-[412px]",

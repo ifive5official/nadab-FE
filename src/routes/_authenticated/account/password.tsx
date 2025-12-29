@@ -11,6 +11,7 @@ import { useChangePasswordMutation } from "@/features/auth/hooks/useChangePasswo
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import { CircleCheckFilledIcon } from "@/components/Icons";
+import Container from "@/components/Container";
 
 export const Route = createFileRoute("/_authenticated/account/password")({
   component: RouteComponent,
@@ -62,106 +63,108 @@ export function RouteComponent() {
   });
 
   return (
-    <div>
+    <>
       <SubHeader showMenuButton={false}>비밀번호 변경</SubHeader>
-      <div className="py-padding-y-m">
-        <StepTitle>비밀번호를 재설정해주세요.</StepTitle>
-      </div>
+      <Container>
+        <div className="py-padding-y-m">
+          <StepTitle>비밀번호를 재설정해주세요.</StepTitle>
+        </div>
 
-      <form
-        className="flex flex-col gap-gap-y-l py-padding-y-m"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (
-            !prevPasswordError &&
-            !newPasswordError &&
-            !confirmPasswordError
-          ) {
-            changePasswordMutation.mutate({
-              currentPassword: prevPassword,
-              newPassword,
-            });
-          }
-        }}
-      >
-        <PasswordInputField
-          label="현재 비밀번호"
-          id="password"
-          name="password"
-          onChange={(e) => {
-            onPrevPasswrodChange(e.target.value);
-            if (confirmPassword) {
-              validateConfirmPassword();
-            }
-          }}
-          value={prevPassword}
-          placeholder="현재 비밀번호를 입력해주세요."
-          type="password"
-          error={prevPasswordError}
-        />
-        <PasswordInputField
-          label="새로운 비밀번호"
-          id="password"
-          name="password"
-          onChange={(e) => {
-            onNewPasswordChange(e.target.value);
-            if (confirmPassword) {
-              validateConfirmPassword();
-            }
-          }}
-          value={newPassword}
-          placeholder="새로운 비밀번호를 입력해주세요."
-          type="password"
-          error={newPasswordError}
-        />
-        <PasswordInputField
-          label="새로운 비밀번호 재입력"
-          id="confirmPassword"
-          name="confirmPassword"
-          onChange={(e) => onConfirmPasswordChange(e.target.value)}
-          value={confirmPassword}
-          placeholder="새로운 비밀번호를 재입력해주세요."
-          type="password"
-          error={confirmPasswordError}
-        />
-
-        <p className="text-caption-m text-text-secondary">
-          영문, 숫자, 특수문자가 포함된 8자 이상의 비밀번호를 입력해주세요.
-        </p>
-        <BlockButton
-          disabled={
-            !(
+        <form
+          className="flex flex-col gap-gap-y-l py-padding-y-m"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (
               !prevPasswordError &&
               !newPasswordError &&
-              !confirmPasswordError &&
-              prevPassword &&
-              newPassword &&
-              confirmPassword
-            ) ||
-            isPrevPasswordValidating ||
-            isNewPasswordValidating ||
-            isConfirmPasswordValidating
-          }
-          isLoading={changePasswordMutation.isPending}
+              !confirmPasswordError
+            ) {
+              changePasswordMutation.mutate({
+                currentPassword: prevPassword,
+                newPassword,
+              });
+            }
+          }}
         >
-          완료
-        </BlockButton>
-      </form>
-      <Modal
-        isOpen={isModalOpen}
-        icon={CircleCheckFilledIcon}
-        title={`비밀번호 변경에\n성공했어요.`}
-        buttons={[
-          {
-            label: "확인",
-            onClick: () => {
-              setIsModalOpen(false);
-              navigate({ to: "/account" });
+          <PasswordInputField
+            label="현재 비밀번호"
+            id="password"
+            name="password"
+            onChange={(e) => {
+              onPrevPasswrodChange(e.target.value);
+              if (confirmPassword) {
+                validateConfirmPassword();
+              }
+            }}
+            value={prevPassword}
+            placeholder="현재 비밀번호를 입력해주세요."
+            type="password"
+            error={prevPasswordError}
+          />
+          <PasswordInputField
+            label="새로운 비밀번호"
+            id="password"
+            name="password"
+            onChange={(e) => {
+              onNewPasswordChange(e.target.value);
+              if (confirmPassword) {
+                validateConfirmPassword();
+              }
+            }}
+            value={newPassword}
+            placeholder="새로운 비밀번호를 입력해주세요."
+            type="password"
+            error={newPasswordError}
+          />
+          <PasswordInputField
+            label="새로운 비밀번호 재입력"
+            id="confirmPassword"
+            name="confirmPassword"
+            onChange={(e) => onConfirmPasswordChange(e.target.value)}
+            value={confirmPassword}
+            placeholder="새로운 비밀번호를 재입력해주세요."
+            type="password"
+            error={confirmPasswordError}
+          />
+
+          <p className="text-caption-m text-text-secondary">
+            영문, 숫자, 특수문자가 포함된 8자 이상의 비밀번호를 입력해주세요.
+          </p>
+          <BlockButton
+            disabled={
+              !(
+                !prevPasswordError &&
+                !newPasswordError &&
+                !confirmPasswordError &&
+                prevPassword &&
+                newPassword &&
+                confirmPassword
+              ) ||
+              isPrevPasswordValidating ||
+              isNewPasswordValidating ||
+              isConfirmPasswordValidating
+            }
+            isLoading={changePasswordMutation.isPending}
+          >
+            완료
+          </BlockButton>
+        </form>
+        <Modal
+          isOpen={isModalOpen}
+          icon={CircleCheckFilledIcon}
+          title={`비밀번호 변경에\n성공했어요.`}
+          buttons={[
+            {
+              label: "확인",
+              onClick: () => {
+                setIsModalOpen(false);
+                navigate({ to: "/account" });
+              },
             },
-          },
-        ]}
-        onClose={() => setIsModalOpen(false)}
-      />
-    </div>
+          ]}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </Container>
+    </>
   );
 }

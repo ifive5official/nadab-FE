@@ -54,11 +54,11 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="z-2 fixed inset-0 bg-neutral-dark-50"
+            className="z-20 fixed inset-0 bg-neutral-dark-50"
             onClick={onClose}
           />
           <motion.div
-            className="z-3 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base shadow-3 border border-border-base rounded-2xl"
+            className="z-30 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base shadow-3 border border-border-base rounded-2xl"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}

@@ -37,11 +37,11 @@ export default function BottomModal({ isOpen, title, items, onClose }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="z-2 absolute inset-0 bg-neutral-dark-50"
+            className="z-20 absolute inset-0 bg-neutral-dark-50"
             onClick={onClose}
           />
           <motion.div
-            className="z-3 absolute bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base shadow-3 border border-border-base rounded-lg divide-y divide-interactive-border-default text-text-primary"
+            className="z-30 absolute bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base shadow-3 border border-border-base rounded-lg divide-y divide-interactive-border-default text-text-primary"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}

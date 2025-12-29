@@ -77,7 +77,7 @@ function FeatureDescription() {
   const navigate = useNavigate();
 
   return (
-    <div className="-mt-header-height h-[calc(100svh-var(--spacing-padding-y-m))] flex flex-col gap-padding-y-xl pt-padding-y-m">
+    <div className="flex-1 flex flex-col gap-padding-y-xl pt-padding-y-m">
       <div className="flex-1 w-full relative">
         {/* 커스텀 네비게이션 */}
         <LeftCarousel
@@ -158,9 +158,7 @@ function FeatureDescription() {
             })}
         </Swiper>
       </div>
-
       <div ref={paginationRef}></div>
-
       <BlockButton
         disabled={activeIndex !== contents.length - 1}
         onClick={() => {

@@ -29,11 +29,8 @@ function RootComponent() {
   return (
     <>
       <div className="min-h-dvh w-vw flex bg-surface-base">
-        {/* 상단 패딩 - 헤더 자리 띄움 */}
-        {/* 하단 패딩 넣은 이유 - 모바일 사파리 하단바 때문에 안 띄우면 이상함ㅜㅜ */}
-        <div className="w-dvw sm:w-[412px] sm:mx-auto pt-header-height  overflow-x-hidden">
+        <div className="flex flex-col w-dvw sm:w-[412px] sm:mx-auto overflow-x-hidden">
           <Outlet />
-
           <ErrorModal />
         </div>
       </div>

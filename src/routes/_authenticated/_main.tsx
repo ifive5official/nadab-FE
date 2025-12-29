@@ -1,3 +1,4 @@
+import Container from "@/components/Container";
 import { MainHeader } from "@/components/Headers";
 import Tabs from "@/components/Tabs";
 import { currentUserOptions } from "@/features/user/quries";
@@ -14,7 +15,9 @@ function RouteComponent() {
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
-      <Outlet />
+      <Container hasHeader={false}>
+        <Outlet />
+      </Container>
     </>
   );
 }

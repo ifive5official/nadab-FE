@@ -20,9 +20,13 @@ export default function Home() {
     <div className="w-full h-full flex flex-col">
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
-      <main className="flex-1 relative w-full overflow-hidden bg-linear-to-b from-[#E8ECFC] to-[#EFF6FF] flex flex-col">
+      <main className="flex-1 relative w-full overflow-hidden flex flex-col">
+        <div
+          className="absolute inset-0 bg-linear-to-b from-[#E8ECFC] to-[#EFF6FF] 
+               dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
+        ></div>
         <video
-          className="absolute inset-0 w-full h-full object-cover opacity-57"
+          className="absolute inset-0 w-full h-full object-cover opacity-57 dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
           autoPlay
           muted
           loop
@@ -31,7 +35,7 @@ export default function Home() {
           <source src="/video.mp4" type="video/mp4" />
         </video>
 
-        <div className="relative z-10 flex-1 flex items-center justify-center">
+        <div className="relative z-1 flex-1 flex items-center justify-center">
           <p className="text-title-2 text-center">
             {currentUser.nickname}님,
             <br />
@@ -39,7 +43,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center justify-center shrink-0">
+        <div className="relative z-1 flex items-center justify-center shrink-0">
           <div className="relative w-[calc((306/390)*100vw)] h-[calc((306/390)*100vw)] sm:w-[306px] sm:h-[306px]">
             <svg
               className="w-full h-full"

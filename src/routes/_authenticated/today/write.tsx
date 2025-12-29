@@ -6,6 +6,7 @@ import { CrystalBadge } from "@/components/Badges";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { QuestionSection } from "@/features/today/QuestionSection";
+import Container from "@/components/Container";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
@@ -19,7 +20,7 @@ function RouteComponent() {
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
-      <main className="flex flex-col h-full">
+      <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection />
           <div>
@@ -46,7 +47,7 @@ function RouteComponent() {
         >
           완료
         </BlockButton>
-      </main>
+      </Container>
       <Modal
         title={`오늘의 답변으로\n크리스탈을 획득했어요.`}
         icon={() => (

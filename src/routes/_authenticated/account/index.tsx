@@ -16,6 +16,7 @@ import useThemeStore from "@/store/useThemeStore";
 import ProfileSection from "@/features/user/components/ProfileSection";
 import { currentUserOptions } from "@/features/user/quries";
 import AccountSection from "@/features/user/components/AccountSection";
+import Container from "@/components/Container";
 
 const notificationOptions = queryOptions({
   queryKey: ["notification"],
@@ -61,41 +62,43 @@ function RouteComponent() {
   // Todo: 알림 시간 변경 시 완료 토스트 띄우기
 
   return (
-    <div>
+    <>
       <SubHeader>마이페이지</SubHeader>
-      <ProfileSection currentUser={currentUser} />
+      <Container>
+        <ProfileSection currentUser={currentUser} />
 
-      <div className="relative -mx-padding-x-m py-gap-y-s">
-        <div className="bg-surface-layer-1 w-full h-gap-y-s " />
-      </div>
+        <div className="relative -mx-padding-x-m py-gap-y-s">
+          <div className="bg-surface-layer-1 w-full h-gap-y-s " />
+        </div>
 
-      <div className="bg-surface-layer-1 rounded-xl my-margin-y-s">
-        <ul className="text-text-primary flex flex-col">
-          <InterestSection
-            currentUser={currentUser}
-            onSelectInterest={(code) =>
-              updateInterestMutation.mutate({ interestCode: code })
-            }
-            isPending={updateInterestMutation.isPending}
-          />
-          <SectionDivider />
-          <NotificationSection
-            isOn={isNotificationon ?? false}
-            onToggle={(prev: boolean) =>
-              toggleNotificationMutation.mutate({ agreed: !prev })
-            }
-          />
-          <SectionDivider />
-          <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
-          <SectionDivider />
-          <AccountSection />
-        </ul>
-      </div>
-      <Toast
-        isOpen={isToastOpen}
-        message={toastMessage}
-        onClose={() => setIsToastOpen(false)}
-      />
-    </div>
+        <div className="bg-surface-layer-1 rounded-xl my-margin-y-s">
+          <ul className="text-text-primary flex flex-col">
+            <InterestSection
+              currentUser={currentUser}
+              onSelectInterest={(code) =>
+                updateInterestMutation.mutate({ interestCode: code })
+              }
+              isPending={updateInterestMutation.isPending}
+            />
+            <SectionDivider />
+            <NotificationSection
+              isOn={isNotificationon ?? false}
+              onToggle={(prev: boolean) =>
+                toggleNotificationMutation.mutate({ agreed: !prev })
+              }
+            />
+            <SectionDivider />
+            <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
+            <SectionDivider />
+            <AccountSection />
+          </ul>
+        </div>
+        <Toast
+          isOpen={isToastOpen}
+          message={toastMessage}
+          onClose={() => setIsToastOpen(false)}
+        />
+      </Container>
+    </>
   );
 }
