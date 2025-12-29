@@ -45,7 +45,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
       <header
         className={clsx(
           "fixed top-0 z-1 flex items-center gap-gap-x-m",
-          "-mx-padding-x-m px-padding-x-m w-full sm:w-[412px] h-header-height",
+          "px-padding-x-m w-full sm:w-[412px] h-header-height",
           "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
         )}
       >
