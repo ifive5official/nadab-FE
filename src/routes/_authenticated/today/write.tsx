@@ -31,9 +31,8 @@ function RouteComponent() {
               className="w-full resize-none outline-0 my-margin-y-m text-caption-l placeholder:text-text-disabled"
               placeholder="내용을 입력하세요."
               onChange={(e) => setAnswer(e.target.value)}
-            >
-              {answer}
-            </textarea>
+              value={answer}
+            />
             <div className="border-b border-interactive-border-default" />
           </div>
           <div className="text-caption-s text-right">
