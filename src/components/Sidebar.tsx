@@ -14,8 +14,8 @@ import { useEffect } from "react";
 
 const MENU_ITEMS = [
   { to: "/", label: "홈", icon: HomeMenuIcon },
-  { to: "/social", label: "소셜", icon: SocialMenuIcon },
   { to: "/report", label: "리포트", icon: ReportMenuIcon },
+  { to: "/social", label: "소셜", icon: SocialMenuIcon },
   { to: "/calendar", label: "캘린더", icon: CalendarMenuIcon },
   { to: "/notice", label: "공지사항", icon: NoticeMenuIcon },
 ] as const;

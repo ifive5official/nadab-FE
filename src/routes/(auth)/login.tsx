@@ -60,7 +60,7 @@ function RouteComponent() {
             isLoading={loginMutation.isPending}
             disabled={!password || !email}
           >
-            완료
+            로그인
           </BlockButton>
         </form>
         <Link

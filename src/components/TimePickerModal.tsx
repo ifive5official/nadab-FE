@@ -10,6 +10,7 @@ import {
   WheelPickerWrapper,
   type WheelPickerOption,
 } from "@ncdai/react-wheel-picker";
+import BlockButton from "./BlockButton";
 
 const createArray = (length: number, add = 0): WheelPickerOption<number>[] =>
   Array.from({ length }, (_, i) => {
@@ -99,18 +100,16 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
               </WheelPickerWrapper>
             </div>
             <div className="flex justify-end gap-gap-x-s">
-              <button
+              <BlockButton
+                btnType="inline"
+                variant="secondary"
                 onClick={onClose}
-                className="rounded-[20px] px-padding-x-m py-padding-x-xs text-button-2 bg-button-tertiary-bg-default border border-button-tertiary-border-default text-button-tertiary-text-default"
               >
                 취소
-              </button>
-              <button
-                onClick={onConfirm}
-                className="rounded-[20px] px-padding-x-m py-padding-x-xs text-button-2 bg-button-primary-bg-default text-button-primary-text-default"
-              >
-                저장
-              </button>
+              </BlockButton>
+              <BlockButton btnType="inline" onClick={onConfirm}>
+                확인
+              </BlockButton>
             </div>
           </motion.div>
         </>

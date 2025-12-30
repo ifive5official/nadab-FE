@@ -38,10 +38,11 @@ export function LandingPage() {
     <div className="flex-1 flex flex-col px-padding-x-m">
       {/* 위 절반 */}
       <div className="pt-padding-y-m flex-1 flex flex-col justify-center items-center">
-        <img
+        {/* Todo: 메인 로고 교체 */}
+        {/* <img
           src="/mainLogo.png"
           className="h-[calc((104.5/796)*100dvh)] w-auto"
-        />
+        /> */}
         <div className="mt-padding-y-xxl mb-margin-y-m">
           <img
             src="/textLogo.png"
@@ -57,7 +58,7 @@ export function LandingPage() {
         <div className="flex flex-col gap-gap-y-xl">
           <div className="flex flex-col gap-gap-y-m">
             <BlockButton
-              variant="tertiary"
+              variant="white"
               onClick={() =>
                 (window.location.href = socialLoginUrls?.naver ?? "")
               }
@@ -70,7 +71,7 @@ export function LandingPage() {
               </div>
             </BlockButton>
             <BlockButton
-              variant="tertiary"
+              variant="white"
               onClick={() =>
                 (window.location.href = socialLoginUrls?.google ?? "")
               }
@@ -83,7 +84,7 @@ export function LandingPage() {
               </div>
             </BlockButton>
             <Link to="/login" onClick={reset}>
-              <BlockButton variant="tertiary">
+              <BlockButton variant="white">
                 <div>
                   <span className="absolute left-padding-x-m">
                     <RoundEmailIcon />

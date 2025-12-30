@@ -4,8 +4,8 @@ import clsx from "clsx";
 
 const TAB_ITEMS = [
   { to: "/", label: "홈" },
-  { to: "/social", label: "소셜" },
   { to: "/report", label: "리포트" },
+  { to: "/social", label: "소셜" },
   { to: "/calendar", label: "캘린더" },
 ] as const;
 

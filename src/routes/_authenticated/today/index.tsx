@@ -1,10 +1,10 @@
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
-import { ChatVerificationReceptionIcon } from "@/components/Icons";
 import { currentUserOptions } from "@/features/user/quries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import SpeechBalloon from "@/components/Speechballoon";
 
 // Todo: 라우팅 구조 변경
 export const Route = createFileRoute("/_authenticated/today/")({
@@ -29,14 +29,23 @@ function RouteComponent() {
               </p>
             </div>
             <div className="flex flex-col gap-gap-y-xl">
-              <SpeechBalloon>
+              <SpeechBalloon
+                textColor="var(--color-text-primary)"
+                bgColor="var(--color-surface-base)"
+              >
                 미래에 지금의 나를 되돌아본다면 해주고 싶은 말이 분명
                 있을거에요.
               </SpeechBalloon>
-              <SpeechBalloon>
+              <SpeechBalloon
+                textColor="var(--color-text-primary)"
+                bgColor="var(--color-surface-base)"
+              >
                 지나온 시간에서 가장 가치 있는 것을 골라보세요.
               </SpeechBalloon>
-              <SpeechBalloon>
+              <SpeechBalloon
+                textColor="var(--color-text-primary)"
+                bgColor="var(--color-surface-base)"
+              >
                 그 대답 속에 담긴 내 진짜 마음은 무엇인가요?
               </SpeechBalloon>
             </div>
@@ -48,16 +57,5 @@ function RouteComponent() {
         </Container>
       </main>
     </>
-  );
-}
-
-function SpeechBalloon({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative text-caption-l">
-      <ChatVerificationReceptionIcon className="absolute top-0 -left-0.5 text-neutral-0" />
-      <div className="w-fit max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))] px-padding-x-m py-padding-y-xs bg-neutral-0 rounded-xl break-keep">
-        {children}
-      </div>
-    </div>
   );
 }

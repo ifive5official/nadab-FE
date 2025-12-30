@@ -508,13 +508,13 @@ export function CloseBigIcon() {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M11.875 22.375L22.375 11.875L23.3031 12.8031L12.8031 23.3031L11.875 22.375Z"
-        fill="white"
+        fill="currentColor"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M12.8031 11.875L23.3031 22.375L22.375 23.3031L11.875 12.8031L12.8031 11.875Z"
-        fill="white"
+        fill="currentColor"
       />
     </svg>
   );
@@ -909,8 +909,10 @@ export function DayCheckIcon() {
 // 글쓰기 ==================
 export function ChatVerificationReceptionIcon({
   className,
+  style,
 }: {
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <svg
@@ -920,9 +922,35 @@ export function ChatVerificationReceptionIcon({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={style}
     >
       <path
         d="M0.648615 0.00353634C0.188615 -0.0464637 -0.151385 0.443536 0.0686152 0.853536C1.70862 3.87354 2.56862 8.33354 3.01862 13.3735C3.51862 18.9435 7.51862 3.94354 7.51862 3.94354C7.51862 3.94354 4.96862 0.533536 0.648615 0.00353634Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function CharVerificationSendingIcon({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      width="8"
+      height="15"
+      viewBox="0 0 8 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      style={style}
+    >
+      <path
+        d="M7.30986 0.00362985C7.79931 -0.0476923 8.16108 0.455265 7.92699 0.876106C6.18199 3.97596 5.26693 8.5539 4.78812 13.7272C4.2561 19.4445 0 4.04781 0 4.04781C0 4.04781 2.71327 0.547644 7.30986 0.00362985Z"
         fill="currentColor"
       />
     </svg>
