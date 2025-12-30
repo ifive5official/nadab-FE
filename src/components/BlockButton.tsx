@@ -23,14 +23,15 @@ export default function BlockButton({
       className={clsx(
         "relative w-full text-center text-button-1 rounded-full py-padding-y-m",
         {
-          "bg-button-primary-bg-default text-button-primary-text-default":
+          "bg-button-gradient-1 shadow-button-1 active:shadow-button-1-2 text-button-primary-text-default after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none after:shadow-[inset_-4px_-4px_10px_0px_rgba(7,8,117,0.6)] after:mix-blend-overlay active:after:shadow-none":
             variant === "primary" && !disabled,
-          "bg-button-secondary-bg-default text-button-secondary-text-default":
+          "bg-button-gradient-2 shadow-button-2 active:shadow-button-2-2 text-button-secondary-text-default after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none after:shadow-[inset_-4px_-4px_5px_0px_rgba(32,24,75,1)] after:mix-blend-overlay active:after:shadow-none":
             variant === "secondary" && !disabled,
-          "bg-button-tertiary-bg-default border border-button-tertiary-border-default text-button-tertiary-text-default":
+          "bg-surface-layer-1 border border-border-base text-button-tertiary-text-default":
             variant === "tertiary" && !disabled,
         },
-        disabled && "bg-button-disabled-bg text-button-disabled-text",
+        disabled &&
+          "bg-button-gradient-3 shadow-button-3 text-button-disabled-text after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none after:shadow-[inset_-4px_-4px_10px_0px_rgba(7,8,117,0.6)] after:mix-blend-overlay active:after:shadow-none",
         className
       )}
       {...props}
