@@ -9,6 +9,7 @@ import { QuestionSection } from "@/features/today/QuestionSection";
 import Container from "@/components/Container";
 import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useGenerateReportMutation } from "@/features/report/useGenerateReportmutation";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
@@ -22,6 +23,9 @@ function RouteComponent() {
   const { data: question } = useSuspenseQuery(questionOptions);
   const [answer, setAnswer] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const generateResponseMutation = useGenerateReportMutation({
+    onSuccess: () => setIsModalOpen(true),
+  });
 
   return (
     <>
@@ -48,7 +52,13 @@ function RouteComponent() {
         </div>
         <BlockButton
           disabled={!answer.trim()}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            generateResponseMutation.mutate({
+              questionId: question?.questionId ?? 0,
+              answer,
+            });
+          }}
+          isLoading={generateResponseMutation.isPending}
         >
           완료
         </BlockButton>

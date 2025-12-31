@@ -71,19 +71,24 @@ export default function Home() {
           ) : (
             <RecordSection />
           )}
-
-          <div className="flex gap-margin-x-m">
-            <BlockButton
-              variant={question?.rerollUsed ? "disabled" : "secondary"}
-              onClick={() => rerollQuestionMutation.mutate()}
-              isLoading={rerollQuestionMutation.isPending}
-            >
-              새로운 질문 받기
-            </BlockButton>
-            <Link to="/today" className="w-full">
-              <BlockButton>쓰러가기</BlockButton>
+          {question?.answered ? (
+            <Link to="/today/report">
+              <BlockButton>오늘의 기록 보러가기</BlockButton>
             </Link>
-          </div>
+          ) : (
+            <div className="flex gap-margin-x-m">
+              <BlockButton
+                variant={question?.rerollUsed ? "disabled" : "secondary"}
+                onClick={() => rerollQuestionMutation.mutate()}
+                isLoading={rerollQuestionMutation.isPending}
+              >
+                새로운 질문 받기
+              </BlockButton>
+              <Link to="/today" className="w-full">
+                <BlockButton>쓰러가기</BlockButton>
+              </Link>
+            </div>
+          )}
         </div>
       </Container>
     </>

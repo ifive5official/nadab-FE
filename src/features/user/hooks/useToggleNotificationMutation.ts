@@ -15,7 +15,7 @@ type Req = components["schemas"]["UpdateMarketingConsentRequest"];
 
 export function useToggleNotificationMutation({ onSuccess }: Props) {
   const queryClient = useQueryClient();
-  const NOTIFICATION_QUERY_KEY = ["notification"];
+  const NOTIFICATION_QUERY_KEY = ["currentUser", "notification"];
 
   return useMutation({
     mutationFn: async ({ agreed }: Req) => {

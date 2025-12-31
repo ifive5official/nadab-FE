@@ -70,7 +70,7 @@ Props) {
               )}
               {buttons.length === 2 && (
                 <>
-                  <BlockButton variant="tertiary" onClick={buttons[0].onClick}>
+                  <BlockButton variant="secondary" onClick={buttons[0].onClick}>
                     {buttons[0].label}
                   </BlockButton>
                   <BlockButton onClick={buttons[1].onClick}>

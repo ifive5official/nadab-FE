@@ -53,7 +53,7 @@ export function QuestionBadge({
 // 감정 종류 나타내는 작은 버튼처럼 생긴 컴포넌트
 type EmotionBadgeProps = {
   height?: number;
-  emotion: (typeof emotions)[number]["title"];
+  emotion: (typeof emotions)[number]["code"];
   onClick?: () => void;
   className?: string;
 };
@@ -64,7 +64,7 @@ export function EmotionBadge({
   onClick,
   className,
 }: EmotionBadgeProps) {
-  const item = emotions.find((c) => c.title === emotion)!;
+  const item = emotions.find((c) => c.code === emotion)!;
   return (
     <div
       style={{ zoom: height / 28 }}

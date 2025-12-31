@@ -17,8 +17,8 @@ export function useRerollQuestionMutation() {
       const res = await api.post<ApiResponse<Res>>("/api/v1/question/reroll");
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["question"] });
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser", "question"], data.data);
     },
     onError: (err: AxiosError<ApiResponse<null>>) => {
       if (err.response?.status === 400) {

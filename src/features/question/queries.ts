@@ -6,7 +6,7 @@ import type { components } from "@/generated/api-types";
 type QuestionRes = components["schemas"]["DailyQuestionResponse"];
 
 export const questionOptions = queryOptions({
-  queryKey: ["question", "currentUser"],
+  queryKey: ["currentUser", "question"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<QuestionRes>>("/api/v1/question");
     return res.data.data;

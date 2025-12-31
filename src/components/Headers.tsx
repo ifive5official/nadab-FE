@@ -28,7 +28,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const { data } = useQuery({
-    queryKey: ["crystals", "currentUser"],
+    queryKey: ["currentUser", "crystals"],
     queryFn: async () => {
       const res = await api.get<ApiResponse<CrystalsRes>>(
         "/api/v1/wallet/balance"

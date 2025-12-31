@@ -13,11 +13,14 @@ import {
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { questionOptions } from "@/features/question/queries";
+import { reportOptions } from "@/features/report/quries";
+import emotions from "@/constants/emotions";
 
 export const Route = createFileRoute("/_authenticated/today/report")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(questionOptions);
+    queryClient.ensureQueryData(reportOptions);
   },
 });
 
@@ -31,12 +34,8 @@ function RouteComponent() {
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { data: question } = useSuspenseQuery(questionOptions);
-  const messages = [
-    "우리는 변화를 원하지만 정작 실천에 옮기는 것에는 서툴어요.",
-    "거창한 계획보다는 지금 당장 할 수 있는 작은 일부터 찾아보는 것이 중요해요.",
-    " 작은 성공의 경험이 쌓여야 결국 큰 목표를 이룰 수 있는 힘이 생기기 때문이에요.",
-    "오늘부터 나만의 작은 루틴을 만들어 하나씩 실천해 보는 것은 어떨까요?",
-  ];
+  const { data: report } = useSuspenseQuery(reportOptions);
+  const messages = report.content!.split(/(?<=[.!?])\s/);
 
   const navigate = useNavigate();
   const [isReady, setIsReady] = useState(false);
@@ -54,7 +53,9 @@ function RouteComponent() {
           <QuestionSection question={question!} />
           <div className="border-b border-interactive-border-default" />
           <div>
-            <EmotionBadge emotion="기쁨" />
+            <EmotionBadge
+              emotion={report.emotion as (typeof emotions)[number]["code"]}
+            />
             <p className="text-title-2 mt-gap-y-s mb-gap-y-l">
               오늘의 기록 속 {currentUser.nickname}님은
             </p>
