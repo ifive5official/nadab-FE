@@ -8,10 +8,14 @@ import Container from "@/components/Container";
 import { Link } from "@tanstack/react-router";
 import FriendSection from "./FriendSection";
 import RecordSection from "./RecordSection";
+import { questionOptions } from "../question/queries";
+import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 
 export default function Home() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const friends = Array(0).fill(0); // 임시
+  const friends = Array(0).fill(0); // Todo: 백엔드 연동
+  const { data: question } = useSuspenseQuery(questionOptions);
+  const rerollQuestionMutation = useRerollQuestionMutation();
 
   return (
     <>
@@ -29,7 +33,7 @@ export default function Home() {
           <p className="relative text-title-2 text-center">
             {currentUser.nickname}님,
             <br />
-            설렘의 순간은 언제였나요?
+            {question?.questionText}
           </p>
           {/* 구슬 */}
           <div className="flex items-center justify-center">
@@ -69,7 +73,13 @@ export default function Home() {
           )}
 
           <div className="flex gap-margin-x-m">
-            <BlockButton variant="secondary">새로운 질문 받기</BlockButton>
+            <BlockButton
+              variant={question?.rerollUsed ? "disabled" : "secondary"}
+              onClick={() => rerollQuestionMutation.mutate()}
+              isLoading={rerollQuestionMutation.isPending}
+            >
+              새로운 질문 받기
+            </BlockButton>
             <Link to="/today" className="w-full">
               <BlockButton>쓰러가기</BlockButton>
             </Link>

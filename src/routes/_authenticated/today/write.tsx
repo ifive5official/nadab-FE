@@ -7,13 +7,19 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { QuestionSection } from "@/features/today/QuestionSection";
 import Container from "@/components/Container";
+import { questionOptions } from "@/features/question/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureQueryData(questionOptions);
+  },
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const { data: question } = useSuspenseQuery(questionOptions);
   const [answer, setAnswer] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -22,7 +28,7 @@ function RouteComponent() {
       <SubHeader>오늘의 질문</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
-          <QuestionSection />
+          <QuestionSection question={question!} />
           <div>
             <div className="border-b border-interactive-border-default" />
             <textarea

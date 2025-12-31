@@ -7,17 +7,22 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import SpeechBalloon from "@/components/Speechballoon";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { questionOptions } from "@/features/question/queries";
 
 export const Route = createFileRoute("/_authenticated/today/")({
   component: RouteComponent,
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureQueryData(questionOptions);
+  },
 });
 
 function RouteComponent() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
+  const { data: question } = useSuspenseQuery(questionOptions);
   const messages = [
-    "미래에 지금의 나를 되돌아본다면 해주고 싶은 말이 분명 있을거에요.",
-    "지나온 시간에서 가장 가치 있는 것을 골라보세요.",
-    "그 대답 속에 담긴 내 진짜 마음은 무엇인가요?",
+    question?.empathyGuide,
+    question?.hintGuide,
+    question?.leadingQuestionGuide,
   ];
 
   const navigate = useNavigate();
@@ -26,7 +31,7 @@ function RouteComponent() {
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 500 * messages.length);
     return () => clearTimeout(timer);
-  }, []);
+  }, [messages.length]);
 
   return (
     <>
@@ -40,7 +45,7 @@ function RouteComponent() {
                 {currentUser.nickname}님,
               </p>
               <p className="text-title-1 break-keep">
-                인생의 마지막 날, 되돌아본다면 나에게 어떤 말을 할까요?
+                {question?.questionText}
               </p>
             </div>
             <div className="flex flex-col gap-gap-y-xl">

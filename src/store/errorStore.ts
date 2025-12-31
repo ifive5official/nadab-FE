@@ -9,7 +9,7 @@ type State = {
 };
 
 type Action = {
-  showError: (title: string, message: string) => void;
+  showError: (title: string, message?: string) => void;
   closeError: () => void;
 };
 
@@ -17,7 +17,7 @@ const useErrorStoreBase = create<State & Action>((set) => ({
   isOpen: false,
   title: "",
   message: "",
-  showError: (title: string, message: string) =>
+  showError: (title: string, message?: string) =>
     set({ isOpen: true, title, message }),
   closeError: () => set({ isOpen: false, title: "", message: "" }),
 }));
