@@ -9,7 +9,7 @@ import { QuestionSection } from "@/features/today/QuestionSection";
 import Container from "@/components/Container";
 import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useGenerateReportMutation } from "@/features/report/useGenerateReportmutation";
+import { useGenerateReportMutation } from "@/features/report/useGenerateReportMutation";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
