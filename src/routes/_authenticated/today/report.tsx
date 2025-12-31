@@ -12,9 +12,13 @@ import {
 } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { questionOptions } from "@/features/question/queries";
 
 export const Route = createFileRoute("/_authenticated/today/report")({
   component: RouteComponent,
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureQueryData(questionOptions);
+  },
 });
 
 function RouteComponent() {
@@ -26,6 +30,7 @@ function RouteComponent() {
   });
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
+  const { data: question } = useSuspenseQuery(questionOptions);
   const messages = [
     "우리는 변화를 원하지만 정작 실천에 옮기는 것에는 서툴어요.",
     "거창한 계획보다는 지금 당장 할 수 있는 작은 일부터 찾아보는 것이 중요해요.",
@@ -46,7 +51,7 @@ function RouteComponent() {
       <SubHeader showBackButton={false}>오늘의 분석</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
-          <QuestionSection />
+          <QuestionSection question={question!} />
           <div className="border-b border-interactive-border-default" />
           <div>
             <EmotionBadge emotion="기쁨" />
