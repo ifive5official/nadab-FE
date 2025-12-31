@@ -2,45 +2,45 @@ import { MainHeader } from "@/components/Headers";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "../user/quries";
 import Tabs from "@/components/Tabs";
-// import QuestionSection from "./QuestionSection";
-// import RecordSection from "./RecordSection";
 import { CrystalBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
-import ProfileImg from "@/components/ProfileImg";
 import Container from "@/components/Container";
 import { Link } from "@tanstack/react-router";
+import FriendSection from "./FriendSection";
+import RecordSection from "./RecordSection";
 
 export default function Home() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const friends = Array(7).fill(0); // 임시
-  const MAX_VISIBLE = 5;
-  // const hasFriends = friends.length > 0;
-  const visibleFriends =
-    friends.length <= MAX_VISIBLE ? friends : friends.slice(0, MAX_VISIBLE - 1);
+  const friends = Array(0).fill(0); // 임시
+
   return (
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
       <Container className="relative" hasHeader={false}>
+        {/* 배경 - 다크모드 필터 적용을 위해 따로 뺌 */}
         <div
           className="absolute inset-0 bg-linear-to-b from-[#E8ECFC] to-[#EFF6FF] 
                dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
-        ></div>
+        />
+
         <div className="flex-1 flex flex-col justify-evenly">
+          {/* 질문 */}
           <p className="relative text-title-2 text-center">
             {currentUser.nickname}님,
             <br />
             설렘의 순간은 언제였나요?
           </p>
-
+          {/* 구슬 */}
           <div className="flex items-center justify-center">
             <div className="relative w-[calc((267/390)*100vw)] sm:w-[calc((267/390)*412px)] aspect-square ">
               <video
-                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-57 dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
+                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
                 autoPlay
                 muted
                 loop
                 playsInline
+                poster="/marble.webp"
               >
                 <source src="/marble.mp4" type="video/mp4" />
               </video>
@@ -62,26 +62,12 @@ export default function Home() {
         </div>
 
         <div className="relative flex flex-col gap-padding-y-xxl">
-          <div className="flex flex-col justify-center items-center gap-gap-y-s">
-            <p className="text-caption-l text-text-secondary">
-              이 질문에 답변한 친구들
-            </p>
-            <div className="flex">
-              {visibleFriends.map((_friend, i) => (
-                <ProfileImg
-                  key={i}
-                  width={36}
-                  src={undefined}
-                  className="-mr-2.5"
-                />
-              ))}
-              {friends.length > MAX_VISIBLE && (
-                <div className="w-9 aspect-square rounded-full flex justify-center items-center text-label-s bg-button-primary-bg-default border border-interactive-border-default text-text-inverse-primary">
-                  +{friends.length - 4}
-                </div>
-              )}
-            </div>
-          </div>
+          {friends.length > 0 ? (
+            <FriendSection friends={friends} />
+          ) : (
+            <RecordSection />
+          )}
+
           <div className="flex gap-margin-x-m">
             <BlockButton variant="secondary">새로운 질문 받기</BlockButton>
             <Link to="/today" className="w-full">
