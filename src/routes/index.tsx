@@ -8,11 +8,13 @@ import type { CurrentUser } from "@/types/currentUser";
 import useErrorStore from "@/store/errorStore";
 import axios from "axios";
 import type { components } from "@/generated/api-types";
+import { questionOptions } from "@/features/question/queries";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/")({
   // Todo: 중복 코드 제거
+  // 로그인 여부에 따른 홈/온보딩 분기 로직 + 리프레시
   beforeLoad: async ({ context }) => {
     const { accessToken, setAccessToken } = useAuthStore.getState();
     let currentToken = accessToken;
@@ -59,6 +61,14 @@ export const Route = createFileRoute("/")({
           );
         }
       }
+    }
+  },
+  // 로그인 시 홈에서 필요한 데이터 가져옴
+  // Todo: 에러 처리
+  loader: ({ context: { queryClient } }) => {
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken) {
+      queryClient.ensureQueryData(questionOptions);
     }
   },
   component: () => {

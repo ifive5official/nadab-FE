@@ -10,6 +10,7 @@ import {
   WheelPickerWrapper,
   type WheelPickerOption,
 } from "@ncdai/react-wheel-picker";
+import BlockButton from "./BlockButton";
 
 const createArray = (length: number, add = 0): WheelPickerOption<number>[] =>
   Array.from({ length }, (_, i) => {
@@ -54,11 +55,11 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="z-2 fixed inset-0 bg-neutral-dark-50"
+            className="z-20 fixed inset-0 bg-neutral-dark-50"
             onClick={onClose}
           />
           <motion.div
-            className="z-3 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base shadow-3 border border-border-base rounded-2xl"
+            className="z-30 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base shadow-3 border border-border-base rounded-2xl"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -99,18 +100,16 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
               </WheelPickerWrapper>
             </div>
             <div className="flex justify-end gap-gap-x-s">
-              <button
+              <BlockButton
+                btnType="inline"
+                variant="secondary"
                 onClick={onClose}
-                className="rounded-[20px] px-padding-x-m py-padding-x-xs text-button-2 bg-button-tertiary-bg-default border border-button-tertiary-border-default text-button-tertiary-text-default"
               >
                 취소
-              </button>
-              <button
-                onClick={onConfirm}
-                className="rounded-[20px] px-padding-x-m py-padding-x-xs text-button-2 bg-button-primary-bg-default text-button-primary-text-default"
-              >
-                저장
-              </button>
+              </BlockButton>
+              <BlockButton btnType="inline" onClick={onConfirm}>
+                확인
+              </BlockButton>
             </div>
           </motion.div>
         </>

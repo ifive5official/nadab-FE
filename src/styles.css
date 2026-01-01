@@ -426,9 +426,9 @@ body {
   --color-neutral-600: #757b80;
   --color-neutral-500: #8c9499;
   --color-neutral-400: #a4adb2;
-  --color-neutral-300: #bbc5cc;
-  --color-neutral-200: #e8eef2;
-  --color-neutral-100: #f2f8fc;
+  --color-neutral-300: #bbbfcc;
+  --color-neutral-200: #e8ebf2;
+  --color-neutral-100: #f7f8ff;
   --color-neutral-0: #ffffff;
 
   /* ----- Dark Alpha (black with opacity) ----- */
@@ -456,18 +456,18 @@ body {
   --color-neutral-light-0: rgba(255, 255, 255, 0);
 
   /* brand color */
-  --color-brand-primary: #3865f3;
+  --color-brand-primary: #5d57f6;
   --color-brand-secondary: #b5e7ff;
 
-  --color-brand-primary-alpha-90: rgba(56, 101, 243, 0.9);
-  --color-brand-primary-alpha-80: rgba(56, 101, 243, 0.8);
-  --color-brand-primary-alpha-70: rgba(56, 101, 243, 0.7);
-  --color-brand-primary-alpha-60: rgba(56, 101, 243, 0.6);
-  --color-brand-primary-alpha-50: rgba(56, 101, 243, 0.5);
-  --color-brand-primary-alpha-40: rgba(56, 101, 243, 0.4);
-  --color-brand-primary-alpha-30: rgba(56, 101, 243, 0.3);
-  --color-brand-primary-alpha-20: rgba(56, 101, 243, 0.2);
-  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1);
+  --color-brand-primary-alpha-90: rgba(93, 87, 246, 0.9);
+  --color-brand-primary-alpha-80: rgba(93, 87, 246, 0.8);
+  --color-brand-primary-alpha-70: rgba(93, 87, 246, 0.7);
+  --color-brand-primary-alpha-60: rgba(93, 87, 246, 0.6);
+  --color-brand-primary-alpha-50: rgba(93, 87, 246, 0.5);
+  --color-brand-primary-alpha-40: rgba(93, 87, 246, 0.4);
+  --color-brand-primary-alpha-30: rgba(93, 87, 246, 0.3);
+  --color-brand-primary-alpha-20: rgba(93, 87, 246, 0.2);
+  --color-brand-primary-alpha-10: rgba(93, 87, 246, 0.1);
 
   /* border */
   --color-border-base: var(--color-neutral-200);
@@ -533,11 +533,27 @@ body {
   --color-icon-inverse-hover: var(--color-text-inverse-secondary);
 
   /* button */
+  --background-image-button-gradient-1: linear-gradient(
+    90deg,
+    #7974ff 0%,
+    #e1c0fc 100%
+  );
+  --background-image-button-gradient-2: linear-gradient(
+    90deg,
+    var(--color-neutral-100) 0%,
+    var(--color-neutral-200) 100%
+  );
+  --background-image-button-gradient-3: linear-gradient(
+    90deg,
+    var(--color-neutral-200) 0%,
+    var(--color-neutral-200) 100%
+  );
+
   --color-button-primary-bg-default: var(--color-brand-primary);
   --color-button-primary-bg-hover: #0c4872;
   --color-button-primary-text-default: var(--color-text-inverse-primary);
 
-  --color-button-secondary-bg-default: #edf9ff;
+  --color-button-secondary-bg-default: #edf0ff;
   --color-button-secondary-bg-hover: #d6f0ff;
   --color-button-secondary-text-default: var(--color-text-link);
 
@@ -603,11 +619,29 @@ body {
   --shadow-2: 0px 4px 12px 0 rgba(0, 0, 0, 0.1);
   --shadow-3: 0px 8px 24px 0 rgba(0, 0, 0, 0.1);
   --shadow-4: 0px 12px 48px 0 rgba(0, 0, 0, 0.1);
+
+  --shadow-button-1: inset 0px 4px 3px 0px rgba(255, 255, 255, 0.4),
+    0px 8px 12px 0px rgba(23, 17, 168, 0.15),
+    inset 4px 4px 10px 0px rgba(255, 255, 255, 0.4);
+  /* inset -4px -4px 10px 0px rgba(7, 8, 117, 0.6); */
+  --shadow-button-1-2: inset 0px 4px 3px 0px rgba(82, 82, 242, 0.3),
+    inset 4px 4px 10px 0px rgba(255, 255, 255, 0.9),
+    inset -4px -4px 10px 0px rgba(0, 0, 58, 0.2);
+  --shadow-button-2: inset 0px 4px 3px 0px rgba(215, 218, 254, 0.6),
+    0px 8px 12px 0px rgba(12, 8, 109, 0.15),
+    inset 4px 4px 8px 0px rgba(255, 255, 255, 1);
+  /* inset -4px -4px 5px 0px rgba(32, 24, 75, 1); */
+  --shadow-button-2-2: inset -4px -4px 10px 0px rgba(28, 49, 138, 0.2),
+    inset 0px 4px 8px 0px rgba(198, 204, 238, 0.3),
+    inset 4px 4px 5px 0px rgba(255, 255, 255, 0.5);
+  --shadow-button-3: inset 0px 4px 3px 0px rgba(255, 255, 255, 0.4),
+    inset 4px 4px 10px 0px rgba(255, 255, 255, 0.4);
+  /* inset -4px -4px 10px 0px rgba(7, 8, 117, 0.6); */
 }
 
 .dark {
   /* brand color */
-  --color-brand-primary: #3865f3;
+  /* --color-brand-primary: #3865f3;
   --color-brand-secondary: #b5e7ff;
 
   --color-brand-primary-alpha-90: rgba(56, 101, 243, 0.9);
@@ -618,7 +652,7 @@ body {
   --color-brand-primary-alpha-40: rgba(56, 101, 243, 0.4);
   --color-brand-primary-alpha-30: rgba(56, 101, 243, 0.3);
   --color-brand-primary-alpha-20: rgba(56, 101, 243, 0.2);
-  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1);
+  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1); */
 
   /* border */
   --color-border-base: var(--color-neutral-900);

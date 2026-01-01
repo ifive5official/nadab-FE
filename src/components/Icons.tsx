@@ -162,6 +162,38 @@ export function ChevronRightIcon({ size = 24 }: { size?: number }) {
   );
 }
 
+export function InfoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="21"
+      height="21"
+      viewBox="0 0 21 21"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={"box-content " + className}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M9.625 10.0625H8.53125V8.75H10.9375V13.125H12.0312V14.4375H9.625V10.0625Z"
+        fill="var(--color-icon-info)"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M9.625 7.65625V5.90625H10.9375V7.65625H9.625Z"
+        fill="var(--color-icon-info)"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M10.2812 3.0625C6.29444 3.0625 3.0625 6.29444 3.0625 10.2812C3.0625 14.2681 6.29444 17.5 10.2812 17.5C14.2681 17.5 17.5 14.2681 17.5 10.2812C17.5 6.29444 14.2681 3.0625 10.2812 3.0625ZM1.75 10.2812C1.75 5.56957 5.56957 1.75 10.2812 1.75C14.9929 1.75 18.8125 5.56957 18.8125 10.2812C18.8125 14.9929 14.9929 18.8125 10.2812 18.8125C5.56957 18.8125 1.75 14.9929 1.75 10.2812Z"
+        fill="var(--color-icon-info)"
+      />
+    </svg>
+  );
+}
+
 // 카테고리==================================
 export function Deco4FilledIcon({ fill }: { fill?: string }) {
   return (
@@ -413,11 +445,11 @@ export function HideFilledIcon() {
     >
       <path
         d="M22.9084 11.584C22.2034 10.039 19.3304 5 11.9994 5C11.2764 5 10.1894 5.085 9.3934 5.274L9.8564 7.219C10.3924 7.092 11.2944 6.999 12.0004 6.999C17.5764 6.999 20.0434 10.419 20.8844 11.998C20.4924 12.73 19.7104 13.935 18.3854 14.967L19.6154 16.545C21.5144 15.064 22.4944 13.321 22.9094 12.416L23.0994 12L22.9084 11.584Z"
-        fill="#17191A"
+        fill="var(--color-icon-default)"
       />
       <path
         d="M1.58539 4.414L4.51839 7.347C2.50839 8.852 1.47039 10.752 1.09039 11.584L0.900391 12L1.09039 12.416C1.79639 13.96 4.66939 19 12.0004 19C13.2994 19 14.5304 18.828 15.6794 18.507L19.5864 22.414L21.0004 21L2.99939 3L1.58539 4.414ZM11.9994 17C6.42239 17 3.95439 13.578 3.11439 12C3.55339 11.171 4.43839 9.826 5.94739 8.777L8.14439 10.974C8.05239 11.34 7.99939 11.716 7.99939 12.001C7.99939 14.207 9.79339 16.001 11.9994 16.001C12.1914 16.001 12.5914 15.976 13.0384 15.868L14.0084 16.838C13.3654 16.944 12.6954 17 11.9994 17Z"
-        fill="#17191A"
+        fill="var(--color-icon-default)"
       />
     </svg>
   );
@@ -508,13 +540,13 @@ export function CloseBigIcon() {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M11.875 22.375L22.375 11.875L23.3031 12.8031L12.8031 23.3031L11.875 22.375Z"
-        fill="white"
+        fill="currentColor"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M12.8031 11.875L23.3031 22.375L22.375 23.3031L11.875 12.8031L12.8031 11.875Z"
-        fill="white"
+        fill="currentColor"
       />
     </svg>
   );
@@ -611,29 +643,23 @@ export function GemFilledIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M1 6.66667L6 12.6L4.2 6.66667H1Z"
-        fill="var(--color-icon-default)"
-      />
+      <path d="M1 6.66667L6 12.6L4.2 6.66667H1Z" fill="currentColor" />
       <path
         d="M7.99999 14.6667L10.4 6.66667H5.53333L7.99999 14.6667Z"
-        fill="var(--color-icon-default)"
+        fill="currentColor"
       />
       <path
         d="M10.0667 5.33333L7.99999 2L5.86666 5.33333H10.0667Z"
-        fill="var(--color-icon-default)"
+        fill="currentColor"
       />
       <path
         d="M14.9333 5.33333L12.4667 2.26667C12.3333 2.13333 12.1333 2 11.9333 2H9.4L11.6 5.33333H14.9333Z"
-        fill="var(--color-icon-default)"
+        fill="currentColor"
       />
-      <path
-        d="M11.8 6.66667L10 12.6L15 6.66667H11.8Z"
-        fill="var(--color-icon-default)"
-      />
+      <path d="M11.8 6.66667L10 12.6L15 6.66667H11.8Z" fill="currentColor" />
       <path
         d="M4.26667 5.33333L6.4 2H4C3.8 2 3.6 2.06667 3.46667 2.26667L1 5.33333H4.26667Z"
-        fill="var(--color-icon-default)"
+        fill="currentColor"
       />
     </svg>
   );
@@ -715,13 +741,13 @@ export function CloseIcon() {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M5 17L17 5L18.0607 6.06066L6.06066 18.0607L5 17Z"
-        fill="#17191A"
+        fill="var(--color-icon-default)"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M6.06066 5L18.0607 17L17 18.0607L5 6.06066L6.06066 5Z"
-        fill="#17191A"
+        fill="var(--color-icon-default)"
       />
     </svg>
   );
@@ -892,14 +918,14 @@ export function NoticeMenuIcon() {
 export function DayCheckIcon() {
   return (
     <svg
-      width="38"
-      height="38"
-      viewBox="0 0 38 38"
+      width="31"
+      height="31"
+      viewBox="0 0 31 31"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M19 0C8.52409 0 0 8.52409 0 19C0 29.4759 8.52409 38 19 38C29.4759 38 38 29.4759 38 19C38 8.52409 29.4759 0 19 0ZM16.0792 27.2063L9.13382 20.1642L11.5935 17.7391L16.0982 22.3077L26.4169 12.0184L28.8558 14.4642L16.0792 27.2063Z"
+        d="M15.2 0C6.81927 0 0 6.81927 0 15.2C0 23.5807 6.81927 30.4 15.2 30.4C23.5807 30.4 30.4 23.5807 30.4 15.2C30.4 6.81927 23.5807 0 15.2 0ZM12.8633 21.765L7.30705 16.1313L9.27476 14.1913L12.8785 17.8462L21.1335 9.61469L23.0847 11.5713L12.8633 21.765Z"
         fill="var(--color-icon-primary)"
       />
     </svg>
@@ -909,8 +935,10 @@ export function DayCheckIcon() {
 // 글쓰기 ==================
 export function ChatVerificationReceptionIcon({
   className,
+  style,
 }: {
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <svg
@@ -920,10 +948,56 @@ export function ChatVerificationReceptionIcon({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={style}
     >
       <path
         d="M0.648615 0.00353634C0.188615 -0.0464637 -0.151385 0.443536 0.0686152 0.853536C1.70862 3.87354 2.56862 8.33354 3.01862 13.3735C3.51862 18.9435 7.51862 3.94354 7.51862 3.94354C7.51862 3.94354 4.96862 0.533536 0.648615 0.00353634Z"
         fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function CharVerificationSendingIcon({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      width="8"
+      height="15"
+      viewBox="0 0 8 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      style={style}
+    >
+      <path
+        d="M7.30986 0.00362985C7.79931 -0.0476923 8.16108 0.455265 7.92699 0.876106C6.18199 3.97596 5.26693 8.5539 4.78812 13.7272C4.2561 19.4445 0 4.04781 0 4.04781C0 4.04781 2.71327 0.547644 7.30986 0.00362985Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+// 상세보기
+export function AccordionIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5 9.06066L6.06066 8L11.5303 13.4697L17 8L18.0607 9.06066L11.5303 15.591L5 9.06066Z"
+        fill="var(--color-icon-default)"
       />
     </svg>
   );

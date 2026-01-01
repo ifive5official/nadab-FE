@@ -4,14 +4,15 @@ import clsx from "clsx";
 
 const TAB_ITEMS = [
   { to: "/", label: "홈" },
-  { to: "/social", label: "소셜" },
   { to: "/report", label: "리포트" },
+  { to: "/social", label: "소셜" },
   { to: "/calendar", label: "캘린더" },
 ] as const;
 
 export default function Tabs() {
   return (
-    <nav className="flex gap-margin-x-xl -mx-padding-x-m px-padding-x-m border-b border-b-border-base">
+    // 헤더 높이 띄움
+    <nav className="mt-header-height flex gap-margin-x-xl px-padding-x-m border-b border-b-border-base">
       {TAB_ITEMS.map((item) => {
         return (
           <Link key={item.to} to={item.to} className="flex-1 text-center">

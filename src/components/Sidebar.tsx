@@ -14,8 +14,8 @@ import { useEffect } from "react";
 
 const MENU_ITEMS = [
   { to: "/", label: "홈", icon: HomeMenuIcon },
-  { to: "/social", label: "소셜", icon: SocialMenuIcon },
   { to: "/report", label: "리포트", icon: ReportMenuIcon },
+  { to: "/social", label: "소셜", icon: SocialMenuIcon },
   { to: "/calendar", label: "캘린더", icon: CalendarMenuIcon },
   { to: "/notice", label: "공지사항", icon: NoticeMenuIcon },
 ] as const;
@@ -50,12 +50,12 @@ export default function Sidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-0 bg-neutral-dark-50"
+              className="fixed z-2 inset-0 bg-neutral-dark-50"
               onClick={closeSidebar}
             />
             {/* 사이드바 */}
             <motion.div
-              className="fixed inset-y-0 right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base px-padding-x-m flex flex-col"
+              className="fixed z-5 inset-y-0 right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base px-padding-x-m flex flex-col"
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 100, opacity: 0 }}

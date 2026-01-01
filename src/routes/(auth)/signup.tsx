@@ -2,6 +2,7 @@ import { useLocation, createFileRoute, Outlet } from "@tanstack/react-router";
 import { GetCurrentStep, type StepId } from "@/features/auth/signupSteps";
 import useAuthStore from "@/store/authStore";
 import { redirect } from "@tanstack/react-router";
+import Container from "@/components/Container";
 
 export const Route = createFileRoute("/(auth)/signup")({
   component: SignupLayout,
@@ -29,9 +30,11 @@ function SignupLayout() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <>
       {currentStep.header}
-      <Outlet />
-    </div>
+      <Container>
+        <Outlet />
+      </Container>
+    </>
   );
 }

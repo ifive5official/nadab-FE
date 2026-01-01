@@ -77,7 +77,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/report/daily/generate/test": {
+    "/api/v1/question/reroll": {
         parameters: {
             query?: never;
             header?: never;
@@ -87,32 +87,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * (테스트용) 오늘의 리포트 생성 API
-         * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
-         *     1.
-         *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
-         *     ```json
-         *     {
-         *          "message": "(분석 내용)",
-         *          "emotion": "(감정 키워드)"
-         *     }
-         *     ```
-         *     2.
-         *     분석 대상을 명시해야 합니다.
-         *     예시)
-         *     ```json
-         *     [분석 대상]
-         *     질문: {question}
-         *     답변: {answer}
-         *     ```
-         *     이하는 temperature에 대한 설명입니다.<br/>
-         *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
-         *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
-         *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
-         *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
-         *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
+         * 새로운 질문 받기
+         * @description 오늘의 질문을 새로 받습니다. 하루에 한 번만 가능합니다.
          */
-        post: operations["generateDailyReport"];
+        post: operations["rerollDailyQuestion"];
         delete?: never;
         options?: never;
         head?: never;
@@ -164,6 +142,84 @@ export interface paths {
          *     인증 코드는 3분 후 자동 만료되며, 만료된 코드는 재발송이 필요합니다.
          */
         post: operations["verifyCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/daily-report/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 오늘의 리포트 생성 API
+         * @description 유저의 오늘의 리포트를 생성합니다. <br/>
+         *     생성 실패 시에도 이 API를 다시 호출하면 됩니다. <br/>
+         *     이 때 유저의 답변은 기존의 답변으로 자동으로 사용됩니다. <br/>
+         *     소요 시간이 최대 3~4초밖에 안 되어 동기처리로 구현했습니다. <br/>
+         *
+         *     | 응답의 emotion | 해당 감정 |
+         *     | :--- | :--- |
+         *     | `JOY` | 기쁨 |
+         *     | `PLEASURE` | 즐거움 |
+         *     | `LOVE` | 사랑 |
+         *     | `SADNESS` | 슬픔 |
+         *     | `ANGER` | 분노 |
+         *     | `PAIN` | 고통 |
+         *     | `REGRET` | 후회 |
+         *     | `FRUSTRATION` | 좌절 |
+         *     | `GROWTH` | 성장 |
+         *     | `ETC` | 기타 |
+         */
+        post: operations["generateDailyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/daily-report/generate/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 오늘의 리포트 생성 API
+         * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
+         *     1.
+         *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
+         *     ```json
+         *     {
+         *          "message": "(분석 내용)",
+         *          "emotion": "(감정 키워드)"
+         *     }
+         *     ```
+         *     2.
+         *     분석 대상을 명시해야 합니다.
+         *     예시)
+         *     ```json
+         *     [분석 대상]
+         *     질문: {question}
+         *     답변: {answer}
+         *     ```
+         *     이하는 temperature에 대한 설명입니다.<br/>
+         *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
+         *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
+         *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
+         *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
+         *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
+         */
+        post: operations["generateDailyReport_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -428,7 +484,6 @@ export interface paths {
          *     - **RELATIONSHIP** : 인간관계
          *     - **LOVE** : 사랑
          *     - **VALUES** : 가치관
-         *     - **DREAM** : 꿈
          */
         patch: operations["updateUserInterests"];
         trace?: never;
@@ -528,6 +583,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/question": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 오늘의 질문 조회
+         * @description 오늘의 질문을 조회합니다.
+         */
+        get: operations["getDailyQuestion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/daily-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 오늘의 리포트 조회 API
+         * @description 유저의 오늘의 리포트를 조회합니다.
+         */
+        get: operations["getDailyReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/{provider}/url": {
         parameters: {
             query?: never;
@@ -618,24 +713,42 @@ export interface components {
              */
             marketing: boolean;
         };
-        /** @description 오늘의 리포트 생성 응답 */
-        DailyReportResponse: {
-            message?: string;
-            emotion?: string;
-            /** Format: int32 */
-            length?: number;
-        };
-        /** @description 테스트용 오늘의 리포트 생성 요청 */
-        TestDailyReportRequest: {
+        /** @description 오늘의 질문 응답 */
+        DailyQuestionResponse: {
             /**
-             * Format: double
-             * @example 0.3
+             * Format: int64
+             * @description 질문 ID
              */
-            temperature: number;
-            /** @example 질문 */
-            question: string;
-            /** @example 답변 */
-            answer: string;
+            questionId?: number;
+            /**
+             * @description 관심 주제 코드
+             * @example PREFERENCE
+             */
+            interestCode?: string;
+            /**
+             * @description 질문 텍스트
+             * @example 요즘 자주 찾는 색깔은 무엇인가요?
+             */
+            questionText?: string;
+            /**
+             * @description 공감 가이드 텍스트
+             * @example 색깔 하나로 기분이 달라질 때가 있어요.
+             */
+            empathyGuide?: string;
+            /**
+             * @description 힌트 가이드 텍스트
+             * @example 지금 입은 옷이나 주변 소품을 보세요.
+             */
+            hintGuide?: string;
+            /**
+             * @description 도입 질문 가이드 텍스트
+             * @example 그 색을 보면 어떤 기분이 드나요?
+             */
+            leadingQuestionGuide?: string;
+            /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
+            answered?: boolean;
+            /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
+            rerollUsed?: boolean;
         };
         /** @description 공통 API 응답 형식 */
         ApiResponseDto: {
@@ -685,6 +798,51 @@ export interface components {
              * @example SIGNUP
              */
             verificationType: string;
+        };
+        /** @description 오늘의 리포트 생성 응답 */
+        CreateDailyReportResponse: {
+            /**
+             * Format: int64
+             * @description 오늘의 리포트 ID
+             * @example 1
+             */
+            reportId?: number;
+            /** @description 오늘의 리포트 내용 */
+            content?: string;
+            /**
+             * @description 오늘의 리포트 감정 상태
+             * @example GROWTH
+             */
+            emotion?: string;
+            /**
+             * Format: int64
+             * @description 리포트 작성 후 크리스탈 잔액
+             * @example 100
+             */
+            balanceAfter?: number;
+        };
+        /** @description 오늘의 리포트 생성 요청 */
+        DailyReportRequest: {
+            /**
+             * Format: int64
+             * @description 질문 ID
+             * @example 1
+             */
+            questionId: number;
+            /** @description 유저의 답변 내용 */
+            answer: string;
+        };
+        /** @description 테스트용 오늘의 리포트 생성 요청 */
+        TestDailyReportRequest: {
+            /**
+             * Format: double
+             * @example 0.3
+             */
+            temperature: number;
+            /** @example 질문 */
+            question: string;
+            /** @example 답변 */
+            answer: string;
         };
         /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
         TokenResponse: {
@@ -914,6 +1072,16 @@ export interface components {
              */
             agreed?: boolean;
         };
+        /** @description 오늘의 리포트 조회 응답 */
+        DailyReportResponse: {
+            /** @description 오늘의 리포트 내용 */
+            content?: string;
+            /**
+             * @description 오늘의 리포트 감정 상태
+             * @example GROWTH
+             */
+            emotion?: string;
+        };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
             /**
@@ -1032,38 +1200,37 @@ export interface operations {
             };
         };
     };
-    generateDailyReport: {
+    rerollDailyQuestion: {
         parameters: {
-            query: {
-                prompt: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TestDailyReportRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description 테스트용 오늘의 리포트 생성 성공 */
+            /** @description 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DailyReportResponse"];
+                    "application/json": components["schemas"]["DailyQuestionResponse"];
                 };
             };
-            /** @description 잘못된 요청 */
-            400: {
+            /** @description 사용자 인증 실패 */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
+                content?: never;
+            };
+            /** @description 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
             };
         };
     };
@@ -1150,6 +1317,110 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    generateDailyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyReportRequest"];
+            };
+        };
+        responses: {
+            /** @description 오늘의 리포트 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateDailyReportResponse"];
+                };
+            };
+            /** @description 잘못된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 오늘의 리포트가 이미 생성된 경우 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description AI 응답 JSON 파싱 실패 */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 외부 AI 서비스 연동 실패 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+        };
+    };
+    generateDailyReport_1: {
+        parameters: {
+            query: {
+                prompt: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestDailyReportRequest"];
+            };
+        };
+        responses: {
+            /** @description 테스트용 오늘의 리포트 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateDailyReportResponse"];
+                };
+            };
+            /** @description 잘못된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
             };
         };
     };
@@ -1780,6 +2051,67 @@ export interface operations {
             };
             /** @description 잘못된 요청 - 닉네임 누락 또는 빈 문자열 */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getDailyQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyQuestionResponse"];
+                };
+            };
+            /** @description 사용자 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getDailyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 오늘의 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReportResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 오늘의 리포트가 존재하지 않는 경우 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

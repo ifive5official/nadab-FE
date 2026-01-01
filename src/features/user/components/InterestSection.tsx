@@ -28,14 +28,14 @@ export default function InterestSection({
             <QuestionBadge
               key={category.title}
               height={36}
-              category={category.title}
+              category={category.code}
               onClick={() => {
                 if (!isPending) {
                   onSelectInterest(category.code);
                 }
               }}
               isActive={category.isSelected}
-              className="cursor-pointer"
+              className="cursor-pointer max-[400px]:text-[11px]!"
             />
           );
         })}
