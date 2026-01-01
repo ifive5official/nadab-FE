@@ -2,7 +2,7 @@
 // 카테고리 뱃지 + 날짜 + 질문 섹션
 import { QuestionBadge } from "@/components/Badges";
 import type { components } from "@/generated/api-types";
-import { formatDate } from "@/lib/formatDate";
+import { formatKoreanDate } from "@/lib/formatDate";
 import categories from "@/constants/categories";
 
 type Question = components["schemas"]["DailyQuestionResponse"];
@@ -13,15 +13,16 @@ type Props = {
 };
 
 export function QuestionSection({ question }: Props) {
-  const category = categories.find(
-    (category) => category.code === question.interestCode
-  )?.title;
   return (
     <div className="flex flex-col gap-gap-y-s">
       <div className="flex justify-between">
-        <QuestionBadge category={category!} />
+        <QuestionBadge
+          category={
+            question.interestCode! as (typeof categories)[number]["code"]
+          }
+        />
         <span className="text-caption-s text-text-tertiary">
-          {formatDate(new Date())}
+          {formatKoreanDate(new Date())}
         </span>
       </div>
       <h2 className="text-title-2 break-keep">{question.questionText}</h2>

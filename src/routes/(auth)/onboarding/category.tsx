@@ -80,7 +80,7 @@ function Category() {
                   }
                 )}
               >
-                <QuestionBadge category={item.title} height={36.4} />
+                <QuestionBadge category={item.code} height={36.4} />
                 <p className="text-text-primary text-body-2">
                   {item.description}
                 </p>

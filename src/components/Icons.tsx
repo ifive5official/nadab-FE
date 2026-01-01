@@ -982,3 +982,23 @@ export function CharVerificationSendingIcon({
     </svg>
   );
 }
+
+// 상세보기
+export function AccordionIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5 9.06066L6.06066 8L11.5303 13.4697L17 8L18.0607 9.06066L11.5303 15.591L5 9.06066Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}

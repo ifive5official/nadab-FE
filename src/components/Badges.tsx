@@ -7,7 +7,7 @@ import emotions from "@/constants/emotions";
 // 질문 카테고리 나타내는 작은 버튼처럼 생긴 컴포넌트
 type QuestionBadgeProps = {
   height?: number;
-  category: (typeof categories)[number]["title"];
+  category: (typeof categories)[number]["code"];
   onClick?: () => void;
   isActive?: boolean;
   className?: string;
@@ -20,7 +20,7 @@ export function QuestionBadge({
   isActive = true,
   className,
 }: QuestionBadgeProps) {
-  const item = categories.find((c) => c.title === category)!;
+  const item = categories.find((c) => c.code === category)!;
   const Icon = item.icon;
   return (
     <div

@@ -10,6 +10,7 @@ import FriendSection from "./FriendSection";
 import RecordSection from "./RecordSection";
 import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
+import { formatISODate } from "@/lib/formatDate";
 
 export default function Home() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
@@ -72,7 +73,10 @@ export default function Home() {
             <RecordSection />
           )}
           {question?.answered ? (
-            <Link to="/today/report">
+            <Link
+              to="/detail/$date"
+              params={{ date: formatISODate(new Date()) }}
+            >
               <BlockButton>오늘의 기록 보러가기</BlockButton>
             </Link>
           ) : (

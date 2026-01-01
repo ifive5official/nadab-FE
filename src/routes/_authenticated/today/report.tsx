@@ -15,6 +15,7 @@ import { motion } from "motion/react";
 import { questionOptions } from "@/features/question/queries";
 import { reportOptions } from "@/features/report/quries";
 import emotions from "@/constants/emotions";
+import ReportMessage from "@/features/report/ReportMessage";
 
 export const Route = createFileRoute("/_authenticated/today/report")({
   component: RouteComponent,
@@ -62,7 +63,7 @@ function RouteComponent() {
             <div className="flex flex-col gap-gap-y-m">
               {messages.map((message, i) => {
                 return (
-                  <motion.p
+                  <motion.div
                     key={i}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0, 0.3, 1] }}
@@ -71,10 +72,9 @@ function RouteComponent() {
                       ease: "easeInOut",
                       delay: 0.001 + i * 0.5,
                     }}
-                    className="w-fit px-padding-x-s py-padding-y-m font-medium text-[13px]/[160%] text-text-secondary bg-surface-layer-1 rounded-2xl"
                   >
-                    {message}
-                  </motion.p>
+                    <ReportMessage>{message}</ReportMessage>
+                  </motion.div>
                 );
               })}
             </div>

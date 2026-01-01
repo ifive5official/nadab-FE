@@ -23,7 +23,7 @@ export function Question() {
         bgColor="var(--color-surface-layer-3)"
       >
         <div className="flex flex-col items-start gap-gap-y-s">
-          <QuestionBadge category="사랑" />
+          <QuestionBadge category="LOVE" />
           <p>
             가나다라님의
             <br />

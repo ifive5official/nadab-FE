@@ -6,6 +6,7 @@ import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
+import { formatISODate } from "@/lib/formatDate";
 
 type Props = {
   onSuccess?: () => void;
@@ -29,9 +30,7 @@ export function useGenerateReportMutation({ onSuccess }: Props) {
       return res.data;
     },
     onSuccess: (data) => {
-      const today = new Date().toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul",
-      });
+      const today = formatISODate(new Date());
       queryClient.invalidateQueries({ queryKey: ["currentUser", "crystals"] });
       queryClient.setQueryData(["currentUser", "report", today], data.data);
       onSuccess?.();
