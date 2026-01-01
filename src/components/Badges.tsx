@@ -26,7 +26,7 @@ export function QuestionBadge({
     <div
       style={{ zoom: height / 28 }}
       className={clsx(
-        "flex justify-center items-center gap-1 px-2 py-1 bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg",
+        "flex justify-center items-center gap-1 px-2 py-1 bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg text-label-s",
         className
       )}
       onClick={onClick}
@@ -38,7 +38,6 @@ export function QuestionBadge({
       />
       <span
         className={clsx(
-          "text-label-s",
           isActive
             ? "text-button-tertiary-text-default"
             : "text-button-disabled-text"
@@ -97,7 +96,7 @@ export function CrystalBadge({ height = 25, crystals }: CrystalBadgeProps) {
   return (
     <div
       style={{ zoom: height / 25 }}
-      className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs w-fit"
+      className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs w-fit text-neutral-1000"
     >
       <GemFilledIcon />
       <span className="text-caption-s">{crystals}</span>

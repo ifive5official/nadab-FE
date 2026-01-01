@@ -37,7 +37,7 @@ export default function Home() {
           </p>
           {/* 구슬 */}
           <div className="flex items-center justify-center">
-            <div className="relative w-[calc((267/390)*100vw)] sm:w-[calc((267/390)*412px)] aspect-square ">
+            <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100svh))] sm:w-[calc((267/390)*412px)] aspect-square ">
               <video
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
                 autoPlay

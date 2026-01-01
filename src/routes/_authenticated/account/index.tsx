@@ -19,7 +19,7 @@ import AccountSection from "@/features/user/components/AccountSection";
 import Container from "@/components/Container";
 
 const notificationOptions = queryOptions({
-  queryKey: ["notification"],
+  queryKey: ["currentUser", "notification"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<NotificationRes>>(
       "/api/v1/terms/consent/marketing"

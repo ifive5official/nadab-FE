@@ -35,7 +35,7 @@ export default function InterestSection({
                 }
               }}
               isActive={category.isSelected}
-              className="cursor-pointer"
+              className="cursor-pointer max-[400px]:text-[11px]!"
             />
           );
         })}

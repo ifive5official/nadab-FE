@@ -24,10 +24,10 @@ export default function BlockButton({
     <button
       disabled={disabled || isLoading}
       className={clsx(
-        "relative text-center text-button-1 rounded-full px-padding-x-m",
+        "relative text-center text-button-1 rounded-full",
         {
           "w-full py-padding-y-m": btnType === "block",
-          "w-fit py-padding-y-xs": btnType === "inline",
+          "w-fit py-padding-y-xs px-padding-x-m": btnType === "inline",
         },
         {
           "bg-button-gradient-1 shadow-button-1 active:shadow-button-1-2 text-button-primary-text-default after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none after:shadow-[inset_-4px_-4px_10px_0px_rgba(7,8,117,0.6)] after:mix-blend-overlay active:after:shadow-none":

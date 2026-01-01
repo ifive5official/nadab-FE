@@ -641,7 +641,7 @@ body {
 
 .dark {
   /* brand color */
-  --color-brand-primary: #3865f3;
+  /* --color-brand-primary: #3865f3;
   --color-brand-secondary: #b5e7ff;
 
   --color-brand-primary-alpha-90: rgba(56, 101, 243, 0.9);
@@ -652,7 +652,7 @@ body {
   --color-brand-primary-alpha-40: rgba(56, 101, 243, 0.4);
   --color-brand-primary-alpha-30: rgba(56, 101, 243, 0.3);
   --color-brand-primary-alpha-20: rgba(56, 101, 243, 0.2);
-  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1);
+  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1); */
 
   /* border */
   --color-border-base: var(--color-neutral-900);

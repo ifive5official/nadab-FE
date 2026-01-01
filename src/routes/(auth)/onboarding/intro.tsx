@@ -15,7 +15,7 @@ import clsx from "clsx";
 import { useNavigate, useBlocker } from "@tanstack/react-router";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import useOnboardingStore from "@/store/onboardingStore";
-import { Question } from "@/features/auth/onboardings";
+import { Question, Report } from "@/features/auth/onboardings";
 
 export const Route = createFileRoute("/(auth)/onboarding/intro")({
   component: FeatureDescription,
@@ -48,12 +48,7 @@ function FeatureDescription() {
     잊고 있던 당신의 생각 패턴이나,
     어느새 훌쩍 자란 당신의 모습을 발견하는 여정에 함께할게요.
     ㅤ`,
-      component: (
-        <img
-          src="/onboarding2.png"
-          className="absolute inset-0 w-full h-full object-contain"
-        />
-      ),
+      component: <Report />,
     },
     {
       category: "친구",
@@ -149,7 +144,7 @@ function FeatureDescription() {
                 }}
               >
                 <div className="h-full flex flex-col gap-padding-y-xl">
-                  <div className="flex-1 flex items-center bg-surface-layer-2 rounded-[20px] relative overflow-hidden">
+                  <div className="flex-1 flex justify-center items-center bg-surface-layer-2 rounded-[20px] relative overflow-hidden">
                     {content.component}
                     {/* <img
                         src={contents[i].imgSrc}

@@ -20,7 +20,7 @@ export default function Container({
       className={clsx(
         "h-full w-full flex flex-col px-padding-x-m pb-padding-y-m",
         className,
-        hasHeader && "mt-header-height"
+        hasHeader && "pt-header-height"
       )}
     >
       {children}
