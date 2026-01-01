@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/detail/$date")({
   component: RouteComponent,
   //   Todo: 검색 api 나오면 특정 날짜 질문 답변 조회하도록 변경
   //   Todo: 작성하지 않은 날짜의 경우 404 페이지로 보냄
+  //   Todo: 에러 처리
   loader: ({ context: { queryClient } }) => {
     return Promise.all([
       queryClient.ensureQueryData(questionOptions),
