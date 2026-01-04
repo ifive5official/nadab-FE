@@ -1,5 +1,4 @@
-// 닉네임 체크
-// 온보딩 및 프로필 수정 시 사용
+// 일간 리포트 생성
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
