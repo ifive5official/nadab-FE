@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 
 type Props = {
@@ -26,25 +26,30 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
     onSuccess: (_, { email }) => {
       onSuccess?.(email);
     },
-    onError: (err: AxiosError<ApiResponse<null>>, { verificationType }) => {
-      if (err.response?.status === 409) {
-        // 회원가입 시
-        onEmailInvalid?.("이미 가입한 회원이에요.");
-      } else if (err.response?.status === 404) {
-        // 비밀번호 변경 시
-        onEmailInvalid?.("해당 이메일로 가입한 계정이 없어요.");
-      } else if (
-        err.response?.status === 400 &&
-        verificationType === "PASSWORD_RESET"
-      ) {
-        onEmailInvalid?.("소셜 로그인 계정은 비밀번호 찾기를 할 수 없어요.");
-      } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      switch (err.response?.data?.code) {
+        case "EMAIL_ALREADY_EXISTS":
+          onEmailInvalid?.("이미 가입한 회원이에요.");
+          break;
+        case "USER_NOT_FOUND":
+          onEmailInvalid?.("해당 이메일로 가입한 계정이 없어요.");
+          break;
+        case "EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN":
+          onEmailInvalid?.("소셜 로그인 계정은 비밀번호 찾기를 할 수 없어요.");
+          break;
+        case "EMAIL_WITHDRAWN_ACCOUNT_SIGNUP_FORBIDDEN":
+          onEmailInvalid?.(
+            "탈퇴된 계정이에요. 로그인해서 계정 복구를 진행해 주세요."
+          );
+          break;
+        default:
+          useErrorStore.getState().showError(
+            // Todo: 에러 메시지 변경
+            err.response?.data?.code ?? err.message,
+            err.response?.data?.message ??
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          );
+          break;
       }
     },
   });

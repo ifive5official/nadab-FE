@@ -58,14 +58,7 @@ function RouteComponent() {
           </h2>
           <section className="bg-interactive-bg-default border border-border-base px-padding-x-m py-padding-y-m rounded-2xl flex flex-col gap-padding-y-xs">
             <h3 className="text-title-3">나의 답변</h3>
-            {/* eslint-disable react/no-unescaped-entities */}
-            <p className="text-body-2 text-text-tertiary">
-              오늘의 이야기는 그 영광이 단순히 '결과'가 아니라, 수많은 고민과
-              노력을 거쳐 '나는 해낼 수 있다'는 믿음을 스스로 증명해낸 '과정' 그
-              자체였음을 보여줘요. 당신 안에 잠재된 힘을 다시 한번 발견한 소중한
-              기록입니다. 이 기록은 미래의 당신과 연결될 첫 번째 조각이 될
-              거예요.오늘의 이야기는 그 영광이 단순히 '결과'가 아니라,{" "}
-            </p>
+            <p className="text-body-2 text-text-tertiary">{report.answer}</p>
           </section>
           <section className="bg-interactive-bg-default border border-border-base px-padding-x-m py-padding-y-m rounded-2xl flex flex-col gap-gap-y-l mt-margin-y-s">
             <div className="flex gap-margin-x-s">
