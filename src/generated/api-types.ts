@@ -4,6 +4,27 @@
  */
 
 export interface paths {
+    "/api/v1/weekly-report/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 주간 리포트 생성 시작
+         * @description 사용자의 (지난 주에 대한) 주간 리포트 생성을 시작합니다. </br>
+         *     비동기로 처리되기 때문에, id로 주간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+         */
+        post: operations["startWeeklyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me/profile-image/upload-url": {
         parameters: {
             query?: never;
@@ -168,10 +189,8 @@ export interface paths {
          *     | :--- | :--- |
          *     | `JOY` | 기쁨 |
          *     | `PLEASURE` | 즐거움 |
-         *     | `LOVE` | 사랑 |
          *     | `SADNESS` | 슬픔 |
          *     | `ANGER` | 분노 |
-         *     | `PAIN` | 고통 |
          *     | `REGRET` | 후회 |
          *     | `FRUSTRATION` | 좌절 |
          *     | `GROWTH` | 성장 |
@@ -195,29 +214,7 @@ export interface paths {
         put?: never;
         /**
          * (테스트용) 오늘의 리포트 생성 API
-         * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
-         *     1.
-         *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
-         *     ```json
-         *     {
-         *          "message": "(분석 내용)",
-         *          "emotion": "(감정 키워드)"
-         *     }
-         *     ```
-         *     2.
-         *     분석 대상을 명시해야 합니다.
-         *     예시)
-         *     ```json
-         *     [분석 대상]
-         *     질문: {question}
-         *     답변: {answer}
-         *     ```
-         *     이하는 temperature에 대한 설명입니다.<br/>
-         *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
-         *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
-         *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
-         *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
-         *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
+         * @description 오늘의 리포트 생성 테스트입니다.
          */
         post: operations["generateDailyReport_1"];
         delete?: never;
@@ -536,6 +533,50 @@ export interface paths {
         patch: operations["changePassword"];
         trace?: never;
     };
+    "/api/v1/weekly-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 나의 주간 리포트 조회
+         * @description 사용자의 (지난 주) 주간 리포트를 조회합니다.
+         */
+        get: operations["getLastWeekWeeklyReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/weekly-report/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * id로 주간 리포트 조회
+         * @description 주간 리포트를 id로 조회합니다. </br>
+         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+         */
+        get: operations["getWeeklyReportById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/wallet/balance": {
         parameters: {
             query?: never;
@@ -578,6 +619,30 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/search/histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 최근 검색어 조회
+         * @description 최근 검색어 10개를 조회합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
+         */
+        get: operations["getRecentSearches"];
+        put?: never;
+        post?: never;
+        /**
+         * 전체 검색어 삭제
+         * @description 모든 검색어를 삭제합니다.
+         */
+        delete: operations["deleteAllSearchHistories"];
         options?: never;
         head?: never;
         patch?: never;
@@ -645,6 +710,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 답변 검색 및 전체 조회
+         * @description 키워드 또는 감정 코드로 답변을 검색하거나, 전체 답변 목록을 조회합니다. (Cursor-based Pagination)
+         *
+         *     ### 검색 모드
+         *     - 전체 조회: 모든 파라미터 생략 시 전체 답변 목록 반환
+         *     - 키워드 검색: 질문 또는 답변 내용에서 검색
+         *     - 감정 필터링: 특정 감정 코드로 필터링
+         *     - 복합 검색: 키워드 + 감정 동시 검색
+         *     - 정렬: 최신순 (date DESC)
+         *     - 페이지 크기: 20개 고정
+         *
+         *     ### Request Parameters (모두 선택)
+         *     - keyword (선택): 검색어 (1~100자, 생략 시 키워드 검색 안 함)
+         *     - emotionCode (선택): 감정 코드 (대문자, 생략 시 감정 필터링 안 함)
+         *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
+         *
+         *     ### Response
+         *     - items: 검색 결과 리스트 (최대 20개)
+         *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
+         *     - hasNext: 다음 페이지 존재 여부
+         *
+         *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
+         *     1. 첫 페이지: GET /api/v1/answers?keyword=안녕
+         *     2. 다음 페이지: GET /api/v1/answers?keyword=안녕&cursor=2025-12-06
+         *        (response의 nextCursor 값을 cursor 파라미터로 전달)
+         *     3. hasNext=false가 될 때까지 반복
+         *
+         *     예시) emotionCode와 함께 사용:
+         *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY
+         *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY&cursor=2025-12-06
+         *
+         *     ### 참고사항
+         *     - 검색어는 자동으로 저장됩니다.
+         *     - keyword와 emotionCode는 동시에 사용 가능합니다.
+         *     - emotionCode만 사용 시 keyword는 생략 가능합니다.
+         */
+        get: operations["searchAnswers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/answers/{answerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 답변 상세 조회
+         * @description 답변 ID로 해당 답변의 상세 정보와 리포트를 조회합니다.
+         *
+         *     - 답변 내용 (answer)
+         *     - 리포트 내용 (content)
+         *     - 감정 상태 (emotion)
+         *
+         *     COMPLETED 상태의 리포트만 조회 가능합니다.
+         */
+        get: operations["getDailyReportByAnswerId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me/profile-image": {
         parameters: {
             query?: never;
@@ -665,10 +809,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/search/histories/{historyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 검색어 개별 삭제
+         * @description 검색어를 삭제한 후 최신 10개를 반환합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
+         */
+        delete: operations["deleteSearchHistory"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description 주간 리포트 생성 시작 응답 */
+        WeeklyReportStartResponse: {
+            /**
+             * Format: int64
+             * @description 생성 예정 주간 리포트 ID
+             * @example 1
+             */
+            reportId?: number;
+            /**
+             * @description 상태
+             * @example PENDING
+             */
+            status?: string;
+            /**
+             * Format: int64
+             * @description 리포트 작성 후 크리스탈 잔액
+             * @example 100
+             */
+            balanceAfter?: number;
+        };
+        /** @description 지난주에 작성된 오늘의 리포트 개수 응답 */
+        CompletedCountResponse: {
+            /** Format: int64 */
+            completedCount?: number;
+        };
         /** @description 프로필 이미지 업로드 PresignedURL 생성 응답 */
         CreateProfileImageUploadUrlResponse: {
             /**
@@ -750,7 +939,7 @@ export interface components {
             /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
             rerollUsed?: boolean;
         };
-        /** @description 공통 API 응답 형식 */
+        /** @description 공통 API 성공 응답 형식 */
         ApiResponseDto: {
             /**
              * Format: int32
@@ -834,11 +1023,6 @@ export interface components {
         };
         /** @description 테스트용 오늘의 리포트 생성 요청 */
         TestDailyReportRequest: {
-            /**
-             * Format: double
-             * @example 0.3
-             */
-            temperature: number;
             /** @example 질문 */
             question: string;
             /** @example 답변 */
@@ -1007,6 +1191,30 @@ export interface components {
              */
             newPassword: string;
         };
+        /** @description 주간 리포트 조회 응답 */
+        WeeklyReportResponse: {
+            /**
+             * Format: int32
+             * @description 리포트가 작성된 달
+             */
+            month?: number;
+            /**
+             * Format: int32
+             * @description 해당 달의 몇주차인지
+             */
+            weekOfMonth?: number;
+            /** @description 이런 면도 발견되었어요 */
+            discovered?: string;
+            /** @description 이런 점이 좋았어요 */
+            good?: string;
+            /** @description 다음엔 이렇게 보완해볼까요? */
+            improve?: string;
+            /**
+             * @description 상태
+             * @example PENDING
+             */
+            status?: string;
+        };
         /** @description 지갑 잔액 응답 */
         WalletBalanceResponse: {
             /** Format: int64 */
@@ -1072,8 +1280,39 @@ export interface components {
              */
             agreed?: boolean;
         };
+        /**
+         * @description 최근 검색어 리스트 응답
+         * @example {
+         *       "histories": [
+         *         {"id": 123, "keyword": "영광"},
+         *         {"id": 122, "keyword": "고통"},
+         *         {"id": 121, "keyword": "행복"},
+         *         ...
+         *       ]
+         *     }
+         */
+        SearchHistoryListResponse: {
+            /** @description 검색어 리스트 (최신순 10개) */
+            histories?: components["schemas"]["SearchHistoryResponse"][];
+        };
+        /** @description 검색어 항목 */
+        SearchHistoryResponse: {
+            /**
+             * Format: int64
+             * @description 검색어 ID
+             * @example 789
+             */
+            id?: number;
+            /**
+             * @description 검색 키워드
+             * @example 영광
+             */
+            keyword?: string;
+        };
         /** @description 오늘의 리포트 조회 응답 */
         DailyReportResponse: {
+            /** @description 나의 답변 */
+            answer?: string;
             /** @description 오늘의 리포트 내용 */
             content?: string;
             /**
@@ -1090,6 +1329,74 @@ export interface components {
              */
             authorizationUrl?: string;
         };
+        /** @description 검색 결과 항목 (요약) */
+        AnswerEntrySummaryResponse: {
+            /**
+             * Format: int64
+             * @description 답변 ID
+             * @example 123
+             */
+            answerId?: number;
+            /**
+             * @description 관심분야 코드 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES)
+             * @example EMOTION
+             */
+            interestCode?: string;
+            /**
+             * @description 감정 코드 (리포트 생성 완료 시에만 제공, PENDING/FAILED 상태면 null)
+             * @example JOY
+             */
+            emotionCode?: string;
+            /**
+             * @description 질문 내용
+             * @example 오늘 가장 기뻤던 순간은?
+             */
+            questionText?: string;
+            /**
+             * @description 답변 미리보기 (키워드 포함 첫 문장 또는 답변 시작 문장, 20~100자, 문장 단위, 끝마침표 없음)
+             * @example 친구와 함께한 시간이 정말 영광이었다
+             */
+            matchedSnippet?: string;
+            /**
+             * Format: date
+             * @description 답변 작성일
+             * @example 2025-12-25
+             */
+            answerDate?: string;
+        };
+        /** @description 검색 결과 리스트 응답 */
+        SearchAnswerEntryResponse: {
+            /** @description 검색 결과 항목 리스트 */
+            items?: components["schemas"]["AnswerEntrySummaryResponse"][];
+            /**
+             * @description 다음 페이지 커서 (null이면 마지막 페이지)
+             * @example 2025-12-25
+             */
+            nextCursor?: string;
+            /**
+             * @description 다음 페이지 존재 여부
+             * @example true
+             */
+            hasNext?: boolean;
+        };
+        /** @description 답변 검색 요청 */
+        SearchAnswerEntryRequest: {
+            /**
+             * @description 검색 키워드 (질문 또는 답변 내용)
+             * @example 영광
+             */
+            keyword?: string;
+            /**
+             * @description 감정 코드 (JOY, PLEASURE, SADNESS, ANGER, REGRET, FRUSTRATION, GROWTH, ETC)
+             * @example JOY
+             */
+            emotionCode?: string;
+            /**
+             * @description 다음 페이지 커서 (형식: date)
+             * @example 2025-12-25
+             */
+            cursor?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -1099,6 +1406,65 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    startWeeklyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 주간 리포트 생성 시작 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeeklyReportStartResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: WEEKLY_REPORT_NOT_ENOUGH_REPORTS - 주간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
+             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompletedCountResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: WEEKLY_REPORT_ALREADY_COMPLETED - 이미 작성된 주간 리포트가 존재함
+             *     - ErrorCode: WEEKLY_REPORT_IN_PROGRESS - 현재 주간 리포트를 생성 중임
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     createProfileImageUploadUrl: {
         parameters: {
             query?: never;
@@ -1121,14 +1487,14 @@ export interface operations {
                     "application/json": components["schemas"]["CreateProfileImageUploadUrlResponse"];
                 };
             };
-            /** @description 잘못된 요청 (예: 지원하지 않는 확장자) */
+            /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /** @description 인증 실패 (JWT 토큰 관련) */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1155,7 +1521,15 @@ export interface operations {
                     "*/*": components["schemas"]["TermsCheckResponse"];
                 };
             };
-            /** @description 인증 실패 */
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1184,14 +1558,27 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 필수 약관 미동의 */
+            /**
+             * @description 잘못된 요청
+             *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
+             *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
+             *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1225,7 +1612,21 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다. */
+            /**
+             * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
+             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없습니다.
+             *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다.
+             *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
+             */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -1257,8 +1658,12 @@ export interface operations {
                 };
             };
             /**
-             * @description - 이메일 형식 오류, 인증 타입 누락
-             *     - PASSWORD_RESET: 탈퇴한 계정 또는 소셜 로그인 계정은 비밀번호 찾기를 위한 이메일 인증 불가
+             * @description 잘못된 요청
+             *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
+             *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정 (PASSWORD_RESET)
+             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정 (PASSWORD_RESET)
+             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_SIGNUP_FORBIDDEN - 탈퇴한 계정 (SIGNUP)
+             *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
              */
             400: {
                 headers: {
@@ -1266,14 +1671,14 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description PASSWORD_RESET: 등록되지 않은 이메일 */
+            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 (PASSWORD_RESET) */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description SIGNUP: 이미 사용 중인 이메일 */
+            /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 (SIGNUP) */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -1304,14 +1709,21 @@ export interface operations {
                     "application/json": components["schemas"]["ApiResponseDto"];
                 };
             };
-            /** @description 이메일/인증 코드 형식 오류, 코드 불일치, 만료된 코드, 이미 인증 완료 */
+            /**
+             * @description 잘못된 요청
+             *     - ErrorCode: EMAIL_ALREADY_VERIFIED - 이미 인증 완료된 이메일
+             *     - ErrorCode: EMAIL_VERIFICATION_CODE_EXPIRED - 인증 코드 만료 (3분 초과)
+             *     - ErrorCode: EMAIL_VERIFICATION_CODE_MISMATCH - 인증 코드 불일치
+             *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
+             *     - ErrorCode: VALIDATION_FAILED - 이메일/인증코드 형식 오류
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 요청을 찾을 수 없음 - 발송 이력이 없거나 코드가 존재하지 않는 경우 */
+            /** @description ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 인증 요청을 찾을 수 없음 (발송 이력 없음) */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1342,58 +1754,62 @@ export interface operations {
                     "application/json": components["schemas"]["CreateDailyReportResponse"];
                 };
             };
-            /** @description 잘못된 요청 */
+            /** @description - ErrorCode: DAILY_QUESTION_MISMATCH - 요청한 질문이 사용자에게 할당된 오늘의 질문과 일치하지 않음 */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
             /** @description 인증 실패 */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
-            /** @description 오늘의 리포트가 이미 생성된 경우 */
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: QUESTION_NOT_FOUND - 질문이 존재하지 않음
+             *     - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않음
+             *     - ErrorCode: EMOTION_NOT_FOUND - 감정 정보를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 사용자의 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: DAILY_REPORT_ALREADY_COMPLETED - 이미 작성된 일간 리포트가 존재함 */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
-            /** @description AI 응답 JSON 파싱 실패 */
+            /**
+             * @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음
+             *     - ErrorCode: AI_RESPONSE_FORMAT_INVALID - AI 응답 JSON의 필수 필드가 비어있음
+             */
             502: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
-            /** @description 외부 AI 서비스 연동 실패 */
+            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
             503: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
         };
     };
     generateDailyReport_1: {
         parameters: {
-            query: {
-                prompt: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -1421,6 +1837,20 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ApiResponseDto"];
                 };
+            };
+            /** @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음 */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1454,8 +1884,8 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - code 또는 state 값이 누락된 경우
-             *     - provider가 'naver' 또는 'google'이 아닌 경우
+             *     - ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver' 또는 'google'이 아닌 경우
+             *     - ErrorCode: VALIDATION_FAILED - code 또는 state 값이 누락된 경우
              */
             400: {
                 headers: {
@@ -1465,10 +1895,9 @@ export interface operations {
             };
             /**
              * @description OAuth2 인증 실패
-             *     - State 검증 실패 (CSRF 공격 방지, 10분 내 사용해야 함)
-             *     - Authorization Code가 유효하지 않거나 만료된 경우
-             *     - OAuth2 제공자로부터 Access Token 발급 실패
-             *     - OAuth2 제공자로부터 사용자 정보 조회 실패
+             *     - ErrorCode: AUTH_INVALID_STATE - State 검증 실패 (CSRF 공격 방지, 10분 내 사용해야 함)
+             *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - OAuth2 제공자로부터 Access Token 발급 실패
+             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - OAuth2 제공자로부터 사용자 정보 조회 실패
              */
             401: {
                 headers: {
@@ -1476,10 +1905,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /**
-             * @description 이메일 중복
-             *     - 해당 네이버, 구글 이메일이 다른 방법으로 이미 가입된 경우
-             */
+            /** @description ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD - 해당 이메일이 다른 방법으로 이미 가입된 경우 */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -1506,14 +1932,22 @@ export interface operations {
                     "*/*": components["schemas"]["ApiResponseDto"];
                 };
             };
-            /** @description 이미 탈퇴한 계정 */
+            /** @description ErrorCode: AUTH_ALREADY_WITHDRAWN - 이미 탈퇴한 계정 */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1546,10 +1980,11 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - 이메일 인증이 완료되지 않은 경우
-             *     - 필수 약관 미동의한 경우
-             *     - 이메일 형식이 올바르지 않은 경우
-             *     - 비밀번호 형식이 올바르지 않은 경우 (영문, 숫자, 특수문자 포함 8자 이상)
+             *     - ErrorCode: AUTH_EMAIL_NOT_VERIFIED - 이메일 인증 미완료
+             *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
+             *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
+             *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
+             *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
              */
             400: {
                 headers: {
@@ -1557,10 +1992,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /**
-             * @description 이메일 중복
-             *     - 이미 사용 중인 이메일입니다
-             */
+            /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -1593,9 +2025,9 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - 탈퇴하지 않은 계정
-             *     - 소셜 로그인 계정
-             *     - 복구 가능 기간(14일) 초과
+             *     - ErrorCode: AUTH_NOT_WITHDRAWN - 탈퇴하지 않은 계정
+             *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_RESTORE_FORBIDDEN - 소셜 로그인 계정
+             *     - ErrorCode: AUTH_RESTORE_PERIOD_EXPIRED - 복구 가능 기간(14일) 초과
              */
             400: {
                 headers: {
@@ -1603,14 +2035,14 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 비밀번호 불일치 */
+            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 사용자를 찾을 수 없음 */
+            /** @description ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1639,9 +2071,8 @@ export interface operations {
             };
             /**
              * @description 인증 실패
-             *     - 쿠키에 Refresh Token이 없는 경우
-             *     - Refresh Token이 만료된 경우 (발급 후 14일 경과)
-             *     - Refresh Token이 삭제된 경우 (로그아웃, 탈퇴, 또는 DB에 존재하지 않음)
+             *     - ErrorCode: AUTH_REFRESH_TOKEN_NOT_FOUND - 쿠키에 Refresh Token이 없는 경우
+             *     - ErrorCode: AUTH_INVALID_REFRESH_TOKEN - Refresh Token이 만료되었거나 DB에 존재하지 않음
              */
             401: {
                 headers: {
@@ -1675,10 +2106,11 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - 이메일 인증 미완료
-             *     - 소셜 로그인 계정
-             *     - 탈퇴한 계정
-             *     - 이전 비밀번호와 동일
+             *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정
+             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정
+             *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
+             *     - ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 이메일 인증 미완료
+             *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
              */
             400: {
                 headers: {
@@ -1686,10 +2118,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /**
-             * @description 사용자를 찾을 수 없음
-             *     - 등록되지 않은 이메일일 경우
-             */
+            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1717,10 +2146,13 @@ export interface operations {
                 };
             };
             /**
-             * @description 인증 실패
-             *     - Authorization 헤더에 JWT Access Token이 없는 경우
-             *     - JWT Access Token이 만료된 경우 (발급 후 1시간 경과)
-             *     - JWT Access Token이 유효하지 않은 경우 (변조, 잘못된 서명)
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
              */
             401: {
                 headers: {
@@ -1753,11 +2185,9 @@ export interface operations {
                 };
             };
             /**
-             * @description 잘못된 요청
-             *     - 이메일 형식이 올바르지 않은 경우
-             *     - 탈퇴한 계정 (message: "탈퇴한 계정입니다. 계정 복구를 진행해주세요.")
-             *       → data 필드에 탈퇴 계정 정보 포함 (닉네임, 완전 삭제 예정일)
-             *       → 프론트엔드: 복구 선택 화면으로 이동 (POST /auth/restore 안내)
+             * @description - ErrorCode: AUTH_ACCOUNT_WITHDRAWN - 탈퇴한 계정
+             *         - data 필드에 탈퇴 계정 정보 포함 (닉네임, 완전 삭제 예정일)
+             *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
              */
             400: {
                 headers: {
@@ -1767,20 +2197,14 @@ export interface operations {
                     "application/json": components["schemas"]["WithdrawnInfoResponse"];
                 };
             };
-            /**
-             * @description 인증 실패
-             *     - 비밀번호가 일치하지 않는 경우
-             */
+            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /**
-             * @description 사용자를 찾을 수 없습니다
-             *     - 등록되지 않은 이메일일 경우
-             */
+            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1807,8 +2231,18 @@ export interface operations {
                     "application/json": components["schemas"]["UserProfileResponse"];
                 };
             };
-            /** @description 인증 실패 */
+            /** @description 인증 실패 (JWT 토큰 관련) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없음
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1838,15 +2272,27 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateUserProfileResponse"];
                 };
             };
-            /** @description 잘못된 요청 (예: 닉네임 중복) */
+            /**
+             * @description - ErrorCode: USER_UPDATE_NO_DATA - 수정할 프로필 정보가 없음
+             *     - ErrorCode: IMAGE_SIZE_EXCEEDED - 이미지 크기 제한 초과 (5MB)
+             *     - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입
+             *     - ErrorCode: IMAGE_METADATA_INVALID - 파일 메타데이터를 읽을 수 없음
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /** @description 인증 실패 (JWT 토큰 관련) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1874,15 +2320,25 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 잘못된 요청 (예: 지원하지 않는 관심 주제) */
+            /** @description - ErrorCode: USER_INTEREST_CODE_INVALID - 지원하지 않는 관심 주제 코드 */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /** @description 인증 실패 (JWT 토큰 관련) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없음
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1908,7 +2364,15 @@ export interface operations {
                     "*/*": components["schemas"]["MarketingConsentResponse"];
                 };
             };
-            /** @description 인증 실패 */
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1937,7 +2401,15 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 인증 실패 */
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1970,8 +2442,8 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - 소셜 로그인 계정이 비밀번호를 변경하려는 경우
-             *     - 이전 비밀번호와 동일한 비밀번호를 사용하려는 경우
+             *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN - 소셜 로그인 계정
+             *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
              */
             400: {
                 headers: {
@@ -1979,11 +2451,75 @@ export interface operations {
                 };
                 content?: never;
             };
-            /**
-             * @description 인증 실패
-             *     - 현재 비밀번호가 불일치할 경우
-             */
+            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 현재 비밀번호 불일치 */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getLastWeekWeeklyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 나의 주간 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeeklyReportResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WEEKLY_REPORT_NOT_FOUND - 주간 리포트를 찾을 수 없음
+             *     - ErrorCode: WEEKLY_REPORT_NOT_COMPLETED - 해당 주간 리포트가 아직 생성 완료되지 않음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getWeeklyReportById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 주간 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeeklyReportResponse"];
+                };
+            };
+            /** @description - ErrorCode: WEEKLY_REPORT_NOT_FOUND - 주간 리포트를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2014,18 +2550,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
-            /** @description 권한 없음 */
-            403: {
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND: 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND: 사용자의 지갑을 찾을 수 없음
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
+                content?: never;
             };
         };
     };
@@ -2049,8 +2584,55 @@ export interface operations {
                     "application/json": components["schemas"]["CheckNicknameResponse"];
                 };
             };
-            /** @description 잘못된 요청 - 닉네임 누락 또는 빈 문자열 */
-            400: {
+        };
+    };
+    getRecentSearches: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchHistoryListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteAllSearchHistories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2076,8 +2658,19 @@ export interface operations {
                     "application/json": components["schemas"]["DailyQuestionResponse"];
                 };
             };
-            /** @description 사용자 인증 실패 */
+            /** @description 인증 실패 (JWT 토큰 관련) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
+             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없습니다.
+             *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2110,7 +2703,11 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 오늘의 리포트가 존재하지 않는 경우 */
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
+             *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 일간 리포트를 찾을 수 없음
+             */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -2143,8 +2740,90 @@ export interface operations {
                     "application/json": components["schemas"]["AuthorizationUrlResponse"];
                 };
             };
-            /** @description 잘못된 요청 - provider가 'naver' 또는 'google'이 아닌 경우 */
+            /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver' 또는 'google'이 아닌 경우 */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    searchAnswers: {
+        parameters: {
+            query: {
+                request: components["schemas"]["SearchAnswerEntryRequest"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 검색 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchAnswerEntryResponse"];
+                };
+            };
+            /** @description 잘못된 요청 (cursor 형식 오류 등) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getDailyReportByAnswerId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                answerId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReportResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: ANSWER_ACCESS_FORBIDDEN - 본인의 답변이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: ANSWER_NOT_FOUND - 답변을 찾을 수 없음
+             *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 리포트가 생성되지 않았음
+             */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2168,8 +2847,58 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteSearchHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                historyId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchHistoryListResponse"];
+                };
+            };
             /** @description 인증 실패 */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: SEARCH_HISTORY_ACCESS_FORBIDDEN - 본인의 검색어가 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: SEARCH_HISTORY_NOT_FOUND - 검색어를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

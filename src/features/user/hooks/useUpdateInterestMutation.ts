@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import type { CurrentUser } from "@/types/currentUser";
 
@@ -40,14 +40,14 @@ export function useUpdateInterestMutation({ onSuccess }: Props) {
     onSuccess: (_, { interestCode }) => {
       onSuccess?.(interestCode);
     },
-    onError: (err: AxiosError<ApiResponse<null>>, _newInterest, context) => {
+    onError: (err: AxiosError<ApiErrResponse<null>>, _newInterest, context) => {
       // 에러 발생 시 원래 데이터로 복구
       if (context?.previousUser) {
         queryClient.setQueryData(USER_QUERY_KEY, context.previousUser);
       }
       useErrorStore.getState().showError(
         // Todo: 에러 메시지 변경
-        err.message,
+        err.response?.data?.code ?? err.message,
         err.response?.data?.message ??
           "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
       );

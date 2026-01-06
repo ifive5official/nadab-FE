@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import useAuthStore from "@/store/authStore";
 
@@ -32,15 +32,18 @@ export function useChangePasswordMutation({
       useAuthStore.getState().setAccessToken(accessToken!);
       onSuccess();
     },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
-      if (err.response?.status === 400) {
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      if (
+        err.response?.data?.code ===
+        "AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN"
+      ) {
         onPasswordInvalid(err.response?.data.message ?? "");
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.data?.code === "AUTH_INVALID_PASSWORD") {
         onPasswordInvalid(err.response?.data.message ?? "");
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경
-          err.message,
+          err.response?.data?.code ?? err.response?.data?.code ?? err.message,
           err.response?.data?.message ??
             "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
         );

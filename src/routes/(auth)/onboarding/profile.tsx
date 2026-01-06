@@ -44,7 +44,6 @@ function Profile() {
         setNicknameError(data.reason ?? "");
       }
     },
-    onNicknameInvalid: (message: string) => setNicknameError(message),
   });
 
   const updateProfileMutation = useUpdateProfileMutation({

@@ -4,9 +4,9 @@ import {
   SectionItem,
 } from "@/features/user/components/AccountSectionComponents";
 import Switch from "@/components/Switch";
-import clsx from "clsx";
 import { useState } from "react";
 import TimePickerModal from "@/components/TimePickerModal";
+import { Badge } from "@/components/Badges";
 
 type Props = {
   isOn: boolean;
@@ -31,18 +31,7 @@ export default function NotificationSection({ isOn, onToggle }: Props) {
         />
         <SectionItem
           title="알림 시간"
-          rightElement={
-            <div
-              className={clsx(
-                "text-caption-m rounded-full border px-padding-x-xs py-padding-y-xxs",
-                isOn
-                  ? "text-brand-primary border-brand-primary"
-                  : "text-field-text-disabled border-field-text-disabled"
-              )}
-            >
-              08 : 00 AM
-            </div>
-          }
+          rightElement={<Badge isActive={isOn}>08 : 00 AM</Badge>}
           disabled={!isOn}
           onClick={() => setIsModalOpen(true)}
         />

@@ -47,7 +47,6 @@ function RouteComponent() {
         setNicknameError(data.reason ?? "");
       }
     },
-    onNicknameInvalid: (message: string) => setNicknameError(message),
   });
 
   const deleteProfileImageMutation = useDeleteProfileMutation();

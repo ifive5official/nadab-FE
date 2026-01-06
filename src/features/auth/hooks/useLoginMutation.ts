@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import { useNavigate } from "@tanstack/react-router";
 import type { components } from "@/generated/api-types";
 import useAuthStore from "@/store/authStore";
@@ -36,12 +36,8 @@ export function useLoginMutation({ onPasswordInvalid }: Props) {
       useAuthStore.getState().setAccessToken(accessToken!);
       navigate({ to: "/" });
     },
-    onError: (err: AxiosError<ApiResponse<ErrRes>>, { email, password }) => {
-      if (
-        err.response?.status === 400 &&
-        err.response.data.message ===
-          "탈퇴한 계정입니다. 계정 복구를 진행해주세요."
-      ) {
+    onError: (err: AxiosError<ApiErrResponse<ErrRes>>, { email, password }) => {
+      if (err.response?.data?.code === "AUTH_ACCOUNT_WITHDRAWN") {
         useRestoreStore.getState().setEmail(email);
         useRestoreStore.getState().setPassword(password ?? "");
         useRestoreStore
@@ -52,16 +48,16 @@ export function useLoginMutation({ onPasswordInvalid }: Props) {
           .setDeletionDate(err.response.data.data?.deletionDate ?? "");
         navigate({ to: "/restore" });
       } else if (
-        err.response?.status === 400 ||
-        err.response?.status === 401 ||
-        err.response?.status === 404
+        err.response?.data?.code === "VALIDATION_FAILED" ||
+        err.response?.data?.code === "AUTH_INVALID_PASSWORD" ||
+        err.response?.data?.code === "USER_NOT_FOUND"
       ) {
-        onPasswordInvalid("잘못된 비밀번호입니다. 다시 확인하세요.");
+        onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
         // 명시적으로 분리해서 메시지를 주는 게 나을까?
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경
-          err.message,
+          err.response?.data?.code ?? err.message,
           err.response?.data?.message ??
             "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
         );

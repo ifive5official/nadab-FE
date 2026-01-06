@@ -4,6 +4,27 @@ import clsx from "clsx";
 import { GemFilledIcon } from "./Icons";
 import emotions from "@/constants/emotions";
 
+// 텍스트와 테마색 테두리가 있는 작은 버튼 컴포넌트
+type BadgeProps = {
+  isActive?: boolean;
+  children: string;
+};
+
+export function Badge({ isActive = true, children }: BadgeProps) {
+  return (
+    <div
+      className={clsx(
+        "text-caption-m rounded-full border px-padding-x-xs py-padding-y-xxs",
+        isActive
+          ? "text-brand-primary border-brand-primary"
+          : "text-field-text-disabled border-field-text-disabled"
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 // 질문 카테고리 나타내는 작은 버튼처럼 생긴 컴포넌트
 type QuestionBadgeProps = {
   height?: number;
@@ -87,6 +108,7 @@ export function EmotionBadge({
   );
 }
 
+// 크리스탈 갯수 보여주는 뱃지 컴포넌트
 type CrystalBadgeProps = {
   height?: number;
   crystals: number;

@@ -48,7 +48,11 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
       if (isRedirect(err)) {
         throw err;
       }
-      if (axios.isAxiosError(err) && err.status === 409) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.data?.code ===
+          "AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD"
+      ) {
         // 이미 일반 로그인으로 가입한 계정일 시
         useErrorStore
           .getState()
@@ -57,7 +61,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
         useErrorStore
           .getState()
           .showError(
-            err.message,
+            err.response?.data?.code ?? err.message,
             err.response?.data?.message ??
               "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
           );

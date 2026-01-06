@@ -1,10 +1,9 @@
-// 닉네임 체크
-// 온보딩 및 프로필 수정 시 사용
+// 일간 리포트 생성
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/generated/api";
+import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { formatISODate } from "@/lib/formatDate";
 
@@ -35,10 +34,10 @@ export function useGenerateReportMutation({ onSuccess }: Props) {
       queryClient.setQueryData(["currentUser", "report", today], data.data);
       onSuccess?.();
     },
-    onError: (err: AxiosError<ApiResponse<null>>) => {
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
       useErrorStore.getState().showError(
         // Todo: 에러 메시지 변경
-        err.message,
+        err.response?.data?.code ?? err.message,
         err.response?.data?.message ??
           "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
       );

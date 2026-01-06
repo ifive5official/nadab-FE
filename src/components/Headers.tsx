@@ -13,12 +13,9 @@ import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import type { ApiResponse } from "@/generated/api";
-import type { components } from "@/generated/api-types";
-import { CrystalBadge } from "./Badges";
 
-type CrystalsRes = components["schemas"]["WalletBalanceResponse"];
+import { CrystalBadge } from "./Badges";
+import { crystalsOptions } from "@/features/user/quries";
 
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
@@ -27,16 +24,7 @@ type MainHeaderProps = {
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const { data } = useQuery({
-    queryKey: ["currentUser", "crystals"],
-    queryFn: async () => {
-      const res = await api.get<ApiResponse<CrystalsRes>>(
-        "/api/v1/wallet/balance"
-      );
-      return res.data.data!;
-    },
-    // Todo: 에러 처리
-  });
+  const { data } = useQuery(crystalsOptions);
   const crystals = data?.crystalBalance ?? 0;
 
   return (

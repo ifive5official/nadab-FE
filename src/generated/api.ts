@@ -5,3 +5,7 @@ export type ApiResponse<T> = {
   message?: string;
   data?: T;
 };
+
+export type ApiErrResponse<T> = ApiResponse<T> & {
+  code?: string;
+};
