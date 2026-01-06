@@ -30,7 +30,6 @@ export function PeriodicReport() {
       return res.data.data!;
     },
     retry: (_, error) => {
-      alert(error?.response?.data?.code); // 테스트
       if (
         error.response?.data?.code === "USER_NOT_FOUND" ||
         error.response?.data?.code === "WEEKLY_REPORT_NOT_FOUND"
@@ -175,24 +174,21 @@ function PeriodicReportSection({
           {isGenerating ? (
             <>
               <h3 className="text-title-2">
-                {config.periodText} 분석을 생성하는 중이에요.
+                현재 {config.periodText} 리포트를 생성 중이에요.
               </h3>
               <p className="text-caption-l">
-                조금만 기다려 주세요.
-                <br />
-                최대 1분 정도의 시간이 소요될 수 있어요.
+                곧 완성될 거예요. 조금만 기다려주세요.
               </p>
             </>
           ) : (
             <>
               <h3 className="text-title-2">
-                아직 {config.periodText} 기록을 분석하지 않았어요.
+                지난 {config.periodText} 리포트를 받아볼까요?
               </h3>
               <p className="text-caption-l">
                 {config.periodText}에 답변을 {config.requiredAnswers}건 이상
-                작성했다면
-                <br />
-                크리스탈을 사용해서 분석을 받을 수 있어요.
+                작성했다면 리포트를 생성할 수 있어요. {config.periodText}{" "}
+                리포트로 나를 되돌아보세요.
               </p>
             </>
           )}
@@ -206,7 +202,7 @@ function PeriodicReportSection({
             disabled={crystalBalance < cost}
             onClick={onGenerate}
           >
-            {cost} 크리스탈로 보기
+            {cost} 크리스탈로 받기
           </BlockButton>
         </div>
       </section>
