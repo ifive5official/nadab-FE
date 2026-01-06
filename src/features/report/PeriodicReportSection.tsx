@@ -8,7 +8,6 @@ import type { components } from "@/generated/api-types";
 import { AxiosError } from "axios";
 import { crystalsOptions } from "../user/quries";
 import { useGenerateWeeklyReportMutation } from "./useGenerateWeeklyReportMutation";
-// import Toast from "@/components/Toast";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
@@ -31,6 +30,7 @@ export function PeriodicReport() {
       return res.data.data!;
     },
     retry: (_, error) => {
+      alert(error?.response?.data?.code); // 테스트
       if (
         error.response?.data?.code === "USER_NOT_FOUND" ||
         error.response?.data?.code === "WEEKLY_REPORT_NOT_FOUND"
@@ -114,12 +114,14 @@ function PeriodicReportSection({
       label: "주간 분석",
       periodText: "지난주",
       title: `${report?.month}월 ${report?.weekOfMonth}주차 분석`,
+      requiredAnswers: 3,
       prevBtnText: `${getPreviousPeriodText("weekly")} 분석 보기`,
     },
     monthly: {
       label: "월간 분석",
       periodText: "지난달",
       title: `${report?.month}월 분석`,
+      requiredAnswers: 20,
       prevBtnText: `${getPreviousPeriodText("monthly")} 분석 보기`,
     },
   }[reportType];
@@ -187,7 +189,8 @@ function PeriodicReportSection({
                 아직 {config.periodText} 기록을 분석하지 않았어요.
               </h3>
               <p className="text-caption-l">
-                {config.periodText}에 답변을 3건 이상 작성했다면
+                {config.periodText}에 답변을 {config.requiredAnswers}건 이상
+                작성했다면
                 <br />
                 크리스탈을 사용해서 분석을 받을 수 있어요.
               </p>
