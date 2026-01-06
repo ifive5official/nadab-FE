@@ -10,6 +10,9 @@ import { crystalsOptions } from "../user/quries";
 import { useGenerateWeeklyReportMutation } from "./useGenerateWeeklyReportMutation";
 // import Toast from "@/components/Toast";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
+import { useState } from "react";
+import { Popover } from "@/components/Popover";
+import Toast from "@/components/Toast";
 
 type weeklyReportRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -28,34 +31,63 @@ export function PeriodicReport() {
       return res.data.data!;
     },
     retry: (_, error) => {
-      if (error.response?.status === 404) return false;
+      if (
+        error.response?.data?.code === "USER_NOT_FOUND" ||
+        error.response?.data?.code === "WEEKLY_REPORT_NOT_FOUND"
+      )
+        return false;
       return true;
     },
+    // 레포트 생성 중일 경우 0.5초 간격으로 폴링
+    refetchInterval: (query) => {
+      const error = query.state.error as AxiosError<ApiErrResponse<null>>;
+      if (error?.response?.data?.code === "WEEKLY_REPORT_NOT_COMPLETED") {
+        return 500;
+      }
+
+      return false;
+    },
   });
-  const generateWeeklyReportMutation = useGenerateWeeklyReportMutation({});
+
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const generateWeeklyReportMutation = useGenerateWeeklyReportMutation({
+    onSuccess: () => {
+      setIsToastOpen(true);
+      setToastMessage("30 크리스탈이 소진되었어요.");
+    },
+  });
   const isGenerating =
     generateWeeklyReportMutation.isPending ||
     weeklyReportErr?.response?.data.code === "WEEKLY_REPORT_NOT_COMPLETED";
 
   return (
-    <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-      <PeriodicReportSection
-        reportType="weekly"
-        report={weeklyReport}
-        onGenerate={() => generateWeeklyReportMutation.mutate()}
-        isGenerating={isGenerating}
-        cost={30}
-        crystalBalance={crystalBalance?.crystalBalance ?? 0}
+    <>
+      <div className="py-padding-y-m flex flex-col gap-gap-y-l">
+        <PeriodicReportSection
+          reportType="weekly"
+          report={weeklyReport}
+          onGenerate={() => generateWeeklyReportMutation.mutate()}
+          isGenerating={isGenerating}
+          cost={30}
+          crystalBalance={crystalBalance?.crystalBalance ?? 0}
+        />
+        <PeriodicReportSection
+          reportType="monthly"
+          report={undefined}
+          onGenerate={() => {}}
+          isGenerating={false}
+          cost={200}
+          crystalBalance={crystalBalance?.crystalBalance ?? 0}
+        />
+      </div>
+      <Toast
+        isOpen={isToastOpen}
+        onClose={() => setIsToastOpen(false)}
+        message={toastMessage}
       />
-      <PeriodicReportSection
-        reportType="monthly"
-        report={undefined}
-        onGenerate={() => {}}
-        isGenerating={false}
-        cost={200}
-        crystalBalance={crystalBalance?.crystalBalance ?? 0}
-      />
-    </div>
+    </>
   );
 }
 
@@ -76,6 +108,7 @@ function PeriodicReportSection({
   crystalBalance,
   isGenerating,
 }: PeriodicReportSectionProps) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const config = {
     weekly: {
       label: "주간 분석",
@@ -94,9 +127,15 @@ function PeriodicReportSection({
   if (report) {
     return (
       <section className="px-padding-x-m pt-padding-y-m pb-padding-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
-        <div className="flex justify-between">
+        <div className="relative flex justify-between">
           <h3 className="text-title-2">{config.title}</h3>
-          <InfoButton />
+          <InfoButton onClick={() => setIsPopoverOpen(true)} />
+          <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
+            <Popover
+              isOpen={isPopoverOpen}
+              onClose={() => setIsPopoverOpen(false)}
+            />
+          </div>
         </div>
         <div className="border-b border-b-surface-layer-2 my-gap-y-l" />
         <div className="flex flex-col gap-gap-y-xl">
@@ -121,9 +160,15 @@ function PeriodicReportSection({
     <>
       <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
         <div className="flex flex-col gap-margin-y-m mb-padding-y-xxl">
-          <div className="flex justify-between items-center">
+          <div className="relative flex justify-between items-center">
             <Badge>{config.label}</Badge>
-            <InfoButton />
+            <InfoButton onClick={() => setIsPopoverOpen(true)} />
+            <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
+              <Popover
+                isOpen={isPopoverOpen}
+                onClose={() => setIsPopoverOpen(false)}
+              />
+            </div>
           </div>
           {isGenerating ? (
             <>
@@ -166,14 +211,19 @@ function PeriodicReportSection({
   );
 }
 
-function InfoButton() {
+function InfoButton({ onClick }: { onClick: () => void }) {
   return (
-    <button className="bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg px-padding-x-xs py-padding-y-xxs flex items-center gap-gap-x-xs">
-      <InfoIcon />
-      <span className="text-caption-s text-interactive-border-info">
-        더 알아보기
-      </span>
-    </button>
+    <>
+      <button
+        onClick={onClick}
+        className="bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg px-padding-x-xs py-padding-y-xxs flex items-center gap-gap-x-xs"
+      >
+        <InfoIcon />
+        <span className="text-caption-s text-interactive-border-info">
+          더 알아보기
+        </span>
+      </button>
+    </>
   );
 }
 
