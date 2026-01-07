@@ -19,4 +19,13 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://nadab-dev.n-e.kr",
+        changeOrigin: true,
+        // rewrite 설정이 필요 없음 (그대로 전달)
+      },
+    },
+  },
 });

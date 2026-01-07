@@ -183,7 +183,7 @@ function PeriodicReportSection({
           ) : (
             <>
               <h3 className="text-title-2">
-                지난 {config.periodText} 리포트를 받아볼까요?
+                {config.periodText} 리포트를 받아볼까요?
               </h3>
               <p className="text-caption-l">
                 {config.periodText}에 답변을 {config.requiredAnswers}건 이상
