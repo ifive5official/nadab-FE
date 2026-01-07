@@ -1,9 +1,12 @@
 {
-  "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }],
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://nadab-dev.n-e.kr/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/"
     }
   ]
 }
