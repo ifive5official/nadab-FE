@@ -419,13 +419,13 @@ body {
 
   /* ========== Neutral Colors ========== */
   --color-neutral-1100: #000000;
-  --color-neutral-1000: #17191a;
-  --color-neutral-900: #2f3133;
-  --color-neutral-800: #464a4d;
-  --color-neutral-700: #5e6366;
-  --color-neutral-600: #757b80;
-  --color-neutral-500: #8c9499;
-  --color-neutral-400: #a4adb2;
+  --color-neutral-1000: #1b1c2f;
+  --color-neutral-900: #302f42;
+  --color-neutral-800: #524a72;
+  --color-neutral-700: #67627c;
+  --color-neutral-600: #808299;
+  --color-neutral-500: #a0a2ad;
+  --color-neutral-400: #a4a6b2;
   --color-neutral-300: #bbbfcc;
   --color-neutral-200: #e8ebf2;
   --color-neutral-100: #f7f8ff;
@@ -640,20 +640,6 @@ body {
 }
 
 .dark {
-  /* brand color */
-  /* --color-brand-primary: #3865f3;
-  --color-brand-secondary: #b5e7ff;
-
-  --color-brand-primary-alpha-90: rgba(56, 101, 243, 0.9);
-  --color-brand-primary-alpha-80: rgba(56, 101, 243, 0.8);
-  --color-brand-primary-alpha-70: rgba(56, 101, 243, 0.7);
-  --color-brand-primary-alpha-60: rgba(56, 101, 243, 0.6);
-  --color-brand-primary-alpha-50: rgba(56, 101, 243, 0.5);
-  --color-brand-primary-alpha-40: rgba(56, 101, 243, 0.4);
-  --color-brand-primary-alpha-30: rgba(56, 101, 243, 0.3);
-  --color-brand-primary-alpha-20: rgba(56, 101, 243, 0.2);
-  --color-brand-primary-alpha-10: rgba(56, 101, 243, 0.1); */
-
   /* border */
   --color-border-base: var(--color-neutral-900);
   --color-border-layer-1: var(--color-neutral-800);

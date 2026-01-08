@@ -118,7 +118,7 @@ export function CrystalBadge({ height = 25, crystals }: CrystalBadgeProps) {
   return (
     <div
       style={{ zoom: height / 25 }}
-      className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-xl px-padding-x-xs py-padding-y-xs w-fit text-neutral-1000"
+      className="flex items-center gap-gap-x-xs bg-button-secondary-bg-default rounded-full px-padding-x-xs py-padding-y-xs w-fit text-neutral-1000"
     >
       <GemFilledIcon />
       <span className="text-caption-s">{crystals}</span>

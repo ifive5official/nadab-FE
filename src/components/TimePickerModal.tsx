@@ -59,7 +59,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
             onClick={onClose}
           />
           <motion.div
-            className="z-30 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base shadow-3 border border-border-base rounded-2xl"
+            className="z-30 fixed bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base dark:bg-surface-layer-1 shadow-3 border border-border-base rounded-2xl"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -67,7 +67,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
           >
             <p className="text-title-3">알림 시간 변경</p>
             <div className="flex justify-center">
-              <WheelPickerWrapper className="w-50! rounded-md bg-white dark:border-zinc-800 dark:bg-zinc-950">
+              <WheelPickerWrapper className="w-50! rounded-md dark:border-zinc-800">
                 <WheelPicker
                   options={hourOptions}
                   defaultValue={8}
@@ -75,7 +75,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
                     highlightWrapper:
-                      "bg-zinc-100 text-text-primary dark:bg-zinc-900 dark:text-zinc-50 rounded-l-[7px]",
+                      "text-text-primary bg-[#787880]/8 dark:text-zinc-50 rounded-l-[7px]",
                   }}
                 />
                 <WheelPicker
@@ -85,7 +85,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
                     highlightWrapper:
-                      "bg-zinc-100 text-text-primary dark:bg-zinc-900 dark:text-zinc-50",
+                      "text-text-primary bg-[#787880]/8 dark:text-zinc-50",
                   }}
                 />
                 <WheelPicker
@@ -94,7 +94,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
                     highlightWrapper:
-                      "bg-zinc-100 text-text-primary dark:bg-zinc-900 dark:text-zinc-50 rounded-r-[7px]",
+                      "text-text-primary bg-[#787880]/8 dark:text-zinc-50 rounded-r-[7px]",
                   }}
                 />
               </WheelPickerWrapper>

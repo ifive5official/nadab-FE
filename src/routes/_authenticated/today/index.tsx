@@ -4,7 +4,8 @@ import { SubHeader } from "@/components/Headers";
 import { currentUserOptions } from "@/features/user/quries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import SpeechBalloon from "@/components/Speechballoon";
+// import SpeechBalloon from "@/components/Speechballoon";
+import { ChatVerificationReceptionIcon } from "@/components/Icons";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { questionOptions } from "@/features/question/queries";
@@ -36,8 +37,8 @@ function RouteComponent() {
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
-      <main className="relative flex flex-col h-full">
-        <div className="absolute inset-0 bg-[url(/background.png)] bg-cover dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95" />
+      <main className="relative flex flex-col h-full bg-surface-base dark:bg-neutral-1100">
+        <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
         <Container>
           <div className="relative flex-1 flex flex-col gap-margin-y-xxl justify-center items-center">
             <div className="text-center">
@@ -61,12 +62,15 @@ function RouteComponent() {
                       delay: 0.001 + i * 0.5,
                     }}
                   >
-                    <SpeechBalloon
-                      textColor="var(--color-text-primary)"
-                      bgColor="var(--color-surface-base)"
-                    >
-                      {message}
-                    </SpeechBalloon>
+                    {/* 크아악~!! */}
+                    {/* Todo: 컴포넌트로 추출.... */}
+                    {/* Todo: 그림자 좀 어떻게 해보자 */}
+                    <div className="relative text-caption-l w-fit rounded-xl shadow-button-1 after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none after:shadow-[inset_-4px_-4px_10px_0px_rgba(7,8,117,0.6)] after:mix-blend-overlay active:after:shadow-none text-text-primary dark:text-neutral-1000 bg-surface-base dark:bg-neutral-200">
+                      <ChatVerificationReceptionIcon className="absolute top-0 -left-0.5 text-surface-base dark:text-neutral-100" />
+                      <div className="w-fit max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))] px-padding-x-m py-padding-y-xs break-keep">
+                        {message}
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })}

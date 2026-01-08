@@ -39,7 +39,7 @@ function RouteComponent() {
     <>
       <SubHeader>상세 보기</SubHeader>
       <Container>
-        <div className="px-padding-x-m py-padding-y-m mt-padding-y-m bg-surface-layer-1 border border-border-base shadow-2 rounded-2xl">
+        <div className="px-padding-x-m py-padding-y-m mt-padding-y-m bg-surface-layer-1 dark:bg-surface-layer-2 border border-border-base shadow-2 rounded-2xl">
           <div className="flex gap-padding-x-xxs">
             <QuestionBadge
               category={
