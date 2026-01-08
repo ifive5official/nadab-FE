@@ -164,9 +164,11 @@ export function ChevronRightIcon({ size = 24 }: { size?: number }) {
 
 export function InfoIcon({
   className,
+  fill = "var(--color-icon-info)",
   size = 21,
 }: {
   className?: string;
+  fill?: string;
   size?: number;
 }) {
   return (
@@ -182,19 +184,19 @@ export function InfoIcon({
         fillRule="evenodd"
         clipRule="evenodd"
         d="M9.625 10.0625H8.53125V8.75H10.9375V13.125H12.0312V14.4375H9.625V10.0625Z"
-        fill="var(--color-icon-info)"
+        fill={fill}
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M9.625 7.65625V5.90625H10.9375V7.65625H9.625Z"
-        fill="var(--color-icon-info)"
+        fill={fill}
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M10.2812 3.0625C6.29444 3.0625 3.0625 6.29444 3.0625 10.2812C3.0625 14.2681 6.29444 17.5 10.2812 17.5C14.2681 17.5 17.5 14.2681 17.5 10.2812C17.5 6.29444 14.2681 3.0625 10.2812 3.0625ZM1.75 10.2812C1.75 5.56957 5.56957 1.75 10.2812 1.75C14.9929 1.75 18.8125 5.56957 18.8125 10.2812C18.8125 14.9929 14.9929 18.8125 10.2812 18.8125C5.56957 18.8125 1.75 14.9929 1.75 10.2812Z"
-        fill="var(--color-icon-info)"
+        fill={fill}
       />
     </svg>
   );
@@ -1005,6 +1007,35 @@ export function AccordionIcon() {
         d="M5 9.06066L6.06066 8L11.5303 13.4697L17 8L18.0607 9.06066L11.5303 15.591L5 9.06066Z"
         fill="var(--color-icon-default)"
       />
+    </svg>
+  );
+}
+
+// 분석
+export function NoResultIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="63"
+      height="63"
+      viewBox="0 0 63 63"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={"box-content " + className}
+    >
+      <g clipPath="url(#clip0_15550_15714)">
+        <path
+          d="M6.50117 36.3996H21.1288C21.7071 38.631 23.0101 40.6072 24.8331 42.018C26.6561 43.4288 28.896 44.1943 31.2012 44.1943C33.5063 44.1943 35.7462 43.4288 37.5693 42.018C39.3923 40.6072 40.6952 38.631 41.2736 36.3996H55.9012M16.9038 9.09961L13.0038 5.19961M45.4986 9.09961L49.3986 5.19961M31.2012 7.79961V2.59961M57.2012 54.5996H5.20117V36.3996L15.6012 18.1996H46.8012L57.2012 36.3996V54.5996Z"
+          stroke="var(--color-brand-primary-alpha-40)"
+          strokeOpacity="0.4"
+          strokeWidth="5.2"
+          strokeLinecap="square"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_15550_15714">
+          <rect width="62.4" height="62.4" fill="white" />
+        </clipPath>
+      </defs>
     </svg>
   );
 }
