@@ -47,17 +47,13 @@ export function RouteComponent() {
     onSuccess: () => {
       setIsModalOpen(true);
     },
-    onPasswordInvalid: (message: string) => {
-      if (message === "현재 비밀번호가 일치하지 않습니다") {
-        setPrevPasswordError(message);
-      } else if (
-        message === "소셜 로그인 계정은 비밀번호를 변경할 수 없습니다"
-      ) {
-        setPrevPasswordError(message);
-      } else if (
-        message === "이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다"
-      ) {
-        setNewPasswordError(message);
+    onPasswordInvalid: (code: string) => {
+      if (code === "AUTH_INVALID_PASSWORD") {
+        setPrevPasswordError("현재 비밀번호와 일치하지 않아요.");
+      } else if (code === "AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN") {
+        setPrevPasswordError("소셜 로그인 계정은 비밀번호를 변경할 수 없어요.");
+      } else if (code === "AUTH_PASSWORD_REUSE_NOT_ALLOWED") {
+        setNewPasswordError("기존과 동일한 비밀번호로 변경할 수 없어요.");
       }
     },
   });

@@ -12,10 +12,11 @@ type Res = components["schemas"]["TokenResponse"];
 type ErrRes = components["schemas"]["WithdrawnInfoResponse"];
 
 type Props = {
+  onEmailInvalid: (message: string) => void;
   onPasswordInvalid: (message: string) => void;
 };
 
-export function useLoginMutation({ onPasswordInvalid }: Props) {
+export function useLoginMutation({ onEmailInvalid, onPasswordInvalid }: Props) {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async ({
@@ -37,30 +38,34 @@ export function useLoginMutation({ onPasswordInvalid }: Props) {
       navigate({ to: "/" });
     },
     onError: (err: AxiosError<ApiErrResponse<ErrRes>>, { email, password }) => {
-      if (err.response?.data?.code === "AUTH_ACCOUNT_WITHDRAWN") {
-        useRestoreStore.getState().setEmail(email);
-        useRestoreStore.getState().setPassword(password ?? "");
-        useRestoreStore
-          .getState()
-          .setNickname(err.response.data.data?.nickname ?? "");
-        useRestoreStore
-          .getState()
-          .setDeletionDate(err.response.data.data?.deletionDate ?? "");
-        navigate({ to: "/restore" });
-      } else if (
-        err.response?.data?.code === "VALIDATION_FAILED" ||
-        err.response?.data?.code === "AUTH_INVALID_PASSWORD" ||
-        err.response?.data?.code === "USER_NOT_FOUND"
-      ) {
-        onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
-        // 명시적으로 분리해서 메시지를 주는 게 나을까?
-      } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.response?.data?.code ?? err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
-        );
+      switch (err.response?.data?.code) {
+        case "AUTH_ACCOUNT_WITHDRAWN":
+          useRestoreStore.getState().setEmail(email);
+          useRestoreStore.getState().setPassword(password ?? "");
+          useRestoreStore
+            .getState()
+            .setNickname(err.response.data.data?.nickname ?? "");
+          useRestoreStore
+            .getState()
+            .setDeletionDate(err.response.data.data?.deletionDate ?? "");
+          navigate({ to: "/restore" });
+          break;
+        case "VALIDATION_FAILED":
+          onEmailInvalid("올바른 형식의 이메일 주소를 입력해주세요.");
+          break;
+        case "AUTH_INVALID_PASSWORD":
+          onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
+          break;
+        case "USER_NOT_FOUND":
+          onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
+          break;
+        default:
+          useErrorStore.getState().showError(
+            // Todo: 에러 메시지 변경
+            err.response?.data?.code ?? err.message,
+            err.response?.data?.message ??
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          );
       }
     },
   });

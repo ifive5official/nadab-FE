@@ -13,11 +13,12 @@ export const Route = createFileRoute("/(auth)/login")({
 function RouteComponent() {
   const resetPasswordStore = useResetPasswordStore.use.reset();
   const [email, setEmail] = useState("");
-  // const [emailError, setEmailError] = useState("")
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const loginMutation = useLoginMutation({
+    onEmailInvalid: (message: string) => setEmailError(message),
     onPasswordInvalid: (message: string) => setPasswordError(message),
   });
 
@@ -38,8 +39,10 @@ function RouteComponent() {
             name="id"
             type="email"
             onChange={(e) => {
+              setEmailError("");
               setEmail(e.target.value);
             }}
+            error={emailError}
             value={email}
             placeholder="이메일을 입력해주세요."
           />
