@@ -99,8 +99,8 @@ export function RouteComponent() {
           />
           <PasswordInputField
             label="새로운 비밀번호"
-            id="password"
-            name="password"
+            id="confirmPassword"
+            name="confirmPassword"
             onChange={(e) => {
               onNewPasswordChange(e.target.value);
               if (confirmPassword) {
