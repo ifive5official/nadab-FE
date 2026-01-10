@@ -41,7 +41,7 @@ function DayRecord({ day, checked }: DayRecordprops) {
         {checked ? (
           <DayCheckIcon />
         ) : (
-          <div className="rounded-full w-[31px] aspect-square bg-surface-layer-1" />
+          <div className="rounded-full w-[31px] aspect-square bg-surface-layer-1 dark:bg-surface-layer-3" />
         )}
       </div>
     </div>

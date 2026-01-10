@@ -69,7 +69,7 @@ type Props = {
 
 function Item({ title, content }: Props) {
   return (
-    <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1">
+    <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1 rounded-lg">
       <p className="text-label-l">{title}</p>
       <p className="text-caption-m text-text-secondary break-keep whitespace-pre-line">
         {content}

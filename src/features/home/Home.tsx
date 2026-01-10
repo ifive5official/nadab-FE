@@ -2,7 +2,6 @@ import { MainHeader } from "@/components/Headers";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "../user/quries";
 import Tabs from "@/components/Tabs";
-import { CrystalBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { Link } from "@tanstack/react-router";
@@ -22,13 +21,10 @@ export default function Home() {
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
-      <Container className="relative" hasHeader={false}>
-        {/* 배경 - 다크모드 필터 적용을 위해 따로 뺌 */}
-        <div
-          className="absolute inset-0 bg-linear-to-b from-[#E8ECFC] to-[#EFF6FF] 
-               dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
-        />
-
+      <Container
+        className="relative bg-[#E8ECFC] dark:bg-field-bg-hover"
+        hasHeader={false}
+      >
         <div className="flex-1 flex flex-col justify-evenly">
           {/* 질문 */}
           <p className="relative text-title-2 text-center">
@@ -40,7 +36,7 @@ export default function Home() {
           <div className="flex items-center justify-center">
             <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100svh))] sm:w-[calc((267/390)*412px)] aspect-square ">
               <video
-                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:filter dark:invert dark:hue-rotate-180 dark:saturate-120 dark:brightness-95"
+                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
                 autoPlay
                 muted
                 loop
@@ -51,27 +47,20 @@ export default function Home() {
               </video>
 
               <div className="absolute inset-0 flex flex-col justify-center items-center gap-gap-y-xl">
-                <p className="text-body-1 text-center">
+                <p className="text-body-1 text-center dark:text-neutral-900">
                   <span className="text-headline-l text-brand-primary">49</span>
                   일째
                   <br />
                   기록을 남겼어요.
                 </p>
-                <div className="flex flex-col items-center gap-gap-y-xs">
-                  <p className="text-caption-m">다음 보상까지 31일</p>
-                  <CrystalBadge height={25} crystals={30} />
-                </div>
+                {friends.length > 0 && <FriendSection friends={friends} />}
               </div>
             </div>
           </div>
         </div>
 
         <div className="relative flex flex-col gap-padding-y-xxl">
-          {friends.length > 0 ? (
-            <FriendSection friends={friends} />
-          ) : (
-            <RecordSection />
-          )}
+          <RecordSection />
           {question?.answered ? (
             <Link
               to="/detail/$date"

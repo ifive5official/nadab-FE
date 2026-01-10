@@ -6,18 +6,26 @@ import { useState } from "react";
 import useResetPasswordStore from "@/store/resetPasswordStore";
 import { useLoginMutation } from "@/features/auth/hooks/useLoginMutation";
 import Container from "@/components/Container";
+import { useInputValidation } from "@/hooks/useInputValidation";
 export const Route = createFileRoute("/(auth)/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const resetPasswordStore = useResetPasswordStore.use.reset();
-  const [email, setEmail] = useState("");
-  // const [emailError, setEmailError] = useState("")
+  const {
+    value: email,
+    error: emailError,
+    onChange: onEmailChange,
+    setError: setEmailError,
+    isValidating: isEmailValidating,
+  } = useInputValidation("email");
+
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const loginMutation = useLoginMutation({
+    onEmailInvalid: (message: string) => setEmailError(message),
     onPasswordInvalid: (message: string) => setPasswordError(message),
   });
 
@@ -37,9 +45,8 @@ function RouteComponent() {
             id="email"
             name="id"
             type="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
+            onChange={(e) => onEmailChange(e.target.value)}
+            error={emailError}
             value={email}
             placeholder="이메일을 입력해주세요."
           />
@@ -58,7 +65,7 @@ function RouteComponent() {
           />
           <BlockButton
             isLoading={loginMutation.isPending}
-            disabled={!password || !email}
+            disabled={!password || !email || !!emailError || isEmailValidating}
           >
             로그인
           </BlockButton>

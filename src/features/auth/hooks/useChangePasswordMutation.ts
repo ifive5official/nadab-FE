@@ -12,7 +12,7 @@ type Res = components["schemas"]["TokenResponse"];
 
 type Props = {
   onSuccess: () => void;
-  onPasswordInvalid: (message: string) => void;
+  onPasswordInvalid: (code: string) => void;
 };
 
 export function useChangePasswordMutation({
@@ -33,13 +33,8 @@ export function useChangePasswordMutation({
       onSuccess();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      if (
-        err.response?.data?.code ===
-        "AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN"
-      ) {
-        onPasswordInvalid(err.response?.data.message ?? "");
-      } else if (err.response?.data?.code === "AUTH_INVALID_PASSWORD") {
-        onPasswordInvalid(err.response?.data.message ?? "");
+      if (err.response?.data?.code) {
+        onPasswordInvalid(err.response?.data?.code);
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경

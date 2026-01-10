@@ -49,7 +49,7 @@ Props) {
             // onClick={onClose}
           />
           <motion.div
-            className="z-30 absolute top-1/2 -translate-y-1/2 inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base shadow-3 border border-border-base rounded-2xl text-text-primary px-padding-x-xl py-padding-y-xl"
+            className="z-30 absolute top-1/2 -translate-y-1/2 inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base dark:bg-surface-layer-2 shadow-3 border border-border-base rounded-2xl text-text-primary px-padding-x-xl py-padding-y-xl"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}

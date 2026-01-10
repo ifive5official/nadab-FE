@@ -1,5 +1,6 @@
 // 분석 완성 조건 보여주는 팝오버
 // 추후 재사용할 시 내용을 props로 받게 할 예정
+import clsx from "clsx";
 import { CloseIcon } from "./Icons";
 
 type Props = {
@@ -8,11 +9,16 @@ type Props = {
   className?: string;
 };
 
-export function Popover({ isOpen, onClose }: Props) {
+export function Popover({ isOpen, onClose, className }: Props) {
   return (
     <>
       {isOpen && (
-        <div className="bg-surface-base shadow-2 rounded-[20px] px-padding-x-m py-padding-y-m flex flex-col gap-gap-y-s">
+        <div
+          className={clsx(
+            "bg-surface-base shadow-2 rounded-[20px] px-padding-x-m py-padding-y-m flex flex-col gap-gap-y-s",
+            className
+          )}
+        >
           <div className="flex items-center justify-between">
             <span className="text-label-m">분석 완성 조건</span>
             <button onClick={onClose}>

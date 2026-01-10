@@ -11,16 +11,16 @@ export default function FriendSection({ friends }: Props) {
   const visibleFriends =
     friends.length <= MAX_VISIBLE ? friends : friends.slice(0, MAX_VISIBLE - 1);
   return (
-    <div className="flex flex-col justify-center items-center gap-gap-y-s">
-      <p className="text-caption-l text-text-secondary">
+    <div className="flex flex-col justify-center items-center gap-gap-y-xs">
+      <p className="text-caption-m text-text-secondary dark:text-neutral-800">
         이 질문에 답변한 친구들
       </p>
       <div className="flex">
         {visibleFriends.map((_friend, i) => (
-          <ProfileImg key={i} width={36} src={undefined} className="-mr-2.5" />
+          <ProfileImg key={i} width={28} src={undefined} className="-mr-1.5" />
         ))}
         {friends.length > MAX_VISIBLE && (
-          <div className="w-9 aspect-square rounded-full flex justify-center items-center text-label-s bg-button-primary-bg-default border border-interactive-border-default text-text-inverse-primary">
+          <div className="w-9 aspect-square rounded-full flex justify-center items-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
             +{friends.length - 4}
           </div>
         )}

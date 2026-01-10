@@ -1,9 +1,9 @@
 import { Badge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
-import { InfoIcon } from "@/components/Icons";
+import { InfoIcon, LoadingSpinnerIcon } from "@/components/Icons";
 import { api } from "@/lib/axios";
 import type { ApiResponse, ApiErrResponse } from "@/generated/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import { AxiosError } from "axios";
 import { crystalsOptions } from "../user/quries";
@@ -11,16 +11,17 @@ import { useGenerateWeeklyReportMutation } from "./useGenerateWeeklyReportMutati
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
-import Toast from "@/components/Toast";
+// import Toast from "@/components/Toast";
 
 type weeklyReportRes = components["schemas"]["WeeklyReportResponse"];
 
 export function PeriodicReport() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
-  const { data: weeklyReport, error: weeklyReportErr } = useQuery<
-    weeklyReportRes,
-    AxiosError<ApiErrResponse<null>>
-  >({
+  const {
+    data: weeklyReport,
+    error: weeklyReportErr,
+    isLoading: isWeeklyReportLoading,
+  } = useQuery<weeklyReportRes, AxiosError<ApiErrResponse<null>>>({
     queryKey: ["currentUser", "weeklyReport"],
     queryFn: async () => {
       // 주간 레포트 조회
@@ -48,44 +49,60 @@ export function PeriodicReport() {
     },
   });
 
-  const [isToastOpen, setIsToastOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  // const [isToastOpen, setIsToastOpen] = useState(false);
+  // const [toastMessage, setToastMessage] = useState("");
 
   const generateWeeklyReportMutation = useGenerateWeeklyReportMutation({
-    onSuccess: () => {
-      setIsToastOpen(true);
-      setToastMessage("30 크리스탈이 소진되었어요.");
-    },
+    // onSuccess: () => {
+    //   setIsToastOpen(true);
+    //   setToastMessage("30 크리스탈이 소진되었어요.");
+    // },
   });
   const isGenerating =
     generateWeeklyReportMutation.isPending ||
     weeklyReportErr?.response?.data.code === "WEEKLY_REPORT_NOT_COMPLETED";
 
+  const deleteWeeklyReportMutation = useMutation({
+    mutationFn: async () => {
+      const res = api.post("/api/v1/test/delete/weekly-report");
+      return res;
+    },
+  });
+
   return (
     <>
+      <button onClick={() => deleteWeeklyReportMutation.mutate()}>삭제</button>
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-        <PeriodicReportSection
-          reportType="weekly"
-          report={weeklyReport}
-          onGenerate={() => generateWeeklyReportMutation.mutate()}
-          isGenerating={isGenerating}
-          cost={30}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
-        <PeriodicReportSection
-          reportType="monthly"
-          report={undefined}
-          onGenerate={() => {}}
-          isGenerating={false}
-          cost={200}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
+        {isWeeklyReportLoading ? (
+          <PeriodicReportSectionSkeleton />
+        ) : (
+          <PeriodicReportSection
+            reportType="weekly"
+            report={weeklyReport}
+            onGenerate={() => generateWeeklyReportMutation.mutate()}
+            isGenerating={isGenerating}
+            cost={30}
+            crystalBalance={crystalBalance?.crystalBalance ?? 0}
+          />
+        )}
+        {isWeeklyReportLoading ? (
+          <PeriodicReportSectionSkeleton />
+        ) : (
+          <PeriodicReportSection
+            reportType="monthly"
+            report={undefined}
+            onGenerate={() => {}}
+            isGenerating={false}
+            cost={200}
+            crystalBalance={crystalBalance?.crystalBalance ?? 0}
+          />
+        )}
       </div>
-      <Toast
+      {/* <Toast
         isOpen={isToastOpen}
         onClose={() => setIsToastOpen(false)}
         message={toastMessage}
-      />
+      /> */}
     </>
   );
 }
@@ -156,57 +173,63 @@ function PeriodicReportSection({
       </section>
     );
   }
-  // 레포트 없거나 대기 중
-  return (
-    <>
-      <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
-        <div className="flex flex-col gap-margin-y-m mb-padding-y-xxl">
-          <div className="relative flex justify-between items-center">
-            <Badge>{config.label}</Badge>
-            <InfoButton onClick={() => setIsPopoverOpen(true)} />
-            <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
-              <Popover
-                isOpen={isPopoverOpen}
-                onClose={() => setIsPopoverOpen(false)}
-              />
-            </div>
+
+  if (isGenerating) {
+    return (
+      <div className="fixed z-30 inset-0 sm:mx-auto sm:w-[412px] bg-surface-base">
+        <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
+        <div className="h-full flex flex-col gap-margin-y-xxl items-center justify-center text-center">
+          <LoadingSpinnerIcon />
+          <div>
+            <p className="text-title-2">
+              현재 주간 리포트를
+              <br />
+              생성 중이에요.
+            </p>
+            <p className="text-body-2 mt-margin-y-s">
+              곧 완성될 거예요. 조금만 기다려주세요.
+            </p>
           </div>
-          {isGenerating ? (
-            <>
-              <h3 className="text-title-2">
-                현재 {config.periodText} 리포트를 생성 중이에요.
-              </h3>
-              <p className="text-caption-l">
-                곧 완성될 거예요. 조금만 기다려주세요.
-              </p>
-            </>
-          ) : (
-            <>
-              <h3 className="text-title-2">
-                {config.periodText} 리포트를 받아볼까요?
-              </h3>
-              <p className="text-caption-l">
-                {config.periodText}에 답변을 {config.requiredAnswers}건 이상
-                작성했다면 리포트를 생성할 수 있어요. {config.periodText}{" "}
-                리포트로 나를 되돌아보세요.
-              </p>
-            </>
-          )}
         </div>
-        <div className="flex gap-gap-x-xs">
-          <BlockButton disabled={true} variant="secondary">
-            이전 분석 보기
-          </BlockButton>
-          <BlockButton
-            isLoading={isGenerating}
-            disabled={crystalBalance < cost}
-            onClick={onGenerate}
-          >
-            {cost} 크리스탈로 받기
-          </BlockButton>
+      </div>
+    );
+  }
+  // 레포트 없음
+  return (
+    <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
+      <div className="flex flex-col gap-margin-y-m mb-padding-y-xxl">
+        <div className="relative flex justify-between items-center">
+          <Badge>{config.label}</Badge>
+          <InfoButton onClick={() => setIsPopoverOpen(true)} />
+          <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
+            <Popover
+              isOpen={isPopoverOpen}
+              onClose={() => setIsPopoverOpen(false)}
+            />
+          </div>
         </div>
-      </section>
-    </>
+        <h3 className="text-title-2">
+          {config.periodText} 리포트를 받아볼까요?
+        </h3>
+        <p className="text-caption-l">
+          {config.periodText}에 답변을 {config.requiredAnswers}건 이상
+          작성했다면 리포트를 생성할 수 있어요. {config.periodText} 리포트로
+          나를 되돌아보세요.
+        </p>
+      </div>
+      <div className="flex gap-gap-x-xs">
+        <BlockButton disabled={true} variant="secondary">
+          이전 분석 보기
+        </BlockButton>
+        <BlockButton
+          isLoading={isGenerating}
+          disabled={crystalBalance < cost}
+          onClick={onGenerate}
+        >
+          {cost} 크리스탈로 받기
+        </BlockButton>
+      </div>
+    </section>
   );
 }
 
@@ -232,5 +255,30 @@ function ReportItem({ title, content }: { title: string; content: string }) {
       <h4 className="text-label-l text-text-secondary">{title}</h4>
       <p className="text-body-2">{content}</p>
     </div>
+  );
+}
+
+function PeriodicReportSectionSkeleton() {
+  return (
+    <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 animate-pulse rounded-2xl shadow-2">
+      <div className="flex flex-col gap-margin-y-m mb-padding-y-xxl invisible">
+        <div className="relative flex justify-between items-center">
+          <Badge>임시 텍스트</Badge>
+          <InfoButton onClick={() => {}} />
+        </div>
+
+        <h3 className="text-title-2">지난달 리포트를 받아볼까요?</h3>
+        <p className="text-caption-l">
+          지난주에 답변을 3건 이상 작성했다면 리포트를 생성할 수 있어요. 지난주
+          리포트로 나를 되돌아보세요.
+        </p>
+      </div>
+      <div className="flex gap-gap-x-xs invisible">
+        <BlockButton disabled={true} variant="secondary">
+          이전 분석 보기
+        </BlockButton>
+        <BlockButton>0 크리스탈로 받기</BlockButton>
+      </div>
+    </section>
   );
 }
