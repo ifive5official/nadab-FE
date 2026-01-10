@@ -6,6 +6,7 @@ import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
+import type { CurrentUser } from "@/types/currentUser";
 
 type Props = {
   onSuccess?: (data: Res) => void;
@@ -26,7 +27,17 @@ export function useUpdateProfileMutation({ onSuccess }: Props) {
       return res.data;
     },
     onSuccess: (data) => {
-      onSuccess?.(data.data!);
+      const updatedData = data.data!;
+      queryClient.setQueryData(["currentUser"], (oldData: CurrentUser) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          nickname: updatedData.nickname,
+          profileImageUrl: updatedData.profileImageUrl,
+        };
+      });
+      onSuccess?.(updatedData);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "NICKNAME_CHANGE_LIMIT_EXCEEDED") {
@@ -44,9 +55,6 @@ export function useUpdateProfileMutation({ onSuccess }: Props) {
             "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
         );
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
 }

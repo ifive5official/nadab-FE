@@ -23,7 +23,7 @@ function RouteComponent() {
         onChange={setSelected}
       />
       <div className="relative -mx-padding-x-m">
-        <div className="border-b border-b-[#E8EEF2] w-full" />
+        <div className="border-b border-b-interactive-border-default w-full" />
       </div>
       {selected === "periodic" && <PeriodicReport />}
       {selected === "total" && <TotalReport />}
