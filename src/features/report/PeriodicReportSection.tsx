@@ -3,7 +3,7 @@ import BlockButton from "@/components/BlockButton";
 import { InfoIcon, LoadingSpinnerIcon } from "@/components/Icons";
 import { api } from "@/lib/axios";
 import type { ApiResponse, ApiErrResponse } from "@/generated/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import { AxiosError } from "axios";
 import { crystalsOptions } from "../user/quries";
@@ -62,16 +62,16 @@ export function PeriodicReport() {
     generateWeeklyReportMutation.isPending ||
     weeklyReportErr?.response?.data.code === "WEEKLY_REPORT_NOT_COMPLETED";
 
-  const deleteWeeklyReportMutation = useMutation({
-    mutationFn: async () => {
-      const res = api.post("/api/v1/test/delete/weekly-report");
-      return res;
-    },
-  });
+  // const deleteWeeklyReportMutation = useMutation({
+  //   mutationFn: async () => {
+  //     const res = api.post("/api/v1/test/delete/weekly-report");
+  //     return res;
+  //   },
+  // });
 
   return (
     <>
-      <button onClick={() => deleteWeeklyReportMutation.mutate()}>삭제</button>
+      {/* <button onClick={() => deleteWeeklyReportMutation.mutate()}>삭제</button> */}
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         {isWeeklyReportLoading ? (
           <PeriodicReportSectionSkeleton />
@@ -178,7 +178,7 @@ function PeriodicReportSection({
     return (
       <div className="fixed z-30 inset-0 sm:mx-auto sm:w-[412px] bg-surface-base">
         <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
-        <div className="h-full flex flex-col gap-margin-y-xxl items-center justify-center text-center">
+        <div className="relative h-full flex flex-col gap-margin-y-xxl items-center justify-center text-center">
           <LoadingSpinnerIcon />
           <div>
             <p className="text-title-2">
