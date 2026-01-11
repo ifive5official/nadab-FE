@@ -799,6 +799,48 @@ export function CloseIcon() {
   );
 }
 
+export function SearchIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1.66602 8.95829C1.66602 4.94645 4.94584 1.66663 8.95768 1.66663C12.9695 1.66663 16.2493 4.94645 16.2493 8.95829C16.2493 12.9701 12.9695 16.25 8.95768 16.25C4.94584 16.25 1.66602 12.9701 1.66602 8.95829ZM8.95768 2.91663C5.63619 2.91663 2.91602 5.6368 2.91602 8.95829C2.91602 12.2798 5.63619 15 8.95768 15C12.2792 15 14.9993 12.2798 14.9993 8.95829C14.9993 5.6368 12.2792 2.91663 8.95768 2.91663Z"
+        fill="var(--color-icon-default)"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14.0663 13.183L17.733 16.8497L16.8491 17.7335L13.1824 14.0669L14.0663 13.183Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}
+
+export default function DeleteFilledIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10.0007 0.833374C4.94648 0.833374 0.833984 4.94587 0.833984 10C0.833984 15.0542 4.94648 19.1667 10.0007 19.1667C15.0548 19.1667 19.1673 15.0542 19.1673 10C19.1673 4.94587 15.0548 0.833374 10.0007 0.833374ZM13.9232 12.7442L12.7448 13.9225L10.0007 11.1784L7.25648 13.9225L6.07815 12.7442L8.82232 10L6.07815 7.25587L7.25648 6.07754L10.0007 8.82171L12.7448 6.07754L13.9232 7.25587L11.179 10L13.9232 12.7442Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}
+
 // 사이드바 ===========================
 export function HomeMenuIcon() {
   return (
@@ -1074,6 +1116,24 @@ export function NoResultIcon({ className }: { className?: string }) {
           <rect width="62.4" height="62.4" fill="white" />
         </clipPath>
       </defs>
+    </svg>
+  );
+}
+
+// 검색
+export function CloseFilledIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15.5885 5.58922L14.4102 4.41089L9.99932 8.82172L5.58849 4.41089L4.41016 5.58922L8.82099 10.0001L4.41016 14.4109L5.58849 15.5892L9.99932 11.1784L14.4102 15.5892L15.5885 14.4109L11.1777 10.0001L15.5885 5.58922Z"
+        fill="var(--color-icon-default)"
+      />
     </svg>
   );
 }

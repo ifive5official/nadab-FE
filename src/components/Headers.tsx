@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { CrystalBadge } from "./Badges";
 import { crystalsOptions } from "@/features/user/quries";
 
+// Todo: 헤더 리펙토링하거나 파일 분리좀 하자...
+
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
 };
@@ -28,29 +30,26 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const crystals = data?.crystalBalance ?? 0;
 
   return (
-    <>
-      {/* 음수 마진으로 본문 패딩 무시 */}
-      <header
-        className={clsx(
-          "fixed top-0 z-10 flex items-center gap-gap-x-m",
-          "px-padding-x-m w-full sm:w-[412px] h-header-height",
-          "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
-        )}
-      >
-        <img src="/textLogo.png" className="w-[54.3px]" />
-        <button onClick={openSidebar} className="ml-auto">
-          <MenuIcon />
-        </button>
-        <button onClick={() => setIsAccountMenuOpen(true)}>
-          <ProfileImg width={32} src={profileImgUrl} />
-        </button>
-        <AccountMenu
-          isOpen={isAccountMenuOpen}
-          onClose={() => setIsAccountMenuOpen(false)}
-          crystals={crystals}
-        />
-      </header>
-    </>
+    <header
+      className={clsx(
+        "fixed top-0 z-10 flex items-center gap-gap-x-m",
+        "px-padding-x-m w-full sm:w-[412px] h-header-height",
+        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+      )}
+    >
+      <img src="/textLogo.png" className="w-[54.3px]" />
+      <button onClick={openSidebar} className="ml-auto">
+        <MenuIcon />
+      </button>
+      <button onClick={() => setIsAccountMenuOpen(true)}>
+        <ProfileImg width={32} src={profileImgUrl} />
+      </button>
+      <AccountMenu
+        isOpen={isAccountMenuOpen}
+        onClose={() => setIsAccountMenuOpen(false)}
+        crystals={crystals}
+      />
+    </header>
   );
 }
 
@@ -101,6 +100,7 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
 
 // 뒤로가기 버튼과 타이틀이 있는 헤더
 type SubHeaderProps = {
+  variant?: "sub" | "search";
   showBackButton?: boolean;
   showMenuButton?: boolean;
   showCloseButton?: boolean;
@@ -108,6 +108,7 @@ type SubHeaderProps = {
 };
 
 export function SubHeader({
+  variant = "sub",
   showBackButton = true,
   showMenuButton = true,
   showCloseButton = false,
@@ -124,25 +125,28 @@ export function SubHeader({
         "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
       )}
     >
-      {showBackButton && (
-        <button
-          className="absolute left-padding-x-s"
-          onClick={() => router.history.back()}
-        >
-          <ArrowLeftIcon />
-        </button>
-      )}
-      <span className="mx-auto">{children}</span>
+      <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
+        {showBackButton && (
+          <button onClick={() => router.history.back()}>
+            <ArrowLeftIcon />
+          </button>
+        )}
+      </div>
 
-      {showMenuButton && (
-        <button className="absolute right-padding-x-s" onClick={openSidebar}>
-          <MenuIcon />
-        </button>
-      )}
-      {showCloseButton && (
-        <Link className="absolute right-padding-x-s" to="/">
-          <CloseIcon />
-        </Link>
+      <span className="flex-1 text-center">{children}</span>
+      {variant !== "search" && (
+        <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
+          {showMenuButton && (
+            <button onClick={openSidebar}>
+              <MenuIcon />
+            </button>
+          )}
+          {showCloseButton && (
+            <Link to="/">
+              <CloseIcon />
+            </Link>
+          )}
+        </div>
       )}
     </header>
   );

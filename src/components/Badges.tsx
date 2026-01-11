@@ -72,6 +72,8 @@ export function QuestionBadge({
 
 // 감정 종류 나타내는 작은 버튼처럼 생긴 컴포넌트
 type EmotionBadgeProps = {
+  variant?: "normal" | "big";
+  filled?: boolean; // 밝은 배경인지 어두운 배경인지
   height?: number;
   emotion: (typeof emotions)[number]["code"];
   onClick?: () => void;
@@ -79,7 +81,8 @@ type EmotionBadgeProps = {
 };
 
 export function EmotionBadge({
-  height = 28,
+  variant = "normal",
+  filled = false,
   emotion,
   onClick,
   className,
@@ -87,9 +90,11 @@ export function EmotionBadge({
   const item = emotions.find((c) => c.code === emotion)!;
   return (
     <div
-      style={{ zoom: height / 28 }}
       className={clsx(
-        "flex justify-center items-center gap-1 px-2 py-1 bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg w-fit",
+        "flex justify-center items-center gap-1 px-2 border border-button-tertiary-border-default rounded-lg",
+        filled ? "bg-surface-layer-1" : "bg-button-tertiary-bg-default",
+        variant === "normal" && "py-1 text-label-s w-fit",
+        variant === "big" && "py-padding-y-xs text-label-m",
         className
       )}
       onClick={onClick}
@@ -103,7 +108,7 @@ export function EmotionBadge({
         />
       </div>
 
-      <span className="text-label-s">{item.title}</span>
+      <span>{item.title}</span>
     </div>
   );
 }
