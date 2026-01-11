@@ -51,6 +51,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/test/generate/daily-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 오늘의 리포트 생성 API
+         * @description 오늘의 리포트 생성 테스트입니다. <br/>
+         *     프롬프트는 현재 서버에 배포된 프롬프트와 동일하게 적용됩니다. <br/>
+         */
+        post: operations["generateDailyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/test/generate/daily-report-with-prompt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 오늘의 리포트 생성 API (프롬프트 포함)
+         * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
+         *     1.
+         *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
+         *     ```json
+         *     {
+         *          "message": "(분석 내용)",
+         *          "emotion": "(감정 키워드)"
+         *     }
+         *     ```
+         *     2.
+         *     분석 대상을 명시해야 합니다.
+         *     예시)
+         *     ```json
+         *     [분석 대상]
+         *     질문: {question}
+         *     답변: {answer}
+         *     ```
+         *     이하는 temperature에 대한 설명입니다.<br/>
+         *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
+         *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
+         *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
+         *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
+         *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
+         */
+        post: operations["generateDailyReport_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/test/delete/weekly-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 주간 리포트 삭제 API
+         * @description 이번 주에 생성된 주간 리포트를 삭제합니다. <br/>
+         *     생성된 리포트만 삭제 가능합니다. <br/>
+         *     크리스탈 또한 환불됩니다.
+         */
+        post: operations["deleteWeeklyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/terms/consent": {
         parameters: {
             query?: never;
@@ -196,27 +281,7 @@ export interface paths {
          *     | `GROWTH` | 성장 |
          *     | `ETC` | 기타 |
          */
-        post: operations["generateDailyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report/generate/test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 오늘의 리포트 생성 API
-         * @description 오늘의 리포트 생성 테스트입니다.
-         */
-        post: operations["generateDailyReport_1"];
+        post: operations["generateDailyReport_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -879,6 +944,75 @@ export interface components {
              */
             contentType: string;
         };
+        /** @description 오늘의 리포트 생성 응답 */
+        CreateDailyReportResponse: {
+            /**
+             * Format: int64
+             * @description 오늘의 리포트 ID
+             * @example 1
+             */
+            reportId?: number;
+            /** @description 오늘의 리포트 내용 */
+            content?: string;
+            /**
+             * @description 오늘의 리포트 감정 상태
+             * @example GROWTH
+             */
+            emotion?: string;
+            /**
+             * Format: int64
+             * @description 리포트 작성 후 크리스탈 잔액
+             * @example 100
+             */
+            balanceAfter?: number;
+        };
+        /** @description 테스트용 오늘의 리포트 생성 요청 */
+        TestDailyReportRequest: {
+            /** @example 질문 */
+            question: string;
+            /** @example 답변 */
+            answer: string;
+        };
+        /** @description 공통 API 성공 응답 형식 */
+        ApiResponseDto: {
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            status?: number;
+            /**
+             * @description 응답 메시지
+             * @example OK
+             */
+            message?: string;
+            /** @description 응답 데이터 */
+            data?: unknown;
+        };
+        /** @description 오늘의 리포트 조회 응답 */
+        DailyReportResponse: {
+            /** @description 나의 답변 */
+            answer?: string;
+            /** @description 오늘의 리포트 내용 */
+            content?: string;
+            /**
+             * @description 오늘의 리포트 감정 상태
+             * @example GROWTH
+             */
+            emotion?: string;
+        };
+        /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
+        PromptTestDailyReportRequest: {
+            /**
+             * Format: double
+             * @example 0.3
+             */
+            temperature: number;
+            /** @example 질문 */
+            question: string;
+            /** @example 답변 */
+            answer: string;
+        };
         /** @description 약관 동의 요청 */
         TermsConsentRequest: {
             /**
@@ -939,22 +1073,6 @@ export interface components {
             /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
             rerollUsed?: boolean;
         };
-        /** @description 공통 API 성공 응답 형식 */
-        ApiResponseDto: {
-            /**
-             * Format: int32
-             * @description HTTP 상태 코드
-             * @example 200
-             */
-            status?: number;
-            /**
-             * @description 응답 메시지
-             * @example OK
-             */
-            message?: string;
-            /** @description 응답 데이터 */
-            data?: unknown;
-        };
         /** @description 이메일 인증 코드 발송 요청 */
         SendVerificationCodeRequest: {
             /**
@@ -988,28 +1106,6 @@ export interface components {
              */
             verificationType: string;
         };
-        /** @description 오늘의 리포트 생성 응답 */
-        CreateDailyReportResponse: {
-            /**
-             * Format: int64
-             * @description 오늘의 리포트 ID
-             * @example 1
-             */
-            reportId?: number;
-            /** @description 오늘의 리포트 내용 */
-            content?: string;
-            /**
-             * @description 오늘의 리포트 감정 상태
-             * @example GROWTH
-             */
-            emotion?: string;
-            /**
-             * Format: int64
-             * @description 리포트 작성 후 크리스탈 잔액
-             * @example 100
-             */
-            balanceAfter?: number;
-        };
         /** @description 오늘의 리포트 생성 요청 */
         DailyReportRequest: {
             /**
@@ -1019,13 +1115,6 @@ export interface components {
              */
             questionId: number;
             /** @description 유저의 답변 내용 */
-            answer: string;
-        };
-        /** @description 테스트용 오늘의 리포트 생성 요청 */
-        TestDailyReportRequest: {
-            /** @example 질문 */
-            question: string;
-            /** @example 답변 */
             answer: string;
         };
         /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
@@ -1309,18 +1398,6 @@ export interface components {
              */
             keyword?: string;
         };
-        /** @description 오늘의 리포트 조회 응답 */
-        DailyReportResponse: {
-            /** @description 나의 답변 */
-            answer?: string;
-            /** @description 오늘의 리포트 내용 */
-            content?: string;
-            /**
-             * @description 오늘의 리포트 감정 상태
-             * @example GROWTH
-             */
-            emotion?: string;
-        };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
             /**
@@ -1495,6 +1572,113 @@ export interface operations {
                 content?: never;
             };
             /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateDailyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestDailyReportRequest"];
+            };
+        };
+        responses: {
+            /** @description 테스트용 오늘의 리포트 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateDailyReportResponse"];
+                };
+            };
+            /** @description 잘못된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음 */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    generateDailyReport_1: {
+        parameters: {
+            query: {
+                prompt: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromptTestDailyReportRequest"];
+            };
+        };
+        responses: {
+            /** @description 테스트용 오늘의 리포트 생성 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReportResponse"];
+                };
+            };
+            /** @description 잘못된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+        };
+    };
+    deleteWeeklyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 테스트용 주간 리포트 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1732,7 +1916,7 @@ export interface operations {
             };
         };
     };
-    generateDailyReport: {
+    generateDailyReport_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -1792,53 +1976,6 @@ export interface operations {
              * @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음
              *     - ErrorCode: AI_RESPONSE_FORMAT_INVALID - AI 응답 JSON의 필수 필드가 비어있음
              */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateDailyReport_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TestDailyReportRequest"];
-            };
-        };
-        responses: {
-            /** @description 테스트용 오늘의 리포트 생성 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateDailyReportResponse"];
-                };
-            };
-            /** @description 잘못된 요청 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음 */
             502: {
                 headers: {
                     [name: string]: unknown;
@@ -2277,6 +2414,7 @@ export interface operations {
              *     - ErrorCode: IMAGE_SIZE_EXCEEDED - 이미지 크기 제한 초과 (5MB)
              *     - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입
              *     - ErrorCode: IMAGE_METADATA_INVALID - 파일 메타데이터를 읽을 수 없음
+             *     - ErrorCode: NICKNAME_CHANGE_LIMIT_EXCEEDED - 닉네임 변경 제한 횟수 초과
              */
             400: {
                 headers: {

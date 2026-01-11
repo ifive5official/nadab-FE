@@ -19,6 +19,7 @@ import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authByeRouteImport } from './routes/(auth)/bye'
 import { Route as AuthenticatedTodayIndexRouteImport } from './routes/_authenticated/today/index'
+import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedTodayWriteRouteImport } from './routes/_authenticated/today/write'
 import { Route as AuthenticatedTodayReportRouteImport } from './routes/_authenticated/today/report'
@@ -89,6 +90,12 @@ const AuthenticatedTodayIndexRoute = AuthenticatedTodayIndexRouteImport.update({
   path: '/today/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSearchIndexRoute =
+  AuthenticatedSearchIndexRouteImport.update({
+    id: '/search/',
+    path: '/search/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountIndexRoute =
   AuthenticatedAccountIndexRouteImport.update({
     id: '/account/',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/search': typeof AuthenticatedSearchIndexRoute
   '/today': typeof AuthenticatedTodayIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
@@ -262,6 +270,7 @@ export interface FileRoutesByTo {
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/search': typeof AuthenticatedSearchIndexRoute
   '/today': typeof AuthenticatedTodayIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
@@ -296,6 +305,7 @@ export interface FileRoutesById {
   '/_authenticated/today/report': typeof AuthenticatedTodayReportRoute
   '/_authenticated/today/write': typeof AuthenticatedTodayWriteRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
+  '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
   '/_authenticated/today/': typeof AuthenticatedTodayIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
 }
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/today/report'
     | '/today/write'
     | '/account'
+    | '/search'
     | '/today'
     | '/auth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/today/report'
     | '/today/write'
     | '/account'
+    | '/search'
     | '/today'
     | '/auth/$provider/callback'
   id:
@@ -393,6 +405,7 @@ export interface FileRouteTypes {
     | '/_authenticated/today/report'
     | '/_authenticated/today/write'
     | '/_authenticated/account/'
+    | '/_authenticated/search/'
     | '/_authenticated/today/'
     | '/(auth)/auth/$provider/callback'
   fileRoutesById: FileRoutesById
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/today'
       fullPath: '/today'
       preLoaderRoute: typeof AuthenticatedTodayIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/search/': {
+      id: '/_authenticated/search/'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/': {
@@ -655,6 +675,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedTodayReportRoute: typeof AuthenticatedTodayReportRoute
   AuthenticatedTodayWriteRoute: typeof AuthenticatedTodayWriteRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+  AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
   AuthenticatedTodayIndexRoute: typeof AuthenticatedTodayIndexRoute
 }
 
@@ -667,6 +688,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedTodayReportRoute: AuthenticatedTodayReportRoute,
   AuthenticatedTodayWriteRoute: AuthenticatedTodayWriteRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+  AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
   AuthenticatedTodayIndexRoute: AuthenticatedTodayIndexRoute,
 }
 

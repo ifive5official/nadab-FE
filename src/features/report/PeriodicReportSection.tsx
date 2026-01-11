@@ -11,6 +11,7 @@ import { useGenerateWeeklyReportMutation } from "./useGenerateWeeklyReportMutati
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
+import { useDeleteWeeklyReportMutation } from "./useDeleteWeeklyReportMutation";
 // import Toast from "@/components/Toast";
 
 type weeklyReportRes = components["schemas"]["WeeklyReportResponse"];
@@ -61,17 +62,12 @@ export function PeriodicReport() {
   const isGenerating =
     generateWeeklyReportMutation.isPending ||
     weeklyReportErr?.response?.data.code === "WEEKLY_REPORT_NOT_COMPLETED";
-
-  // const deleteWeeklyReportMutation = useMutation({
-  //   mutationFn: async () => {
-  //     const res = api.post("/api/v1/test/delete/weekly-report");
-  //     return res;
-  //   },
-  // });
-
+  const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation();
   return (
     <>
-      {/* <button onClick={() => deleteWeeklyReportMutation.mutate()}>삭제</button> */}
+      <button onClick={() => deleteWeeklyReportMutation.mutate()}>
+        주간 레포트 삭제(테스트용)
+      </button>
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         {isWeeklyReportLoading ? (
           <PeriodicReportSectionSkeleton />
@@ -81,7 +77,7 @@ export function PeriodicReport() {
             report={weeklyReport}
             onGenerate={() => generateWeeklyReportMutation.mutate()}
             isGenerating={isGenerating}
-            cost={30}
+            cost={20}
             crystalBalance={crystalBalance?.crystalBalance ?? 0}
           />
         )}
@@ -93,7 +89,7 @@ export function PeriodicReport() {
             report={undefined}
             onGenerate={() => {}}
             isGenerating={false}
-            cost={200}
+            cost={40}
             crystalBalance={crystalBalance?.crystalBalance ?? 0}
           />
         )}
@@ -137,7 +133,7 @@ function PeriodicReportSection({
       label: "월간 분석",
       periodText: "지난달",
       title: `${report?.month}월 분석`,
-      requiredAnswers: 20,
+      requiredAnswers: 15,
       prevBtnText: `${getPreviousPeriodText("monthly")} 분석 보기`,
     },
   }[reportType];
@@ -187,7 +183,9 @@ function PeriodicReportSection({
               생성 중이에요.
             </p>
             <p className="text-body-2 mt-margin-y-s">
-              곧 완성될 거예요. 조금만 기다려주세요.
+              리포트 생성에 1~2분 정도 걸릴 수 있어요.
+              <br />
+              조금만 기다려주세요.
             </p>
           </div>
         </div>
