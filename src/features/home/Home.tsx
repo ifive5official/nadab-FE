@@ -10,12 +10,22 @@ import RecordSection from "./RecordSection";
 import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatDate";
+import { useEffect, useRef } from "react";
 
 export default function Home() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const friends = Array(0).fill(0); // Todo: 백엔드 연동
   const { data: question } = useSuspenseQuery(questionOptions);
   const rerollQuestionMutation = useRerollQuestionMutation();
+  const videoRef = useRef<HTMLVideoElement>(null); // ios 비디오 자동재생 안되는 문제로 넣음
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log("자동 재생 실패:", error);
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -36,9 +46,10 @@ export default function Home() {
           <div className="flex items-center justify-center">
             <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100svh))] sm:w-[calc((267/390)*412px)] aspect-square ">
               <video
+                ref={videoRef}
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
-                autoPlay
                 muted
+                autoPlay
                 loop
                 playsInline
                 poster="/marble.webp"
