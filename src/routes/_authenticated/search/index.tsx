@@ -31,12 +31,18 @@ export const Route = createFileRoute("/_authenticated/search/")({
     queryClient.ensureQueryData(searchHistoryOptions);
   },
 });
-
+// Todo: 리펙토링 혹은 파일 분리 필요...
 function RouteComponent() {
   const { data: searchHistories } = useSuspenseQuery(searchHistoryOptions);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, { isPending }] = useDebounce(searchTerm, 500);
-  const isDebouncing = isPending();
+  const [searchEmotion, setSearchEmotion] = useState<
+    undefined | (typeof emotions)[number]["code"]
+  >(undefined);
+  const [debouncedSearchTerm] = useDebounce(
+    searchTerm,
+    searchTerm === "" ? 0 : 500
+  );
+  const isSearching = debouncedSearchTerm.trim().length > 0 || !!searchEmotion;
   const { ref, inView } = useInView();
   const queryClient = useQueryClient();
   const deleteHistoriesMutation = useDeleteHistoriesMutation();
@@ -48,11 +54,16 @@ function RouteComponent() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["currentUser", "searchResults", debouncedSearchTerm],
+    queryKey: [
+      "currentUser",
+      "searchResults",
+      debouncedSearchTerm,
+      searchEmotion,
+    ],
     queryFn: async ({ pageParam }) => {
       const req: AnswersReq = {
         keyword: debouncedSearchTerm || undefined,
-        emotionCode: undefined,
+        emotionCode: searchEmotion,
         cursor: pageParam || undefined,
       };
       const res = await api.get<ApiResponse<AnswersRes>>("/api/v1/answers", {
@@ -69,7 +80,7 @@ function RouteComponent() {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) =>
       lastPage.hasNext ? lastPage.nextCursor : null,
-    enabled: debouncedSearchTerm.trim().length > 0,
+    enabled: isSearching,
   });
 
   useEffect(() => {
@@ -84,21 +95,18 @@ function RouteComponent() {
         <SearchBar
           onChange={(e) => setSearchTerm(e.target.value)}
           value={searchTerm}
-          onDelete={() => setSearchTerm("")}
-          className="mr-margin-x-l"
+          emotion={searchEmotion}
+          onDeleteEmotion={() => setSearchEmotion(undefined)}
+          onDeleteKeyword={() => setSearchTerm("")}
+          className="mr-margin-x-l h-10"
         />
       </SubHeader>
       <Container>
-        {debouncedSearchTerm ? (
+        {isSearching ? (
+          // 검색어가 있을 때
           <div className="my-margin-y-l">
-            {isFetching || isDebouncing ? (
-              <ul className="list-none flex flex-col gap-gap-y-l">
-                {Array(5)
-                  .fill(0)
-                  .map((_, i) => (
-                    <SearchResultSkeleton key={i} />
-                  ))}
-              </ul>
+            {isFetching ? (
+              <SearchResultSkeleton />
             ) : (
               <>
                 {searchResults?.pages.map((page, i) => {
@@ -112,10 +120,12 @@ function RouteComponent() {
                     </ul>
                   );
                 })}
+                {isFetchingNextPage && <SearchResultSkeleton />}
               </>
             )}
           </div>
         ) : (
+          // 검색어가 없을 때(첫 접속 시 화면)
           <div className="my-margin-y-m flex flex-col gap-margin-y-xl">
             {(searchHistories.histories?.length ?? 0) > 0 && (
               <KeywordSection
@@ -134,16 +144,24 @@ function RouteComponent() {
                 <div className="flex flex-wrap gap-1.5">
                   {searchHistories.histories?.map((item) => {
                     return (
-                      <button
+                      // 검색어 버튼
+                      <div
                         key={item.id}
-                        onClick={() =>
-                          deleteHistoryMutation.mutate({ historyId: item.id! })
-                        }
+                        onClick={() => setSearchTerm(item.keyword!)}
                         className="flex gap-gap-x-xs bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-full text-button-2 px-padding-x-m py-padding-y-xs"
                       >
                         <span>{item.keyword}</span>
-                        <CloseFilledIcon />
-                      </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteHistoryMutation.mutate({
+                              historyId: item.id!,
+                            });
+                          }}
+                        >
+                          <CloseFilledIcon />
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -154,7 +172,10 @@ function RouteComponent() {
               <div className="grid grid-cols-3 gap-1.5">
                 {emotions.map((emotion) => {
                   return (
-                    <button key={emotion.code}>
+                    <button
+                      key={emotion.code}
+                      onClick={() => setSearchEmotion(emotion.code)}
+                    >
                       <EmotionBadge
                         emotion={emotion.code}
                         variant="big"
@@ -191,19 +212,30 @@ function KeywordSection({ header, children }: KeywordSectionProps) {
 
 function SearchResultSkeleton() {
   return (
-    <li className="px-padding-x-m py-padding-y-m rounded-lg bg-surface-layer-2 animate-pulse">
-      <div className="invisible">
-        <div className="flex gap-padding-x-xxs">
-          <QuestionBadge category={"PREFERENCE"} />
-          <EmotionBadge emotion={"JOY"} />
-          <span className="text-caption-s text-text-tertiary ml-auto">
-            test
-          </span>
-        </div>
-        <p className="text-label-l">test</p>
-        <p className="text-caption-m text-text-secondary">test</p>
-      </div>
-    </li>
+    <>
+      <ul className="list-none flex flex-col gap-gap-y-l">
+        {Array(5)
+          .fill(0)
+          .map((_, i) => (
+            <li
+              key={i}
+              className="px-padding-x-m py-padding-y-m rounded-lg bg-surface-layer-2 animate-pulse"
+            >
+              <div className="invisible">
+                <div className="flex gap-padding-x-xxs">
+                  <QuestionBadge category={"PREFERENCE"} />
+                  <EmotionBadge emotion={"ACHIEVEMENT"} />
+                  <span className="text-caption-s text-text-tertiary ml-auto">
+                    test
+                  </span>
+                </div>
+                <p className="text-label-l">test</p>
+                <p className="text-caption-m text-text-secondary">test</p>
+              </div>
+            </li>
+          ))}
+      </ul>
+    </>
   );
 }
 
@@ -222,7 +254,7 @@ function SearchResultItem({ item }: { item: SearchItem }) {
         </span>
       </div>
       <p className="text-label-l">{item.questionText}</p>
-      <p className="text-caption-m text-text-secondary">
+      <p className="text-caption-m text-text-secondary truncate">
         {item.matchedSnippet}
       </p>
     </li>

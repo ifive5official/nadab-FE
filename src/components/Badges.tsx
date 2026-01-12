@@ -1,7 +1,7 @@
 // 재사용하는 작은 뱃지처럼 생긴 컴포넌트들
 import categories from "@/constants/categories";
 import clsx from "clsx";
-import { GemFilledIcon } from "./Icons";
+import { CloseFilledIcon, GemFilledIcon } from "./Icons";
 import emotions from "@/constants/emotions";
 
 // 텍스트와 테마색 테두리가 있는 작은 버튼 컴포넌트
@@ -72,7 +72,7 @@ export function QuestionBadge({
 
 // 감정 종류 나타내는 작은 버튼처럼 생긴 컴포넌트
 type EmotionBadgeProps = {
-  variant?: "normal" | "big";
+  variant?: "normal" | "big" | "search";
   filled?: boolean; // 밝은 배경인지 어두운 배경인지
   height?: number;
   emotion: (typeof emotions)[number]["code"];
@@ -91,10 +91,14 @@ export function EmotionBadge({
   return (
     <div
       className={clsx(
-        "flex justify-center items-center gap-1 px-2 border border-button-tertiary-border-default rounded-lg",
+        "flex justify-center items-center gap-1 px-2 border rounded-lg",
         filled ? "bg-surface-layer-1" : "bg-button-tertiary-bg-default",
-        variant === "normal" && "py-1 text-label-s w-fit",
-        variant === "big" && "py-padding-y-xs text-label-m",
+        variant === "big"
+          ? "py-padding-y-xs text-label-m"
+          : "py-1 text-label-s w-fit",
+        variant === "search"
+          ? "border-button-tertiary-border-hover"
+          : "border-button-tertiary-border-default",
         className
       )}
       onClick={onClick}
@@ -107,8 +111,10 @@ export function EmotionBadge({
           className="w-[13px] aspect-square rounded-full"
         />
       </div>
-
-      <span>{item.title}</span>
+      <span className="whitespace-nowrap text-button-tertiary-text-default">
+        {item.title}
+      </span>
+      {variant === "search" && <CloseFilledIcon />}
     </div>
   );
 }
