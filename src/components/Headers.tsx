@@ -122,7 +122,8 @@ export function SubHeader({
       className={clsx(
         "fixed top-0 z-10 flex items-center",
         "w-full sm:w-[412px] h-header-height",
-        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+        "bg-surface-base text-label-l text-text-secondary",
+        variant === "sub" ? "border-b border-b-border-base" : ""
       )}
     >
       <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
