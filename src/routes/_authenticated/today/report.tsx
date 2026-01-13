@@ -53,7 +53,7 @@ function RouteComponent() {
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection question={question!} />
           <div className="border-b border-interactive-border-default" />
-          <div>
+          <div className="flex flex-col items-start">
             <EmotionBadge
               emotion={report.emotion as (typeof emotions)[number]["code"]}
             />

@@ -136,6 +136,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/test/delete/monthly-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 월간 리포트 삭제 API
+         * @description 이번 달에 생성된 월간 리포트를 삭제합니다. <br/>
+         *     생성된 리포트만 삭제 가능합니다. <br/>
+         *     크리스탈 또한 환불됩니다.
+         */
+        post: operations["deleteMonthlyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/terms/consent": {
         parameters: {
             query?: never;
@@ -197,6 +219,27 @@ export interface paths {
          * @description 오늘의 질문을 새로 받습니다. 하루에 한 번만 가능합니다.
          */
         post: operations["rerollDailyQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/monthly-report/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 월간 리포트 생성 시작
+         * @description 사용자의 (지난 달에 대한) 월간 리포트 생성을 시작합니다. </br>
+         *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+         */
+        post: operations["startMonthlyReport"];
         delete?: never;
         options?: never;
         head?: never;
@@ -272,13 +315,13 @@ export interface paths {
          *
          *     | 응답의 emotion | 해당 감정 |
          *     | :--- | :--- |
-         *     | `JOY` | 기쁨 |
+         *     | `ACHIEVEMENT` | 성취 |
+         *     | `INTEREST` | 흥미 |
+         *     | `PEACE` | 평온 |
          *     | `PLEASURE` | 즐거움 |
-         *     | `SADNESS` | 슬픔 |
-         *     | `ANGER` | 분노 |
+         *     | `WILL` | 의지 |
+         *     | `DEPRESSION` | 우울 |
          *     | `REGRET` | 후회 |
-         *     | `FRUSTRATION` | 좌절 |
-         *     | `GROWTH` | 성장 |
          *     | `ETC` | 기타 |
          */
         post: operations["generateDailyReport_2"];
@@ -607,9 +650,12 @@ export interface paths {
         };
         /**
          * 나의 주간 리포트 조회
-         * @description 사용자의 (지난 주) 주간 리포트를 조회합니다.
+         * @description 사용자의 (지난 주에 대한) 주간 리포트와 이전 주간 리포트를 조회합니다. </br>
+         *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
+         *     ```report```혹은 ```previousReport```가
+         *     ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다.
          */
-        get: operations["getLastWeekWeeklyReport"];
+        get: operations["getMyWeeklyReport"];
         put?: never;
         post?: never;
         delete?: never;
@@ -733,6 +779,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/monthly-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 나의 월간 리포트 조회
+         * @description 사용자의 (지난 달에 대한) 월간 리포트와 이전 월간 리포트를 조회합니다. </br>
+         *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
+         *     ```report```혹은 ```previousReport```가
+         *     ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다.
+         */
+        get: operations["getMyMonthlyReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/monthly-report/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * id로 월간 리포트 조회
+         * @description 월간 리포트를 id로 조회합니다. </br>
+         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+         */
+        get: operations["getMonthlyReportById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/daily-report": {
         parameters: {
             query?: never;
@@ -846,6 +939,76 @@ export interface paths {
          *     COMPLETED 상태의 리포트만 조회 가능합니다.
          */
         get: operations["getDailyReportByAnswerId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/answers/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 월별 캘린더 조회
+         * @description 특정 월의 답변이 있는 날짜와 감정 코드를 조회합니다.
+         *
+         *     - 답변이 없는 날짜는 결과에 포함되지 않습니다.
+         *     - emotionCode는 리포트가 COMPLETED 상태일 때만 제공됩니다.
+         *     - 리포트가 없거나 PENDING/FAILED 상태면 null입니다.
+         */
+        get: operations["getMonthlyCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/answers/calendar/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 날짜 답변 조회
+         * @description 특정 날짜의 답변 미리보기를 조회합니다.
+         *
+         *     - 해당 날짜에 답변이 없으면 404 에러를 반환합니다.
+         *     - 날짜 형식: yyyy-MM-dd (예: 2026-01-30)
+         */
+        get: operations["getAnswerByDate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/answers/calendar/recents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 캘린더 최근 기록 미리보기
+         * @description 최근 답변을 최대 6개까지 조회합니다. (날짜 내림차순)
+         *
+         *     - 답변이 6개 미만인 경우 전체 답변을 반환합니다.
+         *     - 답변이 없는 경우 빈 배열을 반환합니다.
+         */
+        get: operations["getCalendarRecents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1073,6 +1236,26 @@ export interface components {
             /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
             rerollUsed?: boolean;
         };
+        /** @description 월간 리포트 생성 시작 응답 */
+        MonthlyReportStartResponse: {
+            /**
+             * Format: int64
+             * @description 생성 예정 월간 리포트 ID
+             * @example 1
+             */
+            reportId?: number;
+            /**
+             * @description 상태
+             * @example PENDING
+             */
+            status?: string;
+            /**
+             * Format: int64
+             * @description 리포트 작성 후 크리스탈 잔액
+             * @example 100
+             */
+            balanceAfter?: number;
+        };
         /** @description 이메일 인증 코드 발송 요청 */
         SendVerificationCodeRequest: {
             /**
@@ -1280,6 +1463,13 @@ export interface components {
              */
             newPassword: string;
         };
+        /** @description 나의 주간 리포트 조회 응답 */
+        MyWeeklyReportResponse: {
+            /** @description 이번 주간 리포트 */
+            report?: components["schemas"]["WeeklyReportResponse"];
+            /** @description 이전 주간 리포트 */
+            previousReport?: components["schemas"]["WeeklyReportResponse"];
+        };
         /** @description 주간 리포트 조회 응답 */
         WeeklyReportResponse: {
             /**
@@ -1398,6 +1588,32 @@ export interface components {
              */
             keyword?: string;
         };
+        /** @description 월간 리포트 조회 응답 */
+        MonthlyReportResponse: {
+            /**
+             * Format: int32
+             * @description 리포트가 작성된 달
+             */
+            month?: number;
+            /** @description 이런 면도 발견되었어요 */
+            discovered?: string;
+            /** @description 이런 점이 좋았어요 */
+            good?: string;
+            /** @description 다음엔 이렇게 보완해볼까요? */
+            improve?: string;
+            /**
+             * @description 상태
+             * @example PENDING
+             */
+            status?: string;
+        };
+        /** @description 나의 월간 리포트 조회 응답 */
+        MyMonthlyReportResponse: {
+            /** @description 이번 월간 리포트 */
+            report?: components["schemas"]["MonthlyReportResponse"];
+            /** @description 이전 월간 리포트 */
+            previousReport?: components["schemas"]["MonthlyReportResponse"];
+        };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
             /**
@@ -1421,7 +1637,7 @@ export interface components {
             interestCode?: string;
             /**
              * @description 감정 코드 (리포트 생성 완료 시에만 제공, PENDING/FAILED 상태면 null)
-             * @example JOY
+             * @example ACHIEVEMENT
              */
             emotionCode?: string;
             /**
@@ -1464,8 +1680,8 @@ export interface components {
              */
             keyword?: string;
             /**
-             * @description 감정 코드 (JOY, PLEASURE, SADNESS, ANGER, REGRET, FRUSTRATION, GROWTH, ETC)
-             * @example JOY
+             * @description 감정 코드 (ACHIEVEMENT, INTEREST, PEACE, PLEASURE, WILL, DEPRESSION, REGRET, ETC)
+             * @example ACHIEVEMENT
              */
             emotionCode?: string;
             /**
@@ -1473,6 +1689,45 @@ export interface components {
              * @example 2025-12-25
              */
             cursor?: string;
+        };
+        /** @description 캘린더 날짜별 정보 */
+        CalendarEntryResponse: {
+            /**
+             * Format: date
+             * @description 답변 날짜
+             * @example 2026-01-30
+             */
+            date?: string;
+            /**
+             * @description 감정 코드 (답변이 있고 리포트가 COMPLETED 상태일 때만 제공)
+             * @example ACHIEVEMENT
+             */
+            emotionCode?: string;
+        };
+        /** @description 월별 캘린더 응답 */
+        MonthlyCalendarResponse: {
+            /** @description 답변이 있는 날짜의 정보 목록 (답변 없는 날짜는 포함되지 않음) */
+            calendarEntries?: components["schemas"]["CalendarEntryResponse"][];
+        };
+        /** @description 월별 캘린더 조회 요청 */
+        GetMonthlyCalendarRequest: {
+            /**
+             * Format: int32
+             * @description 연도
+             * @example 2026
+             */
+            year: number;
+            /**
+             * Format: int32
+             * @description 월 (1~12)
+             * @example 1
+             */
+            month: number;
+        };
+        /** @description 캘린더 최근 답변 미리보기 응답 */
+        CalendarRecentsResponse: {
+            /** @description 최근 답변 목록 (최대 6개, 날짜 내림차순) */
+            items?: components["schemas"]["AnswerEntrySummaryResponse"][];
         };
     };
     responses: never;
@@ -1687,6 +1942,31 @@ export interface operations {
             };
         };
     };
+    deleteMonthlyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 테스트용 월간 리포트 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     checkTermsConsent: {
         parameters: {
             query?: never;
@@ -1810,6 +2090,65 @@ export interface operations {
             /**
              * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다.
              *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    startMonthlyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 월간 리포트 생성 시작 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MonthlyReportStartResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: MONTHLY_REPORT_NOT_ENOUGH_REPORTS - 월간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
+             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompletedCountResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: MONTHLY_REPORT_ALREADY_COMPLETED - 이미 작성된 월간 리포트가 존재함
+             *     - ErrorCode: MONTHLY_REPORT_IN_PROGRESS - 현재 월간 리포트를 생성 중임
              */
             409: {
                 headers: {
@@ -2598,7 +2937,7 @@ export interface operations {
             };
         };
     };
-    getLastWeekWeeklyReport: {
+    getMyWeeklyReport: {
         parameters: {
             query?: never;
             header?: never;
@@ -2613,7 +2952,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WeeklyReportResponse"];
+                    "application/json": components["schemas"]["MyWeeklyReportResponse"];
                 };
             };
             /** @description 인증 실패 */
@@ -2623,11 +2962,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: WEEKLY_REPORT_NOT_FOUND - 주간 리포트를 찾을 수 없음
-             *     - ErrorCode: WEEKLY_REPORT_NOT_COMPLETED - 해당 주간 리포트가 아직 생성 완료되지 않음
-             */
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -2816,6 +3151,69 @@ export interface operations {
             };
         };
     };
+    getMyMonthlyReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 나의 월간 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyMonthlyReportResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMonthlyReportById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 월간 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MonthlyReportResponse"];
+                };
+            };
+            /** @description - ErrorCode: MONTHLY_REPORT_NOT_FOUND - 월간 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getDailyReport: {
         parameters: {
             query?: never;
@@ -2907,7 +3305,7 @@ export interface operations {
                     "*/*": components["schemas"]["SearchAnswerEntryResponse"];
                 };
             };
-            /** @description 잘못된 요청 (cursor 형식 오류 등) */
+            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (cursor 형식 오류 등) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -2962,6 +3360,112 @@ export interface operations {
              *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 리포트가 생성되지 않았음
              */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMonthlyCalendar: {
+        parameters: {
+            query: {
+                request: components["schemas"]["GetMonthlyCalendarRequest"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MonthlyCalendarResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (연도/월 범위 오류) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAnswerByDate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnswerEntrySummaryResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 날짜 형식 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: ANSWER_NOT_FOUND - 해당 날짜에 답변이 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getCalendarRecents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CalendarRecentsResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
