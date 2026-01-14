@@ -216,11 +216,15 @@ function RouteComponent() {
             })}
           </div>
         </section>
-        {/* Todo: 높이 유동적으로 맞추기 */}
-        <div className="h-50 flex items-center">
-          {selectedDate ? (
-            // 해당 날짜에 답변한 내용이 있다면 보여줌
-            <section className="w-full flex flex-col gap-gap-y-l">
+        <div className="grid grid-cols-1 items-start">
+          {/* // 해당 날짜에 답변한 내용이 있다면 보여줌 */}
+          <section
+            className={clsx(
+              "col-start-1 row-start-1",
+              !selectedDate && "invisible"
+            )}
+          >
+            <div className="flex flex-col gap-gap-y-l">
               {answer ? (
                 <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1 rounded-lg border border-border-base">
                   <div className="flex justify-between mb-margin-y-s">
@@ -261,69 +265,74 @@ function RouteComponent() {
                 </BlockButton>
                 <BlockButton>상세보기</BlockButton>
               </div>
-            </section>
-          ) : (
-            // 해당 날짜에 답변한 내용이 없다면
-            // 최근 기록 / 해당 날짜 기록
-            <section className="w-full min-w-0">
-              <span className="text-label-l py-padding-y-xxs">
-                최근 기록 미리보기
-              </span>
-              <Swiper
-                className="mt-gap-y-m mb-gap-y-l"
-                modules={[Pagination]}
-                pagination={{ enabled: false }}
-                spaceBetween={8}
-                slidesPerView={2} // 한 화면에 보여질 개수
-                slidesPerGroup={2} // 한 번에 넘어가는 개수>
-                onSwiper={(swiper) => {
-                  // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
-                  setTimeout(() => {
-                    // @ts-ignore
-                    swiper.params.pagination.el = paginationRef.current;
+            </div>
+          </section>
 
-                    swiper.pagination.init();
-                    swiper.pagination.render();
-                    swiper.pagination.update();
-                  });
-                }}
-              >
-                {recentData?.items?.map((item) => {
-                  return (
-                    <SwiperSlide
-                      key={item.answerId}
-                      style={{
-                        WebkitUserSelect: "none",
-                        MozUserSelect: "none",
-                        msUserSelect: "none",
-                        userSelect: "none",
-                      }}
-                    >
-                      <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
-                        <div className="flex justify-between mb-margin-y-m">
-                          <EmotionBadge
-                            emotion={
-                              item.emotionCode as (typeof emotions)[number]["code"]
-                            }
-                          />
-                          <span className="text-caption-s text-text-tertiary">
-                            {item.answerDate}
-                          </span>
-                        </div>
-                        <p className="text-label-s truncate">
-                          {item.questionText}
-                        </p>
-                        <p className="text-caption-s line-clamp-2">
-                          {item.matchedSnippet}
-                        </p>
+          {/* // 해당 날짜에 답변한 내용이 없다면
+            // 최근 기록 / 해당 날짜 기록 */}
+          <section
+            className={clsx(
+              "col-start-1 row-start-1",
+              selectedDate && "invisible"
+            )}
+          >
+            <span className="text-label-l py-padding-y-xxs">
+              최근 기록 미리보기
+            </span>
+            <Swiper
+              className="mt-gap-y-m mb-gap-y-l"
+              modules={[Pagination]}
+              pagination={{ enabled: false }}
+              spaceBetween={8}
+              slidesPerView={2} // 한 화면에 보여질 개수
+              slidesPerGroup={2} // 한 번에 넘어가는 개수>
+              onSwiper={(swiper) => {
+                // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
+                setTimeout(() => {
+                  // @ts-ignore
+                  swiper.params.pagination.el = paginationRef.current;
+
+                  swiper.pagination.init();
+                  swiper.pagination.render();
+                  swiper.pagination.update();
+                });
+              }}
+            >
+              {recentData?.items?.map((item) => {
+                return (
+                  <SwiperSlide
+                    key={item.answerId}
+                    style={{
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      msUserSelect: "none",
+                      userSelect: "none",
+                    }}
+                  >
+                    <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
+                      <div className="flex justify-between mb-margin-y-m">
+                        <EmotionBadge
+                          emotion={
+                            item.emotionCode as (typeof emotions)[number]["code"]
+                          }
+                        />
+                        <span className="text-caption-s text-text-tertiary">
+                          {item.answerDate}
+                        </span>
                       </div>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-              <div ref={paginationRef} />
-            </section>
-          )}
+                      <p className="text-label-s truncate">
+                        {item.questionText}
+                      </p>
+                      <p className="text-caption-s line-clamp-2">
+                        {item.matchedSnippet}
+                      </p>
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+            <div ref={paginationRef} />
+          </section>
         </div>
       </div>
     </>
