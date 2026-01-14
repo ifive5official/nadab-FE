@@ -49,6 +49,7 @@ export function PeriodicReport() {
       return false;
     },
   });
+  console.log(weeklyReport);
 
   // const [isToastOpen, setIsToastOpen] = useState(false);
   // const [toastMessage, setToastMessage] = useState("");

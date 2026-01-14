@@ -18,6 +18,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { recentOptions } from "@/features/calendar/queries";
+import BlockButton from "@/components/BlockButton";
 
 export const Route = createFileRoute("/_authenticated/_main/calendar")({
   component: RouteComponent,
@@ -27,15 +28,19 @@ export const Route = createFileRoute("/_authenticated/_main/calendar")({
 
 type CalendarReq = components["schemas"]["GetMonthlyCalendarRequest"];
 type CalendarRes = components["schemas"]["MonthlyCalendarResponse"];
+type AnswerRes = components["schemas"]["AnswerEntrySummaryResponse"];
 
 function RouteComponent() {
   // 현재 캘린더에서 보고있는 날짜
   const [currentDate, setCurrentDate] = useState(new Date());
+  // 특정 답변만 미리보기 할 때 선택하는 날짜
+  const [selectedDate, setSelectedDate] = useState("");
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
   // 캘린더 데이터 가져오기
+  // Todo: 에러 처리
   const { data: calendarData } = useQuery({
     queryKey: ["currentUser", "calendar", year, month],
     queryFn: async () => {
@@ -49,11 +54,25 @@ function RouteComponent() {
           params: req,
         }
       );
-      return res.data.data;
+      return res.data.data!;
     },
   });
 
+  // 최근 기록 미리보기 데이터
   const { data: recentData } = useSuspenseQuery(recentOptions);
+
+  // 특정 날짜 답변 미리보기 데이터
+  // Todo: 에러 처리
+  const { data: answer } = useQuery({
+    queryKey: ["currentUser", selectedDate],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<AnswerRes>>(
+        `/api/v1/answers/calendar/${selectedDate}`
+      );
+      return res.data.data!;
+    },
+    enabled: !!selectedDate,
+  });
 
   // 날짜로 찾기 쉽게 받아온 캘린더 데이터 레코드화
   const entryMap = useMemo(() => {
@@ -160,7 +179,15 @@ function RouteComponent() {
               return (
                 <div
                   key={index}
-                  className="py-padding-y-xs relative flex items-center justify-center"
+                  className="cursor-pointer py-padding-y-xs relative flex items-center justify-center"
+                  onClick={() => {
+                    if (emotionCode) {
+                      setSelectedDate(dateObj.dateString);
+                    } else {
+                      setSelectedDate("");
+                    }
+                    setCurrentDate(new Date(dateObj.dateString));
+                  }}
                 >
                   {emotionCode && (
                     <div
@@ -189,63 +216,115 @@ function RouteComponent() {
             })}
           </div>
         </section>
-        {/* 최근 기록 / 해당 날짜 기록 */}
-        <section>
-          <span className="text-label-l py-padding-y-xxs">
-            최근 기록 미리보기
-          </span>
-          <Swiper
-            className="mt-gap-y-m mb-gap-y-l"
-            modules={[Pagination]}
-            pagination={{ enabled: false }}
-            spaceBetween={8}
-            slidesPerView={2} // 한 화면에 보여질 개수
-            slidesPerGroup={2} // 한 번에 넘어가는 개수>
-            onSwiper={(swiper) => {
-              // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
-              setTimeout(() => {
-                // @ts-ignore
-                swiper.params.pagination.el = paginationRef.current;
-
-                swiper.pagination.init();
-                swiper.pagination.render();
-                swiper.pagination.update();
-              });
-            }}
-          >
-            {recentData?.items?.map((item) => {
-              return (
-                <SwiperSlide
-                  key={item.answerId}
-                  style={{
-                    WebkitUserSelect: "none",
-                    MozUserSelect: "none",
-                    msUserSelect: "none",
-                    userSelect: "none",
-                  }}
-                >
-                  <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
-                    <div className="flex justify-between mb-margin-y-m">
-                      <EmotionBadge
-                        emotion={
-                          item.emotionCode as (typeof emotions)[number]["code"]
-                        }
-                      />
+        {/* Todo: 높이 유동적으로 맞추기 */}
+        <div className="h-50 flex items-center">
+          {selectedDate ? (
+            // 해당 날짜에 답변한 내용이 있다면 보여줌
+            <section className="w-full flex flex-col gap-gap-y-l">
+              {answer ? (
+                <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1 rounded-lg border border-border-base">
+                  <div className="flex justify-between mb-margin-y-s">
+                    <EmotionBadge
+                      emotion={
+                        answer.emotionCode as (typeof emotions)[number]["code"]
+                      }
+                    />
+                    <span className="text-caption-s text-text-tertiary">
+                      {answer.answerDate}
+                    </span>
+                  </div>
+                  <p className="text-label-l truncate">{answer.questionText}</p>
+                  <p className="text-caption-m truncate">
+                    {answer.matchedSnippet}
+                  </p>
+                </div>
+              ) : (
+                <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1 rounded-lg border border-border-base">
+                  <div className="invisible">
+                    <div className="flex justify-between mb-margin-y-s">
+                      <EmotionBadge emotion="ACHIEVEMENT" />
                       <span className="text-caption-s text-text-tertiary">
-                        {item.answerDate}
+                        test
                       </span>
                     </div>
-                    <p className="text-label-s truncate">{item.questionText}</p>
-                    <p className="text-caption-s line-clamp-2">
-                      {item.matchedSnippet}
-                    </p>
+                    <p className="text-label-l truncate">test</p>
+                    <p className="text-caption-m truncate">test</p>
                   </div>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-          <div ref={paginationRef} />
-        </section>
+                </div>
+              )}
+              <div className="flex gap-margin-x-m">
+                <BlockButton
+                  variant="secondary"
+                  onClick={() => setSelectedDate("")}
+                >
+                  최근 기록 보기
+                </BlockButton>
+                <BlockButton>상세보기</BlockButton>
+              </div>
+            </section>
+          ) : (
+            // 해당 날짜에 답변한 내용이 없다면
+            // 최근 기록 / 해당 날짜 기록
+            <section className="w-full min-w-0">
+              <span className="text-label-l py-padding-y-xxs">
+                최근 기록 미리보기
+              </span>
+              <Swiper
+                className="mt-gap-y-m mb-gap-y-l"
+                modules={[Pagination]}
+                pagination={{ enabled: false }}
+                spaceBetween={8}
+                slidesPerView={2} // 한 화면에 보여질 개수
+                slidesPerGroup={2} // 한 번에 넘어가는 개수>
+                onSwiper={(swiper) => {
+                  // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
+                  setTimeout(() => {
+                    // @ts-ignore
+                    swiper.params.pagination.el = paginationRef.current;
+
+                    swiper.pagination.init();
+                    swiper.pagination.render();
+                    swiper.pagination.update();
+                  });
+                }}
+              >
+                {recentData?.items?.map((item) => {
+                  return (
+                    <SwiperSlide
+                      key={item.answerId}
+                      style={{
+                        WebkitUserSelect: "none",
+                        MozUserSelect: "none",
+                        msUserSelect: "none",
+                        userSelect: "none",
+                      }}
+                    >
+                      <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
+                        <div className="flex justify-between mb-margin-y-m">
+                          <EmotionBadge
+                            emotion={
+                              item.emotionCode as (typeof emotions)[number]["code"]
+                            }
+                          />
+                          <span className="text-caption-s text-text-tertiary">
+                            {item.answerDate}
+                          </span>
+                        </div>
+                        <p className="text-label-s truncate">
+                          {item.questionText}
+                        </p>
+                        <p className="text-caption-s line-clamp-2">
+                          {item.matchedSnippet}
+                        </p>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+              <div ref={paginationRef} />
+            </section>
+          )}
+        </div>
       </div>
     </>
   );
