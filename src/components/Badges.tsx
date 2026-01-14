@@ -31,6 +31,7 @@ type QuestionBadgeProps = {
   category: (typeof categories)[number]["code"];
   onClick?: () => void;
   isActive?: boolean;
+  filled?: boolean;
   className?: string;
 };
 
@@ -39,6 +40,7 @@ export function QuestionBadge({
   category,
   onClick,
   isActive = true,
+  filled = false,
   className,
 }: QuestionBadgeProps) {
   const item = categories.find((c) => c.code === category)!;
@@ -47,7 +49,8 @@ export function QuestionBadge({
     <div
       style={{ zoom: height / 28 }}
       className={clsx(
-        "flex justify-center items-center gap-1 px-2 py-1 bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg text-label-s",
+        "flex justify-center items-center gap-1 px-2 py-1 border border-button-tertiary-border-default rounded-lg text-label-s",
+        filled ? "bg-surface-layer-1" : "bg-button-tertiary-bg-default",
         className
       )}
       onClick={onClick}
@@ -95,7 +98,7 @@ export function EmotionBadge({
         filled ? "bg-surface-layer-1" : "bg-button-tertiary-bg-default",
         variant === "big"
           ? "py-padding-y-xs text-label-m"
-          : "py-1 text-label-s w-fit",
+          : "py-1 text-label-s",
         variant === "search"
           ? "border-button-tertiary-border-hover"
           : "border-button-tertiary-border-default",

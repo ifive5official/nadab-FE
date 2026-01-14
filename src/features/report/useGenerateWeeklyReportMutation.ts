@@ -10,7 +10,6 @@ type Props = {
   onSuccess?: () => void;
 };
 
-type weeklyReportRes = components["schemas"]["WeeklyReportResponse"];
 type generateWeeklyReportRes =
   components["schemas"]["WeeklyReportStartResponse"];
 
@@ -19,38 +18,15 @@ export function useGenerateWeeklyReportMutation({ onSuccess }: Props) {
 
   return useMutation({
     mutationFn: async () => {
-      const startRes = await api.post<ApiResponse<generateWeeklyReportRes>>(
+      const res = await api.post<ApiResponse<generateWeeklyReportRes>>(
         "/api/v1/weekly-report/start"
       );
-      const { reportId } = startRes.data.data!;
-      // 0.5초마다 폴링
-      let isFinished = false;
-      let reportData: weeklyReportRes | null = null;
-      while (!isFinished) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const statusRes = await api.get<ApiResponse<weeklyReportRes>>(
-          `/api/v1/weekly-report/${reportId}`
-        );
-        const currentReport = statusRes.data.data!;
-
-        if (currentReport.status === "COMPLETED") {
-          isFinished = true;
-          reportData = currentReport;
-        } else if (currentReport.status === "FAILED") {
-          useErrorStore
-            .getState()
-            .showError(
-              "주간 레포트를 생성하는 데 실패했어요.",
-              "잠시 후 다시 시도해 주세요."
-            );
-        } else {
-          // pending ui 보여줌
-        }
-      }
-      return reportData;
+      return res.data.data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["currentUser", "weeklyReport"], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser", "weeklyReport"],
+      });
       onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {

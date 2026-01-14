@@ -245,9 +245,11 @@ function SearchResultItem({ item }: { item: SearchItem }) {
       <div className="flex gap-padding-x-xxs">
         <QuestionBadge
           category={item.interestCode as (typeof categories)[number]["code"]}
+          filled
         />
         <EmotionBadge
           emotion={item.emotionCode as (typeof emotions)[number]["code"]}
+          filled
         />
         <span className="text-caption-s text-text-tertiary ml-auto">
           {item.answerDate}

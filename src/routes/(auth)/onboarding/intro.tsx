@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Swiper, SwiperSlide } from "swiper/react";
-import type { Swiper as SwiperType } from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
 import { useRef, useState } from "react";
 // @ts-ignore
@@ -79,7 +78,7 @@ function FeatureDescription() {
       ),
     },
   ];
-  const swiperRef = useRef<SwiperType>(null);
+
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const paginationRef = useRef(null);
@@ -109,7 +108,6 @@ function FeatureDescription() {
           spaceBetween={10}
           modules={[Navigation, Pagination]}
           onSwiper={(swiper) => {
-            swiperRef.current = swiper;
             // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
             setTimeout(() => {
               // @ts-ignore
