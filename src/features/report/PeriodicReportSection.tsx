@@ -2,67 +2,47 @@ import { Badge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import { InfoIcon, LoadingSpinnerIcon } from "@/components/Icons";
 import { api } from "@/lib/axios";
-import type { ApiResponse, ApiErrResponse } from "@/generated/api";
+import type { ApiResponse } from "@/generated/api";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
-import { AxiosError } from "axios";
 import { crystalsOptions } from "../user/quries";
 import { useGenerateWeeklyReportMutation } from "./useGenerateWeeklyReportMutation";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
 import { useDeleteWeeklyReportMutation } from "./useDeleteWeeklyReportMutation";
-// import Toast from "@/components/Toast";
 
+type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
 type weeklyReportRes = components["schemas"]["WeeklyReportResponse"];
 
 export function PeriodicReport() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
-  const {
-    data: weeklyReport,
-    error: weeklyReportErr,
-    isLoading: isWeeklyReportLoading,
-  } = useQuery<weeklyReportRes, AxiosError<ApiErrResponse<null>>>({
+  const [isWeeklyReportPolling, setIsWeeklyReportPolling] = useState(false);
+  // Todo: 에러 처리
+  const { data: weeklyReports, isLoading: isWeeklyReportsLoading } = useQuery({
     queryKey: ["currentUser", "weeklyReport"],
     queryFn: async () => {
       // 주간 레포트 조회
-      const res = await api.get<ApiResponse<weeklyReportRes>>(
+      const res = await api.get<ApiResponse<weeklyReportsRes>>(
         "/api/v1/weekly-report"
       );
       return res.data.data!;
     },
-    retry: (_, error) => {
-      if (
-        error.response?.data?.code === "USER_NOT_FOUND" ||
-        error.response?.data?.code === "WEEKLY_REPORT_NOT_FOUND"
-      )
-        return false;
-      return true;
-    },
     // 레포트 생성 중일 경우 0.5초 간격으로 폴링
     refetchInterval: (query) => {
-      const error = query.state.error as AxiosError<ApiErrResponse<null>>;
-      if (error?.response?.data?.code === "WEEKLY_REPORT_NOT_COMPLETED") {
-        return 500;
+      const status = query.state.data?.report?.status;
+      if (status === "PENDING" || status === "IN_PROGRESS") {
+        setIsWeeklyReportPolling(true);
+        return 1000; // 1초마다 폴링
       }
-
+      setIsWeeklyReportPolling(false);
       return false;
     },
   });
-  console.log(weeklyReport);
 
-  // const [isToastOpen, setIsToastOpen] = useState(false);
-  // const [toastMessage, setToastMessage] = useState("");
-
-  const generateWeeklyReportMutation = useGenerateWeeklyReportMutation({
-    // onSuccess: () => {
-    //   setIsToastOpen(true);
-    //   setToastMessage("30 크리스탈이 소진되었어요.");
-    // },
-  });
-  const isGenerating =
-    generateWeeklyReportMutation.isPending ||
-    weeklyReportErr?.response?.data.code === "WEEKLY_REPORT_NOT_COMPLETED";
+  const generateWeeklyReportMutation = useGenerateWeeklyReportMutation({});
+  const isWeeklyReportGenerating =
+    generateWeeklyReportMutation.isPending || isWeeklyReportPolling;
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation();
   return (
     <>
@@ -70,23 +50,25 @@ export function PeriodicReport() {
         주간 레포트 삭제(테스트용)
       </button>
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-        {isWeeklyReportLoading ? (
+        {isWeeklyReportsLoading && !isWeeklyReportPolling ? (
           <PeriodicReportSectionSkeleton />
         ) : (
           <PeriodicReportSection
             reportType="weekly"
-            report={weeklyReport}
+            prevReport={weeklyReports?.previousReport}
+            report={weeklyReports?.report}
             onGenerate={() => generateWeeklyReportMutation.mutate()}
-            isGenerating={isGenerating}
+            isGenerating={isWeeklyReportGenerating}
             cost={20}
             crystalBalance={crystalBalance?.crystalBalance ?? 0}
           />
         )}
-        {isWeeklyReportLoading ? (
+        {isWeeklyReportsLoading && !isWeeklyReportPolling ? (
           <PeriodicReportSectionSkeleton />
         ) : (
           <PeriodicReportSection
             reportType="monthly"
+            prevReport={undefined}
             report={undefined}
             onGenerate={() => {}}
             isGenerating={false}
@@ -95,17 +77,13 @@ export function PeriodicReport() {
           />
         )}
       </div>
-      {/* <Toast
-        isOpen={isToastOpen}
-        onClose={() => setIsToastOpen(false)}
-        message={toastMessage}
-      /> */}
     </>
   );
 }
 
 type PeriodicReportSectionProps = {
   reportType: "weekly" | "monthly";
+  prevReport: weeklyReportRes | undefined;
   report: weeklyReportRes | undefined; // Todo: 월간 리포트도 받을 수 있게 변경
   onGenerate: () => void;
   cost: number;
@@ -115,6 +93,7 @@ type PeriodicReportSectionProps = {
 
 function PeriodicReportSection({
   reportType,
+  prevReport,
   report,
   onGenerate,
   cost,
@@ -138,6 +117,29 @@ function PeriodicReportSection({
       prevBtnText: `${getPreviousPeriodText("monthly")} 분석 보기`,
     },
   }[reportType];
+
+  if (isGenerating) {
+    return (
+      <div className="fixed z-30 inset-0 sm:mx-auto sm:w-[412px] bg-surface-base">
+        <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
+        <div className="relative h-full flex flex-col gap-margin-y-xxl items-center justify-center text-center">
+          <LoadingSpinnerIcon />
+          <div>
+            <p className="text-title-2">
+              현재 주간 리포트를
+              <br />
+              생성 중이에요.
+            </p>
+            <p className="text-body-2 mt-margin-y-s">
+              리포트 생성에 1~2분 정도 걸릴 수 있어요.
+              <br />
+              조금만 기다려주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (report) {
     return (
@@ -163,7 +165,7 @@ function PeriodicReportSection({
             title="다음엔 이렇게 보완해볼까요?"
             content={report.improve!}
           />
-          <BlockButton variant="secondary" disabled={true}>
+          <BlockButton variant="secondary" disabled={!prevReport}>
             {config.prevBtnText}
           </BlockButton>
         </div>
@@ -171,28 +173,6 @@ function PeriodicReportSection({
     );
   }
 
-  if (isGenerating) {
-    return (
-      <div className="fixed z-30 inset-0 sm:mx-auto sm:w-[412px] bg-surface-base">
-        <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
-        <div className="relative h-full flex flex-col gap-margin-y-xxl items-center justify-center text-center">
-          <LoadingSpinnerIcon />
-          <div>
-            <p className="text-title-2">
-              현재 주간 리포트를
-              <br />
-              생성 중이에요.
-            </p>
-            <p className="text-body-2 mt-margin-y-s">
-              리포트 생성에 1~2분 정도 걸릴 수 있어요.
-              <br />
-              조금만 기다려주세요.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
   // 레포트 없음
   return (
     <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
@@ -217,7 +197,7 @@ function PeriodicReportSection({
         </p>
       </div>
       <div className="flex gap-gap-x-xs">
-        <BlockButton disabled={true} variant="secondary">
+        <BlockButton disabled={!prevReport} variant="secondary">
           이전 분석 보기
         </BlockButton>
         <BlockButton
