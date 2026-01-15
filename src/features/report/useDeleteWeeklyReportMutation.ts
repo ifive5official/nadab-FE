@@ -15,7 +15,7 @@ export function useDeleteWeeklyReportMutation() {
     },
     onSuccess: () => {
       queryClient.removeQueries({
-        queryKey: ["currentUser", "weeklyReport"],
+        queryKey: ["currentUser", "weekly-report"],
       });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
