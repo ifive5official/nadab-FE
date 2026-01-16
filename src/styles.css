@@ -641,6 +641,8 @@ body {
 }
 
 .dark {
+  --color-brand-primary: #8e89ff;
+
   /* border */
   --color-border-base: var(--color-neutral-900);
   --color-border-layer-1: var(--color-neutral-800);

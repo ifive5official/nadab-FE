@@ -17,7 +17,12 @@ const MENU_ITEMS = [
   { to: "/report", label: "리포트", icon: ReportMenuIcon },
   { to: "/social", label: "소셜", icon: SocialMenuIcon },
   { to: "/calendar", label: "캘린더", icon: CalendarMenuIcon },
-  { to: "/notice", label: "공지사항", icon: NoticeMenuIcon },
+  {
+    to: "https://peat-language-671.notion.site/2e33409bb9b6802fb2e8f474e8cfd162",
+    label: "공지사항",
+    icon: NoticeMenuIcon,
+    isExternal: true,
+  },
 ] as const;
 
 export default function Sidebar() {
@@ -83,28 +88,45 @@ export default function Sidebar() {
 type MenuItemProps = {
   to: string;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  isExternal?: boolean;
   children: string;
 };
 
-function MenuItem({ to, icon: Icon, children }: MenuItemProps) {
+function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
   return (
-    <Link to={to}>
-      {({ isActive }) => {
-        return (
+    <>
+      {isExternal ? (
+        <a href={to}>
           <li
             className={clsx(
-              "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
-              isActive
-                ? "text-brand-primary bg-brand-primary-alpha-10"
-                : "text-text-primary"
+              "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg"
             )}
           >
             <Icon />
             <p className="mr-auto text-title-3">{children}</p>
             <ChevronRightIcon />
           </li>
-        );
-      }}
-    </Link>
+        </a>
+      ) : (
+        <Link to={to}>
+          {({ isActive }) => {
+            return (
+              <li
+                className={clsx(
+                  "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
+                  isActive
+                    ? "text-brand-primary bg-brand-primary-alpha-10"
+                    : "text-text-primary"
+                )}
+              >
+                <Icon />
+                <p className="mr-auto text-title-3">{children}</p>
+                <ChevronRightIcon />
+              </li>
+            );
+          }}
+        </Link>
+      )}
+    </>
   );
 }
