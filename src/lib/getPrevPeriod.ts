@@ -10,21 +10,25 @@ function getWeekOfMonth(date: Date) {
 /**
  * 주간/월간에 따른 이전 기간 텍스트 생성
  */
-export function getPreviousPeriodText(reportType: "weekly" | "monthly") {
+// 주간 레포트인지 월간 레포트인지 / 이전(저저번주)레포트인지 이번(저번주)레포트인지
+export function getPreviousPeriodText(
+  reportType: "weekly" | "monthly",
+  time: "prev" | "current"
+) {
   const now = new Date();
 
   if (reportType === "weekly") {
-    // 2주 전 날짜 계산
     const lastWeek = new Date(now);
-    lastWeek.setDate(now.getDate() - 14);
+    const sub = time === "prev" ? 14 : 7;
+    lastWeek.setDate(now.getDate() - sub);
 
     const month = lastWeek.getMonth() + 1;
     const week = getWeekOfMonth(lastWeek);
     return `${month}월 ${week}주차`;
   } else {
-    // 2달 전 날짜 계산
     const lastMonth = new Date(now);
-    lastMonth.setMonth(now.getMonth() - 2);
+    const sub = time === "prev" ? 2 : 1;
+    lastMonth.setMonth(now.getMonth() - sub);
 
     const month = lastMonth.getMonth() + 1;
     return `${month}월`;

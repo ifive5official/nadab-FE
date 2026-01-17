@@ -1,25 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { crystalsOptions } from "../user/quries";
-import { useDeleteWeeklyReportMutation } from "./useDeleteWeeklyReportMutation";
-import useReport from "./useReport";
+import { useDeleteWeeklyReportMutation } from "./hooks/useDeleteWeeklyReportMutation";
+import useReport from "./hooks/useReport";
 import PeriodicReportCard from "./PeriodicReportCard";
+import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
   const {
     report: weeklyReport,
     prevReport: prevWeeklyReport,
-    generateReport: generateWeeklyReport,
     isGenerating: isWeeklyReportGenerating,
     isLoading: isWeeklyReportsLoading,
   } = useReport({ type: "weekly" });
+  const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
+    reportType: "weekly",
+  });
   const {
     report: monthlyReport,
     prevReport: prevMonthlyReport,
-    generateReport: generateMonthlyReport,
     isGenerating: isMonthlyReportGenerating,
     isLoading: isMonthlyReportLoading,
   } = useReport({ type: "monthly" });
+  const generateMonthlyReportMutation = useGeneratePeriodicReportMutation({
+    reportType: "monthly",
+  });
 
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
   return (
@@ -32,20 +37,18 @@ export default function PeriodicReportTab() {
           reportType="weekly"
           prevReport={prevWeeklyReport}
           report={weeklyReport}
-          onGenerate={generateWeeklyReport}
+          onGenerate={generateWeeklyReportMutation.mutate}
           isLoading={isWeeklyReportsLoading}
           isGenerating={isWeeklyReportGenerating}
-          cost={20}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
         <PeriodicReportCard
           reportType="monthly"
           prevReport={prevMonthlyReport}
           report={monthlyReport}
-          onGenerate={generateMonthlyReport}
+          onGenerate={generateMonthlyReportMutation.mutate}
           isLoading={isMonthlyReportLoading}
           isGenerating={isMonthlyReportGenerating}
-          cost={40}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
       </div>
