@@ -9,6 +9,7 @@ import useErrorStore from "@/store/errorStore";
 import axios from "axios";
 import type { components } from "@/generated/api-types";
 import { questionOptions } from "@/features/question/queries";
+import { homeOptions } from "@/features/home/queries";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
@@ -36,9 +37,8 @@ export const Route = createFileRoute("/")({
         const user = await context.queryClient.ensureQueryData({
           queryKey: ["currentUser"],
           queryFn: async () => {
-            const res = await api.get<ApiResponse<CurrentUser>>(
-              "/api/v1/user/me"
-            );
+            const res =
+              await api.get<ApiResponse<CurrentUser>>("/api/v1/user/me");
             return res.data.data!;
           },
         });
@@ -68,7 +68,10 @@ export const Route = createFileRoute("/")({
   loader: ({ context: { queryClient } }) => {
     const { accessToken } = useAuthStore.getState();
     if (accessToken) {
-      queryClient.ensureQueryData(questionOptions);
+      return Promise.all([
+        queryClient.ensureQueryData(questionOptions),
+        queryClient.ensureQueryData(homeOptions),
+      ]);
     }
   },
   component: () => {
