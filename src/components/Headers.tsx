@@ -37,7 +37,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
       )}
     >
-      <img src="/textLogo.png" className="w-[54.3px]" />
+      <img src="/textLogo.png" className="w-[83.9px]" />
       <button onClick={openSidebar} className="ml-auto">
         <MenuIcon />
       </button>

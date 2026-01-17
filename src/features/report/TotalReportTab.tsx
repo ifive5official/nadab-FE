@@ -6,7 +6,7 @@ import { Popover } from "@/components/Popover";
 import clsx from "clsx";
 
 // Todo: 전체 분석 api 연동
-export function TotalReport() {
+export default function TotalReportTab() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   return (

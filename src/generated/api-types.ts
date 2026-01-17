@@ -652,8 +652,12 @@ export interface paths {
          * 나의 주간 리포트 조회
          * @description 사용자의 (지난 주에 대한) 주간 리포트와 이전 주간 리포트를 조회합니다. </br>
          *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
-         *     ```report```혹은 ```previousReport```가
-         *     ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다.
+         *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
+         *     **<```report```의 state>** </br>
+         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
          */
         get: operations["getMyWeeklyReport"];
         put?: never;
@@ -790,8 +794,12 @@ export interface paths {
          * 나의 월간 리포트 조회
          * @description 사용자의 (지난 달에 대한) 월간 리포트와 이전 월간 리포트를 조회합니다. </br>
          *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
-         *     ```report```혹은 ```previousReport```가
-         *     ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다.
+         *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
+         *     **<```report```의 state>** </br>
+         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
          */
         get: operations["getMyMonthlyReport"];
         put?: never;
@@ -818,6 +826,49 @@ export interface paths {
          *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
          */
         get: operations["getMonthlyReportById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 홈화면 정보 조회 API
+         * @description 홈화면에 표시할 답변 관련 정보를 조회합니다.
+         *
+         *     ### 제공 정보
+         *     1. 주간 답변 상태: 이번 주(월~일) 답변한 날짜 목록
+         *     2. 연속 기록(Streak): 현재 연속 답변 일수
+         *     3. 총 기록 일수: 첫 답변 이후 경과 일수 (N일째 기록 중)
+         *
+         *     ### 계산 기준
+         *     - 주 시작: 월요일, 주 종료: 일요일
+         *     - Streak: 현재까지 매일 연속 답변한 총 일수
+         *       * 오늘 답변 있음 → 오늘까지 포함한 연속 일수
+         *       * 오늘 답변 없음 → 어제까지의 연속 일수
+         *       * 어제도 답변 없음 → 0
+         *     - 총 기록 일수: (오늘 - 첫 답변 날짜) + 1
+         *
+         *     ### 예시
+         *     - 첫 답변: 2025-12-27
+         *     - 1월 1일~15일 매일 연속 답변
+         *     - 오늘: 2026-01-15
+         *
+         *     응답:
+         *     - answeredDates: ["2026-01-13", "2026-01-14", "2026-01-15"]
+         *     - streakCount: 15 (1월 1일~15일 연속)
+         *     - totalRecordDays: 20 (12월 27일부터 오늘까지 경과)
+         */
+        get: operations["getHomeData"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1613,6 +1664,30 @@ export interface components {
             report?: components["schemas"]["MonthlyReportResponse"];
             /** @description 이전 월간 리포트 */
             previousReport?: components["schemas"]["MonthlyReportResponse"];
+        };
+        /** @description 홈화면 요약 정보 응답 */
+        HomeResponse: {
+            /**
+             * @description 이번 주(월~일) 답변한 날짜 목록 (오름차순)
+             * @example [
+             *       "2026-01-13",
+             *       "2026-01-14",
+             *       "2026-01-15"
+             *     ]
+             */
+            answeredDates?: string[];
+            /**
+             * Format: int64
+             * @description 현재 연속 답변 일수 (오늘 답변 있으면 오늘까지, 없으면 어제까지)
+             * @example 15
+             */
+            streakCount?: number;
+            /**
+             * Format: int64
+             * @description 첫 답변 이후 경과 일수 (N일째 기록 중)
+             * @example 20
+             */
+            totalRecordDays?: number;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -3206,6 +3281,40 @@ export interface operations {
                 };
             };
             /** @description - ErrorCode: MONTHLY_REPORT_NOT_FOUND - 월간 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getHomeData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 홈화면 정보 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;

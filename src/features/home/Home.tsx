@@ -10,11 +10,13 @@ import RecordSection from "./RecordSection";
 import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatDate";
+import { homeOptions } from "./queries";
 
 export default function Home() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const friends = Array(0).fill(0); // Todo: 백엔드 연동
   const { data: question } = useSuspenseQuery(questionOptions);
+  const { data: homeData } = useSuspenseQuery(homeOptions);
   const rerollQuestionMutation = useRerollQuestionMutation();
 
   return (
@@ -48,7 +50,9 @@ export default function Home() {
 
               <div className="absolute inset-0 flex flex-col justify-center items-center gap-gap-y-xl">
                 <p className="text-body-1 text-center dark:text-neutral-900">
-                  <span className="text-headline-l text-brand-primary">49</span>
+                  <span className="text-headline-l text-brand-primary">
+                    {homeData.totalRecordDays}
+                  </span>
                   일째
                   <br />
                   기록을 남겼어요.
@@ -60,7 +64,7 @@ export default function Home() {
         </div>
 
         <div className="relative flex flex-col gap-padding-y-xxl">
-          <RecordSection />
+          <RecordSection data={homeData} />
           {question?.answered ? (
             <Link
               to="/detail/$date"
