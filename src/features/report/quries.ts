@@ -24,7 +24,7 @@ type ReportTypeMap = {
 };
 
 export const periodicReportOptions = <T extends keyof ReportTypeMap>(
-  type: T
+  type: T,
 ) => {
   const config = REPORT_CONFIGS[type];
 
@@ -32,9 +32,26 @@ export const periodicReportOptions = <T extends keyof ReportTypeMap>(
     queryKey: ["currentUser", config.key] as const,
     queryFn: async () => {
       const res = await api.get<ApiResponse<ReportTypeMap[T]>>(
-        `/api/v1/${config.key}`
+        `/api/v1/${config.key}`,
       );
       return res.data.data!;
     },
   });
+};
+
+type AnswerRes = components["schemas"]["AnswerDetailResponse"];
+
+// 날짜별 질문 + 답변 가져오기 옵션
+export const answerOptions = {
+  detail: (date: string) =>
+    queryOptions({
+      queryKey: ["currentUser", date],
+      queryFn: async () => {
+        const res = await api.get<ApiResponse<AnswerRes>>(
+          `/api/v1/answers/calendar/${date}`,
+        );
+        return res.data.data!;
+      },
+      enabled: !!date,
+    }),
 };

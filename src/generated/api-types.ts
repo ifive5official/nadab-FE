@@ -205,6 +205,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/search/histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 최근 검색어 조회
+         * @description 최근 검색어 10개를 조회합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
+         */
+        get: operations["getRecentSearches"];
+        put?: never;
+        /**
+         * 검색어 저장
+         * @description 사용자가 검색어를 확정했을 때 검색어를 저장합니다.
+         *
+         *     - 엔터를 치거나 검색 버튼을 누르거나 답변 검색 결과를 클릭했을 때 호출됩니다.
+         *     - 이미 존재하는 검색어는 최신 순서로 갱신됩니다.
+         *     - 빈 문자열이나 공백만 있는 경우 저장되지 않습니다.
+         *
+         *     ### 에러 처리
+         *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
+         */
+        post: operations["saveSearchHistory"];
+        /**
+         * 전체 검색어 삭제
+         * @description 모든 검색어를 삭제합니다.
+         */
+        delete: operations["deleteAllSearchHistories"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/question/reroll": {
         parameters: {
             query?: never;
@@ -739,30 +774,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/search/histories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 최근 검색어 조회
-         * @description 최근 검색어 10개를 조회합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
-         */
-        get: operations["getRecentSearches"];
-        put?: never;
-        post?: never;
-        /**
-         * 전체 검색어 삭제
-         * @description 모든 검색어를 삭제합니다.
-         */
-        delete: operations["deleteAllSearchHistories"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/question": {
         parameters: {
             query?: never;
@@ -848,7 +859,7 @@ export interface paths {
          *     ### 제공 정보
          *     1. 주간 답변 상태: 이번 주(월~일) 답변한 날짜 목록
          *     2. 연속 기록(Streak): 현재 연속 답변 일수
-         *     3. 총 기록 일수: 첫 답변 이후 경과 일수 (N일째 기록 중)
+         *     3. 총 기록 일수: 실제 답변한 날짜의 총 개수
          *
          *     ### 계산 기준
          *     - 주 시작: 월요일, 주 종료: 일요일
@@ -856,17 +867,19 @@ export interface paths {
          *       * 오늘 답변 있음 → 오늘까지 포함한 연속 일수
          *       * 오늘 답변 없음 → 어제까지의 연속 일수
          *       * 어제도 답변 없음 → 0
-         *     - 총 기록 일수: (오늘 - 첫 답변 날짜) + 1
+         *     - 총 기록 일수: 실제 답변을 작성한 날짜의 개수
          *
          *     ### 예시
          *     - 첫 답변: 2025-12-27
-         *     - 1월 1일~15일 매일 연속 답변
+         *     - 12월 27일~31일 매일 답변 (5일)
+         *     - 1월 1일~3일 답변 안 함
+         *     - 1월 4일~15일 매일 답변 (12일)
          *     - 오늘: 2026-01-15
          *
          *     응답:
-         *     - answeredDates: ["2026-01-13", "2026-01-14", "2026-01-15"]
-         *     - streakCount: 15 (1월 1일~15일 연속)
-         *     - totalRecordDays: 20 (12월 27일부터 오늘까지 경과)
+         *     - answeredDates: ["2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15"]
+         *     - streakCount: 12 (1월 4일부터 15일까지 연속)
+         *     - totalRecordDays: 17 (5+ 12 = 총 17일 답변)
          */
         get: operations["getHomeData"];
         put?: never;
@@ -959,9 +972,9 @@ export interface paths {
          *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY&cursor=2025-12-06
          *
          *     ### 참고사항
-         *     - 검색어는 자동으로 저장됩니다.
          *     - keyword와 emotionCode는 동시에 사용 가능합니다.
          *     - emotionCode만 사용 시 keyword는 생략 가능합니다.
+         *     - 검색어 저장은 POST /api/v1/search/histories 엔드포인트를 통해 별도로 수행할 수 있습니다.
          */
         get: operations["searchAnswers"];
         put?: never;
@@ -983,13 +996,16 @@ export interface paths {
          * 답변 상세 조회
          * @description 답변 ID로 해당 답변의 상세 정보와 리포트를 조회합니다.
          *
+         *     - 질문 내용 (questionText)
+         *     - 질문 카테고리 (interestCode)
+         *     - 답변 작성일 (answerDate)
          *     - 답변 내용 (answer)
          *     - 리포트 내용 (content)
          *     - 감정 상태 (emotion)
          *
          *     COMPLETED 상태의 리포트만 조회 가능합니다.
          */
-        get: operations["getDailyReportByAnswerId"];
+        get: operations["getAnswerDetailById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1030,13 +1046,22 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 특정 날짜 답변 조회
-         * @description 특정 날짜의 답변 미리보기를 조회합니다.
+         * 특정 날짜 답변 상세 조회
+         * @description 특정 날짜의 답변 전체 정보를 조회합니다.
+         *
+         *     응답 데이터:
+         *     - 질문 내용 (questionText)
+         *     - 질문 카테고리 (interestCode)
+         *     - 답변 작성일 (answerDate)
+         *     - 답변 내용 (answer)
+         *     - 리포트 내용 (content)
+         *     - 감정 상태 (emotion)
          *
          *     - 해당 날짜에 답변이 없으면 404 에러를 반환합니다.
+         *     - COMPLETED 상태의 리포트만 조회 가능합니다.
          *     - 날짜 형식: yyyy-MM-dd (예: 2026-01-30)
          */
-        get: operations["getAnswerByDate"];
+        get: operations["getAnswerDetailByDate"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1249,6 +1274,14 @@ export interface components {
              * @example false
              */
             marketing: boolean;
+        };
+        /** @description 검색어 저장 요청 */
+        SaveSearchHistoryRequest: {
+            /**
+             * @description 검색어
+             * @example 행복했던 순간
+             */
+            keyword: string;
         };
         /** @description 오늘의 질문 응답 */
         DailyQuestionResponse: {
@@ -1677,14 +1710,14 @@ export interface components {
              */
             answeredDates?: string[];
             /**
-             * Format: int64
+             * Format: int32
              * @description 현재 연속 답변 일수 (오늘 답변 있으면 오늘까지, 없으면 어제까지)
              * @example 15
              */
             streakCount?: number;
             /**
-             * Format: int64
-             * @description 첫 답변 이후 경과 일수 (N일째 기록 중)
+             * Format: int32
+             * @description 실제 답변한 날짜의 총 개수
              * @example 20
              */
             totalRecordDays?: number;
@@ -1764,6 +1797,34 @@ export interface components {
              * @example 2025-12-25
              */
             cursor?: string;
+        };
+        /** @description 답변 상세 조회 응답 */
+        AnswerDetailResponse: {
+            /**
+             * @description 질문 내용
+             * @example 오늘 가장 기뻤던 순간은?
+             */
+            questionText?: string;
+            /**
+             * @description 질문 카테고리 (관심분야 코드)
+             * @example EMOTION
+             */
+            interestCode?: string;
+            /**
+             * Format: date
+             * @description 답변 작성일
+             * @example 2025-12-25
+             */
+            answerDate?: string;
+            /** @description 나의 답변 */
+            answer?: string;
+            /** @description 리포트 내용 */
+            content?: string;
+            /**
+             * @description 리포트 감정 상태
+             * @example ACHIEVEMENT
+             */
+            emotion?: string;
         };
         /** @description 캘린더 날짜별 정보 */
         CalendarEntryResponse: {
@@ -2118,6 +2179,98 @@ export interface operations {
              *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
              *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
              */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getRecentSearches: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchHistoryListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    saveSearchHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveSearchHistoryRequest"];
+            };
+        };
+        responses: {
+            /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (키워드 누락 또는 길이 초과) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteAllSearchHistories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 인증 실패 */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -3134,60 +3287,6 @@ export interface operations {
             };
         };
     };
-    getRecentSearches: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchHistoryListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteAllSearchHistories: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     getDailyQuestion: {
         parameters: {
             query?: never;
@@ -3430,7 +3529,7 @@ export interface operations {
             };
         };
     };
-    getDailyReportByAnswerId: {
+    getAnswerDetailById: {
         parameters: {
             query?: never;
             header?: never;
@@ -3441,13 +3540,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 리포트 조회 성공 */
+            /** @description 상세 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DailyReportResponse"];
+                    "application/json": components["schemas"]["AnswerDetailResponse"];
                 };
             };
             /** @description 인증 실패 */
@@ -3457,17 +3556,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description - ErrorCode: ANSWER_ACCESS_FORBIDDEN - 본인의 답변이 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: ANSWER_NOT_FOUND - 답변을 찾을 수 없음
-             *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 리포트가 생성되지 않았음
-             */
+            /** @description - ErrorCode: ANSWER_NOT_FOUND - 답변을 찾을 수 없음 (또는 본인의 답변이 아님) */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -3512,7 +3601,7 @@ export interface operations {
             };
         };
     };
-    getAnswerByDate: {
+    getAnswerDetailByDate: {
         parameters: {
             query?: never;
             header?: never;
@@ -3529,7 +3618,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AnswerEntrySummaryResponse"];
+                    "*/*": components["schemas"]["AnswerDetailResponse"];
                 };
             };
             /** @description ErrorCode: VALIDATION_FAILED - 잘못된 날짜 형식 */

@@ -10,7 +10,7 @@ import {
   useSuspenseQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
@@ -40,7 +40,7 @@ function RouteComponent() {
   >(undefined);
   const [debouncedSearchTerm] = useDebounce(
     searchTerm,
-    searchTerm === "" ? 0 : 500
+    searchTerm === "" ? 0 : 500,
   );
   const isSearching = debouncedSearchTerm.trim().length > 0 || !!searchEmotion;
   const { ref, inView } = useInView();
@@ -241,24 +241,26 @@ function SearchResultSkeleton() {
 
 function SearchResultItem({ item }: { item: SearchItem }) {
   return (
-    <li className="px-padding-x-m py-padding-y-m bg-surface-base border border-border-base rounded-lg">
-      <div className="flex gap-padding-x-xxs">
-        <QuestionBadge
-          category={item.interestCode as (typeof categories)[number]["code"]}
-          filled
-        />
-        <EmotionBadge
-          emotion={item.emotionCode as (typeof emotions)[number]["code"]}
-          filled
-        />
-        <span className="text-caption-s text-text-tertiary ml-auto">
-          {item.answerDate}
-        </span>
-      </div>
-      <p className="text-label-l">{item.questionText}</p>
-      <p className="text-caption-m text-text-secondary truncate">
-        {item.matchedSnippet}
-      </p>
-    </li>
+    <Link to="/detail/$date" params={{ date: item.answerDate! }}>
+      <li className="px-padding-x-m py-padding-y-m bg-surface-base border border-border-base rounded-lg">
+        <div className="flex gap-padding-x-xxs">
+          <QuestionBadge
+            category={item.interestCode as (typeof categories)[number]["code"]}
+            filled
+          />
+          <EmotionBadge
+            emotion={item.emotionCode as (typeof emotions)[number]["code"]}
+            filled
+          />
+          <span className="text-caption-s text-text-tertiary ml-auto">
+            {item.answerDate}
+          </span>
+        </div>
+        <p className="text-label-l">{item.questionText}</p>
+        <p className="text-caption-m text-text-secondary truncate">
+          {item.matchedSnippet}
+        </p>
+      </li>
+    </Link>
   );
 }
