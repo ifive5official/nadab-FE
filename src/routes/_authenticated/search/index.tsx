@@ -5,12 +5,8 @@ import { CloseFilledIcon } from "@/components/Icons";
 import SearchBar from "@/components/SearchBar";
 import categories from "@/constants/categories";
 import emotions from "@/constants/emotions";
-import {
-  useInfiniteQuery,
-  useSuspenseQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
@@ -20,6 +16,7 @@ import type { ApiResponse } from "@/generated/api";
 import { searchHistoryOptions } from "@/features/search/queries";
 import { useDeleteHistoryMutation } from "@/features/search/useDeleteHistoryMutation";
 import { useDeleteHistoriesMutation } from "@/features/search/useDeleteHistoriesMutation";
+import { useAddHistoryMutation } from "@/features/search/useAddHistoryMutation";
 
 type AnswersReq = components["schemas"]["SearchAnswerEntryRequest"];
 type AnswersRes = components["schemas"]["SearchAnswerEntryResponse"];
@@ -33,6 +30,7 @@ export const Route = createFileRoute("/_authenticated/search/")({
 });
 // Todo: 리펙토링 혹은 파일 분리 필요...
 function RouteComponent() {
+  const navigate = useNavigate();
   const { data: searchHistories } = useSuspenseQuery(searchHistoryOptions);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchEmotion, setSearchEmotion] = useState<
@@ -40,11 +38,11 @@ function RouteComponent() {
   >(undefined);
   const [debouncedSearchTerm] = useDebounce(
     searchTerm,
-    searchTerm === "" ? 0 : 500,
+    searchTerm === "" ? 0 : 300,
   );
   const isSearching = debouncedSearchTerm.trim().length > 0 || !!searchEmotion;
   const { ref, inView } = useInView();
-  const queryClient = useQueryClient();
+  const addHistoryMutation = useAddHistoryMutation();
   const deleteHistoriesMutation = useDeleteHistoriesMutation();
   const deleteHistoryMutation = useDeleteHistoryMutation();
   const {
@@ -69,12 +67,7 @@ function RouteComponent() {
       const res = await api.get<ApiResponse<AnswersRes>>("/api/v1/answers", {
         params: req,
       });
-      // 검색 후 검색 히스토리 리셋
-      if (debouncedSearchTerm.trim()) {
-        queryClient.invalidateQueries({
-          queryKey: ["currentUser", "searchKeywords"],
-        });
-      }
+
       return res.data.data!;
     },
     initialPageParam: null as string | null,
@@ -92,14 +85,23 @@ function RouteComponent() {
   return (
     <>
       <SubHeader variant="search">
-        <SearchBar
-          onChange={(e) => setSearchTerm(e.target.value)}
-          value={searchTerm}
-          emotion={searchEmotion}
-          onDeleteEmotion={() => setSearchEmotion(undefined)}
-          onDeleteKeyword={() => setSearchTerm("")}
-          className="mr-margin-x-l h-10"
-        />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (searchTerm) {
+              addHistoryMutation.mutate({ keyword: searchTerm });
+            }
+          }}
+        >
+          <SearchBar
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm}
+            emotion={searchEmotion}
+            onDeleteEmotion={() => setSearchEmotion(undefined)}
+            onDeleteKeyword={() => setSearchTerm("")}
+            className="mr-margin-x-l h-10"
+          />
+        </form>
       </SubHeader>
       <Container>
         {isSearching ? (
@@ -114,7 +116,19 @@ function RouteComponent() {
                     <ul key={i} className="list-none flex flex-col gap-gap-y-l">
                       {page.items?.map((item) => {
                         return (
-                          <SearchResultItem item={item} key={item.answerId} />
+                          <SearchResultItem
+                            onClick={() => {
+                              addHistoryMutation.mutate({
+                                keyword: debouncedSearchTerm,
+                              });
+                              navigate({
+                                to: "/detail/$date",
+                                params: { date: item.answerDate! },
+                              });
+                            }}
+                            item={item}
+                            key={item.answerId}
+                          />
                         );
                       })}
                     </ul>
@@ -239,28 +253,35 @@ function SearchResultSkeleton() {
   );
 }
 
-function SearchResultItem({ item }: { item: SearchItem }) {
+function SearchResultItem({
+  item,
+  onClick,
+}: {
+  item: SearchItem;
+  onClick: () => void;
+}) {
   return (
-    <Link to="/detail/$date" params={{ date: item.answerDate! }}>
-      <li className="px-padding-x-m py-padding-y-m bg-surface-base border border-border-base rounded-lg">
-        <div className="flex gap-padding-x-xxs">
-          <QuestionBadge
-            category={item.interestCode as (typeof categories)[number]["code"]}
-            filled
-          />
-          <EmotionBadge
-            emotion={item.emotionCode as (typeof emotions)[number]["code"]}
-            filled
-          />
-          <span className="text-caption-s text-text-tertiary ml-auto">
-            {item.answerDate}
-          </span>
-        </div>
-        <p className="text-label-l">{item.questionText}</p>
-        <p className="text-caption-m text-text-secondary truncate">
-          {item.matchedSnippet}
-        </p>
-      </li>
-    </Link>
+    <li
+      onClick={onClick}
+      className="px-padding-x-m py-padding-y-m bg-surface-base border border-border-base rounded-lg"
+    >
+      <div className="flex gap-padding-x-xxs">
+        <QuestionBadge
+          category={item.interestCode as (typeof categories)[number]["code"]}
+          filled
+        />
+        <EmotionBadge
+          emotion={item.emotionCode as (typeof emotions)[number]["code"]}
+          filled
+        />
+        <span className="text-caption-s text-text-tertiary ml-auto">
+          {item.answerDate}
+        </span>
+      </div>
+      <p className="text-label-l">{item.questionText}</p>
+      <p className="text-caption-m text-text-secondary truncate">
+        {item.matchedSnippet}
+      </p>
+    </li>
   );
 }
