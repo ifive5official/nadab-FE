@@ -19,6 +19,7 @@ import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { recentOptions } from "@/features/calendar/queries";
 import BlockButton from "@/components/BlockButton";
+import { answerOptions } from "@/features/report/quries";
 
 export const Route = createFileRoute("/_authenticated/_main/calendar")({
   component: RouteComponent,
@@ -28,7 +29,6 @@ export const Route = createFileRoute("/_authenticated/_main/calendar")({
 
 type CalendarReq = components["schemas"]["GetMonthlyCalendarRequest"];
 type CalendarRes = components["schemas"]["MonthlyCalendarResponse"];
-type AnswerRes = components["schemas"]["AnswerEntrySummaryResponse"];
 
 function RouteComponent() {
   // 현재 캘린더에서 보고있는 날짜
@@ -52,7 +52,7 @@ function RouteComponent() {
         "/api/v1/answers/calendar",
         {
           params: req,
-        }
+        },
       );
       return res.data.data!;
     },
@@ -63,16 +63,7 @@ function RouteComponent() {
 
   // 특정 날짜 답변 미리보기 데이터
   // Todo: 에러 처리
-  const { data: answer } = useQuery({
-    queryKey: ["currentUser", selectedDate],
-    queryFn: async () => {
-      const res = await api.get<ApiResponse<AnswerRes>>(
-        `/api/v1/answers/calendar/${selectedDate}`
-      );
-      return res.data.data!;
-    },
-    enabled: !!selectedDate,
-  });
+  const { data: answer } = useQuery(answerOptions.detail(selectedDate));
 
   // 날짜로 찾기 쉽게 받아온 캘린더 데이터 레코드화
   const entryMap = useMemo(() => {
@@ -98,7 +89,7 @@ function RouteComponent() {
       monthType: type,
       dateString: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
         2,
-        "0"
+        "0",
       )}-${String(date.getDate()).padStart(2, "0")}`,
     };
   }
@@ -174,7 +165,7 @@ function RouteComponent() {
               const emotionCode = entryMap[dateObj.dateString];
               // Todo: 감정 code를 키로 갖게 바꾸자....
               const emotionColor = emotions.find(
-                (emotion) => emotion.code === emotionCode
+                (emotion) => emotion.code === emotionCode,
               )?.color;
               return (
                 <div
@@ -206,7 +197,7 @@ function RouteComponent() {
                       isCurrentMonth
                         ? "text-text-primary"
                         : "text-text-disabled",
-                      emotionCode && "font-bold!"
+                      emotionCode && "font-bold!",
                     )}
                   >
                     {dateObj.day}
@@ -221,7 +212,7 @@ function RouteComponent() {
           <section
             className={clsx(
               "col-start-1 row-start-1",
-              !selectedDate && "invisible"
+              !selectedDate && "invisible",
             )}
           >
             <div className="flex flex-col gap-gap-y-l">
@@ -230,7 +221,7 @@ function RouteComponent() {
                   <div className="flex justify-between mb-margin-y-s">
                     <EmotionBadge
                       emotion={
-                        answer.emotionCode as (typeof emotions)[number]["code"]
+                        answer.emotion as (typeof emotions)[number]["code"]
                       }
                     />
                     <span className="text-caption-s text-text-tertiary">
@@ -238,9 +229,7 @@ function RouteComponent() {
                     </span>
                   </div>
                   <p className="text-label-l truncate">{answer.questionText}</p>
-                  <p className="text-caption-m truncate">
-                    {answer.matchedSnippet}
-                  </p>
+                  <p className="text-caption-m truncate">{answer.answer}</p>
                 </div>
               ) : (
                 <div className="px-padding-x-m py-padding-y-m bg-surface-layer-1 rounded-lg border border-border-base">
@@ -263,7 +252,13 @@ function RouteComponent() {
                 >
                   최근 기록 보기
                 </BlockButton>
-                <BlockButton>상세보기</BlockButton>
+                <Link
+                  className="w-full"
+                  to="/detail/$date"
+                  params={{ date: selectedDate }}
+                >
+                  <BlockButton>상세보기</BlockButton>
+                </Link>
               </div>
             </div>
           </section>
@@ -273,7 +268,7 @@ function RouteComponent() {
           <section
             className={clsx(
               "col-start-1 row-start-1",
-              selectedDate && "invisible"
+              selectedDate && "invisible",
             )}
           >
             <span className="text-label-l py-padding-y-xxs">

@@ -24,7 +24,7 @@ export default function SearchBar({
     <div
       className={clsx(
         "relative flex-1 px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs focus-within:shadow-1 focus-within:border-border-layer-1",
-        className // 높이나 패딩 넘겨줘야 함
+        className, // 높이나 패딩 넘겨줘야 함
       )}
     >
       <label htmlFor="search" className="cursor-pointer">
@@ -48,6 +48,7 @@ export default function SearchBar({
         className="w-full text-caption-m placeholder:text-field-text-mute focus:outline-none"
       />
       <button
+        type="button"
         onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
         onClick={() => {
           onDeleteKeyword();

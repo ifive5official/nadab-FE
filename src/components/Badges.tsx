@@ -17,7 +17,7 @@ export function Badge({ isActive = true, children }: BadgeProps) {
         "text-caption-m rounded-full border px-padding-x-xs py-padding-y-xxs",
         isActive
           ? "text-brand-primary border-brand-primary"
-          : "text-field-text-disabled border-field-text-disabled"
+          : "text-field-text-disabled border-field-text-disabled",
       )}
     >
       {children}
@@ -51,7 +51,7 @@ export function QuestionBadge({
       className={clsx(
         "flex justify-center items-center gap-1 px-2 py-1 border border-button-tertiary-border-default rounded-lg text-label-s",
         filled ? "bg-surface-layer-1" : "bg-button-tertiary-bg-default",
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -64,7 +64,7 @@ export function QuestionBadge({
         className={clsx(
           isActive
             ? "text-button-tertiary-text-default"
-            : "text-button-disabled-text"
+            : "text-button-disabled-text",
         )}
       >
         {item.title}
@@ -102,7 +102,7 @@ export function EmotionBadge({
         variant === "search"
           ? "border-button-tertiary-border-hover"
           : "border-button-tertiary-border-default",
-        className
+        className,
       )}
       onClick={onClick}
     >
