@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import PeriodicReportTab from "@/features/report/PeriodicReportTab";
 import TotalReportTab from "@/features/report/TotalReportTab";
+import Container from "@/components/Container";
 
 export const Route = createFileRoute("/_authenticated/_main/report")({
   component: RouteComponent,
@@ -12,7 +13,7 @@ function RouteComponent() {
   const [selected, setSelected] = useState("periodic");
 
   return (
-    <>
+    <Container hasHeader={false}>
       <SegmentedControls
         options={[
           { label: "주간/월간", value: "periodic" },
@@ -27,6 +28,6 @@ function RouteComponent() {
       </div>
       {selected === "periodic" && <PeriodicReportTab />}
       {selected === "total" && <TotalReportTab />}
-    </>
+    </Container>
   );
 }
