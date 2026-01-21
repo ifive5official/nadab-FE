@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { motion } from "motion/react";
+import { useId } from "react";
 
 type Option = {
   label: string;
@@ -19,11 +20,12 @@ export default function SegmentedControls({
   onChange,
   className,
 }: Props) {
+  const id = useId();
   return (
     <div
       className={clsx(
         "p-0.5 rounded-[9px] bg-interactive-bg-hover flex items-center",
-        className
+        className,
       )}
     >
       {options.map((option) => {
@@ -34,12 +36,12 @@ export default function SegmentedControls({
             onClick={() => onChange(option.value)}
             className={clsx(
               "relative flex-1 px-padding-x-xxs py-padding-y-xxs",
-              isSelected ? " text-button-2" : "text-caption-m"
+              isSelected ? " text-button-2" : "text-caption-m",
             )}
           >
             {isSelected && (
               <motion.div
-                layoutId="segmentcontrol"
+                layoutId={id}
                 className="absolute inset-0 bg-interactive-bg-default border-[0.5px] border-interactive-border-default shadow-1 rounded-lg"
               />
             )}
