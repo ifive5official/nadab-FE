@@ -1,11 +1,12 @@
 import Container from "@/components/Container";
 import { ChevronRightIcon, WarningFilledIcon } from "@/components/Icons";
-import InlineButton from "@/components/InlineButton";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";
 import { NoResultIcon } from "@/components/Icons";
 import clsx from "clsx";
 import Modal from "@/components/Modal";
+import FriendItem from "./FriendItem";
+import { Link } from "@tanstack/react-router";
 
 export default function FriendsTab() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,35 +24,38 @@ export default function FriendsTab() {
       />
       {/* 친구 요청 미리보기 섹션 */}
       {friendRequests.length > 0 && (
-        <div className="px-padding-x-m py-padding-y-m mt-margin-y-l flex items-center border-y border-y-interactive-border-default">
-          <div className="flex mr-margin-x-l">
-            <div
-              className={clsx(
-                "rounded-full aspect-square h-9 bg-neutral-300",
-                friendRequests.length >= 2 && "-mt-4",
+        <Link to="/social/requests">
+          <div className="px-padding-x-m py-padding-y-m mt-margin-y-l flex items-center border-y border-y-interactive-border-default">
+            <div className="flex mr-margin-x-l">
+              <div
+                className={clsx(
+                  "rounded-full aspect-square h-9 bg-neutral-300",
+                  friendRequests.length >= 2 && "-mt-4",
+                )}
+              />
+              {friendRequests.length === 2 && (
+                <div className="rounded-full aspect-square h-9 bg-neutral-300 -ml-5 -mb-4" />
               )}
-            />
-            {friendRequests.length === 2 && (
-              <div className="rounded-full aspect-square h-9 bg-neutral-300 -ml-5 -mb-4" />
-            )}
-            {friendRequests.length > 2 && (
-              <div className="rounded-full aspect-square h-9 -ml-5 -mb-4 flex items-center justify-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
-                +{friendRequests.length - 1}
-              </div>
-            )}
+              {friendRequests.length > 2 && (
+                <div className="rounded-full aspect-square h-9 -ml-5 -mb-4 flex items-center justify-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
+                  +{friendRequests.length - 1}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col mr-auto">
+              <span className="text-label-m">친구 요청</span>
+              <span className="text-caption-s text-text-tertiary">
+                알케르닉스님{" "}
+                {friendRequests.length > 1 &&
+                  `외 ${friendRequests.length - 1}명`}
+              </span>
+            </div>
+            <div className="bg-brand-primary aspect-square m-[8.5px] h-[11px] rounded-full" />
+            <button>
+              <ChevronRightIcon size={28} />
+            </button>
           </div>
-          <div className="flex flex-col mr-auto">
-            <span className="text-label-m">친구 요청</span>
-            <span className="text-caption-s text-text-tertiary">
-              알케르닉스님{" "}
-              {friendRequests.length > 1 && `외 ${friendRequests.length - 1}명`}
-            </span>
-          </div>
-          <div className="bg-brand-primary aspect-square m-[8.5px] h-[11px] rounded-full" />
-          <button>
-            <ChevronRightIcon size={28} />
-          </button>
-        </div>
+        </Link>
       )}
       {/* 친구 섹션 */}
       <Container hasHeader={false}>
@@ -62,17 +66,17 @@ export default function FriendsTab() {
           <ul className="pt-padding-y-m flex flex-col gap-gap-y-xl">
             {friends.map((_, i) => {
               return (
-                <li key={i} className="flex items-center gap-margin-x-l">
-                  <div className="rounded-full aspect-square h-[50px] bg-neutral-300" />
-                  <span className="text-button-1 mr-auto">알케르닉스</span>
-                  <InlineButton
-                    size="m"
-                    variant="secondary"
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    삭제
-                  </InlineButton>
-                </li>
+                <FriendItem
+                  key={i}
+                  name="알케르닉스"
+                  profileImgUrl=""
+                  buttons={[
+                    {
+                      label: "삭제",
+                      onClick: () => setIsModalOpen(false),
+                    },
+                  ]}
+                />
               );
             })}
           </ul>
