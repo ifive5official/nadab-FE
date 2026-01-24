@@ -23,9 +23,9 @@ export default function InlineButton({
         variant === "secondary" &&
           "bg-button-secondary-bg-default text-button-secondary-text-default",
         variant === "tertiary" &&
-          "bg-button-tertiary-bg-default text-button-tertiary-text-default",
+          "bg-button-tertiary-bg-default text-button-tertiary-text-default border border-button-tertiary-border-default",
         size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
-        size === "s" && "text-button-3 px-padding-x-xs py-padding-y-xxs",
+        size === "s" && "text-button-3 px-padding-x-xs py-1.5",
         className,
       )}
       {...props}

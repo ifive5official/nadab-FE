@@ -2,17 +2,18 @@ import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { createFileRoute } from "@tanstack/react-router";
 import FriendItem from "@/features/social/FriendItem";
-import { NoResultIcon } from "@/components/Icons";
 import Modal from "@/components/Modal";
 import { useState } from "react";
 import { WarningFilledIcon } from "@/components/Icons";
+import NoResult from "@/components/NoResult";
+import InlineButton from "@/components/InlineButton";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const friendRequests = Array(12).fill(0); // 임시
+  const friendRequests = Array(2).fill(0); // 임시
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -28,27 +29,27 @@ function RouteComponent() {
                   name="알케르닉스"
                   profileImgUrl=""
                   buttons={[
-                    {
-                      label: "거절",
-                      onClick: () => setIsModalOpen(true),
-                    },
-                    {
-                      label: "수락",
-                      onClick: () => {},
-                    },
+                    <InlineButton
+                      key={1}
+                      variant="secondary"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      거절
+                    </InlineButton>,
+                    <InlineButton key={2} onClick={() => {}}>
+                      수락
+                    </InlineButton>,
                   ]}
                 />
               );
             })}
           </ul>
         ) : (
-          <div className="flex flex-col items-center gap-gap-y-l my-auto pb-header-height">
-            <NoResultIcon className="p-3.5" />
-            <p className="text-title-1">아직은 친구가 없어요.</p>
-            <p className="text-caption-m">
-              검색을 통해 친구를 추가하고 기록을 나눠보세요.
-            </p>
-          </div>
+          <NoResult
+            title={`모든 친구 요청을\n수락했어요.`}
+            description="검색을 통해 친구를 추가하고 기록을 나눠보세요."
+            className="my-auto pb-header-height"
+          />
         )}
       </Container>
       <Modal

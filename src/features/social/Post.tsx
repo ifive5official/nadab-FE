@@ -26,11 +26,8 @@ export default function Post() {
         <span className="text-button-1">알케르닉스</span>
       </div>
       <div className="border-b border-b-surface-layer-2 my-margin-y-m" />
-      <div className="flex justify-between">
+      <div className="flex justify-start">
         <QuestionBadge category="PREFERENCE" />
-        <span className="text-caption-s text-text-secondary">
-          25년 11월 1일
-        </span>
       </div>
       <p className="text-title-3 mt-margin-y-s mb-margin-y-l">
         설렘의 순간은 언제였나요?

@@ -23,6 +23,7 @@ import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedTodayWriteRouteImport } from './routes/_authenticated/today/write'
 import { Route as AuthenticatedTodayReportRouteImport } from './routes/_authenticated/today/report'
+import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
 import { Route as AuthenticatedPrevReportReportTypeRouteImport } from './routes/_authenticated/prev-report/$reportType'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
@@ -113,6 +114,12 @@ const AuthenticatedTodayReportRoute =
   AuthenticatedTodayReportRouteImport.update({
     id: '/today/report',
     path: '/today/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSocialSearchRoute =
+  AuthenticatedSocialSearchRouteImport.update({
+    id: '/social/search',
+    path: '/social/search',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedSocialRequestsRoute =
@@ -251,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/detail/$date': typeof AuthenticatedDetailDateRoute
   '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/social/search': typeof AuthenticatedSocialSearchRoute
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -285,6 +293,7 @@ export interface FileRoutesByTo {
   '/detail/$date': typeof AuthenticatedDetailDateRoute
   '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/social/search': typeof AuthenticatedSocialSearchRoute
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -322,6 +331,7 @@ export interface FileRoutesById {
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
   '/_authenticated/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/today/report': typeof AuthenticatedTodayReportRoute
   '/_authenticated/today/write': typeof AuthenticatedTodayWriteRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/detail/$date'
     | '/prev-report/$reportType'
     | '/social/requests'
+    | '/social/search'
     | '/today/report'
     | '/today/write'
     | '/account'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/detail/$date'
     | '/prev-report/$reportType'
     | '/social/requests'
+    | '/social/search'
     | '/today/report'
     | '/today/write'
     | '/account'
@@ -428,6 +440,7 @@ export interface FileRouteTypes {
     | '/_authenticated/detail/$date'
     | '/_authenticated/prev-report/$reportType'
     | '/_authenticated/social/requests'
+    | '/_authenticated/social/search'
     | '/_authenticated/today/report'
     | '/_authenticated/today/write'
     | '/_authenticated/account/'
@@ -546,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/today/report'
       fullPath: '/today/report'
       preLoaderRoute: typeof AuthenticatedTodayReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/social/search': {
+      id: '/_authenticated/social/search'
+      path: '/social/search'
+      fullPath: '/social/search'
+      preLoaderRoute: typeof AuthenticatedSocialSearchRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/social/requests': {
@@ -714,6 +734,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
   AuthenticatedPrevReportReportTypeRoute: typeof AuthenticatedPrevReportReportTypeRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
+  AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedTodayReportRoute: typeof AuthenticatedTodayReportRoute
   AuthenticatedTodayWriteRoute: typeof AuthenticatedTodayWriteRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
@@ -730,6 +751,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPrevReportReportTypeRoute:
     AuthenticatedPrevReportReportTypeRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
+  AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedTodayReportRoute: AuthenticatedTodayReportRoute,
   AuthenticatedTodayWriteRoute: AuthenticatedTodayWriteRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
