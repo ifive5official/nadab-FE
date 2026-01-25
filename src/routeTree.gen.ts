@@ -23,6 +23,8 @@ import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedTodayWriteRouteImport } from './routes/_authenticated/today/write'
 import { Route as AuthenticatedTodayReportRouteImport } from './routes/_authenticated/today/report'
+import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
+import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
 import { Route as AuthenticatedPrevReportReportTypeRouteImport } from './routes/_authenticated/prev-report/$reportType'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
@@ -112,6 +114,18 @@ const AuthenticatedTodayReportRoute =
   AuthenticatedTodayReportRouteImport.update({
     id: '/today/report',
     path: '/today/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSocialSearchRoute =
+  AuthenticatedSocialSearchRouteImport.update({
+    id: '/social/search',
+    path: '/social/search',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSocialRequestsRoute =
+  AuthenticatedSocialRequestsRouteImport.update({
+    id: '/social/requests',
+    path: '/social/requests',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPrevReportReportTypeRoute =
@@ -243,6 +257,8 @@ export interface FileRoutesByFullPath {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
   '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
+  '/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/social/search': typeof AuthenticatedSocialSearchRoute
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -276,6 +292,8 @@ export interface FileRoutesByTo {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
   '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
+  '/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/social/search': typeof AuthenticatedSocialSearchRoute
   '/today/report': typeof AuthenticatedTodayReportRoute
   '/today/write': typeof AuthenticatedTodayWriteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -312,6 +330,8 @@ export interface FileRoutesById {
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
   '/_authenticated/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
+  '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
+  '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/today/report': typeof AuthenticatedTodayReportRoute
   '/_authenticated/today/write': typeof AuthenticatedTodayWriteRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
@@ -347,6 +367,8 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/detail/$date'
     | '/prev-report/$reportType'
+    | '/social/requests'
+    | '/social/search'
     | '/today/report'
     | '/today/write'
     | '/account'
@@ -380,6 +402,8 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/detail/$date'
     | '/prev-report/$reportType'
+    | '/social/requests'
+    | '/social/search'
     | '/today/report'
     | '/today/write'
     | '/account'
@@ -415,6 +439,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/withdraw'
     | '/_authenticated/detail/$date'
     | '/_authenticated/prev-report/$reportType'
+    | '/_authenticated/social/requests'
+    | '/_authenticated/social/search'
     | '/_authenticated/today/report'
     | '/_authenticated/today/write'
     | '/_authenticated/account/'
@@ -533,6 +559,20 @@ declare module '@tanstack/react-router' {
       path: '/today/report'
       fullPath: '/today/report'
       preLoaderRoute: typeof AuthenticatedTodayReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/social/search': {
+      id: '/_authenticated/social/search'
+      path: '/social/search'
+      fullPath: '/social/search'
+      preLoaderRoute: typeof AuthenticatedSocialSearchRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/social/requests': {
+      id: '/_authenticated/social/requests'
+      path: '/social/requests'
+      fullPath: '/social/requests'
+      preLoaderRoute: typeof AuthenticatedSocialRequestsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/prev-report/$reportType': {
@@ -693,6 +733,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
   AuthenticatedPrevReportReportTypeRoute: typeof AuthenticatedPrevReportReportTypeRoute
+  AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
+  AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedTodayReportRoute: typeof AuthenticatedTodayReportRoute
   AuthenticatedTodayWriteRoute: typeof AuthenticatedTodayWriteRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
@@ -708,6 +750,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRoute,
   AuthenticatedPrevReportReportTypeRoute:
     AuthenticatedPrevReportReportTypeRoute,
+  AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
+  AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedTodayReportRoute: AuthenticatedTodayReportRoute,
   AuthenticatedTodayWriteRoute: AuthenticatedTodayWriteRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,

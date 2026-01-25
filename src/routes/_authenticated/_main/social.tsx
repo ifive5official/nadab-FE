@@ -1,9 +1,48 @@
-import { createFileRoute } from "@tanstack/react-router";
+import SegmentedControls from "@/components/SegmentedControls";
+import FriendsTab from "@/features/social/FriendsTab";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import FeedTab from "@/features/social/FeedTab";
+import GroupTab from "@/features/social/GroupTab";
+
+type Tab = "feed" | "group" | "friends";
 
 export const Route = createFileRoute("/_authenticated/_main/social")({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): { tab?: Tab } => {
+    return {
+      tab: (search.tab as Tab) || "feed", // 기본값 feed
+    };
+  },
 });
 
 function RouteComponent() {
-  return <div>social</div>;
+  const tab = Route.useSearch().tab ?? "feed";
+  const navigate = useNavigate({ from: Route.fullPath });
+
+  const tabs = [
+    { label: "피드", value: "feed" },
+    { label: "그룹", value: "group" },
+    { label: "친구", value: "friends" },
+  ];
+
+  function handleTabChange(value: string) {
+    navigate({
+      search: (prev) => ({ ...prev, tab: value as Tab }),
+      replace: true,
+    });
+  }
+
+  return (
+    <>
+      <SegmentedControls
+        options={tabs}
+        selected={tab}
+        onChange={handleTabChange}
+        className="my-padding-y-m mx-padding-x-m"
+      />
+      {tab === "feed" && <FeedTab />}
+      {tab === "group" && <GroupTab />}
+      {tab === "friends" && <FriendsTab />}
+    </>
+  );
 }

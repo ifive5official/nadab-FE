@@ -20,6 +20,7 @@ import { Pagination } from "swiper/modules";
 import { recentOptions } from "@/features/calendar/queries";
 import BlockButton from "@/components/BlockButton";
 import { answerOptions } from "@/features/report/quries";
+import Container from "@/components/Container";
 
 export const Route = createFileRoute("/_authenticated/_main/calendar")({
   component: RouteComponent,
@@ -119,7 +120,7 @@ function RouteComponent() {
   const paginationRef = useRef(null);
 
   return (
-    <>
+    <Container hasHeader={false}>
       <Link to="/search">
         <div className="pointer-events-none mt-margin-y-m mb-margin-y-s">
           {/* @ts-ignore */}
@@ -330,6 +331,6 @@ function RouteComponent() {
           </section>
         </div>
       </div>
-    </>
+    </Container>
   );
 }

@@ -23,7 +23,7 @@ export default function SearchBar({
   return (
     <div
       className={clsx(
-        "relative flex-1 px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs focus-within:shadow-1 focus-within:border-border-layer-1",
+        "relative px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs focus-within:shadow-1 focus-within:border-border-layer-1",
         className, // 높이나 패딩 넘겨줘야 함
       )}
     >
