@@ -8,10 +8,17 @@ import FriendItem from "./FriendItem";
 import { Link } from "@tanstack/react-router";
 import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
+import { useQueries } from "@tanstack/react-query";
+import { friendRequestsOptions, friendsOptions } from "./queries";
 
 export default function FriendsTab() {
-  const friends = Array(11).fill(0); // 임시
-  const friendRequests = Array(3).fill(0); // 임시
+  const [friendsQuery, requestsQuery] = useQueries({
+    queries: [friendsOptions, friendRequestsOptions],
+  });
+  const friends = friendsQuery.data;
+  const friendsCount = friends?.totalCount ?? 0;
+  const friendRequests = requestsQuery.data;
+  const requestsCount = friendRequests?.totalCount ?? 0;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -25,22 +32,22 @@ export default function FriendsTab() {
 
       <>
         {/* 친구 요청 미리보기 섹션 */}
-        {friendRequests.length > 0 && (
+        {requestsCount > 0 && (
           <Link to="/social/requests">
             <div className="px-padding-x-m py-padding-y-m flex items-center border-y border-y-interactive-border-default">
               <div className="flex mr-margin-x-l">
                 <div
                   className={clsx(
                     "rounded-full aspect-square h-9 bg-neutral-300",
-                    friendRequests.length >= 2 && "-mt-4",
+                    requestsCount >= 2 && "-mt-4",
                   )}
                 />
-                {friendRequests.length === 2 && (
+                {requestsCount === 2 && (
                   <div className="rounded-full aspect-square h-9 bg-neutral-300 -ml-5 -mb-4" />
                 )}
-                {friendRequests.length > 2 && (
+                {requestsCount > 2 && (
                   <div className="rounded-full aspect-square h-9 -ml-5 -mb-4 flex items-center justify-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
-                    +{friendRequests.length - 1}
+                    +{requestsCount - 1}
                   </div>
                 )}
               </div>
@@ -48,8 +55,7 @@ export default function FriendsTab() {
                 <span className="text-label-m">친구 요청</span>
                 <span className="text-caption-s text-text-tertiary">
                   알케르닉스님{" "}
-                  {friendRequests.length > 1 &&
-                    `외 ${friendRequests.length - 1}명`}
+                  {requestsCount > 1 && `외 ${requestsCount - 1}명`}
                 </span>
               </div>
               <div className="bg-brand-primary aspect-square m-[8.5px] h-[11px] rounded-full" />
@@ -62,16 +68,16 @@ export default function FriendsTab() {
         {/* 친구 섹션 */}
         <Container hasHeader={false}>
           <span className="text-caption-m mt-margin-y-m">
-            친구 {friends.length}명
+            친구 {friendsCount}명
           </span>
-          {friends.length > 0 ? (
+          {friendsCount > 0 ? (
             <ul className="pt-padding-y-m flex flex-col gap-gap-y-xl">
-              {friends.map((_, i) => {
+              {friends?.friends?.map((friend) => {
                 return (
                   <FriendItem
-                    key={i}
-                    name="알케르닉스"
-                    profileImgUrl=""
+                    key={friend.friendshipId}
+                    name={friend.nickname!}
+                    profileImgUrl={friend.profileImageUrl!}
                     buttons={[
                       <InlineButton
                         key={1}
@@ -89,7 +95,7 @@ export default function FriendsTab() {
             <NoResult
               className={clsx(
                 "mb-auto",
-                friendRequests.length === 0
+                friendsCount === 0
                   ? "mt-[calc((110/796)*100dvh)]"
                   : "mt-[calc((70/796)*100dvh)]",
               )}

@@ -15,10 +15,10 @@ export default function ProfileImg({
   return (
     <img
       style={{ width }}
-      src={src ?? defaultProfileImgUrl}
+      src={src || defaultProfileImgUrl}
       className={clsx(
         "aspect-square rounded-full object-cover bg-neutral-300",
-        className
+        className,
       )}
     />
   );
