@@ -6,7 +6,7 @@ import type { components } from "@/generated/api-types";
 type FriendsRes = components["schemas"]["FriendListResponse"];
 
 export const friendsOptions = queryOptions({
-  queryKey: ["currentUser", "friends"],
+  queryKey: ["currentUser", "friends", "list"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<FriendsRes>>("/api/v1/friends");
     return res.data.data!;

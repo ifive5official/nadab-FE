@@ -8,7 +8,7 @@ type Props = {
 
 export default function FriendItem({ profileImgUrl, name, buttons }: Props) {
   return (
-    <li className="flex items-center gap-margin-x-l">
+    <li className="w-full flex items-center gap-margin-x-l">
       <ProfileImg width={50} src={profileImgUrl} />
       <span className="text-button-1 mr-auto">{name}</span>
       <div className="flex gap-gap-x-s">{buttons}</div>

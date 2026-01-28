@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
 
-type Props = {
+type ModalProps = {
   isOpen: boolean;
   icon: React.ComponentType;
   title: string;
@@ -12,7 +12,7 @@ type Props = {
   onClose?: () => void;
 };
 
-type Button = {
+export type Button = {
   label: string;
   onClick: () => void;
 };
@@ -24,7 +24,7 @@ export default function Modal({
   children,
   buttons,
 }: // onClose,
-Props) {
+ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -83,6 +83,6 @@ Props) {
         </>
       )}
     </AnimatePresence>,
-    document.getElementById("modal-root")!
+    document.getElementById("modal-root")!,
   );
 }

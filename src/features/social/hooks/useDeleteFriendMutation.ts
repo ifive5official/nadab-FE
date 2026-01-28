@@ -1,24 +1,21 @@
-// 검색어 저장 - 검색 결과 클릭 및 엔터 입력 시
+// 친구 삭제
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 
-export function useAddFriendHistoryMutation() {
+export function useDeleteFriendMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ nickname }: { nickname: string }) => {
-      const res = await api.post("/api/v1/friends/search/histories", {
-        nickname,
-      });
+    mutationFn: async ({ friendshipId }: { friendshipId: number }) => {
+      const res = await api.delete(`/api/v1/friends/${friendshipId}`);
       return res.data;
     },
     onSuccess: () => {
-      // 검색 후 검색 히스토리 리셋
       queryClient.invalidateQueries({
-        queryKey: ["currentUser", "friends", "searchResults"],
+        queryKey: ["currentUser", "friends", "list"],
       });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
