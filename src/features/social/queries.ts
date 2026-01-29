@@ -29,7 +29,7 @@ type FriendSearchHistoriesRes =
   components["schemas"]["SearchHistoryListResponse"];
 
 export const friendSearchHistoryOptions = queryOptions({
-  queryKey: ["currentUser", "friends", "searchKeywords"],
+  queryKey: ["currentUser", "friends", "searchHistories"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<FriendSearchHistoriesRes>>(
       "/api/v1/friends/search/histories",

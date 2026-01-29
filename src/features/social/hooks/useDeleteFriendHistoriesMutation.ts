@@ -14,7 +14,7 @@ export function useDeleteFriendHistoriesMutation() {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.setQueryData(["currentUser", "friends", "searchResults"], {
+      queryClient.setQueryData(["currentUser", "friends", "searchHistories"], {
         histories: [],
       });
     },

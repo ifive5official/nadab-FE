@@ -109,7 +109,10 @@ function RouteComponent() {
           isFetching={isFetching}
         />
       ) : (
-        <FriendsTabRecentSearchSection histories={searchHistories?.histories} />
+        <FriendsTabRecentSearchSection
+          histories={searchHistories?.histories}
+          onItemClick={(keyword: string) => setSearchTerm(keyword)}
+        />
       )}
       <div ref={ref} />
 

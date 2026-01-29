@@ -4,11 +4,17 @@ type Props = {
   profileImgUrl: string;
   name: string;
   buttons: React.ReactNode[];
+  onClick?: () => void;
 };
 
-export default function FriendItem({ profileImgUrl, name, buttons }: Props) {
+export default function FriendItem({
+  profileImgUrl,
+  name,
+  buttons,
+  onClick,
+}: Props) {
   return (
-    <li className="w-full flex items-center gap-margin-x-l">
+    <li className="w-full flex items-center gap-margin-x-l" onClick={onClick}>
       <ProfileImg width={50} src={profileImgUrl} />
       <span className="text-button-1 mr-auto">{name}</span>
       <div className="flex gap-gap-x-s">{buttons}</div>

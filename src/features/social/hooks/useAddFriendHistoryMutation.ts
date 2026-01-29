@@ -18,7 +18,7 @@ export function useAddFriendHistoryMutation() {
     onSuccess: () => {
       // 검색 후 검색 히스토리 리셋
       queryClient.invalidateQueries({
-        queryKey: ["currentUser", "friends", "searchResults"],
+        queryKey: ["currentUser", "friends", "searchHistories"],
       });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {

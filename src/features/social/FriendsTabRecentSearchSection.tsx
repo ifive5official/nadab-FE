@@ -7,9 +7,13 @@ import { useDeleteFriendHistoryMutation } from "./hooks/useDeleteFriendHistoryMu
 
 type Props = {
   histories: components["schemas"]["SearchHistoryResponse"][] | undefined;
+  onItemClick: (keyword: string) => void;
 };
 
-export default function FriendsTabRecentSearchSection({ histories }: Props) {
+export default function FriendsTabRecentSearchSection({
+  histories,
+  onItemClick,
+}: Props) {
   const deleteHistoriesMutation = useDeleteFriendHistoriesMutation();
   const deleteHistoryMutation = useDeleteFriendHistoryMutation();
 
@@ -35,7 +39,8 @@ export default function FriendsTabRecentSearchSection({ histories }: Props) {
               buttons={[
                 <button
                   key={1}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     deleteHistoryMutation.mutate({
                       nickname: history.nickname!,
                     });
@@ -44,6 +49,7 @@ export default function FriendsTabRecentSearchSection({ histories }: Props) {
                   <CloseFilledIcon />
                 </button>,
               ]}
+              onClick={() => onItemClick(history.nickname!)}
             />
           );
         })}

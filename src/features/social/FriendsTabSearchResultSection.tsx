@@ -9,7 +9,9 @@ import { useFriendRequestMutation } from "./hooks/useFriendRequestMutation";
 import { useDeleteFriendRequestMutation } from "./hooks/useDeleteFriendRequestMutation";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
 import type { ModalConfig } from "@/routes/_authenticated/social/search";
-import { UserCheckFilledIcon } from "@/components/Icons";
+import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
+import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
+import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -28,8 +30,7 @@ type RelationshipStatus =
 
 type RequestBtnConfig = {
   label: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: (identifier: any) => void;
+  onClick?: ({ nickname, id }: { nickname: string; id: number }) => void;
 };
 
 export default function FriendsTabSearchResultSection({
@@ -46,7 +47,14 @@ export default function FriendsTabSearchResultSection({
     (page) => (page.pendingRequests?.length ?? 0) > 0,
   );
 
-  const deleteFriendMutation = useDeleteFriendMutation();
+  const acceptFriendRequestMutation = useAcceptFriendRequestMutation();
+  const rejectFriendRequestMutation = useRejectFriendRequestMutation();
+
+  const deleteFriendMutation = useDeleteFriendMutation({
+    onSuccess: () => {
+      setModalConfig(null);
+    },
+  });
   const friendRequestMutation = useFriendRequestMutation({
     onSuccess: () => {
       setModalConfig(null);
@@ -59,9 +67,9 @@ export default function FriendsTabSearchResultSection({
       SELF: null, // 나일 땐 버튼 없음
       NONE: {
         label: "친구 신청",
-        onClick: (identifier: string) => {
+        onClick: ({ nickname }) => {
           setModalConfig({
-            title: `${identifier}님을 친구로 추가하겠어요?`,
+            title: `${nickname}님을 친구로 추가하겠어요?`,
             children: "친구 신청을 한 친구에게 즉시 알림이 전송돼요.",
             icon: UserCheckFilledIcon,
             buttons: [
@@ -73,7 +81,7 @@ export default function FriendsTabSearchResultSection({
                 label: "확인",
                 onClick: () =>
                   friendRequestMutation.mutate({
-                    receiverNickname: identifier,
+                    receiverNickname: nickname,
                   }),
               },
             ],
@@ -82,28 +90,43 @@ export default function FriendsTabSearchResultSection({
       },
       FRIEND: {
         label: "친구 삭제",
-        onClick: (identifier: number) => {
-          deleteFriendMutation.mutate({ friendshipId: identifier });
+        onClick: ({ nickname, id }) => {
+          setModalConfig({
+            title: `${nickname}님을\n친구에서 삭제하겠어요?`,
+            children: "친구 삭제 이후에 복구가 불가능해요.",
+            icon: WarningFilledIcon,
+            buttons: [
+              {
+                label: "취소",
+                onClick: () => setModalConfig(null),
+              },
+              {
+                label: "확인",
+                onClick: () =>
+                  deleteFriendMutation.mutate({ friendshipId: id }),
+              },
+            ],
+          });
         },
       },
       REQUEST_SENT: {
         label: "친구 신청 중",
-        onClick: (identifier: number) => {
-          deleteFriendRequestMutation.mutate({ friendshipId: identifier });
+        onClick: ({ id }) => {
+          deleteFriendRequestMutation.mutate({ friendshipId: id });
         },
       },
       // 이상하다 응답이 왜 이걸로 오냐
       // Todo: 임시 땜빵 고치자...
       REQUEST_RECEIVED: {
         label: "친구 신청 중",
-        onClick: (identifier: number) => {
-          deleteFriendRequestMutation.mutate({ friendshipId: identifier });
+        onClick: ({ id }) => {
+          deleteFriendRequestMutation.mutate({ friendshipId: id });
         },
       },
     };
 
   return (
-    <section className="flex-1 flex">
+    <section className="flex-1 flex flex-col">
       {/* 검색 결과가 아무것도 없다면 */}
       {!hasResult && !hasPendingRequests && !isFetching && (
         <NoResult
@@ -131,11 +154,24 @@ export default function FriendsTabSearchResultSection({
                             <InlineButton
                               key={1}
                               variant="secondary"
-                              onClick={() => {}}
+                              onClick={() => {
+                                rejectFriendRequestMutation.mutate({
+                                  friendshipId: request.friendshipId!,
+                                });
+                              }}
+                              isLoading={rejectFriendRequestMutation.isPending}
                             >
                               거절
                             </InlineButton>,
-                            <InlineButton key={2} onClick={() => {}}>
+                            <InlineButton
+                              key={2}
+                              onClick={() => {
+                                acceptFriendRequestMutation.mutate({
+                                  friendshipId: request.friendshipId!,
+                                });
+                              }}
+                              isLoading={acceptFriendRequestMutation.isPending}
+                            >
                               수락
                             </InlineButton>,
                           ]}
@@ -170,6 +206,17 @@ export default function FriendsTabSearchResultSection({
                       {page?.searchResults?.map((result) => {
                         const btnConfig =
                           REQUESTBTN_CONFIG[result.relationshipStatus!];
+                        // 누른 버튼인지 확인
+                        const isLoading =
+                          (friendRequestMutation.isPending &&
+                            friendRequestMutation.variables
+                              ?.receiverNickname === result.nickname) ||
+                          (deleteFriendMutation.isPending &&
+                            deleteFriendMutation.variables?.friendshipId ===
+                              result.friendshipId) ||
+                          (deleteFriendRequestMutation.isPending &&
+                            deleteFriendRequestMutation.variables
+                              ?.friendshipId === result.friendshipId);
                         return (
                           <FriendItem
                             key={result.nickname}
@@ -180,12 +227,12 @@ export default function FriendsTabSearchResultSection({
                                 <InlineButton
                                   key="action"
                                   variant="secondary"
+                                  isLoading={isLoading}
                                   onClick={() => {
-                                    if (result.relationshipStatus === "NONE") {
-                                      btnConfig.onClick?.(result.nickname);
-                                    } else {
-                                      btnConfig.onClick?.(result.friendshipId);
-                                    }
+                                    btnConfig.onClick?.({
+                                      nickname: result.nickname!,
+                                      id: result.friendshipId ?? 0,
+                                    });
                                   }}
                                 >
                                   {btnConfig.label}
