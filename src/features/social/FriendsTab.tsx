@@ -10,6 +10,7 @@ import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
 import { useQueries } from "@tanstack/react-query";
 import { friendRequestsOptions, friendsOptions } from "./queries";
+import ProfileImg from "@/components/ProfileImg";
 
 export default function FriendsTab() {
   const [friendsQuery, requestsQuery] = useQueries({
@@ -36,14 +37,17 @@ export default function FriendsTab() {
           <Link to="/social/requests">
             <div className="px-padding-x-m py-padding-y-m flex items-center border-y border-y-interactive-border-default">
               <div className="flex mr-margin-x-l">
-                <div
-                  className={clsx(
-                    "rounded-full aspect-square h-9 bg-neutral-300",
-                    requestsCount >= 2 && "-mt-4",
-                  )}
+                <ProfileImg
+                  width={36}
+                  src={friendRequests?.requests![0].profileImageUrl}
+                  className={clsx(requestsCount >= 2 && "-mt-4")}
                 />
                 {requestsCount === 2 && (
-                  <div className="rounded-full aspect-square h-9 bg-neutral-300 -ml-5 -mb-4" />
+                  <ProfileImg
+                    width={36}
+                    src={friendRequests?.requests![1].profileImageUrl}
+                    className="-ml-5 -mb-4"
+                  />
                 )}
                 {requestsCount > 2 && (
                   <div className="rounded-full aspect-square h-9 -ml-5 -mb-4 flex items-center justify-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
@@ -54,7 +58,7 @@ export default function FriendsTab() {
               <div className="flex flex-col mr-auto">
                 <span className="text-label-m">친구 요청</span>
                 <span className="text-caption-s text-text-tertiary">
-                  알케르닉스님{" "}
+                  {friendRequests?.requests![0].nickname}님{" "}
                   {requestsCount > 1 && `외 ${requestsCount - 1}명`}
                 </span>
               </div>

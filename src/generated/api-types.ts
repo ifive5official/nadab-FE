@@ -389,6 +389,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/feed/unshare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 공유 중단 API
+         * @description 당일 DailyReport 공유를 중단합니다.
+         */
+        post: operations["stopSharing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 공유 시작 API
+         * @description 당일 DailyReport를 친구들에게 공유합니다.
+         */
+        post: operations["startSharing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/email/code": {
         parameters: {
             query?: never;
@@ -1076,6 +1116,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/feed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 피드 조회 API
+         * @description 친구들의 공유된 DailyReport 목록을 조회합니다. ACCEPTED 상태의 친구만 조회됩니다.
+         */
+        get: operations["getFeeds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed/share/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 공유 상태 조회 API
+         * @description 당일 DailyReport의 공유 상태를 조회합니다.
+         *
+         *     이 API는 상세보기 화면에서 오늘 날짜 답변일 때 공유 버튼 상태를 확인하기 위해 사용됩니다.
+         */
+        get: operations["getShareStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/daily-report": {
         parameters: {
             query?: never;
@@ -1485,6 +1567,11 @@ export interface components {
              * @example GROWTH
              */
             emotion?: string;
+            /**
+             * @description 피드 공유 상태
+             * @example false
+             */
+            isShared?: boolean;
         };
         /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
         PromptTestDailyReportRequest: {
@@ -2101,6 +2188,52 @@ export interface components {
              * @example https://cdn.example.com/profiles/abc123.png
              */
             profileImageUrl?: string;
+        };
+        /** @description 피드 목록 응답 */
+        FeedListResponse: {
+            /** @description 피드 목록 */
+            feeds?: components["schemas"]["FeedResponse"][];
+        };
+        /** @description 피드 응답 */
+        FeedResponse: {
+            /**
+             * @description 친구 닉네임
+             * @example 모래
+             */
+            friendNickname?: string;
+            /**
+             * @description 친구 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            friendProfileImageUrl?: string;
+            /**
+             * @description 관심분야 코드
+             * @example EMOTION
+             */
+            interestCode?: string;
+            /**
+             * @description 질문 내용
+             * @example 오늘 가장 기뻤던 순간은?
+             */
+            questionText?: string;
+            /**
+             * @description 답변 내용
+             * @example 집에 갈 때
+             */
+            answer?: string;
+            /**
+             * @description 감정 코드
+             * @example ACHIEVEMENT
+             */
+            emotionCode?: string;
+        };
+        /** @description 피드 공유 상태 응답 */
+        ShareStatusResponse: {
+            /**
+             * @description 오늘의 기록 공유 상태
+             * @example true
+             */
+            isShared?: boolean;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -3031,6 +3164,70 @@ export interface operations {
                 content?: never;
             };
             /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    stopSharing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 공유 중단 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    startSharing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 공유 시작 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -4132,6 +4329,67 @@ export interface operations {
             };
             /** @description 인증 실패 */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 피드 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getShareStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShareStatusResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

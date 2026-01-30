@@ -8,6 +8,7 @@ type Props = {
   children: React.ReactNode;
   className?: string;
   isLoading?: boolean;
+  disabled?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 export default function InlineButton({
   size = "m",
@@ -15,6 +16,7 @@ export default function InlineButton({
   children,
   className,
   isLoading = false,
+  disabled = false,
   ...props
 }: Props) {
   return (
@@ -22,17 +24,21 @@ export default function InlineButton({
       className={clsx(
         "relative flex items-center justify-center rounded-[20px]",
         variant === "primary" &&
+          !disabled &&
           "bg-button-primary-bg-default text-button-primary-text-default",
         variant === "secondary" &&
+          !disabled &&
           "bg-button-secondary-bg-default text-button-secondary-text-default",
         variant === "tertiary" &&
+          !disabled &&
           "bg-button-tertiary-bg-default text-button-tertiary-text-default border border-button-tertiary-border-default",
+        disabled && "bg-button-disabled-bg text-button-disabled-text",
         size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
         size === "s" && "text-button-3 px-padding-x-xs py-1.5",
         className,
       )}
       {...props}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
     >
       {isLoading && (
         <div className="absolute">

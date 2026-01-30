@@ -1,30 +1,51 @@
 import Container from "@/components/Container";
-import InlineButton from "@/components/InlineButton";
 import Post from "./Post";
+import { useQueries } from "@tanstack/react-query";
+import { feedOptions, friendsOptions } from "./queries";
+import ShareBanner from "@/components/ShareBanner";
+import NoResult from "@/components/NoResult";
 
 export default function FeedTab() {
+  const [feedQuery, friendsQuery] = useQueries({
+    queries: [feedOptions, friendsOptions],
+  });
+  const feeds = feedQuery.data?.feeds;
+
+  // Todo: 임시 땜빵 고치기...
+  if (friendsQuery.isLoading) {
+    return null;
+  }
+
   return (
     <>
       <Container
         hasHeader={false}
         className="border-t border-t-interactive-border-default"
       >
-        {/* 공유하기 배너 */}
-        <div className="bg-brand-primary-alpha-10 rounded-lg px-padding-x-m py-padding-y-m my-margin-y-l flex items-center justify-between ">
-          <div className="flex flex-col">
-            <span className="text-label-m">오늘 내가 쓴 기록을</span>
-            <span className="text-title-3">친구들과 공유해볼까요?</span>
-          </div>
-          <InlineButton variant="tertiary">공유하기</InlineButton>
-        </div>
-        {/* 게시글 */}
-        <div className="flex flex-col gap-margin-y-l">
-          {Array(3)
-            .fill(0)
-            .map((_, i) => (
-              <Post key={i} />
-            ))}
-        </div>
+        {friendsQuery?.data?.totalCount === 0 ? (
+          <NoResult
+            title="아직은 친구가 없어요."
+            description="친구 탭에서 친구를 추가하고 기록을 나눠보세요."
+            className="mt-[calc((160/796)*100dvh)]"
+          />
+        ) : (
+          <>
+            <ShareBanner className="my-margin-y-l" />
+            {/* 게시글 */}
+            <div className="flex flex-col gap-margin-y-l">
+              {feeds?.length === 0 && (
+                <NoResult
+                  title="아직 공유된 글이 없어요."
+                  description="친구의 기록이 공유되면 피드에서 확인할 수 있어요."
+                  className="mt-[calc((110/796)*100dvh)]"
+                />
+              )}
+              {feeds?.map((feed) => (
+                <Post feed={feed} key={feed.friendNickname} />
+              ))}
+            </div>
+          </>
+        )}
       </Container>
     </>
   );
