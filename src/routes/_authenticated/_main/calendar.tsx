@@ -305,24 +305,29 @@ function RouteComponent() {
                       userSelect: "none",
                     }}
                   >
-                    <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
-                      <div className="flex justify-between mb-margin-y-m">
-                        <EmotionBadge
-                          emotion={
-                            item.emotionCode as (typeof emotions)[number]["code"]
-                          }
-                        />
-                        <span className="text-caption-s text-text-tertiary">
-                          {item.answerDate}
-                        </span>
+                    <Link
+                      to="/detail/$date"
+                      params={{ date: item.answerDate! }}
+                    >
+                      <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
+                        <div className="flex justify-between mb-margin-y-m">
+                          <EmotionBadge
+                            emotion={
+                              item.emotionCode as (typeof emotions)[number]["code"]
+                            }
+                          />
+                          <span className="text-caption-s text-text-tertiary">
+                            {item.answerDate}
+                          </span>
+                        </div>
+                        <p className="text-label-s h-10 line-clamp-2">
+                          {item.questionText}
+                        </p>
+                        <p className="text-caption-s h-8 line-clamp-2">
+                          {item.matchedSnippet}
+                        </p>
                       </div>
-                      <p className="text-label-s truncate">
-                        {item.questionText}
-                      </p>
-                      <p className="text-caption-s line-clamp-2">
-                        {item.matchedSnippet}
-                      </p>
-                    </div>
+                    </Link>
                   </SwiperSlide>
                 );
               })}
