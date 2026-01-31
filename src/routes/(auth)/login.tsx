@@ -43,7 +43,7 @@ function RouteComponent() {
           <InputField
             label="이메일"
             id="email"
-            name="id"
+            name="email"
             type="email"
             onChange={(e) => onEmailChange(e.target.value)}
             error={emailError}
@@ -53,7 +53,7 @@ function RouteComponent() {
           <PasswordInputField
             label="비밀번호"
             id="password"
-            name="id"
+            name="password"
             type="password"
             onChange={(e) => {
               setPasswordError("");
