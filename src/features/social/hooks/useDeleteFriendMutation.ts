@@ -1,22 +1,21 @@
 // 친구 삭제
-import {
-  useMutation,
-  useQueryClient,
-  type InfiniteData,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
-import type { components } from "@/generated/api-types";
 
-type SearchRes = components["schemas"]["SearchUserListResponse"];
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
   onSuccess?: () => void;
+  onSettled?: (
+    data: any,
+    error: any,
+    variables: { friendshipId: number },
+  ) => void;
 };
 
-export function useDeleteFriendMutation({ onSuccess }: Props) {
+export function useDeleteFriendMutation({ onSuccess, onSettled }: Props) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -24,34 +23,14 @@ export function useDeleteFriendMutation({ onSuccess }: Props) {
       const res = await api.delete(`/api/v1/friends/${friendshipId}`);
       return res.data;
     },
-    onSuccess: (_, { friendshipId }) => {
-      queryClient.invalidateQueries({
-        queryKey: ["currentUser", "friends", "list"],
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["currentUser", "friends"],
       });
-      // 재로딩 방지 위해 검색결과 캐시 세팅
-      queryClient.setQueriesData<InfiniteData<SearchRes>>(
-        { queryKey: ["currentUser", "friends", "searchResults"] },
-        (oldData) => {
-          if (!oldData) return undefined;
-
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              searchResults: page.searchResults?.map((user) =>
-                user.friendshipId === friendshipId
-                  ? {
-                      ...user,
-                      friendshipId,
-                      relationshipStatus: "NONE",
-                    }
-                  : user,
-              ),
-            })),
-          };
-        },
-      );
       onSuccess?.();
+    },
+    onSettled: (data, error, variables) => {
+      onSettled?.(data, error, variables);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       useErrorStore.getState().showError(

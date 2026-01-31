@@ -50,6 +50,7 @@ function RouteComponent() {
   const {
     data: searchResults,
     isFetching,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -107,6 +108,7 @@ function RouteComponent() {
           setModalConfig={setModalConfig}
           searchResults={searchResults}
           isFetching={isFetching}
+          isLoading={isLoading}
         />
       ) : (
         <FriendsTabRecentSearchSection

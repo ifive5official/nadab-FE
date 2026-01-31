@@ -1,18 +1,20 @@
 // 친구 요청 거절
-import {
-  useMutation,
-  useQueryClient,
-  type InfiniteData,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/errorStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
-import type { components } from "@/generated/api-types";
 
-type SearchRes = components["schemas"]["SearchUserListResponse"];
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type Props = {
+  onSettled?: (
+    data: any,
+    error: any,
+    variables: { friendshipId: number },
+  ) => void;
+};
 
-export function useRejectFriendRequestMutation() {
+export function useRejectFriendRequestMutation({ onSettled }: Props) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -25,44 +27,13 @@ export function useRejectFriendRequestMutation() {
       );
       return res.data;
     },
-    onSuccess: (_, { friendshipId }) => {
-      queryClient.invalidateQueries({
-        queryKey: ["currentUser", "friends", "list"],
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({
+        queryKey: ["currentUser", "friends"],
       });
-      // 재로딩 방지 위해 검색결과 캐시 세팅
-      queryClient.setQueriesData<InfiniteData<SearchRes>>(
-        { queryKey: ["currentUser", "friends", "searchResults"] },
-        (oldData) => {
-          if (!oldData) return undefined;
-
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => {
-              // 타겟 유저를 찾아서 친구 요청 목록에서는 지우고
-              // 검색 결과에는 추가함
-              const targetUser = page.pendingRequests?.find(
-                (user) => user.friendshipId === friendshipId,
-              );
-
-              if (!targetUser) return page;
-              return {
-                ...page,
-                pendingRequests: page.pendingRequests?.filter(
-                  (user) => user.friendshipId !== friendshipId,
-                ),
-                searchResults: [
-                  {
-                    ...targetUser,
-                    friendshipId: undefined,
-                    relationshipStatus: "NONE",
-                  },
-                  ...(page.searchResults ?? []),
-                ],
-              };
-            }),
-          };
-        },
-      );
+    },
+    onSettled: (data, error, variables) => {
+      onSettled?.(data, error, variables);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       useErrorStore.getState().showError(

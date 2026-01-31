@@ -1,8 +1,8 @@
 import InlineButton from "@/components/InlineButton";
 import FriendItem from "./FriendItem";
 import { FriendItemSkeleton } from "./FriendItem";
-import { Fragment } from "react";
-import type { InfiniteData } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
+import { type InfiniteData } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import NoResult from "@/components/NoResult";
 import { useFriendRequestMutation } from "./hooks/useFriendRequestMutation";
@@ -19,6 +19,7 @@ type Props = {
   setModalConfig: (config: ModalConfig | null) => void;
   searchResults: InfiniteData<AnswersRes> | undefined;
   isFetching: boolean;
+  isLoading: boolean;
 };
 
 type RelationshipStatus =
@@ -37,6 +38,7 @@ export default function FriendsTabSearchResultSection({
   setModalConfig,
   searchResults,
   isFetching,
+  isLoading,
 }: Props) {
   // 유저 검색 결과가 하나라도 있는가?
   const hasResult = searchResults?.pages.some(
@@ -47,20 +49,60 @@ export default function FriendsTabSearchResultSection({
     (page) => (page.pendingRequests?.length ?? 0) > 0,
   );
 
-  const acceptFriendRequestMutation = useAcceptFriendRequestMutation();
-  const rejectFriendRequestMutation = useRejectFriendRequestMutation();
+  // 친구 요청 섹션 뮤테이션
+  const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
+    onSettled: (_data, _error, variables) => {
+      setAcceptingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
+    },
+  });
+  const rejectFriendRequestMutation = useRejectFriendRequestMutation({
+    onSettled: (_data, _error, variables) => {
+      setRejectingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
+    },
+  });
 
+  // 대기 중 리스트
+  const [acceptingIds, setAcceptingIds] = useState(new Set());
+  const [rejectingIds, setRejectingIds] = useState(new Set());
+
+  // 사용자 섹션 뮤테이션
   const deleteFriendMutation = useDeleteFriendMutation({
-    onSuccess: () => {
-      setModalConfig(null);
+    onSettled: (_data, _error, variables) => {
+      setActiveIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
     },
   });
   const friendRequestMutation = useFriendRequestMutation({
-    onSuccess: () => {
-      setModalConfig(null);
+    onSettled: (_data, _error, variables) => {
+      setActiveIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.receiverNickname);
+        return next;
+      });
     },
   });
-  const deleteFriendRequestMutation = useDeleteFriendRequestMutation();
+  const deleteFriendRequestMutation = useDeleteFriendRequestMutation({
+    onSettled: (_data, _error, variables) => {
+      setActiveIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
+    },
+  });
+  // 사용자 섹션 버튼 대기중 리스트
+  const [activeIds, setActiveIds] = useState(new Set());
 
   const REQUESTBTN_CONFIG: Record<RelationshipStatus, RequestBtnConfig | null> =
     {
@@ -79,10 +121,13 @@ export default function FriendsTabSearchResultSection({
               },
               {
                 label: "확인",
-                onClick: () =>
+                onClick: () => {
+                  setModalConfig(null);
+                  setActiveIds((prev) => new Set(prev).add(nickname));
                   friendRequestMutation.mutate({
                     receiverNickname: nickname,
-                  }),
+                  });
+                },
               },
             ],
           });
@@ -102,8 +147,11 @@ export default function FriendsTabSearchResultSection({
               },
               {
                 label: "확인",
-                onClick: () =>
-                  deleteFriendMutation.mutate({ friendshipId: id }),
+                onClick: () => {
+                  setModalConfig(null);
+                  setActiveIds((prev) => new Set(prev).add(id));
+                  deleteFriendMutation.mutate({ friendshipId: id });
+                },
               },
             ],
           });
@@ -112,6 +160,7 @@ export default function FriendsTabSearchResultSection({
       REQUEST_SENT: {
         label: "친구 신청 중",
         onClick: ({ id }) => {
+          setActiveIds((prev) => new Set(prev).add(id));
           deleteFriendRequestMutation.mutate({ friendshipId: id });
         },
       },
@@ -120,6 +169,7 @@ export default function FriendsTabSearchResultSection({
       REQUEST_RECEIVED: {
         label: "친구 신청 중",
         onClick: ({ id }) => {
+          setActiveIds((prev) => new Set(prev).add(id));
           deleteFriendRequestMutation.mutate({ friendshipId: id });
         },
       },
@@ -158,8 +208,11 @@ export default function FriendsTabSearchResultSection({
                                 rejectFriendRequestMutation.mutate({
                                   friendshipId: request.friendshipId!,
                                 });
+                                setRejectingIds((prev) =>
+                                  new Set(prev).add(request.friendshipId),
+                                );
                               }}
-                              isLoading={rejectFriendRequestMutation.isPending}
+                              isLoading={rejectingIds.has(request.friendshipId)}
                             >
                               거절
                             </InlineButton>,
@@ -169,8 +222,11 @@ export default function FriendsTabSearchResultSection({
                                 acceptFriendRequestMutation.mutate({
                                   friendshipId: request.friendshipId!,
                                 });
+                                setAcceptingIds((prev) =>
+                                  new Set(prev).add(request.friendshipId),
+                                );
                               }}
-                              isLoading={acceptFriendRequestMutation.isPending}
+                              isLoading={acceptingIds.has(request.friendshipId)}
                             >
                               수락
                             </InlineButton>,
@@ -186,11 +242,11 @@ export default function FriendsTabSearchResultSection({
         </div>
       )}
       {/* 전체 사용자 검색결과 */}
-      {hasResult && (
+      {(hasResult || isLoading) && (
         <div className="w-full px-padding-x-m py-padding-y-s">
           <span className="text-caption-m">사용자</span>
           <ul className="w-full py-padding-y-m flex flex-col gap-margin-y-xl">
-            {isFetching ? (
+            {isLoading ? (
               <>
                 {Array(7)
                   .fill(0)
@@ -206,17 +262,8 @@ export default function FriendsTabSearchResultSection({
                       {page?.searchResults?.map((result) => {
                         const btnConfig =
                           REQUESTBTN_CONFIG[result.relationshipStatus!];
-                        // 누른 버튼인지 확인
-                        const isLoading =
-                          (friendRequestMutation.isPending &&
-                            friendRequestMutation.variables
-                              ?.receiverNickname === result.nickname) ||
-                          (deleteFriendMutation.isPending &&
-                            deleteFriendMutation.variables?.friendshipId ===
-                              result.friendshipId) ||
-                          (deleteFriendRequestMutation.isPending &&
-                            deleteFriendRequestMutation.variables
-                              ?.friendshipId === result.friendshipId);
+                        const targetId = result.friendshipId || result.nickname;
+                        const isBtnLoading = activeIds.has(targetId);
                         return (
                           <FriendItem
                             key={result.nickname}
@@ -227,7 +274,7 @@ export default function FriendsTabSearchResultSection({
                                 <InlineButton
                                   key="action"
                                   variant="secondary"
-                                  isLoading={isLoading}
+                                  isLoading={isBtnLoading}
                                   onClick={() => {
                                     btnConfig.onClick?.({
                                       nickname: result.nickname!,
