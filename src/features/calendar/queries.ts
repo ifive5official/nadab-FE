@@ -9,8 +9,8 @@ export const recentOptions = queryOptions({
   queryKey: ["currentUser", "recent"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<RecentsRes>>(
-      "/api/v1/answers/calendar/recents"
+      "/api/v1/answers/calendar/recents",
     );
-    return res.data.data;
+    return res.data.data!;
   },
 });

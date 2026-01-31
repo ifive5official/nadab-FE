@@ -13,13 +13,19 @@ import { useState } from "react";
 import ReportMessage from "@/features/report/ReportMessage";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
+import ShareBanner from "@/components/ShareBanner";
+import { friendsOptions } from "@/features/social/queries";
 
 export const Route = createFileRoute("/_authenticated/detail/$date")({
   component: RouteComponent,
   //   Todo: 에러 처리 보완
   loader: async ({ params: { date }, context: { queryClient } }) => {
     try {
-      await queryClient.ensureQueryData(answerOptions.detail(date));
+      await Promise.all([
+        queryClient.ensureQueryData(answerOptions.detail(date)),
+        // Todo: 오늘 날짜일 때만 api 호출하게 하자
+        queryClient.ensureQueryData(friendsOptions),
+      ]);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
@@ -35,9 +41,11 @@ export const Route = createFileRoute("/_authenticated/detail/$date")({
 
 function RouteComponent() {
   const { date } = Route.useParams();
-  const [{ data: currentUser }, { data }] = useSuspenseQueries({
-    queries: [currentUserOptions, answerOptions.detail(date)],
-  });
+  const today = new Date().toLocaleDateString("en-CA");
+  const [{ data: currentUser }, { data }, { data: friends }] =
+    useSuspenseQueries({
+      queries: [currentUserOptions, answerOptions.detail(date), friendsOptions],
+    });
   const ReportMessages = data.content!.split(/(?<=[.!?])\s/);
   const [isReportOpen, setIsReportOpen] = useState(false);
 
@@ -45,6 +53,10 @@ function RouteComponent() {
     <>
       <SubHeader>상세 보기</SubHeader>
       <Container>
+        {/* 오늘 날짜이고, 친구가 있다면 공유 배너 보임 */}
+        {date === today && (friends.totalCount ?? 0) > 0 && (
+          <ShareBanner className="mt-margin-y-l" />
+        )}
         <div className="px-padding-x-m py-padding-y-m mt-padding-y-m bg-surface-layer-1 dark:bg-surface-layer-2 border border-border-base shadow-2 rounded-2xl">
           <div className="flex gap-padding-x-xxs">
             <QuestionBadge

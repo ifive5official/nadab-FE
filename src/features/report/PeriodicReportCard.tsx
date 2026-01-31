@@ -3,7 +3,6 @@ import BlockButton from "@/components/BlockButton";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
 import type { components } from "@/generated/api-types";
-import ReportGeneratingOverlay from "./ReportGeneratingOverlay";
 import { REPORT_CONFIGS } from "./reportConfigs";
 import clsx from "clsx";
 import PeriodicReport from "./PeriodicReport";
@@ -35,13 +34,8 @@ export default function PeriodicReportCard({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const navigate = useNavigate();
 
-  // 로딩 화면
-  if (isGenerating) {
-    return <ReportGeneratingOverlay type={reportType} />;
-  }
-
   // 레포트
-  if (report) {
+  if (report && !isGenerating) {
     return (
       <PeriodicReport
         reportType={reportType}
@@ -58,13 +52,13 @@ export default function PeriodicReportCard({
     <section
       className={clsx(
         "px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2",
-        isLoading && "animate-pulse"
+        isLoading && "animate-pulse",
       )}
     >
       <div
         className={clsx(
           "flex flex-col gap-margin-y-m mb-padding-y-xxl",
-          isLoading && "invisible"
+          isLoading && "invisible",
         )}
       >
         <div className="relative flex justify-between items-center">
@@ -78,12 +72,14 @@ export default function PeriodicReportCard({
           </div>
         </div>
         <h3 className="text-title-2">
-          지난{config.periodText} 리포트를 받아볼까요?
+          {isGenerating
+            ? `지난${config.periodText} 레포트를 생성 중이에요.`
+            : `지난${config.periodText} 리포트를 받아볼까요?`}
         </h3>
-        <p className="text-caption-l">
-          지난{config.periodText}에 답변을 {config.requiredAnswers}건 이상
-          작성했다면 리포트를 생성할 수 있어요. 지난{config.periodText} 리포트로
-          나를 되돌아보세요.
+        <p className="text-caption-l whitespace-pre-line">
+          {isGenerating
+            ? `리포트 생성에 1-2분 정도 걸릴 수 있어요.\n조금만 기다려주세요.`
+            : `지난${config.periodText}에 답변을 ${config.requiredAnswers}건 이상 작성했다면 리포트를 생성할 수 있어요. 지난${config.periodText} 리포트로 나를 되돌아보세요.`}
         </p>
       </div>
       <div className="flex gap-gap-x-xs">

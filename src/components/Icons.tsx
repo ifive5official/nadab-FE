@@ -356,7 +356,13 @@ export function MoonFilledIcon({ fill }: { fill?: string }) {
 
 //===================================
 
-export function LoadingIcon({ height = 24 }: { height?: number }) {
+export function LoadingIcon({
+  height = 24,
+  color = "white",
+}: {
+  height?: number;
+  color?: string;
+}) {
   return (
     <div style={{ height }} className="flex items-center justify-center">
       <svg
@@ -375,8 +381,7 @@ export function LoadingIcon({ height = 24 }: { height?: number }) {
             <foreignObject x="-1020" y="-1020" width="2040" height="2040">
               <div
                 style={{
-                  background:
-                    "conic-gradient(from 90deg, rgba(255, 255, 255, 1) 0deg, rgba(255, 255, 255, 1) 63.243deg, rgba(255, 255, 255, 0) 360deg)",
+                  background: `conic-gradient(from 90deg, ${color} 0deg, ${color} 63.243deg, transparent 360deg)`,
                   height: "100%",
                   width: "100%",
                   opacity: 1,
@@ -386,7 +391,7 @@ export function LoadingIcon({ height = 24 }: { height?: number }) {
           </g>
         </g>
         <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10ZM2.99027 10C2.99027 13.8714 6.12863 17.0097 10 17.0097C13.8714 17.0097 17.0097 13.8714 17.0097 10C17.0097 6.12863 13.8714 2.99027 10 2.99027C6.12863 2.99027 2.99027 6.12863 2.99027 10Z" />
-        <circle cx="10.1001" cy="18.5" r="1.5" fill="rgb(255, 255, 255)" />
+        <circle cx="10.1001" cy="18.5" r="1.5" fill={color} />
         <defs>
           <clipPath id="paint0_angular_15235_14476_clip_path">
             <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10ZM2.99027 10C2.99027 13.8714 6.12863 17.0097 10 17.0097C13.8714 17.0097 17.0097 13.8714 17.0097 10C17.0097 6.12863 13.8714 2.99027 10 2.99027C6.12863 2.99027 2.99027 6.12863 2.99027 10Z" />
@@ -532,6 +537,31 @@ export function CircleCheckFilledIcon() {
     >
       <path
         d="M27.9996 12.5999C19.5086 12.5999 12.5996 19.5089 12.5996 27.9999C12.5996 36.4909 19.5086 43.3999 27.9996 43.3999C36.4906 43.3999 43.3996 36.4909 43.3996 27.9999C43.3996 19.5089 36.4906 12.5999 27.9996 12.5999ZM25.6322 34.6513L20.0028 28.9435L21.9964 26.9779L25.6476 30.6809L34.0112 22.3411L35.988 24.3235L25.6322 34.6513Z"
+        fill="var(--color-icon-primary)"
+      />
+    </svg>
+  );
+}
+
+export function UserCheckFilledIcon() {
+  return (
+    <svg
+      width="56"
+      height="56"
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M35 30.8003L30.24 26.0403L32.2 24.0803L35 26.8803L40.6 21.2803L42.56 23.2403L35 30.8003Z"
+        fill="var(--color-icon-primary)"
+      />
+      <path
+        d="M27.72 17.0804C26.6 15.9604 25.34 15.4004 23.8 15.4004C22.26 15.4004 20.72 16.1004 19.88 17.0804C18.76 18.2004 18.2 19.4604 18.2 21.0004C18.2 22.5404 18.9 24.0804 19.88 24.9204C21 26.0404 22.26 26.6004 23.8 26.6004C25.34 26.6004 26.88 25.9004 27.72 24.9204C28.84 23.8004 29.4 22.5404 29.4 21.0004C29.4 19.4604 28.7 17.9204 27.72 17.0804Z"
+        fill="var(--color-icon-primary)"
+      />
+      <path
+        d="M14 40.6004V36.4004C14 34.4404 14.7 32.6204 16.1 31.3604C17.36 30.1004 19.18 29.4004 21 29.4004H26.6C28.56 29.4004 30.38 30.1004 31.64 31.5004C32.9 32.7604 33.6 34.5804 33.6 36.4004V40.6004H14Z"
         fill="var(--color-icon-primary)"
       />
     </svg>

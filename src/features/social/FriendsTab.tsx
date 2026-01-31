@@ -8,11 +8,36 @@ import FriendItem from "./FriendItem";
 import { Link } from "@tanstack/react-router";
 import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
+import { useQueries } from "@tanstack/react-query";
+import { friendRequestsOptions, friendsOptions } from "./queries";
+import ProfileImg from "@/components/ProfileImg";
+import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
+import Toast from "@/components/Toast";
 
 export default function FriendsTab() {
-  const friends = Array(11).fill(0); // 임시
-  const friendRequests = Array(3).fill(0); // 임시
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [friendsQuery, requestsQuery] = useQueries({
+    queries: [friendsOptions, friendRequestsOptions],
+  });
+  const friends = friendsQuery.data;
+  const friendsCount = friends?.totalCount ?? 0;
+  const friendRequests = requestsQuery.data;
+  const requestsCount = friendRequests?.totalCount ?? 0;
+
+  const deleteFriendMutation = useDeleteFriendMutation({
+    onSuccess: () => setIsToastOpen(true),
+  });
+
+  // 있을 때 모달 띄움
+  const [selectedRequest, setSelectedRequest] = useState<{
+    nickname: string;
+    id: number;
+  } | null>(null);
+  const [isToastOpen, setIsToastOpen] = useState(false);
+
+  // Todo: 임시 땜빵 처리
+  if (friendsQuery.isLoading || requestsQuery.isLoading) {
+    return null;
+  }
 
   return (
     <>
@@ -25,31 +50,33 @@ export default function FriendsTab() {
 
       <>
         {/* 친구 요청 미리보기 섹션 */}
-        {friendRequests.length > 0 && (
+        {requestsCount > 0 && (
           <Link to="/social/requests">
             <div className="px-padding-x-m py-padding-y-m flex items-center border-y border-y-interactive-border-default">
               <div className="flex mr-margin-x-l">
-                <div
-                  className={clsx(
-                    "rounded-full aspect-square h-9 bg-neutral-300",
-                    friendRequests.length >= 2 && "-mt-4",
-                  )}
+                <ProfileImg
+                  width={36}
+                  src={friendRequests?.requests![0].profileImageUrl}
+                  className={clsx(requestsCount >= 2 && "-mt-4")}
                 />
-                {friendRequests.length === 2 && (
-                  <div className="rounded-full aspect-square h-9 bg-neutral-300 -ml-5 -mb-4" />
+                {requestsCount === 2 && (
+                  <ProfileImg
+                    width={36}
+                    src={friendRequests?.requests![1].profileImageUrl}
+                    className="-ml-5 -mb-4"
+                  />
                 )}
-                {friendRequests.length > 2 && (
+                {requestsCount > 2 && (
                   <div className="rounded-full aspect-square h-9 -ml-5 -mb-4 flex items-center justify-center text-label-s bg-button-primary-bg-default border border-interactive-border-default dark:border-0 text-text-inverse-primary">
-                    +{friendRequests.length - 1}
+                    +{requestsCount - 1}
                   </div>
                 )}
               </div>
               <div className="flex flex-col mr-auto">
                 <span className="text-label-m">친구 요청</span>
                 <span className="text-caption-s text-text-tertiary">
-                  알케르닉스님{" "}
-                  {friendRequests.length > 1 &&
-                    `외 ${friendRequests.length - 1}명`}
+                  {friendRequests?.requests![0].nickname}님{" "}
+                  {requestsCount > 1 && `외 ${requestsCount - 1}명`}
                 </span>
               </div>
               <div className="bg-brand-primary aspect-square m-[8.5px] h-[11px] rounded-full" />
@@ -62,21 +89,27 @@ export default function FriendsTab() {
         {/* 친구 섹션 */}
         <Container hasHeader={false}>
           <span className="text-caption-m mt-margin-y-m">
-            친구 {friends.length}명
+            친구 {friendsCount}명
           </span>
-          {friends.length > 0 ? (
+          {friendsCount > 0 ? (
             <ul className="pt-padding-y-m flex flex-col gap-gap-y-xl">
-              {friends.map((_, i) => {
+              {friends?.friends?.map((friend) => {
                 return (
                   <FriendItem
-                    key={i}
-                    name="알케르닉스"
-                    profileImgUrl=""
+                    key={friend.friendshipId}
+                    name={friend.nickname!}
+                    profileImgUrl={friend.profileImageUrl!}
                     buttons={[
                       <InlineButton
                         key={1}
                         variant="secondary"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() =>
+                          setSelectedRequest({
+                            nickname: friend.nickname!,
+                            id: friend.friendshipId!,
+                          })
+                        }
+                        isLoading={deleteFriendMutation.isPending}
                       >
                         삭제
                       </InlineButton>,
@@ -89,7 +122,7 @@ export default function FriendsTab() {
             <NoResult
               className={clsx(
                 "mb-auto",
-                friendRequests.length === 0
+                friendsCount === 0
                   ? "mt-[calc((110/796)*100dvh)]"
                   : "mt-[calc((70/796)*100dvh)]",
               )}
@@ -101,23 +134,33 @@ export default function FriendsTab() {
       </>
 
       <Modal
-        title={`알케르닉스님을 친구에서 삭제하겠어요?`}
+        title={`${selectedRequest?.nickname}님을 친구에서 삭제하겠어요?`}
         icon={WarningFilledIcon}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={!!selectedRequest}
+        onClose={() => setSelectedRequest(null)}
         buttons={[
           {
             label: "취소",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => setSelectedRequest(null),
           },
           {
             label: "확인",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => {
+              setSelectedRequest(null);
+              deleteFriendMutation.mutate({
+                friendshipId: selectedRequest?.id ?? 0,
+              });
+            },
           },
         ]}
       >
         친구 삭제 이후에 복구가 불가능해요.
       </Modal>
+      <Toast
+        isOpen={isToastOpen}
+        onClose={() => setIsToastOpen(false)}
+        message="친구가 삭제되었어요."
+      />
     </>
   );
 }

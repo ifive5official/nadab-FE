@@ -37,7 +37,11 @@ export default function Home() {
           {/* 구슬 */}
           <div className="flex items-center justify-center">
             <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100svh))] sm:w-[calc((267/390)*412px)] aspect-square ">
-              <video
+              <img
+                src="/video.webp"
+                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
+              />
+              {/* <video
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
                 muted
                 autoPlay
@@ -46,8 +50,7 @@ export default function Home() {
                 poster="/marble.webp"
               >
                 <source src="/marble.mp4" type="video/mp4" />
-              </video>
-
+              </video> */}
               <div className="absolute inset-0 flex flex-col justify-center items-center gap-gap-y-xl">
                 <p className="text-body-1 text-center dark:text-neutral-900">
                   <span className="text-headline-l text-brand-primary">

@@ -1,8 +1,16 @@
 import { EmotionBadge, QuestionBadge } from "@/components/Badges";
 import { useState, useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
+import type { components } from "@/generated/api-types";
+import ProfileImg from "@/components/ProfileImg";
+import type categories from "@/constants/categories";
+import type emotions from "@/constants/emotions";
 
-export default function Post() {
+type Props = {
+  feed: components["schemas"]["FeedResponse"];
+};
+
+export default function Post({ feed }: Props) {
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false); // 텍스트가 넘치는가?
   const answerRef = useRef<HTMLParagraphElement>(null);
@@ -22,23 +30,24 @@ export default function Post() {
   return (
     <section className="px-padding-x-m py-padding-y-m rounded-2xl bg-surface-layer-1 border border-border-base shadow-1">
       <div className="flex items-center gap-margin-x-s">
-        <div className="rounded-full aspect-square h-[35px] bg-neutral-300" />
-        <span className="text-button-1">알케르닉스</span>
+        <ProfileImg width={35} src={feed.friendProfileImageUrl} />
+        <span className="text-button-1">{feed.friendNickname}</span>
       </div>
       <div className="border-b border-b-surface-layer-2 my-margin-y-m" />
       <div className="flex justify-start">
-        <QuestionBadge category="PREFERENCE" />
+        <QuestionBadge
+          category={feed.interestCode as (typeof categories)[number]["code"]}
+        />
       </div>
       <p className="text-title-3 mt-margin-y-s mb-margin-y-l">
-        설렘의 순간은 언제였나요?
+        {feed.questionText}
       </p>
       <div className="flex flex-col px-padding-x-m py-padding-y-m bg-interactive-bg-default rounded-2xl border border-border-base overflow-hidden">
         <EmotionBadge
-          emotion="ACHIEVEMENT"
+          emotion={feed.emotionCode as (typeof emotions)[number]["code"]}
           filled
           className="mr-auto mb-padding-y-xs"
         />
-        {/* eslint-disable react/no-unescaped-entities */}
         <p
           ref={answerRef}
           className={clsx(
@@ -46,11 +55,7 @@ export default function Post() {
             !isAnswerOpen && "line-clamp-2",
           )}
         >
-          오늘의 이야기는 그 영광이 단순히 '결과'가 아니라, 수많은 고민과 노력을
-          거쳐 '나는 해낼 수 있다'는 믿음을 스스로 증명해낸 '과정' 그 자체였음을
-          보여줘요. 당신 안에 잠재된 힘을 다시 한번 발견한 소중한 기록입니다. 이
-          기록은 미래의 당신과 연결될 첫 번째 조각이 될 거예요.오늘의 이야기는
-          그 영광이 단순히 '결과'가 아니라,
+          {feed.answer}
         </p>
         {isOverflowing && (
           <button

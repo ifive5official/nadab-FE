@@ -281,6 +281,154 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/friends/search/histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 최근 검색어 조회
+         * @description 최근 검색한 유저 5명을 조회합니다. 응답 리스트는 최신순입니다.
+         */
+        get: operations["getRecentSearches_1"];
+        put?: never;
+        /**
+         * 친구 검색 기록 저장
+         * @description 사용자가 친구 검색 결과를 클릭했을 때 검색 기록을 저장합니다.
+         *
+         *     - 프로필을 조회했을 때 호출됩니다.
+         *     - 이미 존재하는 검색 기록은 최신 순서로 갱신됩니다.
+         *     - 최대 100개까지 저장되며, 초과 시 오래된 것부터 삭제됩니다.
+         *
+         *     ### 에러 처리
+         *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
+         */
+        post: operations["saveSearchHistory_1"];
+        /**
+         * 전체 검색어 삭제
+         * @description 모든 검색 기록을 삭제합니다.
+         */
+        delete: operations["deleteAllSearchHistories_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 받은 친구 요청 목록 조회
+         * @description 받은 친구 요청 목록을 조회합니다.
+         *
+         *     - totalCount: 총 요청 수
+         *     - requests: 전체 요청 목록 (최신순)
+         */
+        get: operations["getReceivedRequests"];
+        put?: never;
+        /**
+         * 친구 요청 보내기
+         * @description 닉네임으로 유저를 찾아 친구 요청을 보냅니다.
+         *
+         *     - 본인에게는 요청 불가
+         *     - 이미 친구이거나 요청이 존재하면 불가
+         *     - 발신자/수신자 모두 친구 수 20명 미만이어야 함
+         */
+        post: operations["sendFriendRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/requests/{friendshipId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 친구 요청 거절
+         * @description 받은 친구 요청을 거절합니다.
+         */
+        post: operations["rejectFriendRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/requests/{friendshipId}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 친구 요청 수락
+         * @description 받은 친구 요청을 수락합니다.
+         *
+         *     - 양쪽 모두 친구 수 20명 미만이어야 함
+         */
+        post: operations["acceptFriendRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed/unshare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 공유 중단 API
+         * @description 당일 DailyReport 공유를 중단합니다.
+         */
+        post: operations["stopSharing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 공유 시작 API
+         * @description 당일 DailyReport를 친구들에게 공유합니다.
+         */
+        post: operations["startSharing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/email/code": {
         parameters: {
             query?: never;
@@ -890,6 +1038,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/friends": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 친구 목록 조회
+         * @description 친구 목록을 조회합니다.
+         *
+         *     - totalCount: 총 친구 수
+         *     - friends: 친구 목록 (최신순)
+         */
+        get: operations["getFriends"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 유저 검색
+         * @description 닉네임으로 유저를 검색합니다. (Cursor-based Pagination)
+         *
+         *     ### 검색 모드
+         *     - 닉네임 부분 매칭: 검색어가 닉네임의 앞, 중간, 끝 어디에 있어도 검색됨
+         *       * 예: "모래" 검색 시 → "모래", "모래사장", "나모래다", "예쁜모래" 모두 검색
+         *     - 정렬: 관련도 순
+         *       * 1순위: 완전 일치 (닉네임 = 검색어)
+         *       * 2순위: 시작 매칭 (닉네임이 검색어로 시작)
+         *       * 3순위: 부분 매칭 (그 외)
+         *       * 같은 순위 내에서는 닉네임 가나다순 정렬
+         *     - 페이지 크기: 30개 고정
+         *     - 제외 대상: 탈퇴한 유저는 검색 결과에서 제외됨
+         *
+         *     ### Request Parameters
+         *     - keyword (필수): 검색 키워드 (닉네임, 1~255자)
+         *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
+         *
+         *     ### Response
+         *     - pendingRequests: 나한테 친구 요청 보낸 사람들 중 검색어와 일치하는 사람들
+         *       * 첫 페이지 (cursor=null): 요청 보낸 사람들 포함 (탈퇴한 유저 제외)
+         *       * 이후 페이지 (cursor 있음): 빈 배열 반환
+         *       * 프론트엔드에서는 첫 페이지에서 받은 값을 계속 유지하면 됩니다.
+         *     - searchResults: 검색 결과 리스트 (항상 정확히 30개, 본인 포함 가능)
+         *       * 제외 대상: 받은 친구 요청 유저 (pendingRequests에 표시), 탈퇴한 유저
+         *       * 본인이 검색되면 relationshipStatus는 SELF로 표시됨
+         *       * 중복 없음: 받은 요청 유저는 pendingRequests에만 표시되고 searchResults에는 포함 안 됨
+         *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
+         *     - hasNext: 다음 페이지 존재 여부
+         *
+         *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
+         *     1. 첫 페이지: GET /api/v1/friends/search?keyword=모래
+         *        → pendingRequests: [친구 요청 보낸 사람들], searchResults: [검색 결과 30개]
+         *     2. 다음 페이지: GET /api/v1/friends/search?keyword=모래&cursor=모래가나
+         *        → pendingRequests: [], searchResults: [다음 30개]
+         *        (response의 nextCursor 값을 cursor 파라미터로 전달)
+         *     3. hasNext=false가 될 때까지 반복
+         */
+        get: operations["searchUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 피드 조회 API
+         * @description 친구들의 공유된 DailyReport 목록을 조회합니다. ACCEPTED 상태의 친구만 조회됩니다.
+         */
+        get: operations["getFeeds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed/share/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 공유 상태 조회 API
+         * @description 당일 DailyReport의 공유 상태를 조회합니다.
+         *
+         *     이 API는 상세보기 화면에서 오늘 날짜 답변일 때 공유 버튼 상태를 확인하기 위해 사용됩니다.
+         */
+        get: operations["getShareStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/daily-report": {
         parameters: {
             query?: never;
@@ -1133,6 +1401,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/friends/{friendshipId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 친구 삭제
+         * @description 친구를 삭제합니다.
+         */
+        delete: operations["deleteFriend"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/search/histories/{nickname}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 검색어 개별 삭제
+         * @description 특정 닉네임의 검색 기록을 삭제하고, 삭제 후 남은 최신 검색 기록 5개를 반환합니다.
+         */
+        delete: operations["deleteSearchHistory_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/friends/requests/{friendshipId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 친구 요청 취소
+         * @description 본인이 보낸 친구 요청을 취소합니다.
+         */
+        delete: operations["cancelFriendRequest"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1239,6 +1567,11 @@ export interface components {
              * @example GROWTH
              */
             emotion?: string;
+            /**
+             * @description 피드 공유 상태
+             * @example false
+             */
+            isShared?: boolean;
         };
         /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
         PromptTestDailyReportRequest: {
@@ -1339,6 +1672,31 @@ export interface components {
              * @example 100
              */
             balanceAfter?: number;
+        };
+        /** @description 친구 검색 기록 저장 요청 */
+        SaveFriendSearchRequest: {
+            /**
+             * @description 검색된 유저의 닉네임
+             * @example 춤추는사막여우
+             */
+            nickname: string;
+        };
+        /** @description 친구 관계 응답 */
+        FriendshipResponse: {
+            /**
+             * Format: int64
+             * @description 친구 관계 ID
+             * @example 123
+             */
+            friendshipId?: number;
+        };
+        /** @description 친구 관계 생성 요청 */
+        CreateFriendshipRequest: {
+            /**
+             * @description 친구 요청을 받을 유저의 닉네임
+             * @example 춤추는사막여우
+             */
+            receiverNickname: string;
         };
         /** @description 이메일 인증 코드 발송 요청 */
         SendVerificationCodeRequest: {
@@ -1643,34 +2001,23 @@ export interface components {
              */
             agreed?: boolean;
         };
-        /**
-         * @description 최근 검색어 리스트 응답
-         * @example {
-         *       "histories": [
-         *         {"id": 123, "keyword": "영광"},
-         *         {"id": 122, "keyword": "고통"},
-         *         {"id": 121, "keyword": "행복"},
-         *         ...
-         *       ]
-         *     }
-         */
+        /** @description 최근 친구 검색 기록 리스트 응답 */
         SearchHistoryListResponse: {
-            /** @description 검색어 리스트 (최신순 10개) */
+            /** @description 검색 기록 리스트 (최신순, 최대 5개) */
             histories?: components["schemas"]["SearchHistoryResponse"][];
         };
-        /** @description 검색어 항목 */
+        /** @description 최근 검색한 유저 정보 */
         SearchHistoryResponse: {
             /**
-             * Format: int64
-             * @description 검색어 ID
-             * @example 789
+             * @description 닉네임
+             * @example 춤추는사막여우
              */
-            id?: number;
+            nickname?: string;
             /**
-             * @description 검색 키워드
-             * @example 영광
+             * @description 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
              */
-            keyword?: string;
+            profileImageUrl?: string;
         };
         /** @description 월간 리포트 조회 응답 */
         MonthlyReportResponse: {
@@ -1721,6 +2068,172 @@ export interface components {
              * @example 20
              */
             totalRecordDays?: number;
+        };
+        /** @description 친구 목록 응답 */
+        FriendListResponse: {
+            /**
+             * Format: int32
+             * @description 총 친구 수
+             * @example 5
+             */
+            totalCount?: number;
+            /** @description 친구 목록 */
+            friends?: components["schemas"]["FriendResponse"][];
+        };
+        /** @description 친구 프로필 정보 */
+        FriendResponse: {
+            /**
+             * Format: int64
+             * @description 친구 관계 ID
+             * @example 123
+             */
+            friendshipId?: number;
+            /**
+             * @description 닉네임
+             * @example 모래
+             */
+            nickname?: string;
+            /**
+             * @description 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            profileImageUrl?: string;
+            /**
+             * @description 탈퇴 예정 여부 (14일 유예기간 중)
+             * @example false
+             */
+            isWithdrawn?: boolean;
+        };
+        /** @description 유저 검색 결과 응답 */
+        SearchUserListResponse: {
+            /** @description 나한테 친구 요청 보낸 사람들 (최신순) */
+            pendingRequests?: components["schemas"]["SearchUserResponse"][];
+            /** @description 검색 결과 (관련도순) */
+            searchResults?: components["schemas"]["SearchUserResponse"][];
+            /**
+             * @description 다음 페이지 커서 (null이면 마지막 페이지)
+             * @example 모래가나
+             */
+            nextCursor?: string;
+            /**
+             * @description 다음 페이지 존재 여부
+             * @example true
+             */
+            hasNext?: boolean;
+        };
+        /** @description 유저 검색 결과 항목 */
+        SearchUserResponse: {
+            /**
+             * Format: int64
+             * @description 친구 관계 ID (친구 요청 취소/수락/거절/삭제 시 사용, NONE 상태일 땐 null)
+             * @example 123
+             */
+            friendshipId?: number;
+            /**
+             * @description 닉네임
+             * @example 춤추는사막여우
+             */
+            nickname?: string;
+            /**
+             * @description 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            profileImageUrl?: string;
+            /**
+             * @description 친구 관계 상태
+             * @example NONE
+             * @enum {string}
+             */
+            relationshipStatus?: "SELF" | "NONE" | "FRIEND" | "REQUEST_SENT" | "REQUEST_RECEIVED";
+        };
+        /** @description 유저 검색 요청 */
+        SearchUserRequest: {
+            /**
+             * @description 검색 키워드 (닉네임)
+             * @example 모래
+             */
+            keyword: string;
+            /**
+             * @description 다음 페이지 커서 (형식: nickname)
+             * @example 모래가나
+             */
+            cursor?: string;
+        };
+        /** @description 받은 친구 요청 목록 응답 */
+        PendingFriendListResponse: {
+            /**
+             * Format: int32
+             * @description 총 요청 수
+             * @example 3
+             */
+            totalCount?: number;
+            /** @description 친구 요청 목록 (최신순) */
+            requests?: components["schemas"]["PendingFriendResponse"][];
+        };
+        /** @description 친구 요청 정보 */
+        PendingFriendResponse: {
+            /**
+             * Format: int64
+             * @description 친구 관계 ID
+             * @example 123
+             */
+            friendshipId?: number;
+            /**
+             * @description 닉네임
+             * @example 춤추는사막여우
+             */
+            nickname?: string;
+            /**
+             * @description 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            profileImageUrl?: string;
+        };
+        /** @description 피드 목록 응답 */
+        FeedListResponse: {
+            /** @description 피드 목록 */
+            feeds?: components["schemas"]["FeedResponse"][];
+        };
+        /** @description 피드 응답 */
+        FeedResponse: {
+            /**
+             * @description 친구 닉네임
+             * @example 모래
+             */
+            friendNickname?: string;
+            /**
+             * @description 친구 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            friendProfileImageUrl?: string;
+            /**
+             * @description 관심분야 코드
+             * @example EMOTION
+             */
+            interestCode?: string;
+            /**
+             * @description 질문 내용
+             * @example 오늘 가장 기뻤던 순간은?
+             */
+            questionText?: string;
+            /**
+             * @description 답변 내용
+             * @example 집에 갈 때
+             */
+            answer?: string;
+            /**
+             * @description 감정 코드
+             * @example ACHIEVEMENT
+             */
+            emotionCode?: string;
+        };
+        /** @description 피드 공유 상태 응답 */
+        ShareStatusResponse: {
+            /**
+             * @description 오늘의 기록 공유 상태
+             * @example true
+             */
+            isShared?: boolean;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -2386,6 +2899,343 @@ export interface operations {
             };
         };
     };
+    getRecentSearches_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchHistoryListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    saveSearchHistory_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveFriendSearchRequest"];
+            };
+        };
+        responses: {
+            /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (닉네임 누락 또는 길이 초과) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteAllSearchHistories_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getReceivedRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PendingFriendListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sendFriendRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFriendshipRequest"];
+            };
+        };
+        responses: {
+            /** @description 요청 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FriendshipResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: VALIDATION_FAILED - 닉네임 누락 또는 길이 초과
+             *     - ErrorCode: FRIENDSHIP_CANNOT_SEND_TO_SELF - 본인에게 요청 불가
+             *     - ErrorCode: FRIENDSHIP_ALREADY_EXISTS - 이미 친구이거나 요청 존재
+             *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과 (본인)
+             *     - ErrorCode: FRIEND_RECEIVER_LIMIT_EXCEEDED - 친구 수 20명 초과 (상대방)
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: USER_NOT_FOUND - 수신자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rejectFriendRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                friendshipId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 거절 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    acceptFriendRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                friendshipId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 수락 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /**
+             * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
+             *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    stopSharing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 공유 중단 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    startSharing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 공유 시작 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     sendVerificationCode: {
         parameters: {
             query?: never;
@@ -2982,6 +3832,7 @@ export interface operations {
              *     - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입
              *     - ErrorCode: IMAGE_METADATA_INVALID - 파일 메타데이터를 읽을 수 없음
              *     - ErrorCode: NICKNAME_CHANGE_LIMIT_EXCEEDED - 닉네임 변경 제한 횟수 초과
+             *     - ErrorCode: NICKNAME_ALREADY_TAKEN - 이미 사용 중인 닉네임
              */
             400: {
                 headers: {
@@ -3422,6 +4273,130 @@ export interface operations {
             };
         };
     };
+    getFriends: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FriendListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    searchUsers: {
+        parameters: {
+            query: {
+                request: components["schemas"]["SearchUserRequest"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 검색 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchUserListResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - 검색 키워드 누락 또는 길이 초과 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 피드 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getShareStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShareStatusResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getDailyReport: {
         parameters: {
             query?: never;
@@ -3738,6 +4713,135 @@ export interface operations {
                 content?: never;
             };
             /** @description - ErrorCode: SEARCH_HISTORY_NOT_FOUND - 검색어를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteFriend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                friendshipId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 관계 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인의 친구가 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 친구 관계를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteSearchHistory_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                nickname: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 삭제 성공 및 남은 검색 기록 반환 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SearchHistoryListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cancelFriendRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                friendshipId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 취소 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인이 보낸 요청이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;
