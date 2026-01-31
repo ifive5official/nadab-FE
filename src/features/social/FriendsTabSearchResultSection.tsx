@@ -12,10 +12,12 @@ import type { ModalConfig } from "@/routes/_authenticated/social/search";
 import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
 import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
+import useErrorStore from "@/store/errorStore";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
 type Props = {
+  hasMaxFriends: boolean;
   setModalConfig: (config: ModalConfig | null) => void;
   searchResults: InfiniteData<AnswersRes> | undefined;
   isFetching: boolean;
@@ -35,6 +37,7 @@ type RequestBtnConfig = {
 };
 
 export default function FriendsTabSearchResultSection({
+  hasMaxFriends,
   setModalConfig,
   searchResults,
   isFetching,
@@ -217,14 +220,23 @@ export default function FriendsTabSearchResultSection({
                               거절
                             </InlineButton>,
                             <InlineButton
+                              variant={hasMaxFriends ? "disabled" : "primary"}
                               key={2}
                               onClick={() => {
-                                acceptFriendRequestMutation.mutate({
-                                  friendshipId: request.friendshipId!,
-                                });
-                                setAcceptingIds((prev) =>
-                                  new Set(prev).add(request.friendshipId),
-                                );
+                                if (hasMaxFriends) {
+                                  useErrorStore
+                                    .getState()
+                                    .showError(
+                                      `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                    );
+                                } else {
+                                  acceptFriendRequestMutation.mutate({
+                                    friendshipId: request.friendshipId!,
+                                  });
+                                  setAcceptingIds((prev) =>
+                                    new Set(prev).add(request.friendshipId),
+                                  );
+                                }
                               }}
                               isLoading={acceptingIds.has(request.friendshipId)}
                             >
@@ -264,6 +276,8 @@ export default function FriendsTabSearchResultSection({
                           REQUESTBTN_CONFIG[result.relationshipStatus!];
                         const targetId = result.friendshipId || result.nickname;
                         const isBtnLoading = activeIds.has(targetId);
+                        const isBtnDisabled =
+                          result.relationshipStatus === "NONE" && hasMaxFriends;
                         return (
                           <FriendItem
                             key={result.nickname}
@@ -273,13 +287,24 @@ export default function FriendsTabSearchResultSection({
                               btnConfig && (
                                 <InlineButton
                                   key="action"
-                                  variant="secondary"
+                                  variant={
+                                    isBtnDisabled ? "disabled" : "secondary"
+                                  }
                                   isLoading={isBtnLoading}
                                   onClick={() => {
-                                    btnConfig.onClick?.({
-                                      nickname: result.nickname!,
-                                      id: result.friendshipId ?? 0,
-                                    });
+                                    if (hasMaxFriends) {
+                                      useErrorStore
+                                        .getState()
+                                        .showError(
+                                          `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                        );
+                                    }
+                                    {
+                                      btnConfig.onClick?.({
+                                        nickname: result.nickname!,
+                                        id: result.friendshipId ?? 0,
+                                      });
+                                    }
                                   }}
                                 >
                                   {btnConfig.label}

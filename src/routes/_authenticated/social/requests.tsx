@@ -7,18 +7,27 @@ import { useState } from "react";
 import { WarningFilledIcon } from "@/components/Icons";
 import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
-import { friendRequestsOptions } from "@/features/social/queries";
+import {
+  friendRequestsOptions,
+  friendsOptions,
+} from "@/features/social/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useAcceptFriendRequestMutation } from "@/features/social/hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "@/features/social/hooks/useRejectFriendRequestMutation";
+import useErrorStore from "@/store/errorStore";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
-  loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(friendRequestsOptions),
+  loader: async ({ context: { queryClient } }) => [
+    await Promise.all([
+      queryClient.ensureQueryData(friendsOptions),
+      queryClient.ensureQueryData(friendRequestsOptions),
+    ]),
+  ],
 });
 
 function RouteComponent() {
+  const { data: friends } = useQuery(friendsOptions);
   const { data: friendRequests } = useQuery(friendRequestsOptions);
   // 있을 때 모달 띄움
   const [selectedRequest, setSelectedRequest] = useState<{
@@ -50,6 +59,8 @@ function RouteComponent() {
   const [acceptingIds, setAcceptingIds] = useState(new Set());
   const [rejectingIds, setRejectingIds] = useState(new Set());
 
+  const hasMaxFriends = (friends?.totalCount ?? 0) >= 20;
+
   return (
     <>
       <SubHeader>친구 요청</SubHeader>
@@ -78,13 +89,22 @@ function RouteComponent() {
                     </InlineButton>,
                     <InlineButton
                       key={2}
+                      variant={hasMaxFriends ? "disabled" : "primary"}
                       onClick={() => {
-                        acceptFriendRequestMutation.mutate({
-                          friendshipId: request.friendshipId!,
-                        });
-                        setAcceptingIds((prev) =>
-                          new Set(prev).add(request.friendshipId),
-                        );
+                        if (hasMaxFriends) {
+                          useErrorStore
+                            .getState()
+                            .showError(
+                              `친구는 최대 20명까지\n추가할 수 있어요.`,
+                            );
+                        } else {
+                          acceptFriendRequestMutation.mutate({
+                            friendshipId: request.friendshipId!,
+                          });
+                          setAcceptingIds((prev) =>
+                            new Set(prev).add(request.friendshipId),
+                          );
+                        }
                       }}
                       isLoading={acceptingIds.has(request.friendshipId)}
                     >

@@ -4,7 +4,10 @@ import SearchBar from "@/components/SearchBar";
 import Modal from "@/components/Modal";
 import type { Button } from "@/components/Modal";
 import { useEffect, useState } from "react";
-import { friendSearchHistoryOptions } from "@/features/social/queries";
+import {
+  friendSearchHistoryOptions,
+  friendsOptions,
+} from "@/features/social/queries";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "use-debounce";
@@ -28,12 +31,16 @@ export type ModalConfig = {
 
 export const Route = createFileRoute("/_authenticated/social/search")({
   component: RouteComponent,
-  loader: ({ context: { queryClient } }) => {
-    queryClient.ensureQueryData(friendSearchHistoryOptions);
+  loader: async ({ context: { queryClient } }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(friendsOptions),
+      queryClient.ensureQueryData(friendSearchHistoryOptions),
+    ]);
   },
 });
 
 function RouteComponent() {
+  const { data: friends } = useSuspenseQuery(friendsOptions);
   const { data: searchHistories } = useSuspenseQuery(
     friendSearchHistoryOptions,
   );
@@ -105,6 +112,7 @@ function RouteComponent() {
 
       {isSearching ? (
         <FriendsTabSearchResultSection
+          hasMaxFriends={(friends?.totalCount ?? 0) >= 20}
           setModalConfig={setModalConfig}
           searchResults={searchResults}
           isFetching={isFetching}

@@ -4,7 +4,7 @@ import { LoadingIcon } from "./Icons";
 
 type Props = {
   size?: "m" | "s";
-  variant?: "primary" | "secondary" | "tertiary";
+  variant?: "primary" | "secondary" | "tertiary" | "disabled";
   children: React.ReactNode;
   className?: string;
   isLoading?: boolean;
@@ -32,7 +32,8 @@ export default function InlineButton({
         variant === "tertiary" &&
           !disabled &&
           "bg-button-tertiary-bg-default text-button-tertiary-text-default border border-button-tertiary-border-default",
-        disabled && "bg-button-disabled-bg text-button-disabled-text",
+        (disabled || variant === "disabled") &&
+          "bg-button-disabled-bg text-button-disabled-text",
         size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
         size === "s" && "text-button-3 px-padding-x-xs py-1.5",
         className,
