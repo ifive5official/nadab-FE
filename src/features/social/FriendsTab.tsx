@@ -11,6 +11,8 @@ import InlineButton from "@/components/InlineButton";
 import { useQueries } from "@tanstack/react-query";
 import { friendRequestsOptions, friendsOptions } from "./queries";
 import ProfileImg from "@/components/ProfileImg";
+import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
+import Toast from "@/components/Toast";
 
 export default function FriendsTab() {
   const [friendsQuery, requestsQuery] = useQueries({
@@ -20,7 +22,22 @@ export default function FriendsTab() {
   const friendsCount = friends?.totalCount ?? 0;
   const friendRequests = requestsQuery.data;
   const requestsCount = friendRequests?.totalCount ?? 0;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const deleteFriendMutation = useDeleteFriendMutation({
+    onSuccess: () => setIsToastOpen(true),
+  });
+
+  // 있을 때 모달 띄움
+  const [selectedRequest, setSelectedRequest] = useState<{
+    nickname: string;
+    id: number;
+  } | null>(null);
+  const [isToastOpen, setIsToastOpen] = useState(false);
+
+  // Todo: 임시 땜빵 처리
+  if (friendsQuery.isLoading || requestsQuery.isLoading) {
+    return null;
+  }
 
   return (
     <>
@@ -86,7 +103,13 @@ export default function FriendsTab() {
                       <InlineButton
                         key={1}
                         variant="secondary"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() =>
+                          setSelectedRequest({
+                            nickname: friend.nickname!,
+                            id: friend.friendshipId!,
+                          })
+                        }
+                        isLoading={deleteFriendMutation.isPending}
                       >
                         삭제
                       </InlineButton>,
@@ -111,23 +134,33 @@ export default function FriendsTab() {
       </>
 
       <Modal
-        title={`알케르닉스님을 친구에서 삭제하겠어요?`}
+        title={`${selectedRequest?.nickname}님을 친구에서 삭제하겠어요?`}
         icon={WarningFilledIcon}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={!!selectedRequest}
+        onClose={() => setSelectedRequest(null)}
         buttons={[
           {
             label: "취소",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => setSelectedRequest(null),
           },
           {
             label: "확인",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => {
+              setSelectedRequest(null);
+              deleteFriendMutation.mutate({
+                friendshipId: selectedRequest?.id ?? 0,
+              });
+            },
           },
         ]}
       >
         친구 삭제 이후에 복구가 불가능해요.
       </Modal>
+      <Toast
+        isOpen={isToastOpen}
+        onClose={() => setIsToastOpen(false)}
+        message="친구가 삭제되었어요."
+      />
     </>
   );
 }

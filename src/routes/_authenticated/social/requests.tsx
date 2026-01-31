@@ -7,36 +7,87 @@ import { useState } from "react";
 import { WarningFilledIcon } from "@/components/Icons";
 import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
+import { friendRequestsOptions } from "@/features/social/queries";
+import { useQuery } from "@tanstack/react-query";
+import { useAcceptFriendRequestMutation } from "@/features/social/hooks/useAcceptFriendMutation";
+import { useRejectFriendRequestMutation } from "@/features/social/hooks/useRejectFriendRequestMutation";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(friendRequestsOptions),
 });
 
 function RouteComponent() {
-  const friendRequests = Array(2).fill(0); // 임시
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: friendRequests } = useQuery(friendRequestsOptions);
+  // 있을 때 모달 띄움
+  const [selectedRequest, setSelectedRequest] = useState<{
+    nickname: string;
+    id: number;
+  } | null>(null);
+
+  const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
+    onSettled: (_data, _error, variables) => {
+      setAcceptingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
+    },
+  });
+
+  const rejectFriendRequestMutation = useRejectFriendRequestMutation({
+    onSettled: (_data, _error, variables) => {
+      setRejectingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.friendshipId);
+        return next;
+      });
+    },
+  });
+
+  // 대기 중 리스트
+  const [acceptingIds, setAcceptingIds] = useState(new Set());
+  const [rejectingIds, setRejectingIds] = useState(new Set());
 
   return (
     <>
       <SubHeader>친구 요청</SubHeader>
       <Container>
-        {friendRequests.length > 0 ? (
+        {(friendRequests?.totalCount ?? 0) > 0 ? (
           <ul className="pt-padding-y-m flex flex-col gap-margin-y-l">
-            {friendRequests.map((_, i) => {
+            {friendRequests?.requests?.map((request) => {
               return (
                 <FriendItem
-                  key={i}
-                  name="알케르닉스"
-                  profileImgUrl=""
+                  key={request.friendshipId}
+                  name={request.nickname!}
+                  profileImgUrl={request.profileImageUrl!}
                   buttons={[
                     <InlineButton
                       key={1}
                       variant="secondary"
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={() =>
+                        setSelectedRequest({
+                          id: request.friendshipId!,
+                          nickname: request.nickname!,
+                        })
+                      }
+                      isLoading={rejectingIds.has(request.friendshipId)}
                     >
                       거절
                     </InlineButton>,
-                    <InlineButton key={2} onClick={() => {}}>
+                    <InlineButton
+                      key={2}
+                      onClick={() => {
+                        acceptFriendRequestMutation.mutate({
+                          friendshipId: request.friendshipId!,
+                        });
+                        setAcceptingIds((prev) =>
+                          new Set(prev).add(request.friendshipId),
+                        );
+                      }}
+                      isLoading={acceptingIds.has(request.friendshipId)}
+                    >
                       수락
                     </InlineButton>,
                   ]}
@@ -53,18 +104,23 @@ function RouteComponent() {
         )}
       </Container>
       <Modal
-        title={`알케르닉스님의 요청을 거절할까요?`}
+        title={`${selectedRequest?.nickname}님의 요청을 거절할까요?`}
         icon={WarningFilledIcon}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={!!selectedRequest}
+        onClose={() => setSelectedRequest(null)}
         buttons={[
           {
             label: "취소",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => setSelectedRequest(null),
           },
           {
             label: "확인",
-            onClick: () => setIsModalOpen(false),
+            onClick: () => {
+              setSelectedRequest(null);
+              rejectFriendRequestMutation.mutate({
+                friendshipId: selectedRequest?.id ?? 0,
+              });
+            },
           },
         ]}
       >

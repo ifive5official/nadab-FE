@@ -50,7 +50,7 @@ export const friendsOptions = queryOptions({
 type FriendRequestsRes = components["schemas"]["PendingFriendListResponse"];
 
 export const friendRequestsOptions = queryOptions({
-  queryKey: ["currentUser", "friendRequests"],
+  queryKey: ["currentUser", "friends"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<FriendRequestsRes>>(
       "/api/v1/friends/requests",
