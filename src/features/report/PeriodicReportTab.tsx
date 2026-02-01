@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { crystalsOptions } from "../user/quries";
-import { useDeleteWeeklyReportMutation } from "./hooks/useDeleteWeeklyReportMutation";
+import {
+  useDeleteMonthlyReportMutation,
+  useDeleteWeeklyReportMutation,
+} from "./hooks/useDeleteWeeklyReportMutation";
 import useReport from "./hooks/useReport";
 import PeriodicReportCard from "./PeriodicReportCard";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
@@ -27,6 +30,7 @@ export default function PeriodicReportTab() {
   });
 
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
+  const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
   return (
     <>
       <button onClick={() => deleteWeeklyReportMutation.mutate()}>
@@ -42,6 +46,9 @@ export default function PeriodicReportTab() {
           isGenerating={isWeeklyReportGenerating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
+        <button onClick={() => deleteMonthlyReportMutation.mutate()}>
+          월간 레포트 삭제(테스트용)
+        </button>
         <PeriodicReportCard
           reportType="monthly"
           prevReport={prevMonthlyReport}
