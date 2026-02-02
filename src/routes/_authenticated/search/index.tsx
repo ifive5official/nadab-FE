@@ -17,6 +17,7 @@ import { searchHistoryOptions } from "@/features/search/queries";
 import { useDeleteHistoryMutation } from "@/features/search/useDeleteHistoryMutation";
 import { useDeleteHistoriesMutation } from "@/features/search/useDeleteHistoriesMutation";
 import { useAddHistoryMutation } from "@/features/search/useAddHistoryMutation";
+import NoResult from "@/components/NoResult";
 
 type AnswersReq = components["schemas"]["SearchAnswerEntryRequest"];
 type AnswersRes = components["schemas"]["SearchAnswerEntryResponse"];
@@ -76,6 +77,10 @@ function RouteComponent() {
     enabled: isSearching,
   });
 
+  const hasResult = searchResults?.pages.some(
+    (page) => (page.items?.length ?? 0) > 0,
+  );
+
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -109,11 +114,18 @@ function RouteComponent() {
       <Container>
         {isSearching ? (
           // 검색어가 있을 때
-          <div className="my-margin-y-l">
+          <div className="my-margin-y-l h-full flex flex-col">
             {isFetching ? (
               <SearchResultSkeleton />
             ) : (
               <>
+                {!hasResult && (
+                  <NoResult
+                    className="my-auto pb-header-height"
+                    title={`검색어를 포함하는\n기록을 찾을 수 없어요.`}
+                    description="다른 검색어로 다시 찾아보세요."
+                  />
+                )}
                 {searchResults?.pages.map((page, i) => {
                   return (
                     <ul key={i} className="list-none flex flex-col gap-gap-y-l">

@@ -6,7 +6,7 @@ import { UserSchema } from "@/features/user/userSchema";
 
 export function useInputValidation(
   field: keyof z.input<typeof UserSchema>,
-  initialValue?: string
+  initialValue?: string,
 ) {
   const [value, setValue] = useState(initialValue ?? "");
   const [error, setError] = useState("");
@@ -41,7 +41,7 @@ export function useConfirmPasswordValidation(password: string) {
 
   const validate = useDebouncedCallback(() => {
     if (value !== password) {
-      setError("비밀번호가 일치하지 않습니다.");
+      setError("같은 비밀번호를 재입력해주세요.");
     } else {
       setError("");
     }
