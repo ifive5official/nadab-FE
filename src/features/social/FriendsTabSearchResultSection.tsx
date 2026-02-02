@@ -13,6 +13,7 @@ import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
 import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
 import useErrorStore from "@/store/errorStore";
+import Toast from "@/components/Toast";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -87,6 +88,7 @@ export default function FriendsTabSearchResultSection({
     },
   });
   const friendRequestMutation = useFriendRequestMutation({
+    onSuccess: () => setToastMessage("친구 신청 알림이 전송되었어요."),
     onSettled: (_data, _error, variables) => {
       setActiveIds((prev) => {
         const next = new Set(prev);
@@ -96,6 +98,7 @@ export default function FriendsTabSearchResultSection({
     },
   });
   const deleteFriendRequestMutation = useDeleteFriendRequestMutation({
+    onSuccess: () => setToastMessage("친구 신청이 취소되었어요."),
     onSettled: (_data, _error, variables) => {
       setActiveIds((prev) => {
         const next = new Set(prev);
@@ -178,138 +181,77 @@ export default function FriendsTabSearchResultSection({
       },
     };
 
+  const [toastMessage, setToastMessage] = useState("");
+
   return (
-    <section className="flex-1 flex flex-col">
-      {/* 검색 결과가 아무것도 없다면 */}
-      {!hasResult && !hasPendingRequests && !isFetching && (
-        <NoResult
-          title={`검색어를 포함하는\n닉네임을 찾을 수 없어요.`}
-          description="다른 검색어로 다시 찾아보세요."
-          className="mx-auto my-auto pb-header-height"
-        />
-      )}
-      {/* 나에게 친구 요청한 유저 중 검색어와 일치하는 유저 */}
-      {hasPendingRequests && (
-        <div className="w-full border-b border-b-interactive-border-default px-padding-x-m py-padding-y-s">
-          <span className="text-caption-m">친구 요청</span>
-          <ul className="w-full pt-padding-y-m flex flex-col gap-margin-y-xl">
-            <>
-              {searchResults?.pages.map((page, i) => {
-                return (
-                  <Fragment key={i}>
-                    {page?.pendingRequests?.map((request) => {
-                      return (
-                        <FriendItem
-                          key={request.friendshipId}
-                          name={request.nickname!}
-                          profileImgUrl={request.profileImageUrl!}
-                          buttons={[
-                            <InlineButton
-                              key={1}
-                              variant="secondary"
-                              onClick={() => {
-                                rejectFriendRequestMutation.mutate({
-                                  friendshipId: request.friendshipId!,
-                                });
-                                setRejectingIds((prev) =>
-                                  new Set(prev).add(request.friendshipId),
-                                );
-                              }}
-                              isLoading={rejectingIds.has(request.friendshipId)}
-                            >
-                              거절
-                            </InlineButton>,
-                            <InlineButton
-                              variant={hasMaxFriends ? "disabled" : "primary"}
-                              key={2}
-                              onClick={() => {
-                                if (hasMaxFriends) {
-                                  useErrorStore
-                                    .getState()
-                                    .showError(
-                                      `친구는 최대 20명까지\n추가할 수 있어요.`,
-                                    );
-                                } else {
-                                  acceptFriendRequestMutation.mutate({
-                                    friendshipId: request.friendshipId!,
-                                  });
-                                  setAcceptingIds((prev) =>
-                                    new Set(prev).add(request.friendshipId),
-                                  );
-                                }
-                              }}
-                              isLoading={acceptingIds.has(request.friendshipId)}
-                            >
-                              수락
-                            </InlineButton>,
-                          ]}
-                        />
-                      );
-                    })}
-                  </Fragment>
-                );
-              })}
-            </>
-          </ul>
-        </div>
-      )}
-      {/* 전체 사용자 검색결과 */}
-      {(hasResult || isLoading) && (
-        <div className="w-full px-padding-x-m py-padding-y-s">
-          <span className="text-caption-m">사용자</span>
-          <ul className="w-full py-padding-y-m flex flex-col gap-margin-y-xl">
-            {isLoading ? (
-              <>
-                {Array(7)
-                  .fill(0)
-                  .map((_, i) => (
-                    <FriendItemSkeleton key={i} />
-                  ))}
-              </>
-            ) : (
+    <>
+      <section className="flex-1 flex flex-col">
+        {/* 검색 결과가 아무것도 없다면 */}
+        {!hasResult && !hasPendingRequests && !isFetching && (
+          <NoResult
+            title={`검색어를 포함하는\n닉네임을 찾을 수 없어요.`}
+            description="다른 검색어로 다시 찾아보세요."
+            className="mx-auto my-auto pb-header-height"
+          />
+        )}
+        {/* 나에게 친구 요청한 유저 중 검색어와 일치하는 유저 */}
+        {hasPendingRequests && (
+          <div className="w-full border-b border-b-interactive-border-default px-padding-x-m py-padding-y-s">
+            <span className="text-caption-m">친구 요청</span>
+            <ul className="w-full pt-padding-y-m flex flex-col gap-margin-y-xl">
               <>
                 {searchResults?.pages.map((page, i) => {
                   return (
                     <Fragment key={i}>
-                      {page?.searchResults?.map((result) => {
-                        const btnConfig =
-                          REQUESTBTN_CONFIG[result.relationshipStatus!];
-                        const targetId = result.friendshipId || result.nickname;
-                        const isBtnLoading = activeIds.has(targetId);
-                        const isBtnDisabled =
-                          result.relationshipStatus === "NONE" && hasMaxFriends;
+                      {page?.pendingRequests?.map((request) => {
                         return (
                           <FriendItem
-                            key={result.nickname}
-                            name={result.nickname!}
-                            profileImgUrl={result.profileImageUrl!}
+                            key={request.friendshipId}
+                            name={request.nickname!}
+                            profileImgUrl={request.profileImageUrl!}
                             buttons={[
-                              btnConfig && (
-                                <InlineButton
-                                  key="action"
-                                  variant={
-                                    isBtnDisabled ? "disabled" : "secondary"
+                              <InlineButton
+                                key={1}
+                                variant="secondary"
+                                onClick={() => {
+                                  rejectFriendRequestMutation.mutate({
+                                    friendshipId: request.friendshipId!,
+                                  });
+                                  setRejectingIds((prev) =>
+                                    new Set(prev).add(request.friendshipId),
+                                  );
+                                }}
+                                isLoading={rejectingIds.has(
+                                  request.friendshipId,
+                                )}
+                              >
+                                거절
+                              </InlineButton>,
+                              <InlineButton
+                                variant={hasMaxFriends ? "disabled" : "primary"}
+                                key={2}
+                                onClick={() => {
+                                  if (hasMaxFriends) {
+                                    useErrorStore
+                                      .getState()
+                                      .showError(
+                                        `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                      );
+                                  } else {
+                                    acceptFriendRequestMutation.mutate({
+                                      friendshipId: request.friendshipId!,
+                                    });
+                                    setAcceptingIds((prev) =>
+                                      new Set(prev).add(request.friendshipId),
+                                    );
                                   }
-                                  isLoading={isBtnLoading}
-                                  onClick={() => {
-                                    if (hasMaxFriends) {
-                                      useErrorStore
-                                        .getState()
-                                        .showError(
-                                          `친구는 최대 20명까지\n추가할 수 있어요.`,
-                                        );
-                                    }
-                                    {
-                                      btnConfig.onClick?.({
-                                        nickname: result.nickname!,
-                                        id: result.friendshipId ?? 0,
-                                      });
-                                    }
-                                  }}
-                                >
-                                  {btnConfig.label}
-                                </InlineButton>
-                              ),
+                                }}
+                                isLoading={acceptingIds.has(
+                                  request.friendshipId,
+                                )}
+                              >
+                                수락
+                              </InlineButton>,
                             ]}
                           />
                         );
@@ -318,10 +260,86 @@ export default function FriendsTabSearchResultSection({
                   );
                 })}
               </>
-            )}
-          </ul>
-        </div>
-      )}
-    </section>
+            </ul>
+          </div>
+        )}
+        {/* 전체 사용자 검색결과 */}
+        {(hasResult || isLoading) && (
+          <div className="w-full px-padding-x-m py-padding-y-s">
+            <span className="text-caption-m">사용자</span>
+            <ul className="w-full py-padding-y-m flex flex-col gap-margin-y-xl">
+              {isLoading ? (
+                <>
+                  {Array(7)
+                    .fill(0)
+                    .map((_, i) => (
+                      <FriendItemSkeleton key={i} />
+                    ))}
+                </>
+              ) : (
+                <>
+                  {searchResults?.pages.map((page, i) => {
+                    return (
+                      <Fragment key={i}>
+                        {page?.searchResults?.map((result) => {
+                          const btnConfig =
+                            REQUESTBTN_CONFIG[result.relationshipStatus!];
+                          const targetId =
+                            result.friendshipId || result.nickname;
+                          const isBtnLoading = activeIds.has(targetId);
+                          const isBtnDisabled =
+                            result.relationshipStatus === "NONE" &&
+                            hasMaxFriends;
+                          return (
+                            <FriendItem
+                              key={result.nickname}
+                              name={result.nickname!}
+                              profileImgUrl={result.profileImageUrl!}
+                              buttons={[
+                                btnConfig && (
+                                  <InlineButton
+                                    key="action"
+                                    variant={
+                                      isBtnDisabled ? "disabled" : "secondary"
+                                    }
+                                    isLoading={isBtnLoading}
+                                    onClick={() => {
+                                      if (hasMaxFriends) {
+                                        useErrorStore
+                                          .getState()
+                                          .showError(
+                                            `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                          );
+                                      }
+                                      {
+                                        btnConfig.onClick?.({
+                                          nickname: result.nickname!,
+                                          id: result.friendshipId ?? 0,
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    {btnConfig.label}
+                                  </InlineButton>
+                                ),
+                              ]}
+                            />
+                          );
+                        })}
+                      </Fragment>
+                    );
+                  })}
+                </>
+              )}
+            </ul>
+          </div>
+        )}
+      </section>
+      <Toast
+        isOpen={!!toastMessage}
+        onClose={() => setToastMessage("")}
+        message={toastMessage}
+      />
+    </>
   );
 }

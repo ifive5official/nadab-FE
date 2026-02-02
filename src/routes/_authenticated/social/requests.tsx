@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAcceptFriendRequestMutation } from "@/features/social/hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "@/features/social/hooks/useRejectFriendRequestMutation";
 import useErrorStore from "@/store/errorStore";
+import Toast from "@/components/Toast";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
@@ -34,8 +35,10 @@ function RouteComponent() {
     nickname: string;
     id: number;
   } | null>(null);
+  const [toastMessage, setToastMessage] = useState("");
 
   const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
+    onSuccess: () => setToastMessage("친구 요청이 수락되어 친구가 되었어요."),
     onSettled: (_data, _error, variables) => {
       setAcceptingIds((prev) => {
         const next = new Set(prev);
@@ -46,6 +49,7 @@ function RouteComponent() {
   });
 
   const rejectFriendRequestMutation = useRejectFriendRequestMutation({
+    onSuccess: () => setToastMessage("친구 요청이 거절되었어요."),
     onSettled: (_data, _error, variables) => {
       setRejectingIds((prev) => {
         const next = new Set(prev);
@@ -146,6 +150,11 @@ function RouteComponent() {
       >
         친구 요청 거절 이후에 복구가 불가능해요.
       </Modal>
+      <Toast
+        isOpen={!!toastMessage}
+        onClose={() => setToastMessage("")}
+        message={toastMessage}
+      />
     </>
   );
 }

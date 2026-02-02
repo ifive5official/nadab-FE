@@ -7,6 +7,7 @@ import type { ApiErrResponse } from "@/generated/api";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
+  onSuccess?: () => void;
   onSettled?: (
     data: any,
     error: any,
@@ -14,7 +15,10 @@ type Props = {
   ) => void;
 };
 
-export function useRejectFriendRequestMutation({ onSettled }: Props) {
+export function useRejectFriendRequestMutation({
+  onSuccess,
+  onSettled,
+}: Props) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -28,9 +32,10 @@ export function useRejectFriendRequestMutation({ onSettled }: Props) {
       return res.data;
     },
     onSuccess: async () => {
-      return await queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["currentUser", "friends"],
       });
+      onSuccess?.();
     },
     onSettled: (data, error, variables) => {
       onSettled?.(data, error, variables);
