@@ -44,7 +44,10 @@ export default function FriendsTab() {
       <Link to="/social/search">
         <div className="pointer-events-none mx-padding-x-m mb-margin-y-l shrink-0">
           {/* @ts-ignore */}
-          <SearchBar className="h-11" />
+          <SearchBar
+            className="h-11"
+            placeholder="닉네임을 검색하여 친구를 추가해보세요."
+          />
         </div>
       </Link>
 

@@ -99,6 +99,9 @@ function RouteComponent() {
             emotion={searchEmotion}
             onDeleteEmotion={() => setSearchEmotion(undefined)}
             onDeleteKeyword={() => setSearchTerm("")}
+            placeholder={
+              searchEmotion ? "" : "검색을 통해 기록을 되돌아보세요."
+            }
             className="mr-margin-x-l h-10"
           />
         </form>
@@ -118,9 +121,11 @@ function RouteComponent() {
                         return (
                           <SearchResultItem
                             onClick={() => {
-                              addHistoryMutation.mutate({
-                                keyword: debouncedSearchTerm,
-                              });
+                              if (debouncedSearchTerm) {
+                                addHistoryMutation.mutate({
+                                  keyword: debouncedSearchTerm,
+                                });
+                              }
                               navigate({
                                 to: "/detail/$date",
                                 params: { date: item.answerDate! },

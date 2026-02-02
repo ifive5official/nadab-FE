@@ -124,7 +124,10 @@ function RouteComponent() {
       <Link to="/search">
         <div className="pointer-events-none mt-margin-y-m mb-margin-y-s">
           {/* @ts-ignore */}
-          <SearchBar className="h-11" />
+          <SearchBar
+            className="h-11"
+            placeholder="검색을 통해 기록을 되돌아보세요."
+          />
         </div>
       </Link>
       <div className="flex-1 flex flex-col justify-around gap-gap-y-l">

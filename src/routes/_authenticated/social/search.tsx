@@ -105,6 +105,7 @@ function RouteComponent() {
             value={searchTerm}
             onDeleteKeyword={() => setSearchTerm("")}
             className="mr-margin-x-l h-10"
+            placeholder="닉네임을 검색하여 친구를 추가해보세요."
           />
         </form>
       </SubHeader>
