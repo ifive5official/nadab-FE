@@ -3,7 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import emotions from "@/constants/emotions";
 import { EmotionBadge } from "@/components/Badges";
 import { useState, useMemo, useRef } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  NoResultIcon,
+} from "@/components/Icons";
 import clsx from "clsx";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
@@ -124,7 +128,10 @@ function RouteComponent() {
       <Link to="/search">
         <div className="pointer-events-none mt-margin-y-m mb-margin-y-s">
           {/* @ts-ignore */}
-          <SearchBar className="h-11" />
+          <SearchBar
+            className="h-11"
+            placeholder="검색을 통해 기록을 되돌아보세요."
+          />
         </div>
       </Link>
       <div className="flex-1 flex flex-col justify-around gap-gap-y-l">
@@ -275,64 +282,80 @@ function RouteComponent() {
             <span className="text-label-l py-padding-y-xxs">
               최근 기록 미리보기
             </span>
-            <Swiper
-              className="mt-gap-y-m mb-gap-y-l"
-              modules={[Pagination]}
-              pagination={{ enabled: false }}
-              spaceBetween={8}
-              slidesPerView={2} // 한 화면에 보여질 개수
-              slidesPerGroup={2} // 한 번에 넘어가는 개수>
-              onSwiper={(swiper) => {
-                // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
-                setTimeout(() => {
-                  // @ts-ignore
-                  swiper.params.pagination.el = paginationRef.current;
+            {(recentData?.items?.length ?? 0 > 0) ? (
+              <>
+                <Swiper
+                  className="mt-gap-y-m mb-gap-y-l"
+                  modules={[Pagination]}
+                  pagination={{ enabled: false }}
+                  spaceBetween={8}
+                  slidesPerView={2} // 한 화면에 보여질 개수
+                  slidesPerGroup={2} // 한 번에 넘어가는 개수>
+                  onSwiper={(swiper) => {
+                    // 순서 이슈로 ref가 주입이 안 되어서 임시 땜빵
+                    setTimeout(() => {
+                      // @ts-ignore
+                      swiper.params.pagination.el = paginationRef.current;
 
-                  swiper.pagination.init();
-                  swiper.pagination.render();
-                  swiper.pagination.update();
-                });
-              }}
-            >
-              {recentData?.items?.map((item) => {
-                return (
-                  <SwiperSlide
-                    key={item.answerId}
-                    style={{
-                      WebkitUserSelect: "none",
-                      MozUserSelect: "none",
-                      msUserSelect: "none",
-                      userSelect: "none",
-                    }}
-                  >
-                    <Link
-                      to="/detail/$date"
-                      params={{ date: item.answerDate! }}
-                    >
-                      <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
-                        <div className="flex justify-between mb-margin-y-m">
-                          <EmotionBadge
-                            emotion={
-                              item.emotionCode as (typeof emotions)[number]["code"]
-                            }
-                          />
-                          <span className="text-caption-s text-text-tertiary">
-                            {item.answerDate}
-                          </span>
-                        </div>
-                        <p className="text-label-s h-10 line-clamp-2">
-                          {item.questionText}
-                        </p>
-                        <p className="text-caption-s h-8 line-clamp-2">
-                          {item.matchedSnippet}
-                        </p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-            <div ref={paginationRef} />
+                      swiper.pagination.init();
+                      swiper.pagination.render();
+                      swiper.pagination.update();
+                    });
+                  }}
+                >
+                  {recentData?.items?.map((item) => {
+                    return (
+                      <SwiperSlide
+                        key={item.answerId}
+                        style={{
+                          WebkitUserSelect: "none",
+                          MozUserSelect: "none",
+                          msUserSelect: "none",
+                          userSelect: "none",
+                        }}
+                      >
+                        <Link
+                          to="/detail/$date"
+                          params={{ date: item.answerDate! }}
+                        >
+                          <div className="px-padding-x-m py-padding-y-s bg-surface-layer-1 rounded-lg">
+                            <div className="flex justify-between mb-margin-y-m">
+                              <EmotionBadge
+                                emotion={
+                                  item.emotionCode as (typeof emotions)[number]["code"]
+                                }
+                              />
+                              <span className="text-caption-s text-text-tertiary">
+                                {item.answerDate}
+                              </span>
+                            </div>
+                            <p className="text-label-s h-10 line-clamp-2">
+                              {item.questionText}
+                            </p>
+                            <p className="text-caption-s h-8 line-clamp-2">
+                              {item.matchedSnippet}
+                            </p>
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
+                <div ref={paginationRef} />
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col text-center items-center pt-padding-y-m">
+                  <NoResultIcon className="p-3" size={48} />
+                  <p className="text-button-1 mt-margin-y-m mb-gap-y-xs">
+                    아직 남긴 기록이 없어요.
+                  </p>
+                  <p className="text-caption-s">
+                    오늘의 질문에 답하고 기록을 되돌아보세요.
+                  </p>
+                </div>
+              </>
+            )}
           </section>
         </div>
       </div>

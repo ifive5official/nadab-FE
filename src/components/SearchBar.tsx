@@ -44,7 +44,6 @@ export default function SearchBar({
         name="search"
         type="text"
         value={value}
-        placeholder={emotion ? "" : "검색을 통해 기록을 되돌아보세요."}
         className="w-full text-caption-m placeholder:text-field-text-mute focus:outline-none"
       />
       <button
