@@ -2,7 +2,7 @@
 // 마이페이지에서 사용
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";

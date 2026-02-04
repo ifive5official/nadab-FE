@@ -1,7 +1,7 @@
 // 주간 레포트 및 월간 레포트 삭제(테스트용)
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 

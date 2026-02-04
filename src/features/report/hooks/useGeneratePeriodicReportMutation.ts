@@ -1,7 +1,7 @@
 // 주간/월간 레포트 생성 뮤테이션
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";

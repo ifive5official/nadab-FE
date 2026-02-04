@@ -1,7 +1,7 @@
 // 검색어 저장 - 검색 결과 클릭 및 엔터 입력 시
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 

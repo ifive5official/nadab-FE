@@ -2,7 +2,7 @@
 // 프로필 수정 페이지에서 사용 - 프로필 수정 api 호출과 같은 시점에 사용!!
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 

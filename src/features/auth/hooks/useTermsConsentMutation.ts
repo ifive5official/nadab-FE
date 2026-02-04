@@ -1,7 +1,7 @@
 // 소셜 로그인 시 약관 동의 위해 사용
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 

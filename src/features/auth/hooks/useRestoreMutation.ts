@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import { useNavigate } from "@tanstack/react-router";

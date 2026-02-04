@@ -9,7 +9,7 @@ import useAuthStore from "@/store/authStore";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { CurrentUser } from "@/types/currentUser";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import axios from "axios";
 import type { components } from "@/generated/api-types";
 

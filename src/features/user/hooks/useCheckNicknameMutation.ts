@@ -2,7 +2,7 @@
 // 온보딩 및 프로필 수정 시 사용
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";

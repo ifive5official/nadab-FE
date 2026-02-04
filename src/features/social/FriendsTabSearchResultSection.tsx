@@ -8,18 +8,17 @@ import NoResult from "@/components/NoResult";
 import { useFriendRequestMutation } from "./hooks/useFriendRequestMutation";
 import { useDeleteFriendRequestMutation } from "./hooks/useDeleteFriendRequestMutation";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
-import type { ModalConfig } from "@/components/Modal";
 import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
 import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import Toast from "@/components/Toast";
+import useModalStore from "@/store/modalStore";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
 type Props = {
   hasMaxFriends: boolean;
-  setModalConfig: (config: ModalConfig | null) => void;
   searchResults: InfiniteData<AnswersRes> | undefined;
   isFetching: boolean;
   isLoading: boolean;
@@ -39,7 +38,6 @@ type RequestBtnConfig = {
 
 export default function FriendsTabSearchResultSection({
   hasMaxFriends,
-  setModalConfig,
   searchResults,
   isFetching,
   isLoading,
@@ -110,25 +108,27 @@ export default function FriendsTabSearchResultSection({
   // 사용자 섹션 버튼 대기중 리스트
   const [activeIds, setActiveIds] = useState(new Set());
 
+  const { showModal, closeModal } = useModalStore();
+
   const REQUESTBTN_CONFIG: Record<RelationshipStatus, RequestBtnConfig | null> =
     {
       SELF: null, // 나일 땐 버튼 없음
       NONE: {
         label: "친구 신청",
         onClick: ({ nickname }) => {
-          setModalConfig({
+          showModal({
             title: `${nickname}님을 친구로 추가하겠어요?`,
             children: "친구 신청을 한 친구에게 즉시 알림이 전송돼요.",
             icon: UserCheckFilledIcon,
             buttons: [
               {
                 label: "취소",
-                onClick: () => setModalConfig(null),
+                onClick: closeModal,
               },
               {
                 label: "확인",
                 onClick: () => {
-                  setModalConfig(null);
+                  closeModal();
                   setActiveIds((prev) => new Set(prev).add(nickname));
                   friendRequestMutation.mutate({
                     receiverNickname: nickname,
@@ -142,19 +142,19 @@ export default function FriendsTabSearchResultSection({
       FRIEND: {
         label: "친구 삭제",
         onClick: ({ nickname, id }) => {
-          setModalConfig({
+          showModal({
             title: `${nickname}님을\n친구에서 삭제하겠어요?`,
             children: "친구 삭제 이후에 복구가 불가능해요.",
             icon: WarningFilledIcon,
             buttons: [
               {
                 label: "취소",
-                onClick: () => setModalConfig(null),
+                onClick: closeModal,
               },
               {
                 label: "확인",
                 onClick: () => {
-                  setModalConfig(null);
+                  closeModal();
                   setActiveIds((prev) => new Set(prev).add(id));
                   deleteFriendMutation.mutate({ friendshipId: id });
                 },

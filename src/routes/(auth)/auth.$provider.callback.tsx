@@ -6,7 +6,7 @@ import useAuthStore from "@/store/authStore";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 

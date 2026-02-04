@@ -2,7 +2,7 @@
 // 로그아웃까지 서버에서 자동 처리해줌
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import useAuthStore from "@/store/authStore";

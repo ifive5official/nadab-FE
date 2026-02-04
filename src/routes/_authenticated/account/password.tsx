@@ -8,17 +8,16 @@ import {
 } from "@/hooks/useInputValidation";
 import { SubHeader } from "@/components/Headers";
 import { useChangePasswordMutation } from "@/features/auth/hooks/useChangePasswordMutation";
-import { useState } from "react";
-import Modal from "@/components/Modal";
 import { CircleCheckFilledIcon } from "@/components/Icons";
 import Container from "@/components/Container";
+import useModalStore from "@/store/modalStore";
 
 export const Route = createFileRoute("/_authenticated/account/password")({
   component: RouteComponent,
 });
 
 export function RouteComponent() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { showModal, closeModal } = useModalStore();
   const {
     value: prevPassword,
     error: prevPasswordError,
@@ -45,7 +44,19 @@ export function RouteComponent() {
 
   const changePasswordMutation = useChangePasswordMutation({
     onSuccess: () => {
-      setIsModalOpen(true);
+      showModal({
+        icon: CircleCheckFilledIcon,
+        title: `비밀번호 변경에\n성공했어요.`,
+        buttons: [
+          {
+            label: "확인",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/account" });
+            },
+          },
+        ],
+      });
     },
     onPasswordInvalid: (code: string) => {
       if (code === "AUTH_INVALID_PASSWORD") {
@@ -145,21 +156,6 @@ export function RouteComponent() {
             완료
           </BlockButton>
         </form>
-        <Modal
-          isOpen={isModalOpen}
-          icon={CircleCheckFilledIcon}
-          title={`비밀번호 변경에\n성공했어요.`}
-          buttons={[
-            {
-              label: "확인",
-              onClick: () => {
-                setIsModalOpen(false);
-                navigate({ to: "/account" });
-              },
-            },
-          ]}
-          onClose={() => setIsModalOpen(false)}
-        />
       </Container>
     </>
   );

@@ -2,7 +2,6 @@ import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { createFileRoute } from "@tanstack/react-router";
 import FriendItem from "@/features/social/FriendItem";
-import Modal from "@/components/Modal";
 import { useState } from "react";
 import { WarningFilledIcon } from "@/components/Icons";
 import NoResult from "@/components/NoResult";
@@ -14,8 +13,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useAcceptFriendRequestMutation } from "@/features/social/hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "@/features/social/hooks/useRejectFriendRequestMutation";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import Toast from "@/components/Toast";
+import useModalStore from "@/store/modalStore";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
@@ -30,11 +30,7 @@ export const Route = createFileRoute("/_authenticated/social/requests")({
 function RouteComponent() {
   const { data: friends } = useQuery(friendsOptions);
   const { data: friendRequests } = useQuery(friendRequestsOptions);
-  // 있을 때 모달 띄움
-  const [selectedRequest, setSelectedRequest] = useState<{
-    nickname: string;
-    id: number;
-  } | null>(null);
+  const { showModal, closeModal } = useModalStore();
   const [toastMessage, setToastMessage] = useState("");
 
   const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
@@ -81,12 +77,28 @@ function RouteComponent() {
                     <InlineButton
                       key={1}
                       variant="secondary"
-                      onClick={() =>
-                        setSelectedRequest({
-                          id: request.friendshipId!,
-                          nickname: request.nickname!,
-                        })
-                      }
+                      onClick={() => {
+                        showModal({
+                          title: `${request.nickname!}님의 요청을 거절할까요?`,
+                          children: "친구 요청 거절 이후에 복구가 불가능해요.",
+                          icon: WarningFilledIcon,
+                          buttons: [
+                            {
+                              label: "취소",
+                              onClick: closeModal,
+                            },
+                            {
+                              label: "확인",
+                              onClick: () => {
+                                closeModal();
+                                rejectFriendRequestMutation.mutate({
+                                  friendshipId: request.friendshipId!,
+                                });
+                              },
+                            },
+                          ],
+                        });
+                      }}
                       isLoading={rejectingIds.has(request.friendshipId)}
                     >
                       거절
@@ -127,29 +139,6 @@ function RouteComponent() {
           />
         )}
       </Container>
-      <Modal
-        title={`${selectedRequest?.nickname}님의 요청을 거절할까요?`}
-        icon={WarningFilledIcon}
-        isOpen={!!selectedRequest}
-        onClose={() => setSelectedRequest(null)}
-        buttons={[
-          {
-            label: "취소",
-            onClick: () => setSelectedRequest(null),
-          },
-          {
-            label: "확인",
-            onClick: () => {
-              setSelectedRequest(null);
-              rejectFriendRequestMutation.mutate({
-                friendshipId: selectedRequest?.id ?? 0,
-              });
-            },
-          },
-        ]}
-      >
-        친구 요청 거절 이후에 복구가 불가능해요.
-      </Modal>
       <Toast
         isOpen={!!toastMessage}
         onClose={() => setToastMessage("")}

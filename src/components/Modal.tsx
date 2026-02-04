@@ -2,37 +2,11 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
+import useModalStore from "@/store/modalStore";
 
-// 모달 콘텐츠 변경이 필요할 때
-export type ModalConfig = {
-  icon: React.ComponentType;
-  title: string;
-  children?: React.ReactNode;
-  buttons: Button[];
-};
+export default function Modal() {
+  const { isOpen, config } = useModalStore();
 
-type ModalProps = {
-  isOpen: boolean;
-  icon: React.ComponentType;
-  title: string;
-  children?: React.ReactNode; // 콘텐츠
-  buttons: Button[];
-  onClose?: () => void;
-};
-
-export type Button = {
-  label: string;
-  onClick: () => void;
-};
-
-export default function Modal({
-  isOpen,
-  icon: Icon,
-  title,
-  children,
-  buttons,
-}: // onClose,
-ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -44,9 +18,11 @@ ModalProps) {
     };
   }, [isOpen]);
 
+  const Icon = config?.icon;
+
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && config && (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -64,25 +40,28 @@ ModalProps) {
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
             <div className="flex flex-col items-center gap-margin-y-s">
-              <Icon />
+              {Icon && <Icon />}
               <p className="text-label-l whitespace-pre-line text-center">
-                {title}
+                {config.title}
               </p>
-              <p className="text-caption-m">{children}</p>
+              <p className="text-caption-m">{config.children}</p>
             </div>
             <div className="w-full flex gap-gap-x-s mt-gap-y-xl">
-              {buttons.length === 1 && (
-                <BlockButton onClick={buttons[0].onClick}>
-                  {buttons[0].label}
+              {config.buttons.length === 1 && (
+                <BlockButton onClick={config.buttons[0].onClick}>
+                  {config.buttons[0].label}
                 </BlockButton>
               )}
-              {buttons.length === 2 && (
+              {config.buttons.length === 2 && (
                 <>
-                  <BlockButton variant="secondary" onClick={buttons[0].onClick}>
-                    {buttons[0].label}
+                  <BlockButton
+                    variant="secondary"
+                    onClick={config.buttons[0].onClick}
+                  >
+                    {config.buttons[0].label}
                   </BlockButton>
-                  <BlockButton onClick={buttons[1].onClick}>
-                    {buttons[1].label}
+                  <BlockButton onClick={config.buttons[1].onClick}>
+                    {config.buttons[1].label}
                   </BlockButton>
                 </>
               )}
