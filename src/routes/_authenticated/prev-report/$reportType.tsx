@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/prev-report/$reportType")(
     loader: async ({ params: { reportType }, context: { queryClient } }) => {
       queryClient.ensureQueryData(periodicReportOptions(reportType));
     },
-  }
+  },
 );
 
 function RouteComponent() {

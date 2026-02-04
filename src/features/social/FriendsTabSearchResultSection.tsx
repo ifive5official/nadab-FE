@@ -8,7 +8,7 @@ import NoResult from "@/components/NoResult";
 import { useFriendRequestMutation } from "./hooks/useFriendRequestMutation";
 import { useDeleteFriendRequestMutation } from "./hooks/useDeleteFriendRequestMutation";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
-import type { ModalConfig } from "@/routes/_authenticated/social/search";
+import type { ModalConfig } from "@/components/Modal";
 import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
 import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";

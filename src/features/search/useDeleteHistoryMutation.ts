@@ -14,7 +14,7 @@ export function useDeleteHistoryMutation() {
   return useMutation({
     mutationFn: async ({ historyId }: { historyId: number }) => {
       const res = await api.delete<ApiResponse<Res>>(
-        `/api/v1/search/histories/${historyId}`
+        `/api/v1/search/histories/${historyId}`,
       );
       return res.data;
     },
@@ -26,7 +26,7 @@ export function useDeleteHistoryMutation() {
         // Todo: 에러 메시지 변경
         err.response?.data?.code ?? err.message,
         err.response?.data?.message ??
-          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
       );
     },
   });

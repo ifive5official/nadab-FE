@@ -31,7 +31,7 @@ export function useGeneratePeriodicReportMutation<
   return useMutation({
     mutationFn: async () => {
       const res = await api.post<ApiResponse<generateReportTypeMap[T]>>(
-        `/api/v1/${config.key}/start`
+        `/api/v1/${config.key}/start`,
       );
       return res.data.data;
     },
@@ -47,14 +47,14 @@ export function useGeneratePeriodicReportMutation<
           .getState()
           .showError(
             `지난${config.periodText} 분석이 완성되지 못했어요.`,
-            `이번${config.periodText} 기록을 열심히 작성해서\n다음 분석을 완성해봐요.`
+            `이번${config.periodText} 기록을 열심히 작성해서\n다음 분석을 완성해봐요.`,
           );
       } else {
         useErrorStore.getState().showError(
           // Todo: 에러 메시지 변경
           err.response?.data?.code ?? "",
           err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
         );
       }
     },

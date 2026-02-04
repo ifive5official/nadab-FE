@@ -3,6 +3,14 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
 
+// 모달 콘텐츠 변경이 필요할 때
+export type ModalConfig = {
+  icon: React.ComponentType;
+  title: string;
+  children?: React.ReactNode;
+  buttons: Button[];
+};
+
 type ModalProps = {
   isOpen: boolean;
   icon: React.ComponentType;

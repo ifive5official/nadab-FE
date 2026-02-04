@@ -39,7 +39,7 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
           break;
         case "EMAIL_WITHDRAWN_ACCOUNT_SIGNUP_FORBIDDEN":
           onEmailInvalid?.(
-            "탈퇴된 계정이에요. 로그인해서 계정 복구를 진행해 주세요."
+            "탈퇴된 계정이에요. 로그인해서 계정 복구를 진행해 주세요.",
           );
           break;
         default:
@@ -47,7 +47,7 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
             // Todo: 에러 메시지 변경
             err.response?.data?.code ?? err.message,
             err.response?.data?.message ??
-              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
           );
           break;
       }

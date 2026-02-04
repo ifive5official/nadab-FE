@@ -21,7 +21,7 @@ export function useLogoutMutation() {
         // Todo: 에러 메시지 변경
         err.response?.data?.code ?? err.message,
         err.response?.data?.message ??
-          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
       );
     },
   });

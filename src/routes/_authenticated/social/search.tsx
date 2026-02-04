@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import SearchBar from "@/components/SearchBar";
 import Modal from "@/components/Modal";
-import type { Button } from "@/components/Modal";
+import type { ModalConfig } from "@/components/Modal";
 import { useEffect, useState } from "react";
 import {
   friendSearchHistoryOptions,
@@ -21,13 +21,6 @@ import { WarningFilledIcon } from "@/components/Icons";
 
 type AnswersReq = components["schemas"]["SearchUserRequest"];
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
-
-export type ModalConfig = {
-  icon: React.ComponentType;
-  title: string;
-  children?: React.ReactNode;
-  buttons: Button[];
-};
 
 export const Route = createFileRoute("/_authenticated/social/search")({
   component: RouteComponent,
