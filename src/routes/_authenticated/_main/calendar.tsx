@@ -25,11 +25,15 @@ import { recentOptions } from "@/features/calendar/queries";
 import BlockButton from "@/components/BlockButton";
 import { answerOptions } from "@/features/report/quries";
 import Container from "@/components/Container";
+import Loading from "@/components/Loading";
 
 export const Route = createFileRoute("/_authenticated/_main/calendar")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(recentOptions),
+  pendingComponent: () => <Loading />,
+  pendingMs: 200, // 0.2초 이상 걸릴 때만 로딩 컴포넌트 표시
+  pendingMinMs: 200,
 });
 
 type CalendarReq = components["schemas"]["GetMonthlyCalendarRequest"];

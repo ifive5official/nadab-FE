@@ -15,7 +15,6 @@ export default function PeriodicReportTab() {
     report: weeklyReport,
     prevReport: prevWeeklyReport,
     isGenerating: isWeeklyReportGenerating,
-    isLoading: isWeeklyReportsLoading,
   } = useReport({ type: "weekly" });
   const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "weekly",
@@ -24,7 +23,6 @@ export default function PeriodicReportTab() {
     report: monthlyReport,
     prevReport: prevMonthlyReport,
     isGenerating: isMonthlyReportGenerating,
-    isLoading: isMonthlyReportLoading,
   } = useReport({ type: "monthly" });
   const generateMonthlyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "monthly",
@@ -49,7 +47,6 @@ export default function PeriodicReportTab() {
             reportType="weekly"
             prevReport={prevWeeklyReport}
             onGenerate={generateWeeklyReportMutation.mutate}
-            isLoading={isWeeklyReportsLoading}
             isGenerating={isWeeklyReportGenerating}
             crystalBalance={crystalBalance?.crystalBalance ?? 0}
           />
@@ -69,7 +66,6 @@ export default function PeriodicReportTab() {
             reportType="monthly"
             prevReport={prevMonthlyReport}
             onGenerate={generateMonthlyReportMutation.mutate}
-            isLoading={isMonthlyReportLoading}
             isGenerating={isMonthlyReportGenerating}
             crystalBalance={crystalBalance?.crystalBalance ?? 0}
           />

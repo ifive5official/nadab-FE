@@ -1,7 +1,6 @@
-// 주간/월간 리포트 불러오기
-import { useQuery } from "@tanstack/react-query";
+// 주간/월간 리포트 불러오기(폴링 포함)
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
-import { useState } from "react";
 import { periodicReportOptions } from "../quries";
 
 type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
@@ -19,28 +18,28 @@ type Props<T extends keyof ReportTypeMap> = {
 export default function useReport<T extends keyof ReportTypeMap>({
   type,
 }: Props<T>) {
-  const [isPolling, setIsPolling] = useState(false);
+  // const [isPolling, setIsPolling] = useState(false);
   // Todo: 에러 처리
-  const { data: reports, isLoading } = useQuery({
+  const { data: reports } = useSuspenseQuery({
     ...periodicReportOptions(type),
     // 레포트 생성 중일 경우 1초 간격으로 폴링
     refetchInterval: (query) => {
       const status = query.state.data?.report?.status;
       if (status === "PENDING" || status === "IN_PROGRESS") {
-        setIsPolling(true);
+        // setIsPolling(true);
         return 1000; // 1초마다 폴링
       }
-      setIsPolling(false);
+      // setIsPolling(false);
       return false;
     },
   });
 
-  const isGenerating = isPolling;
+  const status = reports?.report?.status;
+  const isGenerating = status === "PENDING" || status === "IN_PROGRESS";
 
   return {
     report: reports?.report,
     prevReport: reports?.previousReport,
-    isLoading: isLoading && !isPolling,
     isGenerating,
   };
 }

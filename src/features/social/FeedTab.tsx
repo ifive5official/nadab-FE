@@ -1,20 +1,15 @@
 import Container from "@/components/Container";
 import Post from "./Post";
-import { useQueries } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { feedOptions, friendsOptions } from "./queries";
 import ShareBanner from "@/components/ShareBanner";
 import NoResult from "@/components/NoResult";
 
 export default function FeedTab() {
-  const [feedQuery, friendsQuery] = useQueries({
+  const [feedQuery, friendsQuery] = useSuspenseQueries({
     queries: [feedOptions, friendsOptions],
   });
   const feeds = feedQuery.data?.feeds;
-
-  // Todo: 임시 땜빵 고치기...
-  if (friendsQuery.isLoading) {
-    return null;
-  }
 
   return (
     <>

@@ -7,7 +7,7 @@ import FriendItem from "./FriendItem";
 import { Link } from "@tanstack/react-router";
 import NoResult from "@/components/NoResult";
 import InlineButton from "@/components/InlineButton";
-import { useQueries } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { friendRequestsOptions, friendsOptions } from "./queries";
 import ProfileImg from "@/components/ProfileImg";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
@@ -15,7 +15,7 @@ import Toast from "@/components/Toast";
 import useModalStore from "@/store/modalStore";
 
 export default function FriendsTab() {
-  const [friendsQuery, requestsQuery] = useQueries({
+  const [friendsQuery, requestsQuery] = useSuspenseQueries({
     queries: [friendsOptions, friendRequestsOptions],
   });
   const friends = friendsQuery.data;
@@ -29,11 +29,6 @@ export default function FriendsTab() {
 
   const { showModal, closeModal } = useModalStore();
   const [isToastOpen, setIsToastOpen] = useState(false);
-
-  // Todo: 스켈레톤 없이 임시 땜빵 처리
-  if (friendsQuery.isLoading || requestsQuery.isLoading) {
-    return null;
-  }
 
   return (
     <>

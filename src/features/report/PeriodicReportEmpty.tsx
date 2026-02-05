@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Popover } from "@/components/Popover";
 import type { components } from "@/generated/api-types";
 import { REPORT_CONFIGS } from "./reportConfigs";
-import clsx from "clsx";
 import { InfoButton } from "./ReportComponents";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -16,7 +15,6 @@ type Props = {
   prevReport: ReportRes | undefined;
   onGenerate: () => void;
   crystalBalance: number;
-  isLoading: boolean; // 아직 로딩이 안되었을 때 스켈레톤 보이기 위함
   isGenerating: boolean; // 생성중 로딩 화면을 보이기 위함
 };
 
@@ -25,7 +23,6 @@ export default function PeriodicReportCard({
   prevReport,
   onGenerate,
   crystalBalance,
-  isLoading,
   isGenerating,
 }: Props) {
   const config = REPORT_CONFIGS[reportType];
@@ -34,17 +31,11 @@ export default function PeriodicReportCard({
 
   return (
     <section
-      className={clsx(
-        "px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2",
-        isLoading && "animate-pulse",
-      )}
+      className={
+        "px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2"
+      }
     >
-      <div
-        className={clsx(
-          "flex flex-col gap-margin-y-m mb-padding-y-xxl",
-          isLoading && "invisible",
-        )}
-      >
+      <div className={"flex flex-col gap-margin-y-m mb-padding-y-xxl"}>
         <div className="relative flex justify-between items-center">
           <Badge>{config.label}</Badge>
           <InfoButton onClick={() => setIsPopoverOpen(true)} />
