@@ -28,7 +28,7 @@ function RootComponent() {
 
   return (
     <>
-      <div className="min-h-full w-full flex bg-surface-base">
+      <div className="min-h-full w-full flex-4">
         <div className="flex flex-col w-dvw sm:w-[412px] sm:mx-auto overflow-x-hidden">
           <Outlet />
           <Modal />
