@@ -5,10 +5,10 @@ import PeriodicReport from "@/features/report/PeriodicReport";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { periodicReportOptions } from "@/features/report/quries";
 import BlockButton from "@/components/BlockButton";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import { crystalsOptions } from "@/features/user/quries";
 import { REPORT_CONFIGS } from "@/features/report/reportConfigs";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
@@ -25,13 +25,12 @@ export const Route = createFileRoute("/_authenticated/prev-report/$reportType")(
     loader: async ({ params: { reportType }, context: { queryClient } }) => {
       queryClient.ensureQueryData(periodicReportOptions(reportType));
     },
-  }
+  },
 );
 
 function RouteComponent() {
   const { reportType } = Route.useParams();
   const config = REPORT_CONFIGS[reportType];
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { data: crystals } = useSuspenseQuery(crystalsOptions);
   const crystalBalance = crystals.crystalBalance ?? 0;
   const { data: reports } = useSuspenseQuery(periodicReportOptions(reportType));
@@ -60,8 +59,6 @@ function RouteComponent() {
               reportType={reportType}
               prevReport={undefined}
               report={reports.previousReport}
-              isPopoverOpen={isPopoverOpen}
-              setIsPopoverOpen={setIsPopoverOpen}
             />
             <BlockButton
               disabled={!!(crystalBalance < config.cost)}

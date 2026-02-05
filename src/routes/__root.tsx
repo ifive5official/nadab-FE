@@ -1,9 +1,9 @@
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import ErrorModal from "@/components/ErrorModal";
 import type { QueryClient } from "@tanstack/react-query";
 import useThemeStore from "@/store/useThemeStore";
 import { useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
+import Modal from "@/components/Modal";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -31,7 +31,7 @@ function RootComponent() {
       <div className="min-h-dvh w-vw flex bg-surface-base">
         <div className="flex flex-col w-dvw sm:w-[412px] sm:mx-auto overflow-x-hidden">
           <Outlet />
-          <ErrorModal />
+          <Modal />
         </div>
       </div>
       <Sidebar />

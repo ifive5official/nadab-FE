@@ -8,8 +8,7 @@ import StepTitle from "@/features/auth/StepTitle";
 import { PasswordInputField } from "@/components/InputFields";
 import BlockButton from "@/components/BlockButton";
 import { getNextStepPath } from "@/features/auth/resetPasswordStep";
-import { useState } from "react";
-import Modal from "@/components/Modal";
+import useModalStore from "@/store/modalStore";
 import { CircleCheckFilledIcon } from "@/components/Icons";
 import { useFindPasswordMutation } from "@/features/auth/hooks/useFindPasswordMutation";
 
@@ -44,17 +43,30 @@ function Reset() {
 
   const navigate = useNavigate();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { showModal, closeModal } = useModalStore();
 
   const resetPasswordMutation = useFindPasswordMutation({
     onSuccess: () => {
-      setIsModalOpen(true);
+      showModal({
+        icon: CircleCheckFilledIcon,
+        title: `비밀번호 변경에\n성공했어요.`,
+        buttons: [
+          {
+            label: "확인",
+            onClick: () => {
+              closeModal();
+              updatePassword(password);
+              const nextStep = getNextStepPath("reset");
+              navigate({ to: nextStep });
+            },
+          },
+        ],
+      });
     },
     onPasswordInvalid: (message: string) => {
       setPasswordError(message);
     },
   });
-
   return (
     <div>
       <div className="py-padding-y-m">
@@ -113,23 +125,6 @@ function Reset() {
           완료
         </BlockButton>
       </form>
-      <Modal
-        isOpen={isModalOpen}
-        icon={CircleCheckFilledIcon}
-        title={`비밀번호 변경에\n성공했어요.`}
-        buttons={[
-          {
-            label: "확인",
-            onClick: () => {
-              setIsModalOpen(false);
-              updatePassword(password);
-              const nextStep = getNextStepPath("reset");
-              navigate({ to: nextStep });
-            },
-          },
-        ]}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 }

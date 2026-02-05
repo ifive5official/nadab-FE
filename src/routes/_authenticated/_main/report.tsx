@@ -17,7 +17,7 @@ function RouteComponent() {
       <SegmentedControls
         options={[
           { label: "주간/월간", value: "periodic" },
-          { label: "전체", value: "total" },
+          { label: "유형", value: "category" },
         ]}
         selected={selected}
         className="my-padding-y-m"
@@ -27,7 +27,7 @@ function RouteComponent() {
         <div className="border-b border-b-interactive-border-default w-full" />
       </div>
       {selected === "periodic" && <PeriodicReportTab />}
-      {selected === "total" && <TotalReportTab />}
+      {selected === "category" && <TotalReportTab />}
     </Container>
   );
 }

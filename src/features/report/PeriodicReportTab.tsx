@@ -5,8 +5,9 @@ import {
   useDeleteWeeklyReportMutation,
 } from "./hooks/useDeleteWeeklyReportMutation";
 import useReport from "./hooks/useReport";
-import PeriodicReportCard from "./PeriodicReportCard";
+import PeriodicReportEmpty from "./PeriodicReportEmpty";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
+import PeriodicReport from "./PeriodicReport";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
@@ -37,27 +38,42 @@ export default function PeriodicReportTab() {
         주간 레포트 삭제(테스트용)
       </button>
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-        <PeriodicReportCard
-          reportType="weekly"
-          prevReport={prevWeeklyReport}
-          report={weeklyReport}
-          onGenerate={generateWeeklyReportMutation.mutate}
-          isLoading={isWeeklyReportsLoading}
-          isGenerating={isWeeklyReportGenerating}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
+        {weeklyReport && !isWeeklyReportGenerating ? (
+          <PeriodicReport
+            reportType={"weekly"}
+            prevReport={prevWeeklyReport}
+            report={weeklyReport}
+          />
+        ) : (
+          <PeriodicReportEmpty
+            reportType="weekly"
+            prevReport={prevWeeklyReport}
+            onGenerate={generateWeeklyReportMutation.mutate}
+            isLoading={isWeeklyReportsLoading}
+            isGenerating={isWeeklyReportGenerating}
+            crystalBalance={crystalBalance?.crystalBalance ?? 0}
+          />
+        )}
+
         <button onClick={() => deleteMonthlyReportMutation.mutate()}>
           월간 레포트 삭제(테스트용)
         </button>
-        <PeriodicReportCard
-          reportType="monthly"
-          prevReport={prevMonthlyReport}
-          report={monthlyReport}
-          onGenerate={generateMonthlyReportMutation.mutate}
-          isLoading={isMonthlyReportLoading}
-          isGenerating={isMonthlyReportGenerating}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
+        {monthlyReport && !isMonthlyReportGenerating ? (
+          <PeriodicReport
+            reportType={"monthly"}
+            prevReport={prevMonthlyReport}
+            report={monthlyReport}
+          />
+        ) : (
+          <PeriodicReportEmpty
+            reportType="monthly"
+            prevReport={prevMonthlyReport}
+            onGenerate={generateMonthlyReportMutation.mutate}
+            isLoading={isMonthlyReportLoading}
+            isGenerating={isMonthlyReportGenerating}
+            crystalBalance={crystalBalance?.crystalBalance ?? 0}
+          />
+        )}
       </div>
     </>
   );

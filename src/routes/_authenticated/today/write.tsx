@@ -1,7 +1,6 @@
 import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
 import { PlusIcon, WarningFilledIcon } from "@/components/Icons";
-import Modal from "@/components/Modal";
 import { CrystalBadge } from "@/components/Badges";
 import {
   createFileRoute,
@@ -14,6 +13,7 @@ import Container from "@/components/Container";
 import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
+import useModalStore from "@/store/modalStore";
 
 export const Route = createFileRoute("/_authenticated/today/write")({
   component: RouteComponent,
@@ -27,21 +27,58 @@ function RouteComponent() {
   const { data: question } = useSuspenseQuery(questionOptions);
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 10;
-  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
-  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const { isOpen, showModal, closeModal } = useModalStore();
   const generateResponseMutation = useGenerateReportMutation({
-    onSuccess: () => setIsCompleteModalOpen(true),
+    onSuccess: () =>
+      showModal({
+        title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
+        icon: () => (
+          <div className="flex items-center mb-margin-y-s">
+            <PlusIcon />
+            <CrystalBadge height={32.5} crystals={10} />
+          </div>
+        ),
+        buttons: [
+          {
+            label: "홈으로",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/" });
+            },
+          },
+          {
+            label: "분석보기",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/today/report" });
+            },
+          },
+        ],
+      }),
   });
 
   useBlocker({
     shouldBlockFn: () => {
       // 충분히 글을 쓴 상태에서는 네비게이션 막고 모달 띄움
-      const canLeave =
-        !canSubmit ||
-        (canSubmit && isCompleteModalOpen) ||
-        (canSubmit && isLeaveModalOpen);
+      const canLeave = !canSubmit || (canSubmit && isOpen);
       if (!canLeave) {
-        setIsLeaveModalOpen(true);
+        showModal({
+          title: `떠나시겠어요? 작성 중인 내용은 삭제돼요.`,
+          icon: WarningFilledIcon,
+          buttons: [
+            {
+              label: "떠날래요.",
+              onClick: () => {
+                closeModal();
+                navigate({ to: "/" });
+              },
+            },
+            {
+              label: "머물래요.",
+              onClick: closeModal,
+            },
+          ],
+        });
       }
       return !canLeave;
     },
@@ -83,47 +120,6 @@ function RouteComponent() {
           완료
         </BlockButton>
       </Container>
-
-      {/* 뒤로가기 시도 시 뜨는 모달 */}
-      <Modal
-        title={`떠나시겠어요? 작성 중인 내용은 삭제돼요.`}
-        icon={WarningFilledIcon}
-        isOpen={isLeaveModalOpen}
-        onClose={() => setIsLeaveModalOpen(false)}
-        buttons={[
-          {
-            label: "떠날래요.",
-            onClick: () => navigate({ to: "/" }),
-          },
-          {
-            label: "머물래요.",
-            onClick: () => setIsLeaveModalOpen(false),
-          },
-        ]}
-      />
-
-      {/* 크리스탈 획득 모달 */}
-      <Modal
-        title={`오늘의 답변으로\n크리스탈을 획득했어요.`}
-        icon={() => (
-          <div className="flex items-center mb-margin-y-s">
-            <PlusIcon />
-            <CrystalBadge height={32.5} crystals={10} />
-          </div>
-        )}
-        isOpen={isCompleteModalOpen}
-        onClose={() => setIsCompleteModalOpen(false)}
-        buttons={[
-          {
-            label: "홈으로",
-            onClick: () => navigate({ to: "/" }),
-          },
-          {
-            label: "분석보기",
-            onClick: () => navigate({ to: "/today/report" }),
-          },
-        ]}
-      />
     </>
   );
 }

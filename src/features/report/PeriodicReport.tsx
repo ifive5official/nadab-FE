@@ -6,6 +6,7 @@ import type { components } from "@/generated/api-types";
 import { ReportItem } from "./ReportComponents";
 import { useNavigate } from "@tanstack/react-router";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
+import { useState } from "react";
 
 type ReportRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -14,8 +15,6 @@ type Props = {
   reportType: "weekly" | "monthly";
   prevReport: ReportRes | undefined;
   report: ReportRes;
-  isPopoverOpen: boolean;
-  setIsPopoverOpen: (next: boolean) => void;
 };
 
 export default function PeriodicReport({
@@ -23,14 +22,14 @@ export default function PeriodicReport({
   reportType,
   prevReport,
   report,
-  isPopoverOpen,
-  setIsPopoverOpen,
 }: Props) {
   const reportTitle =
     reportType === "weekly"
       ? `${report?.month}월 ${report?.weekOfMonth}주차 분석`
       : `${report?.month}월 분석`;
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const navigate = useNavigate();
+
   return (
     <>
       <section className="px-padding-x-m pt-padding-y-m pb-padding-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
@@ -50,7 +49,6 @@ export default function PeriodicReport({
             title="이런 면도 발견되었어요."
             content={report.discovered!}
           />
-          <ReportItem title="이런 점이 좋았어요." content={report.good!} />
           <ReportItem
             title="다음엔 이렇게 보완해볼까요?"
             content={report.improve!}

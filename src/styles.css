@@ -9,6 +9,10 @@
 
 body {
   color: var(--color-text-primary);
+  /* 상하 스크롤 바운스 시 배경 흰색 보이는 것 방지 */
+  overscroll-behavior-y: none;
+  /* 가로 스크롤 완전 차단 */
+  overflow-x: hidden;
 }
 
 @layer base {

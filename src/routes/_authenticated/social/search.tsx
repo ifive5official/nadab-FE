@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import SearchBar from "@/components/SearchBar";
-import Modal from "@/components/Modal";
-import type { Button } from "@/components/Modal";
 import { useEffect, useState } from "react";
 import {
   friendSearchHistoryOptions,
@@ -17,17 +15,8 @@ import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import FriendsTabRecentSearchSection from "@/features/social/FriendsTabRecentSearchSection";
 import FriendsTabSearchResultSection from "@/features/social/FriendsTabSearchResultSection";
-import { WarningFilledIcon } from "@/components/Icons";
-
 type AnswersReq = components["schemas"]["SearchUserRequest"];
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
-
-export type ModalConfig = {
-  icon: React.ComponentType;
-  title: string;
-  children?: React.ReactNode;
-  buttons: Button[];
-};
 
 export const Route = createFileRoute("/_authenticated/social/search")({
   component: RouteComponent,
@@ -53,7 +42,6 @@ function RouteComponent() {
   const isSearching = debouncedSearchTerm.trim().length > 0;
   const { ref, inView } = useInView();
   const addHistoryMutation = useAddFriendHistoryMutation();
-  const [modalConfig, setModalConfig] = useState<ModalConfig | null>(null);
   const {
     data: searchResults,
     isFetching,
@@ -114,7 +102,6 @@ function RouteComponent() {
       {isSearching ? (
         <FriendsTabSearchResultSection
           hasMaxFriends={(friends?.totalCount ?? 0) >= 20}
-          setModalConfig={setModalConfig}
           searchResults={searchResults}
           isFetching={isFetching}
           isLoading={isLoading}
@@ -126,16 +113,6 @@ function RouteComponent() {
         />
       )}
       <div ref={ref} />
-
-      <Modal
-        title={modalConfig?.title ?? ""}
-        icon={modalConfig?.icon ?? WarningFilledIcon}
-        isOpen={!!modalConfig}
-        onClose={() => setModalConfig(null)}
-        buttons={modalConfig?.buttons ?? []}
-      >
-        {modalConfig?.children}
-      </Modal>
     </>
   );
 }

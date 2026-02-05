@@ -5,9 +5,9 @@ import { feedShareStatusOptions } from "@/features/social/queries";
 import { useShareFeedMutation } from "@/features/social/hooks/useShareFeedMutation";
 import { useUnshareFeedMutation } from "@/features/social/hooks/useUnshareFeedMutation";
 import Toast from "./Toast";
-import Modal from "./Modal";
 import { useState } from "react";
 import { WarningFilledIcon } from "./Icons";
+import useModalStore from "@/store/modalStore";
 
 type SharedBannerConfig = {
   bannerText1: string;
@@ -23,6 +23,8 @@ type Props = {
 
 // 오늘의 기록 공유 배너
 export default function ShareBanner({ className }: Props) {
+  const { showModal, closeModal } = useModalStore();
+
   const { data, isError, isLoading } = useQuery(feedShareStatusOptions);
   const shareFeedMutation = useShareFeedMutation({
     onSuccess: () => setToastMessage("오늘의 기록을 친구와 공유했어요."),
@@ -31,7 +33,6 @@ export default function ShareBanner({ className }: Props) {
     onSuccess: () => setToastMessage("오늘의 기록 공유를 중단했어요."),
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>("");
 
   const isShared = data?.isShared;
@@ -52,7 +53,24 @@ export default function ShareBanner({ className }: Props) {
       bannerText2: "친구들과 공유했어요.",
       btnText: "공유 멈추기",
       onButtonClick: () => {
-        setIsModalOpen(true);
+        showModal({
+          icon: WarningFilledIcon,
+          title: "오늘의 기록 공유를 중단하시겠어요?",
+          children: "내 기록이 친구의 피드에서 사라져요.",
+          buttons: [
+            {
+              label: "취소",
+              onClick: closeModal,
+            },
+            {
+              label: "확인",
+              onClick: () => {
+                closeModal();
+                unShareFeedMutation.mutate();
+              },
+            },
+          ],
+        });
       },
     },
     NOT_SHARED: {
@@ -94,27 +112,6 @@ export default function ShareBanner({ className }: Props) {
           {shareBannerConfig.btnText}
         </InlineButton>
       </div>
-      <Modal
-        title="오늘의 기록 공유를 중단하시겠어요?"
-        icon={WarningFilledIcon}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        buttons={[
-          {
-            label: "취소",
-            onClick: () => setIsModalOpen(false),
-          },
-          {
-            label: "확인",
-            onClick: () => {
-              setIsModalOpen(false);
-              unShareFeedMutation.mutate();
-            },
-          },
-        ]}
-      >
-        내 기록이 친구의 피드에서 사라져요.
-      </Modal>
       <Toast
         isOpen={!!toastMessage}
         message={toastMessage}

@@ -1,7 +1,7 @@
 // 일반(이메일) 회원가입 시 사용
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
@@ -44,7 +44,7 @@ export function useSignupMutation({ onSuccess }: Props) {
         // Todo: 에러 메시지 변경
         err.response?.data?.code ?? err.message,
         err.response?.data?.message ??
-          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+          "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
       );
     },
   });

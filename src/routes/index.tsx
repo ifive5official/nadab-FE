@@ -5,7 +5,7 @@ import useAuthStore from "@/store/authStore";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { CurrentUser } from "@/types/currentUser";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 import axios from "axios";
 import type { components } from "@/generated/api-types";
 import { questionOptions } from "@/features/question/queries";
@@ -22,14 +22,15 @@ export const Route = createFileRoute("/")({
     if (!accessToken) {
       try {
         const res = await api.post<ApiResponse<TokenRes>>(
-          "/api/v1/auth/refresh"
+          "/api/v1/auth/refresh",
         );
         const newAccessToken = res.data.data?.accessToken ?? null;
         setAccessToken(newAccessToken!);
         currentToken = newAccessToken;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // 아무 처리 안 함
+        console.log(err);
       }
     }
     if (currentToken) {
@@ -57,7 +58,7 @@ export const Route = createFileRoute("/")({
             // Todo: 에러 메시지 변경
             err.response?.data?.code ?? err.message,
             err.response?.data?.message ??
-              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
           );
         }
       }

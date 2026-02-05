@@ -6,7 +6,7 @@ import useAuthStore from "@/store/authStore";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
-import useErrorStore from "@/store/errorStore";
+import useErrorStore from "@/store/modalStore";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
         {
           code,
           state,
-        }
+        },
       );
       const { accessToken, signupStatus } = res.data.data!;
 
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
           .showError(
             err.response?.data?.code ?? err.message,
             err.response?.data?.message ??
-              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요."
+              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
           );
       }
       throw redirect({

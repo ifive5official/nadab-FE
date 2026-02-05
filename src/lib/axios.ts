@@ -33,7 +33,11 @@ api.interceptors.response.use(
     }
 
     // 401이면서 refresh 아닌 요청일 때만
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !error.response?.data?.code &&
+      !originalRequest._retry
+    ) {
       // 이미 refresh 중이면 큐에 넣음
       if (isRefreshing) {
         return new Promise((resolve) => {
@@ -76,5 +80,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
