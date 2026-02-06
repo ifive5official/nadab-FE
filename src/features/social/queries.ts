@@ -3,6 +3,7 @@ import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import type { AxiosError } from "axios";
+import axios from "axios";
 
 // 피드 기능 =============================================
 
@@ -21,10 +22,22 @@ type feedShareStatusRes = components["schemas"]["ShareStatusResponse"];
 export const feedShareStatusOptions = queryOptions({
   queryKey: ["currentUser", "feedShareStatus"],
   queryFn: async () => {
-    const res = await api.get<ApiResponse<feedShareStatusRes>>(
-      "/api/v1/feed/share/status",
-    );
-    return res.data.data!;
+    try {
+      const res = await api.get<ApiResponse<feedShareStatusRes>>(
+        "/api/v1/feed/share/status",
+      );
+      return res.data.data!;
+    } catch (err) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.data?.code === "DAILY_REPORT_NOT_FOUND"
+      ) {
+        return {
+          isShared: undefined,
+        };
+      }
+      throw err;
+    }
   },
   retry: (failureCount, err: AxiosError<ApiErrResponse<null>>) => {
     // 아직 오늘의 질문에 답하지 않았다고 응답이 오면 재시도 하지 않음

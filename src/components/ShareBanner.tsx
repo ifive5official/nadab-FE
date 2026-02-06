@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import InlineButton from "./InlineButton";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { feedShareStatusOptions } from "@/features/social/queries";
 import { useShareFeedMutation } from "@/features/social/hooks/useShareFeedMutation";
 import { useUnshareFeedMutation } from "@/features/social/hooks/useUnshareFeedMutation";
@@ -25,7 +25,7 @@ type Props = {
 export default function ShareBanner({ className }: Props) {
   const { showModal, closeModal } = useModalStore();
 
-  const { data, isError, isLoading } = useQuery(feedShareStatusOptions);
+  const { data } = useSuspenseQuery(feedShareStatusOptions);
   const shareFeedMutation = useShareFeedMutation({
     onSuccess: () => setToastMessage("오늘의 기록을 친구와 공유했어요."),
   });
@@ -36,13 +36,18 @@ export default function ShareBanner({ className }: Props) {
   const [toastMessage, setToastMessage] = useState<string>("");
 
   const isShared = data?.isShared;
-  const sharedStatus = isError ? "ERROR" : isShared ? "SHARED" : "NOT_SHARED";
+  const sharedStatus =
+    isShared === undefined
+      ? "NOT_ANSWERED"
+      : isShared
+        ? "SHARED"
+        : "NOT_SHARED";
 
   const configMap: Record<
-    "ERROR" | "SHARED" | "NOT_SHARED",
+    "NOT_ANSWERED" | "SHARED" | "NOT_SHARED",
     SharedBannerConfig
   > = {
-    ERROR: {
+    NOT_ANSWERED: {
       bannerText1: "오늘의 질문에 답하고",
       bannerText2: "친구들과 공유해보세요.",
       btnText: "공유하기",
@@ -84,19 +89,19 @@ export default function ShareBanner({ className }: Props) {
   };
 
   // 에러 방지용 기본값
-  const shareBannerConfig = configMap[sharedStatus] || configMap.ERROR;
+  const shareBannerConfig = configMap[sharedStatus];
   return (
     <>
       <div
         className={clsx(
           "rounded-lg px-padding-x-m py-padding-y-m flex items-center justify-between",
-          sharedStatus === "ERROR"
+          sharedStatus === "NOT_ANSWERED"
             ? "bg-surface-layer-1"
             : "bg-brand-primary-alpha-10",
           className,
         )}
       >
-        <div className={clsx("flex flex-col", isLoading && "invisible")}>
+        <div className="flex flex-col">
           <span className="text-label-m">{shareBannerConfig.bannerText1}</span>
           <span className="text-title-3">{shareBannerConfig.bannerText2}</span>
         </div>
@@ -107,7 +112,6 @@ export default function ShareBanner({ className }: Props) {
           }
           disabled={shareBannerConfig.isBtnDisabled}
           onClick={shareBannerConfig.onButtonClick}
-          className={clsx(isLoading && "invisible")}
         >
           {shareBannerConfig.btnText}
         </InlineButton>

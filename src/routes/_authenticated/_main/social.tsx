@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import FeedTab from "@/features/social/FeedTab";
 import {
   feedOptions,
+  feedShareStatusOptions,
   friendRequestsOptions,
   friendsOptions,
 } from "@/features/social/queries";
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
         await Promise.all([
           queryClient.ensureQueryData(feedOptions),
           queryClient.ensureQueryData(friendsOptions),
+          queryClient.ensureQueryData(feedShareStatusOptions),
         ]);
         break;
       case "group":

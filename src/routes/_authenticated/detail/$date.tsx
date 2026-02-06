@@ -6,7 +6,6 @@ import { answerOptions } from "@/features/report/quries";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import categories from "@/constants/categories";
 import emotions from "@/constants/emotions";
-import { formatKoreanDate } from "@/lib/formatDate";
 import { currentUserOptions } from "@/features/user/quries";
 import { AccordionIcon } from "@/components/Icons";
 import { useState } from "react";
@@ -14,18 +13,26 @@ import ReportMessage from "@/features/report/ReportMessage";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
 import ShareBanner from "@/components/ShareBanner";
-import { friendsOptions } from "@/features/social/queries";
+import {
+  feedShareStatusOptions,
+  friendsOptions,
+} from "@/features/social/queries";
 
 export const Route = createFileRoute("/_authenticated/detail/$date")({
   component: RouteComponent,
   //   Todo: 에러 처리 보완
   loader: async ({ params: { date }, context: { queryClient } }) => {
+    const isToday = new Date().toLocaleDateString("en-CA") === date;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const promises: Promise<any>[] = [
+      queryClient.ensureQueryData(answerOptions.detail(date)),
+    ];
+    if (isToday) {
+      promises.push(queryClient.ensureQueryData(friendsOptions));
+      promises.push(queryClient.ensureQueryData(feedShareStatusOptions));
+    }
     try {
-      await Promise.all([
-        queryClient.ensureQueryData(answerOptions.detail(date)),
-        // Todo: 오늘 날짜일 때만 api 호출하게 하자
-        queryClient.ensureQueryData(friendsOptions),
-      ]);
+      await Promise.all(promises);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
@@ -68,7 +75,7 @@ function RouteComponent() {
               emotion={data.emotion as (typeof emotions)[number]["code"]}
             />
             <span className="text-caption-s text-text-secondary ml-auto">
-              {formatKoreanDate(new Date())}
+              {date}
             </span>
           </div>
           <h2 className="text-title-2 mt-margin-y-s mb-margin-y-l break-keep">
