@@ -7,7 +7,6 @@ import categories from "@/constants/categories";
 
 type Question = components["schemas"]["DailyQuestionResponse"];
 
-// Todo: 질문 props로 받기
 type Props = {
   question: Question;
 };

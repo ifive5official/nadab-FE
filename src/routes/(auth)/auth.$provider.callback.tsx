@@ -7,6 +7,7 @@ import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import axios from "axios";
 import useErrorStore from "@/store/modalStore";
+import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type LoginRes = components["schemas"]["TokenResponse"];
 
@@ -58,13 +59,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
           .getState()
           .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
       } else if (axios.isAxiosError(err)) {
-        useErrorStore
-          .getState()
-          .showError(
-            err.response?.data?.code ?? err.message,
-            err.response?.data?.message ??
-              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
-          );
+        handleDefaultApiError(err);
       }
       throw redirect({
         to: "/",

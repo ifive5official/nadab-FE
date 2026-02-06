@@ -7,6 +7,7 @@ import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import type { CurrentUser } from "@/types/currentUser";
+import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type Props = {
   onSuccess?: (data: Res) => void;
@@ -48,12 +49,7 @@ export function useUpdateProfileMutation({ onSuccess }: Props) {
             "닉네임 변경은 14일 내에 최대 2번까지 가능해요.",
           );
       } else {
-        useErrorStore.getState().showError(
-          // Todo: 에러 메시지 변경
-          err.response?.data?.code ?? err.message,
-          err.response?.data?.message ??
-            "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
-        );
+        handleDefaultApiError(err);
       }
     },
   });

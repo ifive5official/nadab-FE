@@ -5,11 +5,11 @@ import useAuthStore from "@/store/authStore";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { CurrentUser } from "@/types/currentUser";
-import useErrorStore from "@/store/modalStore";
 import axios from "axios";
 import type { components } from "@/generated/api-types";
 import { questionOptions } from "@/features/question/queries";
 import { homeOptions } from "@/features/home/queries";
+import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type TokenRes = components["schemas"]["TokenResponse"];
 
@@ -54,12 +54,7 @@ export const Route = createFileRoute("/")({
             // 관심 주제 없음(온보딩 미완료)
             throw redirect({ to: "/onboarding/intro" });
           }
-          useErrorStore.getState().showError(
-            // Todo: 에러 메시지 변경
-            err.response?.data?.code ?? err.message,
-            err.response?.data?.message ??
-              "알 수 없는 에러가 발생했습니다. 다시 시도해 주세요.",
-          );
+          handleDefaultApiError(err);
         }
       }
     }
