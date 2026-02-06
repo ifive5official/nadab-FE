@@ -32,7 +32,7 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
               "fixed inset-x-padding-x-m sm:mx-auto sm:w-[412px]",
               bottom ?? "bottom-padding-y-m",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
-              "bg-surface-alpha-inverse border border-border-alpha-inverse rounded-full text-text-inverse-primary backdrop-blur-sm"
+              "bg-surface-alpha-inverse border border-border-alpha-inverse rounded-full text-text-inverse-primary backdrop-blur-sm",
             )}
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -48,6 +48,6 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
         </>
       )}
     </AnimatePresence>,
-    document.getElementById("modal-root")!
+    document.getElementById("modal-root")!,
   );
 }

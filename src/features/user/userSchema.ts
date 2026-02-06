@@ -7,11 +7,11 @@ export const UserSchema = z.object({
     .string()
     .min(2, { message: "닉네임은 2글자 이상이어야 해요." })
     .max(10, { message: "닉네임은 10자 이하여야 해요." })
-    .regex(/^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z ]+$/, {
-      message: "닉네임은 한글/영문만 사용할 수 있어요.",
+    .regex(/^\S+$/, {
+      message: "닉네임에 공백을 포함할 수 없어요.",
     })
-    .regex(/^[^ ].*[^ ]$/, {
-      message: "닉네임의 시작과 끝에는 공백을 사용할 수 없어요.",
+    .regex(/^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]+$/, {
+      message: "닉네임은 한글/영문만 사용할 수 있어요.",
     }),
   email: z.string().email({ message: "올바른 이메일 형식이 아니에요." }),
   password: z
