@@ -5,31 +5,18 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
-import useAuthStore from "@/store/authStore";
-import { api } from "@/lib/axios";
+import { api, getOrRefreshAccessToken } from "@/lib/axios";
 import type { ApiResponse } from "@/generated/api";
 import type { CurrentUser } from "@/types/currentUser";
 import axios from "axios";
-import type { components } from "@/generated/api-types";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
-
-type TokenRes = components["schemas"]["TokenResponse"];
 
 export const Route = createFileRoute("/_authenticated")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const { accessToken, setAccessToken } = useAuthStore.getState();
+    const accessToken = await getOrRefreshAccessToken();
     if (!accessToken) {
-      try {
-        const res = await api.post<ApiResponse<TokenRes>>(
-          "/api/v1/auth/refresh",
-        );
-        const newAccessToken = res.data.data?.accessToken ?? null;
-        setAccessToken(newAccessToken!);
-      } catch (err) {
-        if (isRedirect(err)) throw err;
-        throw redirect({ to: "/" });
-      }
+      throw redirect({ to: "/" });
     }
     try {
       const user = await context.queryClient.ensureQueryData({

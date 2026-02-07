@@ -7,6 +7,43 @@ export const api = axios.create({
   withCredentials: true, // refresh token 쿠키 포함
 });
 
+let isRefreshing = false;
+let queue: ((token: string) => void)[] = []; // 요청 재시도 함수들의 큐
+
+export const getOrRefreshAccessToken = async (): Promise<string | null> => {
+  const { accessToken, setAccessToken, clearAuth } = useAuthStore.getState();
+
+  // 1. 이미 토큰이 있다면 바로 반환
+  if (accessToken) return accessToken;
+
+  // 2. 이미 다른 곳에서 리프레시 중이라면 큐에서 대기
+  if (isRefreshing) {
+    return new Promise((resolve) => {
+      queue.push((token: string) => resolve(token));
+    });
+  }
+
+  // 3. 리프레시 시작
+  isRefreshing = true;
+  try {
+    const res = await api.post("/api/v1/auth/refresh");
+    const newAccessToken = res.data.data.accessToken;
+    setAccessToken(newAccessToken);
+
+    // 대기 중인 요청들에 새 토큰 전달
+    queue.forEach((cb) => cb(newAccessToken));
+    queue = [];
+    return newAccessToken;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (err) {
+    queue = [];
+    clearAuth();
+    return null;
+  } finally {
+    isRefreshing = false;
+  }
+};
+
 // 항상 access token을 요청 헤더에 붙임
 api.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
@@ -17,9 +54,6 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
-
-let isRefreshing = false;
-let queue: ((token: string) => void)[] = []; // 요청 재시도 함수들의 큐
 
 // 401 처리 + 자동 리프레시
 api.interceptors.response.use(
@@ -32,53 +66,17 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 401이면서 refresh 아닌 요청일 때만
-    if (
-      error.response?.status === 401 &&
-      !error.response?.data?.code &&
-      !originalRequest._retry
-    ) {
-      // 이미 refresh 중이면 큐에 넣음
-      if (isRefreshing) {
-        return new Promise((resolve) => {
-          queue.push((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(api(originalRequest));
-          });
-        });
-      }
-
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      isRefreshing = true;
 
-      try {
-        // Refresh Token은 HttpOnly 쿠키로 자동 전송
-        const res = await api.post("/api/v1/auth/refresh");
+      // 분리한 함수 호출 (공유된 상태를 사용함)
+      const newToken = await getOrRefreshAccessToken();
 
-        // access token 재설정
-        const newAccessToken = res.data.data.accessToken;
-        useAuthStore.getState().setAccessToken(newAccessToken);
-
-        // 대기 중인 요청들 다시 실행
-        queue.forEach((cb) => cb(newAccessToken));
-        queue = [];
-
-        // 원래 요청 재시도
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+      if (newToken) {
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
-      } catch (err) {
-        console.log(err);
-        queue = [];
-
-        // Refresh Token도 만료되면, 강제 로그아웃
-        useAuthStore.getState().clearAuth();
-        // window.location.href = "/";
-        return Promise.reject(err);
-      } finally {
-        isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   },
 );
