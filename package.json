@@ -7,9 +7,12 @@
     "build": "vite build && tsc",
     "serve": "vite preview",
     "test": "vitest run",
-    "gen:api": "openapi-typescript https://nadab-dev.n-e.kr/v3/api-docs --output src/generated/api-types.ts"
+    "gen:api": "openapi-typescript https://nadab-dev.n-e.kr/v3/api-docs --output src/generated/api-types.ts",
+    "app:sync": "pnpm run build && npx cap sync"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
     "@ncdai/react-wheel-picker": "^1.0.19",
     "@tailwindcss/vite": "^4.1.16",
     "@tanstack/react-devtools": "^0.7.0",
@@ -32,6 +35,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.0.2",
     "@eslint/js": "^9.39.1",
     "@tanstack/eslint-plugin-query": "^5.91.2",
     "@tanstack/eslint-plugin-router": "^1.133.19",
