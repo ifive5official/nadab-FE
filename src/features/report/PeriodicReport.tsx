@@ -7,6 +7,7 @@ import { ReportItem } from "./ReportComponents";
 import { useNavigate } from "@tanstack/react-router";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useState } from "react";
+import useModalStore from "@/store/modalStore";
 
 type ReportRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -28,6 +29,7 @@ export default function PeriodicReport({
       ? `${report?.month}월 ${report?.weekOfMonth}주차 분석`
       : `${report?.month}월 분석`;
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const { showError } = useModalStore();
   const navigate = useNavigate();
 
   return (
@@ -55,9 +57,14 @@ export default function PeriodicReport({
           />
           {variant === "current" && (
             <BlockButton
-              onClick={() => navigate({ to: `/prev-report/${reportType}` })}
-              variant="secondary"
-              disabled={!prevReport}
+              onClick={() => {
+                if (prevReport) {
+                  navigate({ to: `/prev-report/${reportType}` });
+                } else {
+                  showError("이전 분석이\n존재하지 않아요.");
+                }
+              }}
+              variant={prevReport ? "secondary" : "disabled"}
             >
               {getPreviousPeriodText(reportType, "prev")} 분석 보기
             </BlockButton>

@@ -13,6 +13,10 @@ import { crystalsOptions } from "@/features/user/quries";
 import { REPORT_CONFIGS } from "@/features/report/reportConfigs";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import { useGeneratePeriodicReportMutation } from "@/features/report/hooks/useGeneratePeriodicReportMutation";
+import useModalStore from "@/store/modalStore";
+import { WarningFilledIcon } from "@/components/Icons";
+import { CrystalBadge } from "@/components/Badges";
+import useToastStore from "@/store/toastStore";
 
 const reportTypeSchema = z.object({
   reportType: z.enum(["weekly", "monthly"]),
@@ -29,6 +33,8 @@ export const Route = createFileRoute("/_authenticated/prev-report/$reportType")(
 );
 
 function RouteComponent() {
+  const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
   const { reportType } = Route.useParams();
   const config = REPORT_CONFIGS[reportType];
   const { data: crystals } = useSuspenseQuery(crystalsOptions);
@@ -61,12 +67,29 @@ function RouteComponent() {
               report={reports.previousReport}
             />
             <BlockButton
-              disabled={!!(crystalBalance < config.cost)}
+              variant={crystalBalance >= config.cost ? "primary" : "disabled"}
               onClick={() => {
                 if (reports.report) {
                   navigate({ to: "/report" });
-                } else {
+                } else if (crystalBalance >= config.cost) {
                   generateReportMutation.mutate();
+                  showToast({
+                    message: `${config.cost} 크리스탈이 소진되었어요.`,
+                  });
+                } else {
+                  showModal({
+                    icon: WarningFilledIcon,
+                    title: "현재 보유한\n크리스탈이 부족해요.",
+                    children: (
+                      <p className="flex items-center gap-gap-x-s">
+                        <span className="text-caption-m">
+                          남은 크리스탈 개수
+                        </span>
+                        <CrystalBadge crystals={config.cost - crystalBalance} />
+                      </p>
+                    ),
+                    buttons: [{ label: "확인", onClick: closeModal }],
+                  });
                 }
               }}
             >

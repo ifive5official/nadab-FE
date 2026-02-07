@@ -1,5 +1,5 @@
 // 리포트 페이지에서 리포트가 없거나 로딩중일 때 보여줄 것
-import { Badge } from "@/components/Badges";
+import { Badge, CrystalBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
@@ -7,6 +7,9 @@ import type { components } from "@/generated/api-types";
 import { REPORT_CONFIGS } from "./reportConfigs";
 import { InfoButton } from "./ReportComponents";
 import { useNavigate } from "@tanstack/react-router";
+import useModalStore from "@/store/modalStore";
+import { WarningFilledIcon } from "@/components/Icons";
+import useToastStore from "@/store/toastStore";
 
 type ReportRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -27,6 +30,8 @@ export default function PeriodicReportCard({
 }: Props) {
   const config = REPORT_CONFIGS[reportType];
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const { showModal, closeModal, showError } = useModalStore();
+  const { showToast } = useToastStore();
   const navigate = useNavigate();
 
   return (
@@ -59,16 +64,38 @@ export default function PeriodicReportCard({
       </div>
       <div className="flex gap-gap-x-xs">
         <BlockButton
-          onClick={() => navigate({ to: `/prev-report/${reportType}` })}
-          disabled={!prevReport}
-          variant="secondary"
+          onClick={() => {
+            if (prevReport) {
+              navigate({ to: `/prev-report/${reportType}` });
+            } else {
+              showError("이전 분석이\n존재하지 않아요.");
+            }
+          }}
+          variant={prevReport ? "secondary" : "disabled"}
         >
           이전 분석 보기
         </BlockButton>
         <BlockButton
           isLoading={isGenerating}
-          disabled={crystalBalance < config.cost}
-          onClick={onGenerate}
+          variant={crystalBalance >= config.cost ? "primary" : "disabled"}
+          onClick={() => {
+            if (crystalBalance >= config.cost) {
+              onGenerate();
+              showToast({ message: `${config.cost} 크리스탈이 소진되었어요.` });
+            } else {
+              showModal({
+                icon: WarningFilledIcon,
+                title: "현재 보유한\n크리스탈이 부족해요.",
+                children: (
+                  <p className="flex items-center gap-gap-x-s">
+                    <span className="text-caption-m">남은 크리스탈 개수</span>
+                    <CrystalBadge crystals={config.cost - crystalBalance} />
+                  </p>
+                ),
+                buttons: [{ label: "확인", onClick: closeModal }],
+              });
+            }
+          }}
         >
           {config.cost} 크리스탈로 받기
         </BlockButton>

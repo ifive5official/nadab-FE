@@ -28,13 +28,13 @@ const useModalStoreBase = create<State & Action>((set) => ({
   isOpen: false,
   config: null,
   showModal: (config) => set({ isOpen: true, config }),
-  showError: (title, messate) =>
+  showError: (title, message) =>
     set({
       isOpen: true,
       config: {
         icon: WarningFilledIcon,
         title,
-        children: messate,
+        children: message,
         buttons: [{ label: "확인", onClick: () => set({ isOpen: false }) }],
       },
     }),
