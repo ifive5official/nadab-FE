@@ -94,14 +94,14 @@ function FeatureDescription() {
           ref={prevRef}
           className={clsx(
             "absolute top-1/2 z-10 left-0 sm:block hidden",
-            activeIndex === 0 && "hidden!"
+            activeIndex === 0 && "hidden!",
           )}
         />
         <RightCarousel
           ref={nextRef}
           className={clsx(
             "absolute top-1/2 z-10 right-0 sm:block hidden",
-            activeIndex === contents.length - 1 && "hidden!"
+            activeIndex === contents.length - 1 && "hidden!",
           )}
         />
         <Swiper
