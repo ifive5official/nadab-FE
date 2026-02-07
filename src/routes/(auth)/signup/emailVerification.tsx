@@ -8,6 +8,7 @@ import StepTitle from "@/features/auth/StepTitle";
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useSendEmailCodeMutation } from "@/features/auth/hooks/useSendEmailCodeMutation";
 import { useVerifyEmailCodeMutation } from "@/features/auth/hooks/useVerifyEmailCodeMutation";
+import useToastStore from "@/store/toastStore";
 
 export const Route = createFileRoute("/(auth)/signup/emailVerification")({
   component: EmailVerification,
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/(auth)/signup/emailVerification")({
 });
 
 function EmailVerification() {
+  const { showToast } = useToastStore();
   const updateIsEmailVerified = useSignupStore.use.updateIsEmailVerified();
   const email = useSignupStore.use.email();
   const [enteredCode, setEnteredCode] = useState("");
@@ -30,7 +32,9 @@ function EmailVerification() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [timeLeft, setTimeLeft] = useState(180); // 3분
 
-  const resendCodeMutation = useSendEmailCodeMutation({});
+  const resendCodeMutation = useSendEmailCodeMutation({
+    onSuccess: () => showToast({ message: "인증번호가 재발송되었어요." }),
+  });
   const verifyCodeMutation = useVerifyEmailCodeMutation({
     onSuccess: () => {
       updateIsEmailVerified();

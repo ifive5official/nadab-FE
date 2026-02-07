@@ -1,7 +1,6 @@
 import Container from "@/components/Container";
 import { ChevronRightIcon, WarningFilledIcon } from "@/components/Icons";
 import SearchBar from "@/components/SearchBar";
-import { useState } from "react";
 import clsx from "clsx";
 import FriendItem from "./FriendItem";
 import { Link } from "@tanstack/react-router";
@@ -11,8 +10,8 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 import { friendRequestsOptions, friendsOptions } from "./queries";
 import ProfileImg from "@/components/ProfileImg";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
-import Toast from "@/components/Toast";
 import useModalStore from "@/store/modalStore";
+import useToastStore from "@/store/toastStore";
 
 export default function FriendsTab() {
   const [friendsQuery, requestsQuery] = useSuspenseQueries({
@@ -24,11 +23,11 @@ export default function FriendsTab() {
   const requestsCount = friendRequests?.totalCount ?? 0;
 
   const deleteFriendMutation = useDeleteFriendMutation({
-    onSuccess: () => setIsToastOpen(true),
+    onSuccess: () => showToast({ message: "친구가 삭제되었어요." }),
   });
 
   const { showModal, closeModal } = useModalStore();
-  const [isToastOpen, setIsToastOpen] = useState(false);
+  const { showToast } = useToastStore();
 
   return (
     <>
@@ -142,11 +141,6 @@ export default function FriendsTab() {
           )}
         </Container>
       </>
-      <Toast
-        isOpen={isToastOpen}
-        onClose={() => setIsToastOpen(false)}
-        message="친구가 삭제되었어요."
-      />
     </>
   );
 }

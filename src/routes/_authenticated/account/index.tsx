@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
-import { useState } from "react";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
-import Toast from "@/components/Toast";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SectionDivider } from "@/features/user/components/AccountSectionComponents";
 import InterestSection from "@/features/user/components/InterestSection";
@@ -17,12 +15,13 @@ import ProfileSection from "@/features/user/components/ProfileSection";
 import { currentUserOptions } from "@/features/user/quries";
 import AccountSection from "@/features/user/components/AccountSection";
 import Container from "@/components/Container";
+import useToastStore from "@/store/toastStore";
 
 const notificationOptions = queryOptions({
   queryKey: ["currentUser", "notification"],
   queryFn: async () => {
     const res = await api.get<ApiResponse<NotificationRes>>(
-      "/api/v1/terms/consent/marketing"
+      "/api/v1/terms/consent/marketing",
     );
     return res.data.data!.agreed!;
   },
@@ -37,8 +36,7 @@ export const Route = createFileRoute("/_authenticated/account/")({
 type NotificationRes = components["schemas"]["MarketingConsentResponse"];
 
 function RouteComponent() {
-  const [isToastOpen, setIsToastOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { data: isNotificationon } = useSuspenseQuery(notificationOptions);
@@ -46,15 +44,13 @@ function RouteComponent() {
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
-      setToastMessage("관심 주제 변경이 완료되었어요.");
-      setIsToastOpen(true);
+      showToast({ message: "관심 주제 변경이 완료되었어요." });
     },
   });
   const toggleNotificationMutation = useToggleNotificationMutation({
     onSuccess: (newSetting: boolean) => {
       if (newSetting) {
-        setToastMessage("알림이 설정되었어요.");
-        setIsToastOpen(true);
+        showToast({ message: "알림이 설정되었어요." });
       }
     },
   });
@@ -93,11 +89,6 @@ function RouteComponent() {
             <AccountSection />
           </ul>
         </div>
-        <Toast
-          isOpen={isToastOpen}
-          message={toastMessage}
-          onClose={() => setIsToastOpen(false)}
-        />
       </Container>
     </>
   );

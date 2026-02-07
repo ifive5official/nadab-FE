@@ -14,8 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useAcceptFriendRequestMutation } from "@/features/social/hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "@/features/social/hooks/useRejectFriendRequestMutation";
 import useErrorStore from "@/store/modalStore";
-import Toast from "@/components/Toast";
 import useModalStore from "@/store/modalStore";
+import useToastStore from "@/store/toastStore";
 
 export const Route = createFileRoute("/_authenticated/social/requests")({
   component: RouteComponent,
@@ -31,10 +31,11 @@ function RouteComponent() {
   const { data: friends } = useQuery(friendsOptions);
   const { data: friendRequests } = useQuery(friendRequestsOptions);
   const { showModal, closeModal } = useModalStore();
-  const [toastMessage, setToastMessage] = useState("");
+  const { showToast } = useToastStore();
 
   const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
-    onSuccess: () => setToastMessage("친구 요청이 수락되어 친구가 되었어요."),
+    onSuccess: () =>
+      showToast({ message: "친구 요청이 수락되어 친구가 되었어요." }),
     onSettled: (_data, _error, variables) => {
       setAcceptingIds((prev) => {
         const next = new Set(prev);
@@ -45,7 +46,7 @@ function RouteComponent() {
   });
 
   const rejectFriendRequestMutation = useRejectFriendRequestMutation({
-    onSuccess: () => setToastMessage("친구 요청이 거절되었어요."),
+    onSuccess: () => showToast({ message: "친구 요청이 거절되었어요." }),
     onSettled: (_data, _error, variables) => {
       setRejectingIds((prev) => {
         const next = new Set(prev);
@@ -139,11 +140,6 @@ function RouteComponent() {
           />
         )}
       </Container>
-      <Toast
-        isOpen={!!toastMessage}
-        onClose={() => setToastMessage("")}
-        message={toastMessage}
-      />
     </>
   );
 }

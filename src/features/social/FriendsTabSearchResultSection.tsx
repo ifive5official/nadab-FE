@@ -12,8 +12,8 @@ import { UserCheckFilledIcon, WarningFilledIcon } from "@/components/Icons";
 import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
 import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
 import useErrorStore from "@/store/modalStore";
-import Toast from "@/components/Toast";
 import useModalStore from "@/store/modalStore";
+import useToastStore from "@/store/toastStore";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -86,7 +86,7 @@ export default function FriendsTabSearchResultSection({
     },
   });
   const friendRequestMutation = useFriendRequestMutation({
-    onSuccess: () => setToastMessage("친구 신청 알림이 전송되었어요."),
+    onSuccess: () => showToast({ message: "친구 신청 알림이 전송되었어요." }),
     onSettled: (_data, _error, variables) => {
       setActiveIds((prev) => {
         const next = new Set(prev);
@@ -96,7 +96,7 @@ export default function FriendsTabSearchResultSection({
     },
   });
   const deleteFriendRequestMutation = useDeleteFriendRequestMutation({
-    onSuccess: () => setToastMessage("친구 신청이 취소되었어요."),
+    onSuccess: () => showToast({ message: "친구 신청이 취소되었어요." }),
     onSettled: (_data, _error, variables) => {
       setActiveIds((prev) => {
         const next = new Set(prev);
@@ -109,6 +109,7 @@ export default function FriendsTabSearchResultSection({
   const [activeIds, setActiveIds] = useState(new Set());
 
   const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
 
   const REQUESTBTN_CONFIG: Record<RelationshipStatus, RequestBtnConfig | null> =
     {
@@ -180,8 +181,6 @@ export default function FriendsTabSearchResultSection({
         },
       },
     };
-
-  const [toastMessage, setToastMessage] = useState("");
 
   return (
     <>
@@ -335,11 +334,6 @@ export default function FriendsTabSearchResultSection({
           </div>
         )}
       </section>
-      <Toast
-        isOpen={!!toastMessage}
-        onClose={() => setToastMessage("")}
-        message={toastMessage}
-      />
     </>
   );
 }

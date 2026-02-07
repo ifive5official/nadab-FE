@@ -31,6 +31,7 @@ export function useSendEmailCodeMutation({ onEmailInvalid, onSuccess }: Props) {
         case "EMAIL_ALREADY_EXISTS":
           onEmailInvalid?.("이미 가입한 회원이에요.");
           break;
+        case "EMAIL_NOT_REGISTERED":
         case "USER_NOT_FOUND":
           onEmailInvalid?.("해당 이메일로 가입한 계정이 없어요.");
           break;

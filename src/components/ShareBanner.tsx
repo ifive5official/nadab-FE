@@ -4,10 +4,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { feedShareStatusOptions } from "@/features/social/queries";
 import { useShareFeedMutation } from "@/features/social/hooks/useShareFeedMutation";
 import { useUnshareFeedMutation } from "@/features/social/hooks/useUnshareFeedMutation";
-import Toast from "./Toast";
-import { useState } from "react";
 import { WarningFilledIcon } from "./Icons";
 import useModalStore from "@/store/modalStore";
+import useToastStore from "@/store/toastStore";
 
 type SharedBannerConfig = {
   bannerText1: string;
@@ -24,16 +23,15 @@ type Props = {
 // 오늘의 기록 공유 배너
 export default function ShareBanner({ className }: Props) {
   const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
 
   const { data } = useSuspenseQuery(feedShareStatusOptions);
   const shareFeedMutation = useShareFeedMutation({
-    onSuccess: () => setToastMessage("오늘의 기록을 친구와 공유했어요."),
+    onSuccess: () => showToast({ message: "오늘의 기록을 친구와 공유했어요." }),
   });
   const unShareFeedMutation = useUnshareFeedMutation({
-    onSuccess: () => setToastMessage("오늘의 기록 공유를 중단했어요."),
+    onSuccess: () => showToast({ message: "오늘의 기록 공유를 중단했어요." }),
   });
-
-  const [toastMessage, setToastMessage] = useState<string>("");
 
   const isShared = data?.isShared;
   const sharedStatus =
@@ -116,11 +114,6 @@ export default function ShareBanner({ className }: Props) {
           {shareBannerConfig.btnText}
         </InlineButton>
       </div>
-      <Toast
-        isOpen={!!toastMessage}
-        message={toastMessage}
-        onClose={() => setToastMessage("")}
-      />
     </>
   );
 }

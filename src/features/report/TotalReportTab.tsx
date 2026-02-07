@@ -16,7 +16,7 @@ export default function TotalReportTab() {
         <div className="flex-2" />
         <NoResult
           className="mb-gap-y-l"
-          title={`전체 분석이 아직\n완성되지 못했어요.`}
+          title={`유형 분석이 아직\n완성되지 못했어요.`}
           description={`이야기를 조금 더 채워주시면,\n${currentUser.nickname}님만의 분석을 전해드릴게요.`}
         />
 

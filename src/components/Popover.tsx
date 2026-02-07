@@ -38,7 +38,7 @@ export function Popover({ isOpen, onClose, className }: Props) {
               {REPORT_CONFIGS["monthly"].requiredAnswers}건 이상 작성 시
               완성돼요.
             </li>
-            <li>전체분석은 30개 이상의 답변을 작성해야 제공돼요.</li>
+            <li>유형 분석은 30개 이상의 답변을 작성해야 제공돼요.</li>
           </ul>
         </div>
       )}

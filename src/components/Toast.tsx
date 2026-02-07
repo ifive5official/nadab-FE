@@ -1,36 +1,21 @@
 import { motion, AnimatePresence } from "motion/react";
-// import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { CloseBigIcon, ToastCircleCheckFilledIcon } from "./Icons";
 import clsx from "clsx";
+import useToastStore from "@/store/toastStore";
 
-type Props = {
-  isOpen: boolean;
-  bottom?: string;
-  message: string;
-  onClose: () => void;
-};
-
-export default function Toast({ isOpen, bottom, message, onClose }: Props) {
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     document.body.style.overflow = "hidden";
-  //   }
-
-  //   return () => {
-  //     document.body.style.overflow = "";
-  //   };
-  // }, [isOpen]);
+export default function Toast() {
+  const { isOpen, config, closeToast } = useToastStore();
 
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && config && (
         <>
-          <div className="z-20 fixed inset-0" onClick={onClose} />
+          <div className="z-20 fixed inset-0" onClick={closeToast} />
           <motion.div
             className={clsx(
               "fixed inset-x-padding-x-m sm:mx-auto sm:w-[412px]",
-              bottom ?? "bottom-padding-y-m",
+              config.bottom ?? "bottom-padding-y-m",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
               "bg-surface-alpha-inverse border border-border-alpha-inverse rounded-full text-text-inverse-primary backdrop-blur-sm",
             )}
@@ -40,14 +25,14 @@ export default function Toast({ isOpen, bottom, message, onClose }: Props) {
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
             <ToastCircleCheckFilledIcon />
-            <p className="mr-auto text-label-m">{message}</p>
-            <button onClick={onClose}>
+            <p className="mr-auto text-label-m">{config.message}</p>
+            <button onClick={closeToast}>
               <CloseBigIcon />
             </button>
           </motion.div>
         </>
       )}
     </AnimatePresence>,
-    document.getElementById("modal-root")!,
+    document.getElementById("toast-root")!,
   );
 }
