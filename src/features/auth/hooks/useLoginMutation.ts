@@ -57,11 +57,11 @@ export function useLoginMutation({ onEmailInvalid, onPasswordInvalid }: Props) {
           onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
           break;
         case "USER_NOT_FOUND":
-          onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
+          onPasswordInvalid("올바른 이메일 주소를 입력해주세요.");
           break;
         case "AUTH_REFRESH_TOKEN_NOT_FOUND":
           // Todo: 리프레시 에러가 자꾸 떠서 임시로 막았는데 이게 왜 됨?
-          onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
+          // onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
           break;
         default:
           handleDefaultApiError(err);
