@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
+import ErrorPage from "@/components/ErrorPage";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -12,6 +13,7 @@ type RouterContext = {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
+  errorComponent: ErrorPage,
 });
 
 function RootComponent() {
