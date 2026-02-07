@@ -17,9 +17,11 @@ import {
   feedShareStatusOptions,
   friendsOptions,
 } from "@/features/social/queries";
+import ErrorPage from "@/components/ErrorPage";
 
 export const Route = createFileRoute("/_authenticated/detail/$date")({
   component: RouteComponent,
+  notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
   //   Todo: 에러 처리 보완
   loader: async ({ params: { date }, context: { queryClient } }) => {
     const isToday = new Date().toLocaleDateString("en-CA") === date;

@@ -14,6 +14,7 @@ type RouterContext = {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
   errorComponent: ErrorPage,
+  notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
 });
 
 function RootComponent() {
