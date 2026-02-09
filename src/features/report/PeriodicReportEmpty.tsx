@@ -53,7 +53,7 @@ export default function PeriodicReportCard({
         </div>
         <h3 className="text-title-2">
           {isGenerating
-            ? `지난${config.periodText} 레포트를 생성 중이에요.`
+            ? `지난${config.periodText} 리포트를 생성 중이에요.`
             : `지난${config.periodText} 리포트를 받아볼까요?`}
         </h3>
         <p className="text-caption-l whitespace-pre-line">
@@ -68,12 +68,12 @@ export default function PeriodicReportCard({
             if (prevReport) {
               navigate({ to: `/prev-report/${reportType}` });
             } else {
-              showError("이전 분석이\n존재하지 않아요.");
+              showError("이전 리포트가\n존재하지 않아요.");
             }
           }}
           variant={prevReport ? "secondary" : "disabled"}
         >
-          이전 분석 보기
+          이전 리포트 보기
         </BlockButton>
         <BlockButton
           isLoading={isGenerating}

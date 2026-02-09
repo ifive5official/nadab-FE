@@ -22,7 +22,7 @@ export default function useReport<T extends keyof ReportTypeMap>({
   // Todo: 에러 처리
   const { data: reports } = useSuspenseQuery({
     ...periodicReportOptions(type),
-    // 레포트 생성 중일 경우 1초 간격으로 폴링
+    // 리포트 생성 중일 경우 1초 간격으로 폴링
     refetchInterval: (query) => {
       const status = query.state.data?.report?.status;
       if (status === "PENDING" || status === "IN_PROGRESS") {

@@ -1,5 +1,5 @@
-// 오늘의 레포트 페이지와 상세보기 페이지에서
-// 레포트 한 문장 당 띄우는 박스
+// 오늘의 리포트 페이지와 상세보기 페이지에서
+// 리포트 한 문장 당 띄우는 박스
 export default function ReportMessage({
   children,
 }: {

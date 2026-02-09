@@ -48,7 +48,7 @@ function RouteComponent() {
 
   return (
     <>
-      <SubHeader showBackButton={false}>오늘의 분석</SubHeader>
+      <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection question={question!} />

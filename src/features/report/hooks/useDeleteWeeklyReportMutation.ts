@@ -1,4 +1,4 @@
-// 주간 레포트 및 월간 레포트 삭제(테스트용)
+// 주간 리포트 및 월간 리포트 삭제(테스트용)
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";

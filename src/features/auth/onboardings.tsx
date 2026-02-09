@@ -13,7 +13,7 @@ export function Question() {
         <NoticeMenuIcon />
         <div className="mr-auto">
           <p className="text-label-m">오늘의 질문이 도착했어요.</p>
-          <p className="text-caption-s">답변을 작성해서 분석을 받아보세요.</p>
+          <p className="text-caption-s">답변을 작성해서 리포트를 받아보세요.</p>
         </div>
         <CloseBigIcon />
       </div>

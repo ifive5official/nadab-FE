@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { crystalsOptions } from "../user/quries";
-import {
-  useDeleteMonthlyReportMutation,
-  useDeleteWeeklyReportMutation,
-} from "./hooks/useDeleteWeeklyReportMutation";
+// import {
+//   useDeleteMonthlyReportMutation,
+//   useDeleteWeeklyReportMutation,
+// } from "./hooks/useDeleteWeeklyReportMutation";
 import useReport from "./hooks/useReport";
 import PeriodicReportEmpty from "./PeriodicReportEmpty";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
@@ -28,13 +28,13 @@ export default function PeriodicReportTab() {
     reportType: "monthly",
   });
 
-  const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
-  const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
+  // const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
+  // const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
   return (
     <>
-      <button onClick={() => deleteWeeklyReportMutation.mutate()}>
-        주간 레포트 삭제(테스트용)
-      </button>
+      {/* <button onClick={() => deleteWeeklyReportMutation.mutate()}>
+        주간 리포트 삭제(테스트용)
+      </button> */}
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         {weeklyReport && !isWeeklyReportGenerating ? (
           <PeriodicReport
@@ -52,9 +52,9 @@ export default function PeriodicReportTab() {
           />
         )}
 
-        <button onClick={() => deleteMonthlyReportMutation.mutate()}>
-          월간 레포트 삭제(테스트용)
-        </button>
+        {/* <button onClick={() => deleteMonthlyReportMutation.mutate()}>
+          월간 리포트 삭제(테스트용)
+        </button> */}
         {monthlyReport && !isMonthlyReportGenerating ? (
           <PeriodicReport
             reportType={"monthly"}

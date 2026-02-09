@@ -47,7 +47,7 @@ function RouteComponent() {
             },
           },
           {
-            label: "분석보기",
+            label: "리포트 보기",
             onClick: () => {
               closeModal();
               navigate({ to: "/today/report" });

@@ -1,4 +1,4 @@
-// 주간/월간 레포트 생성 뮤테이션
+// 주간/월간 리포트 생성 뮤테이션
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import useErrorStore from "@/store/modalStore";
@@ -47,8 +47,8 @@ export function useGeneratePeriodicReportMutation<
         useErrorStore
           .getState()
           .showError(
-            `지난${config.periodText} 분석이 완성되지 못했어요.`,
-            `이번${config.periodText} 기록을 열심히 작성해서\n다음 분석을 완성해봐요.`,
+            `지난${config.periodText} 리포트가 완성되지 못했어요.`,
+            `이번${config.periodText} 기록을 열심히 작성해서\n다음 리포트를 완성해봐요.`,
           );
       } else {
         handleDefaultApiError(err);

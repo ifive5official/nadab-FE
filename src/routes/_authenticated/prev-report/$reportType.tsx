@@ -1,4 +1,4 @@
-// 이전 레포트 보기 페이지
+// 이전 리포트 보기 페이지
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import PeriodicReport from "@/features/report/PeriodicReport";
@@ -50,13 +50,13 @@ function RouteComponent() {
   //   Todo: 에러 처리 보완
   useEffect(() => {
     if (!reports.previousReport) {
-      useErrorStore.getState().showError("이전 레포트를 불러올 수 없어요.");
+      useErrorStore.getState().showError("이전 리포트를 불러올 수 없어요.");
     }
   }, [reports.previousReport]);
 
   return (
     <>
-      <SubHeader>이전 분석 보기</SubHeader>
+      <SubHeader>이전 리포트 보기</SubHeader>
       <Container>
         {reports.previousReport && (
           <div className="py-padding-y-m flex flex-col gap-gap-y-xl">
@@ -94,8 +94,8 @@ function RouteComponent() {
               }}
             >
               {reports.report
-                ? `${getPreviousPeriodText(reportType, "current")} 분석 보기`
-                : `${config.cost} 크리스탈로 ${getPreviousPeriodText(reportType, "current")} 분석 받기`}
+                ? `${getPreviousPeriodText(reportType, "current")} 리포트 보기`
+                : `${config.cost} 크리스탈로 ${getPreviousPeriodText(reportType, "current")} 리포트 받기`}
             </BlockButton>
           </div>
         )}
