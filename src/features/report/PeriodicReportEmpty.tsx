@@ -68,12 +68,12 @@ export default function PeriodicReportCard({
             if (prevReport) {
               navigate({ to: `/prev-report/${reportType}` });
             } else {
-              showError("이전 분석이\n존재하지 않아요.");
+              showError("이전 리포트가\n존재하지 않아요.");
             }
           }}
           variant={prevReport ? "secondary" : "disabled"}
         >
-          이전 분석 보기
+          이전 리포트 보기
         </BlockButton>
         <BlockButton
           isLoading={isGenerating}

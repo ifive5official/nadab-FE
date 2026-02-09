@@ -1121,7 +1121,7 @@ export function AccordionIcon() {
   );
 }
 
-// 분석
+// 리포트
 export function NoResultIcon({
   className,
   size = 63,

@@ -47,8 +47,8 @@ export function useGeneratePeriodicReportMutation<
         useErrorStore
           .getState()
           .showError(
-            `지난${config.periodText} 분석이 완성되지 못했어요.`,
-            `이번${config.periodText} 기록을 열심히 작성해서\n다음 분석을 완성해봐요.`,
+            `지난${config.periodText} 리포트가 완성되지 못했어요.`,
+            `이번${config.periodText} 기록을 열심히 작성해서\n다음 리포트를 완성해봐요.`,
           );
       } else {
         handleDefaultApiError(err);

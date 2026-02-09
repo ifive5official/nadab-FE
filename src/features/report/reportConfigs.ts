@@ -1,6 +1,6 @@
 export const REPORT_CONFIGS = {
   weekly: {
-    label: "주간 분석",
+    label: "주간 리포트",
     cost: 20,
     periodText: "주",
     key: "weekly-report",
@@ -8,7 +8,7 @@ export const REPORT_CONFIGS = {
     requiredAnswers: 3,
   },
   monthly: {
-    label: "월간 분석",
+    label: "월간 리포트",
     cost: 40,
     periodText: "달",
     key: "monthly-report",

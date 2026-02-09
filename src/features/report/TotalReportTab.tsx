@@ -6,7 +6,7 @@ import { Popover } from "@/components/Popover";
 import clsx from "clsx";
 import NoResult from "@/components/NoResult";
 
-// Todo: 전체 분석 api 연동
+// Todo: 전체 리포트 api 연동
 export default function TotalReportTab() {
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -16,8 +16,8 @@ export default function TotalReportTab() {
         <div className="flex-2" />
         <NoResult
           className="mb-gap-y-l"
-          title={`유형 분석이 아직\n완성되지 못했어요.`}
-          description={`이야기를 조금 더 채워주시면,\n${currentUser.nickname}님만의 분석을 전해드릴게요.`}
+          title={`유형 리포트가 아직\n완성되지 못했어요.`}
+          description={`이야기를 조금 더 채워주시면,\n${currentUser.nickname}님만의 리포트를 전해드릴게요.`}
         />
 
         <button

@@ -56,7 +56,7 @@ function RouteComponent() {
 
   return (
     <>
-      <SubHeader>이전 분석 보기</SubHeader>
+      <SubHeader>이전 리포트 보기</SubHeader>
       <Container>
         {reports.previousReport && (
           <div className="py-padding-y-m flex flex-col gap-gap-y-xl">
@@ -94,8 +94,8 @@ function RouteComponent() {
               }}
             >
               {reports.report
-                ? `${getPreviousPeriodText(reportType, "current")} 분석 보기`
-                : `${config.cost} 크리스탈로 ${getPreviousPeriodText(reportType, "current")} 분석 받기`}
+                ? `${getPreviousPeriodText(reportType, "current")} 리포트 보기`
+                : `${config.cost} 크리스탈로 ${getPreviousPeriodText(reportType, "current")} 리포트 받기`}
             </BlockButton>
           </div>
         )}

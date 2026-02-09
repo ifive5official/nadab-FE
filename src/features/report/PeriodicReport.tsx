@@ -1,4 +1,4 @@
-// 리포트 및 이전 분석 보기 페이지에서 리포트가 있을 때 보여줄 것
+// 리포트 및 이전 리포트 보기 페이지에서 리포트가 있을 때 보여줄 것
 import BlockButton from "@/components/BlockButton";
 import { InfoButton } from "./ReportComponents";
 import { Popover } from "@/components/Popover";
@@ -12,7 +12,7 @@ import useModalStore from "@/store/modalStore";
 type ReportRes = components["schemas"]["WeeklyReportResponse"];
 
 type Props = {
-  variant?: "prev" | "current"; // 이전 분석 보기 페이지인지 리포트 페이지인지
+  variant?: "prev" | "current"; // 이전 리포트 보기 페이지인지 리포트 페이지인지
   reportType: "weekly" | "monthly";
   prevReport: ReportRes | undefined;
   report: ReportRes;
@@ -26,8 +26,8 @@ export default function PeriodicReport({
 }: Props) {
   const reportTitle =
     reportType === "weekly"
-      ? `${report?.month}월 ${report?.weekOfMonth}주차 분석`
-      : `${report?.month}월 분석`;
+      ? `${report?.month}월 ${report?.weekOfMonth}주차 리포트`
+      : `${report?.month}월 리포트`;
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { showError } = useModalStore();
   const navigate = useNavigate();
@@ -61,12 +61,12 @@ export default function PeriodicReport({
                 if (prevReport) {
                   navigate({ to: `/prev-report/${reportType}` });
                 } else {
-                  showError("이전 분석이\n존재하지 않아요.");
+                  showError("이전 리포트가\n존재하지 않아요.");
                 }
               }}
               variant={prevReport ? "secondary" : "disabled"}
             >
-              {getPreviousPeriodText(reportType, "prev")} 분석 보기
+              {getPreviousPeriodText(reportType, "prev")} 리포트 보기
             </BlockButton>
           )}
         </div>

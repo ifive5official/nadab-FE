@@ -1,4 +1,4 @@
-// 오늘의 질문 / 오늘의 분석 페이지에서 사용
+// 오늘의 질문 / 오늘의 리포트 페이지에서 사용
 // 카테고리 뱃지 + 날짜 + 질문 섹션
 import { QuestionBadge } from "@/components/Badges";
 import type { components } from "@/generated/api-types";

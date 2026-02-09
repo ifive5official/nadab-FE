@@ -22,14 +22,17 @@ export default function RecordSection({ data }: Props) {
 
   // 받은 날짜 배열을 요일 인덱스(0~6)의 집합으로 변환
   const answeredDayIndices = new Set(
-    data.answeredDates?.map((dateString) => new Date(dateString).getDay())
+    data.answeredDates?.map((dateString) => new Date(dateString).getDay()),
   );
 
   return (
     <div className="flex flex-col items-center gap-gap-y-xs">
-      <p className="text-caption-l text-text-secondary text-center">
-        {data.streakCount}일 연속 기록을 이어나가다니 대단해요!
-      </p>
+      {(data.streakCount ?? 0) > 1 && (
+        <p className="text-caption-l text-text-secondary text-center">
+          {data.streakCount}일 연속 기록을 이어나가다니 대단해요!
+        </p>
+      )}
+
       <div className="flex gap-gap-x-xs">
         {weekConfig.map((day) => (
           <DayRecord
@@ -54,7 +57,7 @@ function DayRecord({ day, checked }: DayRecordprops) {
       <span
         className={clsx(
           "text-label-m",
-          checked ? "text-text-primary" : "text-text-disabled"
+          checked ? "text-text-primary" : "text-text-disabled",
         )}
       >
         {day}
