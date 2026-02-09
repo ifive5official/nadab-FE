@@ -33,7 +33,7 @@ export default function PeriodicReportTab() {
   return (
     <>
       {/* <button onClick={() => deleteWeeklyReportMutation.mutate()}>
-        주간 레포트 삭제(테스트용)
+        주간 리포트 삭제(테스트용)
       </button> */}
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         {weeklyReport && !isWeeklyReportGenerating ? (
@@ -53,7 +53,7 @@ export default function PeriodicReportTab() {
         )}
 
         {/* <button onClick={() => deleteMonthlyReportMutation.mutate()}>
-          월간 레포트 삭제(테스트용)
+          월간 리포트 삭제(테스트용)
         </button> */}
         {monthlyReport && !isMonthlyReportGenerating ? (
           <PeriodicReport

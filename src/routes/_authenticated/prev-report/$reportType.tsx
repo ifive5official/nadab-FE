@@ -1,4 +1,4 @@
-// 이전 레포트 보기 페이지
+// 이전 리포트 보기 페이지
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import PeriodicReport from "@/features/report/PeriodicReport";
@@ -50,7 +50,7 @@ function RouteComponent() {
   //   Todo: 에러 처리 보완
   useEffect(() => {
     if (!reports.previousReport) {
-      useErrorStore.getState().showError("이전 레포트를 불러올 수 없어요.");
+      useErrorStore.getState().showError("이전 리포트를 불러올 수 없어요.");
     }
   }, [reports.previousReport]);
 
