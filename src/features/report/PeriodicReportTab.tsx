@@ -1,16 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { crystalsOptions } from "../user/quries";
-// import {
-//   useDeleteMonthlyReportMutation,
-//   useDeleteWeeklyReportMutation,
-// } from "./hooks/useDeleteWeeklyReportMutation";
+import {
+  useDeleteMonthlyReportMutation,
+  useDeleteWeeklyReportMutation,
+} from "./hooks/useDeleteWeeklyReportMutation";
 import useReport from "./hooks/useReport";
 import PeriodicReportEmpty from "./PeriodicReportEmpty";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
 import PeriodicReport from "./PeriodicReport";
+import { REPORT_CONFIGS } from "./reportConfigs";
+import useToastStore from "@/store/toastStore";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
+  const { showToast } = useToastStore();
   const {
     report: weeklyReport,
     prevReport: prevWeeklyReport,
@@ -18,6 +21,10 @@ export default function PeriodicReportTab() {
   } = useReport({ type: "weekly" });
   const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "weekly",
+    onSuccess: () =>
+      showToast({
+        message: `${REPORT_CONFIGS["weekly"].cost} 크리스탈이 소진되었어요.`,
+      }),
   });
   const {
     report: monthlyReport,
@@ -26,15 +33,19 @@ export default function PeriodicReportTab() {
   } = useReport({ type: "monthly" });
   const generateMonthlyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "monthly",
+    onSuccess: () =>
+      showToast({
+        message: `${REPORT_CONFIGS["monthly"].cost} 크리스탈이 소진되었어요.`,
+      }),
   });
 
-  // const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
-  // const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
+  const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용
+  const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
   return (
     <>
-      {/* <button onClick={() => deleteWeeklyReportMutation.mutate()}>
+      <button onClick={() => deleteWeeklyReportMutation.mutate()}>
         주간 리포트 삭제(테스트용)
-      </button> */}
+      </button>
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         {weeklyReport && !isWeeklyReportGenerating ? (
           <PeriodicReport
@@ -52,9 +63,9 @@ export default function PeriodicReportTab() {
           />
         )}
 
-        {/* <button onClick={() => deleteMonthlyReportMutation.mutate()}>
+        <button onClick={() => deleteMonthlyReportMutation.mutate()}>
           월간 리포트 삭제(테스트용)
-        </button> */}
+        </button>
         {monthlyReport && !isMonthlyReportGenerating ? (
           <PeriodicReport
             reportType={"monthly"}
