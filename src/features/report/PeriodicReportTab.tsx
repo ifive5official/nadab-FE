@@ -8,9 +8,12 @@ import useReport from "./hooks/useReport";
 import PeriodicReportEmpty from "./PeriodicReportEmpty";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
 import PeriodicReport from "./PeriodicReport";
+import { REPORT_CONFIGS } from "./reportConfigs";
+import useToastStore from "@/store/toastStore";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
+  const { showToast } = useToastStore();
   const {
     report: weeklyReport,
     prevReport: prevWeeklyReport,
@@ -18,6 +21,10 @@ export default function PeriodicReportTab() {
   } = useReport({ type: "weekly" });
   const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "weekly",
+    onSuccess: () =>
+      showToast({
+        message: `${REPORT_CONFIGS["weekly"].cost} 크리스탈이 소진되었어요.`,
+      }),
   });
   const {
     report: monthlyReport,
@@ -26,6 +33,10 @@ export default function PeriodicReportTab() {
   } = useReport({ type: "monthly" });
   const generateMonthlyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "monthly",
+    onSuccess: () =>
+      showToast({
+        message: `${REPORT_CONFIGS["monthly"].cost} 크리스탈이 소진되었어요.`,
+      }),
   });
 
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation(); // 테스트용

@@ -9,7 +9,6 @@ import { InfoButton } from "./ReportComponents";
 import { useNavigate } from "@tanstack/react-router";
 import useModalStore from "@/store/modalStore";
 import { WarningFilledIcon } from "@/components/Icons";
-import useToastStore from "@/store/toastStore";
 
 type ReportRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -31,7 +30,7 @@ export default function PeriodicReportCard({
   const config = REPORT_CONFIGS[reportType];
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { showModal, closeModal, showError } = useModalStore();
-  const { showToast } = useToastStore();
+
   const navigate = useNavigate();
 
   return (
@@ -81,7 +80,6 @@ export default function PeriodicReportCard({
           onClick={() => {
             if (crystalBalance >= config.cost) {
               onGenerate();
-              showToast({ message: `${config.cost} 크리스탈이 소진되었어요.` });
             } else {
               showModal({
                 icon: WarningFilledIcon,
