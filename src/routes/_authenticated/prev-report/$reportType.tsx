@@ -43,6 +43,9 @@ function RouteComponent() {
   const generateReportMutation = useGeneratePeriodicReportMutation({
     reportType,
     onSuccess: () => {
+      showToast({
+        message: `${config.cost} 크리스탈이 소진되었어요.`,
+      });
       navigate({ to: "/report" });
     },
   });
@@ -73,9 +76,6 @@ function RouteComponent() {
                   navigate({ to: "/report" });
                 } else if (crystalBalance >= config.cost) {
                   generateReportMutation.mutate();
-                  showToast({
-                    message: `${config.cost} 크리스탈이 소진되었어요.`,
-                  });
                 } else {
                   showModal({
                     icon: WarningFilledIcon,
