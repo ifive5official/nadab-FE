@@ -14,7 +14,7 @@ export default function FeedTab() {
   return (
     <>
       <Container
-        hasHeader={false}
+        isMain={true}
         className="border-t border-t-interactive-border-default"
       >
         {friendsQuery?.data?.totalCount === 0 ? (

@@ -13,9 +13,8 @@ export default function TotalReportTab() {
   return (
     <>
       <section className="relative px-padding-x-m py-padding-y-m h-full flex flex-col items-center justify-center">
-        <div className="flex-2" />
         <NoResult
-          className="mb-gap-y-l"
+          className="mt-[calc((80/796)*100dvh)] mb-gap-y-l"
           title={`유형 리포트가 아직\n완성되지 못했어요.`}
           description={`이야기를 조금 더 채워주시면,\n${currentUser.nickname}님만의 리포트를 전해드릴게요.`}
         />
@@ -35,7 +34,6 @@ export default function TotalReportTab() {
             isPopoverOpen ? "" : "invisible",
           )}
         />
-        <div className="flex-1" />
       </section>
     </>
   );

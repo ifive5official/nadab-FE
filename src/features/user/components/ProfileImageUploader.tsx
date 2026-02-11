@@ -132,7 +132,8 @@ export default function ProfileImageUploader({
       onSuccess(res.data?.uploadUrl ?? "");
       showToast({
         message: "프로필 사진이 추가되었어요.",
-        bottom: "bottom-margin-y-xxxl",
+        bottom:
+          "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
       });
     } catch (e) {
       console.error(e);

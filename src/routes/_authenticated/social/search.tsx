@@ -97,7 +97,7 @@ function RouteComponent() {
           />
         </form>
       </SubHeader>
-      <div className="mt-header-height h-gap-y-l border-b border-b-interactive-border-default" />
+      <div className="h-gap-y-l border-b border-b-interactive-border-default" />
 
       {isSearching ? (
         <FriendsTabSearchResultSection

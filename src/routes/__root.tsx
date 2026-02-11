@@ -32,12 +32,10 @@ function RootComponent() {
 
   return (
     <>
-      <div className="min-h-full w-full flex">
-        <div className="flex flex-col w-dvw sm:w-[412px] sm:mx-auto overflow-x-hidden">
-          <Outlet />
-          <Modal />
-          <Toast />
-        </div>
+      <div className="h-full w-full flex flex-col sm:w-[412px] sm:mx-auto overflow-hidden">
+        <Outlet />
+        <Modal />
+        <Toast />
       </div>
       <Sidebar />
     </>

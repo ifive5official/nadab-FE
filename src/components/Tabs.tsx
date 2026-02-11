@@ -12,7 +12,7 @@ const TAB_ITEMS = [
 export default function Tabs() {
   return (
     // 헤더 높이 띄움
-    <nav className="mt-header-height flex gap-margin-x-xl px-padding-x-m border-b border-b-border-base">
+    <nav className="flex gap-margin-x-xl px-padding-x-m border-b border-b-border-base">
       {TAB_ITEMS.map((item) => {
         return (
           <Link key={item.to} to={item.to} className="flex-1 text-center">
@@ -23,7 +23,7 @@ export default function Tabs() {
                     "list-none py-padding-y-m text-label-l",
                     isActive
                       ? "text-interactive-text-default border-b-2 border-b-text-primary"
-                      : "text-interactive-text-mute"
+                      : "text-interactive-text-mute",
                   )}
                 >
                   {item.label}

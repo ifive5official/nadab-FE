@@ -23,10 +23,7 @@ export default function Home() {
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
-      <Container
-        className="relative bg-[#E8ECFC] dark:bg-field-bg-hover"
-        hasHeader={false}
-      >
+      <Container className="relative bg-[#E8ECFC] dark:bg-field-bg-hover">
         <div className="flex-1 flex flex-col justify-evenly">
           {/* 질문 */}
           <p className="relative text-title-2 text-center">

@@ -32,9 +32,9 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   return (
     <header
       className={clsx(
-        "fixed top-0 z-10 flex items-center gap-gap-x-m",
+        "shrink-0 z-10 flex items-center gap-gap-x-m",
         "px-padding-x-m w-full sm:w-[412px] h-header-height",
-        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary",
       )}
     >
       <img src="/textLogo.png" className="w-[83.9px]" />
@@ -67,7 +67,7 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
         <>
           <div className="z-20 fixed inset-0" onClick={onClose} />
           {/* 헤더 영역만큼 비워두기...*/}
-          <div className="z-30 fixed top-header-height right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
+          <div className="z-30 fixed top-[calc(var(--spacing-header-height)+var(--safe-top))] right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
             <div className="flex flex-col top-0 w-fit px-padding-x-s py-padding-y-xs bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
               <div className="p-padding-y-xxs flex items-center gap-gap-x-s border-b border-b-border-base dark:border-b-border-layer-3">
                 <span className="text-caption-s text-text-tertiary">
@@ -120,10 +120,10 @@ export function SubHeader({
   return (
     <header
       className={clsx(
-        "fixed top-0 z-10 flex items-center",
+        "shrink-0 z-10 flex items-center",
         "w-full sm:w-[412px] h-header-height",
         "bg-surface-base text-label-l text-text-secondary",
-        variant === "sub" ? "border-b border-b-border-base" : ""
+        variant === "sub" ? "border-b border-b-border-base" : "",
       )}
     >
       <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
@@ -159,9 +159,9 @@ export function ProgressHeader({ progress }: { progress: number }) {
     <>
       <header
         className={clsx(
-          "fixed top-0 z-10 flex items-center text-center",
+          "relative shrink-0 z-10 flex items-center text-center",
           "w-full sm:w-[412px] h-header-height",
-          "bg-surface-base text-label-l text-text-secondary"
+          "bg-surface-base text-label-l text-text-secondary",
         )}
       >
         <button

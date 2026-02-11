@@ -60,7 +60,7 @@ export default function Sidebar() {
             />
             {/* 사이드바 */}
             <motion.div
-              className="fixed z-5 inset-y-0 right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base dark:bg-surface-layer-1 px-padding-x-m flex flex-col"
+              className="fixed z-5 top-(--safe-top) bottom-(--safe-bottom) right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base dark:bg-surface-layer-1 px-padding-x-m flex flex-col"
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 100, opacity: 0 }}
@@ -99,7 +99,7 @@ function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
         <a href={to}>
           <li
             className={clsx(
-              "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg"
+              "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
             )}
           >
             <Icon />
@@ -116,7 +116,7 @@ function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
                   "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
                   isActive
                     ? "text-brand-primary bg-brand-primary-alpha-10"
-                    : "text-text-primary"
+                    : "text-text-primary",
                 )}
               >
                 <Icon />

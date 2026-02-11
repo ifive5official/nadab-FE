@@ -38,7 +38,7 @@ function RouteComponent() {
   const [selected, setSelected] = useState("periodic");
 
   return (
-    <Container hasHeader={false}>
+    <Container isMain={true}>
       <SegmentedControls
         options={[
           { label: "주간/월간", value: "periodic" },

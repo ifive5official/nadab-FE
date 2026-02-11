@@ -5,6 +5,14 @@
   font-family:
     Pretendard,
     -apple-system;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
 }
 
 html,
@@ -13,10 +21,7 @@ body {
   height: 100%;
   background-color: var(--color-surface-base);
   color: var(--color-text-primary);
-  /* 상하 스크롤 바운스 시 배경 흰색 보이는 것 방지 */
-  /* overscroll-behavior-y: none; */
-  /* 가로 스크롤 완전 차단 */
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 @layer base {
