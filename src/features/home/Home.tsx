@@ -11,8 +11,15 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatDate";
 import { homeOptions } from "./queries";
+import { useEffect } from "react";
 
 export default function Home() {
+  // 배경색이 하단바에 비치게 함
+  useEffect(() => {
+    document.documentElement.classList.add("no-safe-padding");
+    return () => document.documentElement.classList.remove("no-safe-padding");
+  }, []);
+
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const friends = Array(0).fill(0); // Todo: 백엔드 연동
   const { data: question } = useSuspenseQuery(questionOptions);
@@ -23,7 +30,7 @@ export default function Home() {
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
       <Tabs />
-      <Container className="relative bg-[#E8ECFC] dark:bg-field-bg-hover">
+      <Container className="relative bg-[#E8ECFC] dark:bg-field-bg-hover pb-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))]!">
         <div className="flex-1 flex flex-col justify-evenly">
           {/* 질문 */}
           <p className="relative text-title-2 text-center">

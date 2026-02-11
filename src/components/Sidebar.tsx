@@ -60,7 +60,7 @@ export default function Sidebar() {
             />
             {/* 사이드바 */}
             <motion.div
-              className="fixed z-5 top-(--safe-top) bottom-(--safe-bottom) right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base dark:bg-surface-layer-1 px-padding-x-m flex flex-col"
+              className="fixed z-5 top-0 bottom-(--safe-bottom) right-0 sm:right-[calc((100vw-420px)/2)] w-[clamp(calc(320px*0.5),calc((320/390)*100vw),calc(320px*1.2))] sm:w-[320px] bg-surface-base dark:bg-surface-layer-1 px-padding-x-m flex flex-col"
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 100, opacity: 0 }}

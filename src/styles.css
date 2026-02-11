@@ -6,13 +6,16 @@
     Pretendard,
     -apple-system;
 
-  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 html {
-  padding-top: var(--safe-top);
   padding-bottom: var(--safe-bottom);
+}
+
+/* 홈, 질문 온보딩 페이지에서 사용 */
+html.no-safe-padding {
+  padding-bottom: 0px !important;
 }
 
 html,
