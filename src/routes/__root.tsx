@@ -6,6 +6,8 @@ import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
 import ErrorPage from "@/components/ErrorPage";
+import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
+import { StatusBar } from "@capacitor/status-bar";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -27,6 +29,18 @@ function RootComponent() {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
+    }
+
+    if (Capacitor.isNativePlatform()) {
+      async function syncSystemBars() {
+        await SystemBars.setStyle({
+          style: isDarkMode ? SystemBarsStyle.Dark : SystemBarsStyle.Light,
+        });
+        await StatusBar.setBackgroundColor({
+          color: isDarkMode ? "#000000" : "#FFFFFF",
+        });
+      }
+      syncSystemBars();
     }
   }, [isDarkMode]);
 

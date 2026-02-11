@@ -7,8 +7,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
-import android.graphics.Color; // 추가
-import android.os.Build; // 추가
+import android.graphics.Color;
+import android.os.Build;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -18,12 +18,13 @@ public class MainActivity extends BridgeActivity {
         // 1. 엣지 투 엣지(전체화면) 설정을 명시적으로 선언
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
-        // 하단 네비게이션 바를 완전히 투명하게 설정
+        // 상단바 하단바 투명 설정
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
         // 안드로이드 10(API 29) 이상에서 시스템이 강제로 넣는 반투명 배경(Scrim) 제거
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getWindow().setNavigationBarContrastEnforced(false);
+            getWindow().setStatusBarContrastEnforced(false);
         }
 
         // 2. 루트 뷰(웹뷰를 담고 있는 그릇)를 찾습니다.
