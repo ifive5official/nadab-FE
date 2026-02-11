@@ -8,6 +8,11 @@ const config: CapacitorConfig = {
     androidScheme: "https",
     hostname: "nadab-fe.vercel.app",
   },
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
 };
 
 export default config;
