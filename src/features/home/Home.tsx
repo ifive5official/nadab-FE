@@ -41,16 +41,6 @@ export default function Home() {
                 src="/video.webp"
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
               />
-              {/* <video
-                className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
-                muted
-                autoPlay
-                loop
-                playsInline
-                poster="/marble.webp"
-              >
-                <source src="/marble.mp4" type="video/mp4" />
-              </video> */}
               <div className="absolute inset-0 flex flex-col justify-center items-center gap-gap-y-xl">
                 <p className="text-body-1 text-center dark:text-neutral-900">
                   <span className="text-headline-l text-brand-primary">
