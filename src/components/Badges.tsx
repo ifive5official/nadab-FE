@@ -7,14 +7,17 @@ import emotions from "@/constants/emotions";
 // 텍스트와 테마색 테두리가 있는 작은 버튼 컴포넌트
 type BadgeProps = {
   isActive?: boolean;
+  size?: "s" | "m";
   children: string;
 };
 
-export function Badge({ isActive = true, children }: BadgeProps) {
+export function Badge({ isActive = true, size = "s", children }: BadgeProps) {
   return (
     <div
       className={clsx(
-        "text-caption-m rounded-full border px-padding-x-xs py-padding-y-xxs",
+        "rounded-full border ",
+        size === "s" && "text-caption-m px-padding-x-xs py-padding-y-xxs",
+        size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
         isActive
           ? "text-brand-primary border-brand-primary"
           : "text-field-text-disabled border-field-text-disabled",

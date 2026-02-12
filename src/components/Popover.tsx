@@ -26,7 +26,7 @@ export function Popover({ isOpen, onClose, className }: Props) {
               <CloseIcon />
             </button>
           </div>
-          <ul className="text-left text-caption-m list-disc list-inside whitespace-nowrap">
+          <ul className="text-left text-caption-m list-disc list-inside">
             <li>매주/매달 해당 기간의 다음날에 리포트가 도착해요.</li>
             <li>
               주간리포트는 해당 주에 답변을{" "}

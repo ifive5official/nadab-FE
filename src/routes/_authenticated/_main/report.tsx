@@ -77,7 +77,9 @@ function RouteComponent() {
         <div className="border-b border-b-interactive-border-default w-full" />
       </div>
       {selected === "periodic" && <PeriodicReportTab />}
-      {selected === "category" && <TotalReportTab />}
+      {selected === "category" && (
+        <TotalReportTab category={selectedCategory} />
+      )}
     </Container>
   );
 }
