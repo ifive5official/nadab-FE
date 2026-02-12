@@ -21,7 +21,6 @@ export default function Home() {
   }, []);
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const friends = Array(0).fill(0); // Todo: 백엔드 연동
   const { data: question } = useSuspenseQuery(questionOptions);
   const { data: homeData } = useSuspenseQuery(homeOptions);
   const rerollQuestionMutation = useRerollQuestionMutation();
@@ -54,7 +53,12 @@ export default function Home() {
                   <br />
                   기록을 남겼어요.
                 </p>
-                {friends.length > 0 && <FriendSection friends={friends} />}
+                {homeData.answeredFriendCount! > 0 && (
+                  <FriendSection
+                    friends={homeData.answeredFriendProfiles!}
+                    friendsCnt={homeData.answeredFriendCount!}
+                  />
+                )}
               </div>
             </div>
           </div>
