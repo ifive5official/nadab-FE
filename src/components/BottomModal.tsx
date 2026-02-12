@@ -41,7 +41,7 @@ export default function BottomModal({ isOpen, title, items, onClose }: Props) {
             onClick={onClose}
           />
           <motion.div
-            className="z-30 absolute bottom-padding-y-m inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base dark:bg-surface-layer-2 shadow-3 border border-border-base rounded-lg divide-y divide-interactive-border-default dark:divide-field-border-hover text-text-primary"
+            className="z-30 absolute bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base dark:bg-surface-layer-2 shadow-3 border border-border-base rounded-lg divide-y divide-interactive-border-default dark:divide-field-border-hover text-text-primary"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -65,6 +65,6 @@ export default function BottomModal({ isOpen, title, items, onClose }: Props) {
         </>
       )}
     </AnimatePresence>,
-    document.getElementById("modal-root")!
+    document.getElementById("modal-root")!,
   );
 }

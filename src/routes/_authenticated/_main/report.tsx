@@ -42,7 +42,7 @@ function RouteComponent() {
     useState<(typeof categories)[number]["code"]>("PREFERENCE");
 
   return (
-    <Container hasHeader={false}>
+    <Container isMain={true}>
       <SegmentedControls
         options={[
           { label: "주간/월간", value: "periodic" },

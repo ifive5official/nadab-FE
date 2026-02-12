@@ -18,6 +18,12 @@ export const Route = createFileRoute("/_authenticated/today/")({
 });
 
 function RouteComponent() {
+  // 배경색이 하단바에 비치게 함
+  useEffect(() => {
+    document.documentElement.classList.add("no-safe-padding");
+    return () => document.documentElement.classList.remove("no-safe-padding");
+  }, []);
+
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { data: question } = useSuspenseQuery(questionOptions);
   const messages = [
@@ -37,7 +43,7 @@ function RouteComponent() {
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
-      <main className="relative flex flex-col h-full bg-surface-base dark:bg-neutral-1100">
+      <main className="relative flex flex-col h-full bg-surface-base dark:bg-neutral-1100 pb-(--safe-bottom)">
         <div className="absolute inset-0 bg-[url(/background.png)] bg-cover opacity-60 dark:opacity-70" />
         <Container>
           <div className="relative flex-1 flex flex-col gap-margin-y-xxl justify-center items-center">

@@ -32,7 +32,12 @@ export default function FriendsTab() {
   return (
     <>
       <Link to="/social/search">
-        <div className="pointer-events-none mx-padding-x-m mb-margin-y-l shrink-0">
+        <div
+          className={clsx(
+            "pointer-events-none mx-padding-x-m shrink-0",
+            requestsCount > 0 && "mb-margin-y-l",
+          )}
+        >
           {/* @ts-ignore */}
           <SearchBar
             className="h-11"
@@ -80,7 +85,7 @@ export default function FriendsTab() {
           </Link>
         )}
         {/* 친구 섹션 */}
-        <Container hasHeader={false}>
+        <Container isMain={true}>
           <span className="text-caption-m mt-margin-y-m">
             친구 {friendsCount}명
           </span>

@@ -32,9 +32,9 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   return (
     <header
       className={clsx(
-        "fixed top-0 z-10 flex items-center gap-gap-x-m",
+        "shrink-0 z-10 flex items-center gap-gap-x-m",
         "px-padding-x-m w-full sm:w-[412px] h-header-height",
-        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary"
+        "bg-surface-base border-b border-b-border-base text-label-l text-text-secondary",
       )}
     >
       <img src="/textLogo.png" className="w-[83.9px]" />
@@ -120,10 +120,10 @@ export function SubHeader({
   return (
     <header
       className={clsx(
-        "fixed top-0 z-10 flex items-center",
+        "shrink-0 z-10 flex items-center",
         "w-full sm:w-[412px] h-header-height",
         "bg-surface-base text-label-l text-text-secondary",
-        variant === "sub" ? "border-b border-b-border-base" : ""
+        variant === "sub" ? "border-b border-b-border-base" : "",
       )}
     >
       <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
@@ -159,9 +159,9 @@ export function ProgressHeader({ progress }: { progress: number }) {
     <>
       <header
         className={clsx(
-          "fixed top-0 z-10 flex items-center text-center",
+          "relative shrink-0 z-10 flex items-center text-center",
           "w-full sm:w-[412px] h-header-height",
-          "bg-surface-base text-label-l text-text-secondary"
+          "bg-surface-base text-label-l text-text-secondary",
         )}
       >
         <button

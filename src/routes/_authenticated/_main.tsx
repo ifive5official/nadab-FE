@@ -13,8 +13,10 @@ function RouteComponent() {
   return (
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
-      <Tabs />
-      <Outlet />
+      <div className="flex-1 flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <Tabs />
+        <Outlet />
+      </div>
     </>
   );
 }

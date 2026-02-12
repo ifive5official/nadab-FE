@@ -27,13 +27,11 @@ function OnboardingLayout() {
   }
 
   return (
-    // 주제 선택 스크롤 동작 때문에 높이 설정함
-    // Todo: 더 좋은 방법이 없나...
-    <div className="h-dvh w-full sm:w-[412px] sm:mx-auto flex flex-col">
+    <>
       {currentStep.header}
-      <Container hasHeader={!!currentStep.header}>
+      <Container>
         <Outlet />
       </Container>
-    </div>
+    </>
   );
 }

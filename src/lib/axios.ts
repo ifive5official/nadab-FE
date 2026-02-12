@@ -1,9 +1,10 @@
 // axios 전역 설정
 import useAuthStore from "@/store/authStore";
 import axios from "axios";
+import { Capacitor } from "@capacitor/core";
 
 export const api = axios.create({
-  baseURL: "/",
+  baseURL: Capacitor.isNativePlatform() ? "https://nadab-dev.n-e.kr" : "/",
   withCredentials: true, // refresh token 쿠키 포함
 });
 

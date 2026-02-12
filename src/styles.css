@@ -5,6 +5,17 @@
   font-family:
     Pretendard,
     -apple-system;
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  padding-bottom: var(--safe-bottom);
+}
+
+/* 홈, 질문 온보딩 페이지에서 사용 */
+html.no-safe-padding {
+  padding-bottom: 0px !important;
 }
 
 html,
@@ -13,10 +24,7 @@ body {
   height: 100%;
   background-color: var(--color-surface-base);
   color: var(--color-text-primary);
-  /* 상하 스크롤 바운스 시 배경 흰색 보이는 것 방지 */
-  /* overscroll-behavior-y: none; */
-  /* 가로 스크롤 완전 차단 */
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 @layer base {
