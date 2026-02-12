@@ -8,6 +8,7 @@ import Toast from "@/components/Toast";
 import ErrorPage from "@/components/ErrorPage";
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
+import { BackButtonHandler } from "@/hooks/backButtonHandler";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -20,6 +21,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  // 뒤로가기 버튼과 히스토리 api 연동
+  if (Capacitor.isNativePlatform()) {
+    BackButtonHandler();
+  }
+
   // 다크모드 적용
   const isDarkMode = useThemeStore.use.isDarkMode();
 
