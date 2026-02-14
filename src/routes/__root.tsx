@@ -9,6 +9,7 @@ import ErrorPage from "@/components/ErrorPage";
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
 import { BackButtonHandler } from "@/hooks/backButtonHandler";
+// import { SplashScreen } from "@capacitor/splash-screen";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -50,6 +51,14 @@ function RootComponent() {
     }
   }, [isDarkMode]);
 
+  // // 스플래시 스크린 닫기
+  // useEffect(() => {
+  //   if (Capacitor.isNativePlatform()) {
+  //     requestAnimationFrame(async () => {
+  //       await SplashScreen.hide();
+  //     });
+  //   }
+  // }, []);
   return (
     <>
       <div className="h-full w-full flex flex-col sm:w-[412px] sm:mx-auto overflow-hidden">
