@@ -10,7 +10,8 @@ export default function ErrorPage({ error }: { error: any }) {
   const title =
     isAxiosNetworkError || isModuleLoadError
       ? "네트워크 연결 상태가 불안정해요."
-      : error.message;
+      : (error.response?.data?.message ?? error.message);
+
   const message =
     isAxiosNetworkError || isModuleLoadError
       ? "네트워크 연결 상태를 확인해주세요."

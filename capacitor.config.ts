@@ -12,6 +12,9 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true,
     },
+    CapacitorCookies: {
+      enabled: true,
+    },
     // SplashScreen: {
     //   launchAutoHide: true,
     //   androidScaleType: "FIT_CENTER",
