@@ -13,6 +13,8 @@ dependencies {
     implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-toast')
+    implementation project(':codetrix-studio-capacitor-google-auth')
+    implementation project(':team-lepisode-capacitor-naver-login')
 
 }
 

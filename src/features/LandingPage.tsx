@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
 import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
@@ -6,6 +6,14 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
+
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import { CapacitorNaverLogin } from "@team-lepisode/capacitor-naver-login";
+import useAuthStore from "@/store/authStore";
+import axios from "axios";
+import useModalStore from "@/store/modalStore";
+import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import { Capacitor } from "@capacitor/core";
 
 type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
@@ -27,12 +35,83 @@ export function LandingPage() {
         naver: naverUrl!.replace("https://nadab-fe.vercel.app/", REDIRECT_BASE),
         google: googleUrl!.replaceAll(
           "https://nadab-fe.vercel.app/",
-          REDIRECT_BASE
+          REDIRECT_BASE,
         ),
       };
     },
     // Todo: 에러 처리
   });
+
+  const navigate = useNavigate();
+
+  async function sdkGoogleLogin() {
+    try {
+      const user = await GoogleAuth.signIn();
+      const res = await api.post("/api/v1/auth/google/native-login", {
+        googleIdToken: user.authentication.idToken,
+      });
+      const { accessToken, signupStatus } = res.data.data!;
+
+      useAuthStore.getState().setAccessToken(accessToken!);
+
+      if (signupStatus === "PROFILE_INCOMPLETE") {
+        navigate({
+          to: "/signup/terms",
+          replace: true,
+          search: { type: "social" },
+        });
+      }
+    } catch (err) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.data?.code ===
+          "AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD"
+      ) {
+        // 이미 일반 로그인으로 가입한 계정일 시
+        useModalStore
+          .getState()
+          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+      } else if (axios.isAxiosError(err)) {
+        handleDefaultApiError(err);
+      }
+    }
+  }
+
+  async function sdkNaverLogin() {
+    try {
+      console.log("start");
+      const user = await CapacitorNaverLogin.login();
+      console.log("user: ", user);
+      const res = await api.post("/api/v1/auth/naver/native-login", {
+        naverAccessToken: user.accessToken,
+      });
+      console.log("res: ", res);
+      const { accessToken, signupStatus } = res.data.data!;
+
+      useAuthStore.getState().setAccessToken(accessToken!);
+
+      if (signupStatus === "PROFILE_INCOMPLETE") {
+        navigate({
+          to: "/signup/terms",
+          replace: true,
+          search: { type: "social" },
+        });
+      }
+    } catch (err) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.data?.code ===
+          "AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD"
+      ) {
+        // 이미 일반 로그인으로 가입한 계정일 시
+        useModalStore
+          .getState()
+          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+      } else if (axios.isAxiosError(err)) {
+        handleDefaultApiError(err);
+      }
+    }
+  }
 
   return (
     <div className="flex-1 flex flex-col px-padding-x-m">
@@ -58,9 +137,13 @@ export function LandingPage() {
           <div className="flex flex-col gap-gap-y-m">
             <BlockButton
               variant="white"
-              onClick={() =>
-                (window.location.href = socialLoginUrls?.naver ?? "")
-              }
+              onClick={() => {
+                if (Capacitor.isNativePlatform()) {
+                  sdkNaverLogin();
+                } else {
+                  window.location.href = socialLoginUrls?.naver ?? "";
+                }
+              }}
             >
               <div>
                 <span className="absolute left-padding-x-m">
@@ -71,9 +154,13 @@ export function LandingPage() {
             </BlockButton>
             <BlockButton
               variant="white"
-              onClick={() =>
-                (window.location.href = socialLoginUrls?.google ?? "")
-              }
+              onClick={() => {
+                if (Capacitor.isNativePlatform()) {
+                  sdkGoogleLogin();
+                } else {
+                  window.location.href = socialLoginUrls?.google ?? "";
+                }
+              }}
             >
               <div>
                 <span className="absolute left-padding-x-m">

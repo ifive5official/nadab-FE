@@ -13,3 +13,9 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/.pnpm/@c
 
 include ':capacitor-toast'
 project(':capacitor-toast').projectDir = new File('../node_modules/.pnpm/@capacitor+toast@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/toast/android')
+
+include ':codetrix-studio-capacitor-google-auth'
+project(':codetrix-studio-capacitor-google-auth').projectDir = new File('../node_modules/.pnpm/@codetrix-studio+capacitor-_c72adc005ba8650449c96370c662d9e4/node_modules/@codetrix-studio/capacitor-google-auth/android')
+
+include ':team-lepisode-capacitor-naver-login'
+project(':team-lepisode-capacitor-naver-login').projectDir = new File('../node_modules/.pnpm/@team-lepisode+capacitor-na_234ab78a729801e01732e7b06dc0a185/node_modules/@team-lepisode/capacitor-naver-login/android')
