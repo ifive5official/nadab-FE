@@ -21,9 +21,18 @@ export default function ErrorPage({ error }: { error: any }) {
     <div className="w-full h-full flex justify-center items-center">
       <div className="flex flex-col items-center gap-gap-y-l">
         <WarningFilledIcon />
+        <button
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          새로고침(임시)
+        </button>
         {/* <span className="text-title-2">{title}</span>
         <span className="text-body-2">{message}</span> */}
-        <pre>{JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}</pre>
+        <p className="w-full whitespace-pre-wrap break-all px-4">
+          {JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}
+        </p>
       </div>
     </div>
   );
