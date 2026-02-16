@@ -26,6 +26,12 @@ export const getOrRefreshAccessToken = async (): Promise<string | null> => {
 
   // 3. 리프레시 시작
   isRefreshing = true;
+
+  // 동기화 문제 해결 테스트..
+  if (Capacitor.isNativePlatform()) {
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+
   try {
     const res = await api.post("/api/v1/auth/refresh");
     const newAccessToken = res.data.data.accessToken;
