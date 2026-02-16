@@ -1,3 +1,4 @@
+import "dotenv/config";
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
@@ -17,9 +18,14 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ["profile", "email"],
-      serverClientId:
-        "650501637678-bkqh77oilfboj5kih7rhtblkoq8uv9lp.apps.googleusercontent.com", // 백엔드에서 쓰는 클라이언트 ID
+      serverClientId: process.env.VITE_GOOGLE_CLIENT_ID,
       forceCodeForRefreshToken: true,
+    },
+    CapacitorNaverLogin: {
+      clientId: process.env.VITE_NAVER_CLIENT_ID,
+      clientSecret: process.env.VITE_NAVER_CLIENT_SECRET,
+      clientName: "nadab",
+      urlScheme: "com.nadab.app",
     },
     // SplashScreen: {
     //   launchAutoHide: true,

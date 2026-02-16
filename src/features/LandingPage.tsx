@@ -14,6 +14,7 @@ import axios from "axios";
 import useModalStore from "@/store/modalStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import { Capacitor } from "@capacitor/core";
+import { useEffect } from "react";
 
 type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
@@ -44,9 +45,19 @@ export function LandingPage() {
 
   const navigate = useNavigate();
 
+  // 구글 SDK 설정
+  useEffect(() => {
+    GoogleAuth.initialize({
+      scopes: ["profile", "email"],
+      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      grantOfflineAccess: true,
+    });
+  });
+
   async function sdkGoogleLogin() {
     try {
       const user = await GoogleAuth.signIn();
+      console.log(user.authentication.idToken);
       const res = await api.post("/api/v1/auth/google/native-login", {
         googleIdToken: user.authentication.idToken,
       });
@@ -79,13 +90,10 @@ export function LandingPage() {
 
   async function sdkNaverLogin() {
     try {
-      console.log("start");
       const user = await CapacitorNaverLogin.login();
-      console.log("user: ", user);
       const res = await api.post("/api/v1/auth/naver/native-login", {
         naverAccessToken: user.accessToken,
       });
-      console.log("res: ", res);
       const { accessToken, signupStatus } = res.data.data!;
 
       useAuthStore.getState().setAccessToken(accessToken!);
