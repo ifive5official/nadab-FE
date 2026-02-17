@@ -253,7 +253,7 @@ function SearchResultSkeleton() {
               className="px-padding-x-m py-padding-y-m rounded-lg bg-surface-layer-2 animate-pulse"
             >
               <div className="invisible">
-                <div className="flex gap-padding-x-xxs">
+                <div className="flex gap-padding-x-xxs mb-margin-y-s">
                   <QuestionBadge category={"PREFERENCE"} />
                   <EmotionBadge emotion={"ACHIEVEMENT"} />
                   <span className="text-caption-s text-text-tertiary ml-auto">
@@ -282,7 +282,7 @@ function SearchResultItem({
       onClick={onClick}
       className="px-padding-x-m py-padding-y-m bg-surface-base border border-border-base rounded-lg"
     >
-      <div className="flex gap-padding-x-xxs">
+      <div className="flex gap-padding-x-xxs mb-margin-y-s">
         <QuestionBadge
           category={item.interestCode as (typeof categories)[number]["code"]}
           filled

@@ -22,12 +22,13 @@ export default function SearchBar({
 }: Props) {
   return (
     <div
+      tabIndex={0}
       className={clsx(
         "relative px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs focus-within:shadow-1 focus-within:border-border-layer-1",
         className, // 높이나 패딩 넘겨줘야 함
       )}
     >
-      <label htmlFor="search" className="cursor-pointer">
+      <label tabIndex={1} htmlFor="search" className="cursor-pointer">
         <SearchIcon />
       </label>
       {emotion && (
@@ -39,6 +40,7 @@ export default function SearchBar({
         />
       )}
       <input
+        tabIndex={2}
         {...props}
         id="search"
         name="search"
@@ -47,6 +49,7 @@ export default function SearchBar({
         className="w-full text-caption-m placeholder:text-field-text-mute focus:outline-none"
       />
       <button
+        tabIndex={3}
         type="button"
         onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
         onClick={() => {
