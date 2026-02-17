@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import DeleteFilledIcon, { SearchIcon } from "./Icons";
-import type { InputHTMLAttributes } from "react";
+import { useState, type InputHTMLAttributes } from "react";
 import emotions from "@/constants/emotions";
 import { EmotionBadge } from "./Badges";
 
@@ -20,15 +20,17 @@ export default function SearchBar({
   onDeleteKeyword,
   ...props
 }: Props) {
+  // 사파리에서 focus-with 안 되는 문제 대응
+  const [isFocused, setIsFocused] = useState(false);
   return (
     <div
-      tabIndex={0}
       className={clsx(
-        "relative px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs focus-within:shadow-1 focus-within:border-border-layer-1",
+        "relative px-padding-x-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs",
         className, // 높이나 패딩 넘겨줘야 함
+        isFocused && "shadow-1 border-border-layer-1",
       )}
     >
-      <label tabIndex={1} htmlFor="search" className="cursor-pointer">
+      <label htmlFor="search" className="cursor-pointer">
         <SearchIcon />
       </label>
       {emotion && (
@@ -40,16 +42,16 @@ export default function SearchBar({
         />
       )}
       <input
-        tabIndex={2}
         {...props}
         id="search"
         name="search"
         type="text"
         value={value}
         className="w-full text-caption-m placeholder:text-field-text-mute focus:outline-none"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
       <button
-        tabIndex={3}
         type="button"
         onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
         onClick={() => {
