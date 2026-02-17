@@ -14,6 +14,7 @@ import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMu
 import useErrorStore from "@/store/modalStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
+import { useAddFriendHistoryMutation } from "./hooks/useAddFriendHistoryMutation";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -105,6 +106,7 @@ export default function FriendsTabSearchResultSection({
       });
     },
   });
+  const addFriendHistoryMutation = useAddFriendHistoryMutation();
   // 사용자 섹션 버튼 대기중 리스트
   const [activeIds, setActiveIds] = useState(new Set());
 
@@ -134,6 +136,7 @@ export default function FriendsTabSearchResultSection({
                   friendRequestMutation.mutate({
                     receiverNickname: nickname,
                   });
+                  addFriendHistoryMutation.mutate({ nickname });
                 },
               },
             ],
