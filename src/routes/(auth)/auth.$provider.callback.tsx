@@ -51,8 +51,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
       }
       if (
         axios.isAxiosError(err) &&
-        err.response?.data?.code ===
-          "AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD"
+        err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
       ) {
         // 이미 일반 로그인으로 가입한 계정일 시
         useErrorStore

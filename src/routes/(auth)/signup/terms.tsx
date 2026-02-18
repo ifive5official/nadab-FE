@@ -12,14 +12,14 @@ import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useTermsConsentMutation } from "@/features/auth/hooks/useTermsConsentMutation";
 
 type SignupSearch = {
-  type?: "social";
+  type?: "social" | "renewal";
 };
 
 export const Route = createFileRoute("/(auth)/signup/terms")({
   component: Terms,
   validateSearch: (search: Record<string, unknown>): SignupSearch => {
     return {
-      type: (search.type as "social") || undefined,
+      type: (search.type as "social" | "renewal") || undefined,
     };
   },
 });
@@ -105,7 +105,7 @@ function Terms() {
           className="flex items-center gap-gap-x-s text-button-1 text-text-primary px-padding-x-s py-padding-y-s border border-border-base rounded-[20px]"
           onClick={() => {
             setItems((prev) =>
-              prev.map((item) => ({ ...item, isAgreed: !isAllAgreed }))
+              prev.map((item) => ({ ...item, isAgreed: !isAllAgreed })),
             );
           }}
         >
@@ -129,7 +129,7 @@ function Terms() {
                   {
                     "text-text-disabled": !item.isAgreed,
                     "text-text-primary": item.isAgreed,
-                  }
+                  },
                 )}
                 onClick={() => {
                   setItems((prev) =>
@@ -139,7 +139,7 @@ function Terms() {
                       } else {
                         return innerItem;
                       }
-                    })
+                    }),
                   );
                 }}
               >
@@ -164,21 +164,30 @@ function Terms() {
           disabled={!isAllRequiredAgreed}
           onClick={() => {
             const isMarketingTermsAgreed = items.find(
-              (item) => item.title === "마케팅 정보 수신에 동의해요."
+              (item) => item.title === "마케팅 정보 수신에 동의해요.",
             )!.isAgreed;
-            // 소셜 로그인일 경우 약관 동의 api 호출 + 온보딩으로 바로 이동
-            if (type === "social") {
-              termsconsentMutation.mutate({
-                isMarketingTermsAgreed,
-              });
-              navigate({ to: "/onboarding/intro" });
-            } else {
-              updateIsRequiredTermsAgreed();
-              if (isMarketingTermsAgreed) {
-                updateIsMarketingTermsAgreed();
-              }
-              const nextStep = getNextStepPath("terms");
-              navigate({ to: nextStep });
+            switch (type) {
+              case "social":
+                // 소셜 로그인 - 약관 동의 api 호출 + 온보딩으로 이동
+                termsconsentMutation.mutate({
+                  isMarketingTermsAgreed,
+                });
+                navigate({ to: "/onboarding/intro" });
+                break;
+              case "renewal":
+                // 약관 재동의 - 약관 동의 api 호출 + 홈으로 이동
+                termsconsentMutation.mutate({
+                  isMarketingTermsAgreed,
+                });
+                navigate({ to: "/" });
+                break;
+              default:
+                // 일반 회원가입 - 다음 회원가입 단계로 이동
+                updateIsRequiredTermsAgreed();
+                if (isMarketingTermsAgreed) {
+                  updateIsMarketingTermsAgreed();
+                }
+                navigate({ to: getNextStepPath("terms") });
             }
           }}
           isLoading={termsconsentMutation.isPending}

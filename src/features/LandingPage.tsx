@@ -47,11 +47,13 @@ export function LandingPage() {
 
   // 구글 SDK 설정
   useEffect(() => {
-    GoogleAuth.initialize({
-      scopes: ["profile", "email"],
-      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      grantOfflineAccess: true,
-    });
+    if (Capacitor.isNativePlatform()) {
+      GoogleAuth.initialize({
+        scopes: ["profile", "email"],
+        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        grantOfflineAccess: true,
+      });
+    }
   });
 
   async function sdkGoogleLogin() {
@@ -108,8 +110,7 @@ export function LandingPage() {
     } catch (err) {
       if (
         axios.isAxiosError(err) &&
-        err.response?.data?.code ===
-          "AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD"
+        err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
       ) {
         // 이미 일반 로그인으로 가입한 계정일 시
         useModalStore
