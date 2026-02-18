@@ -11,11 +11,22 @@ export const api = axios.create({
 let isRefreshing = false;
 let queue: ((token: string) => void)[] = []; // 요청 재시도 함수들의 큐
 
+function isTokenExpired(token: string) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp < now + 10; // 만료 10초 전이면 만료로 간주 (여유 대역)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return true;
+  }
+}
+
 export const getOrRefreshAccessToken = async (): Promise<string | null> => {
   const { accessToken, setAccessToken, clearAuth } = useAuthStore.getState();
 
-  // 1. 이미 토큰이 있다면 바로 반환
-  if (accessToken) return accessToken;
+  // 1. 이미 유효한 토큰이 있다면 바로 반환
+  if (accessToken && !isTokenExpired(accessToken)) return accessToken;
 
   // 2. 이미 다른 곳에서 리프레시 중이라면 큐에서 대기
   if (isRefreshing) {

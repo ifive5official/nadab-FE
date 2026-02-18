@@ -33,6 +33,7 @@ export default function ErrorPage({ error }: { error: any }) {
         <p className="w-full whitespace-pre-wrap break-all px-4">
           {JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}
         </p>
+        <p>header: {error.config?.headers}</p>
       </div>
     </div>
   );
