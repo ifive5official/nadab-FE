@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
   // 로그인 여부에 따른 홈/온보딩 분기 로직 + 리프레시
   beforeLoad: async ({ context }) => {
     const accessToken = await getOrRefreshAccessToken();
-
+    console.log("index beforeLoad", accessToken);
     if (accessToken) {
       try {
         const user = await context.queryClient.ensureQueryData({

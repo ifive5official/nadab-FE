@@ -47,10 +47,12 @@ export const getOrRefreshAccessToken = async (): Promise<string | null> => {
     queue.forEach((cb) => cb(newAccessToken));
     queue = [];
     return newAccessToken;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (err) {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+  } catch (err: any) {
     queue = [];
-    clearAuth();
+    if (err?.response?.status === 401 || err?.response?.status === 403) {
+      clearAuth();
+    }
     return null;
   } finally {
     isRefreshing = false;

@@ -1,7 +1,11 @@
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  useRouter,
+} from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
 import useThemeStore from "@/store/useThemeStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
@@ -10,6 +14,7 @@ import ErrorPage from "@/components/ErrorPage";
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
 import { BackButtonHandler } from "@/hooks/backButtonHandler";
+import { Network } from "@capacitor/network";
 // import { SplashScreen } from "@capacitor/splash-screen";
 
 type RouterContext = {
@@ -23,6 +28,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  const router = useRouter();
+  const [isOnline, setIsOnline] = useState(true);
+
   // 뒤로가기 버튼과 히스토리 api 연동
   if (Capacitor.isNativePlatform()) {
     BackButtonHandler();
@@ -52,6 +60,28 @@ function RootComponent() {
     }
   }, [isDarkMode]);
 
+  // 네트워크 상태 확인
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    Network.getStatus().then((status) => setIsOnline(status.connected));
+
+    Network.addListener("networkStatusChange", (status) => {
+      setIsOnline(status.connected);
+    });
+
+    if (isOnline) {
+      // 네트워크가 다시 연결되면, 라우터에게 현재 페이지의 beforeLoad/loader를 다시 실행하라고 명령
+      router.invalidate();
+    }
+
+    return () => {
+      Network.removeAllListeners();
+    };
+  }, [isOnline, router]);
+
   // // 스플래시 스크린 닫기
   // useEffect(() => {
   //   if (Capacitor.isNativePlatform()) {
@@ -63,7 +93,7 @@ function RootComponent() {
   return (
     <>
       <div className="h-full w-full flex flex-col sm:w-[412px] sm:mx-auto overflow-hidden">
-        <Outlet />
+        {isOnline ? <Outlet /> : <ErrorPage error={{}} type="network" />}
         <Modal />
         <Toast />
       </div>
