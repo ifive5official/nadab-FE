@@ -11,6 +11,9 @@ import {
 import { getNextStepPath } from "@/features/auth/signupSteps";
 import { useTermsConsentMutation } from "@/features/auth/hooks/useTermsConsentMutation";
 
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
+
 type SignupSearch = {
   type?: "social" | "renewal";
 };
@@ -42,7 +45,15 @@ function Terms() {
             target="_blank"
             rel="noreferrer"
             href="https://peat-language-671.notion.site/2a93409bb9b680df9622d528417a6f5b"
-            onClick={(e) => e.stopPropagation()}
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (Capacitor.isNativePlatform()) {
+                e.preventDefault();
+                await Browser.open({
+                  url: "https://peat-language-671.notion.site/2a93409bb9b680df9622d528417a6f5b",
+                });
+              }
+            }}
           >
             서비스 이용약관
           </a>
@@ -60,7 +71,15 @@ function Terms() {
             target="_blank"
             rel="noreferrer"
             href="https://peat-language-671.notion.site/2a03409bb9b6808bba61fffff6d03c56"
-            onClick={(e) => e.stopPropagation()}
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (Capacitor.isNativePlatform()) {
+                e.preventDefault();
+                await Browser.open({
+                  url: "https://peat-language-671.notion.site/2a03409bb9b6808bba61fffff6d03c56",
+                });
+              }
+            }}
           >
             개인정보 처리 방침
           </a>

@@ -12,6 +12,9 @@ import useSidebarStore from "@/store/sidebarStore";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect } from "react";
 
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
+
 const MENU_ITEMS = [
   { to: "/", label: "홈", icon: HomeMenuIcon },
   { to: "/report", label: "리포트", icon: ReportMenuIcon },
@@ -96,7 +99,15 @@ function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
   return (
     <>
       {isExternal ? (
-        <a href={to}>
+        <a
+          href={to}
+          onClick={async (e) => {
+            if (Capacitor.isNativePlatform()) {
+              e.preventDefault();
+              await Browser.open({ url: to });
+            }
+          }}
+        >
           <li
             className={clsx(
               "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",

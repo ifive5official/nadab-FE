@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
 import ErrorPage from "@/components/ErrorPage";
+
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
 import { BackButtonHandler } from "@/hooks/backButtonHandler";

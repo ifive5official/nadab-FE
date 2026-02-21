@@ -9,6 +9,7 @@ import type categories from "@/constants/categories";
 import { InfoButton } from "./ReportComponents";
 import { Badge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
+import { api } from "@/lib/axios";
 
 type Props = {
   category: (typeof categories)[number]["code"];
@@ -22,6 +23,13 @@ export default function TotalReportTab({ category }: Props) {
   return (
     <>
       <section className="relative flex-1 flex flex-col items-center">
+        <button
+          onClick={async () => {
+            await api.post("/api/v1/type-report/start/PREFERENCE");
+          }}
+        >
+          생성(임시)
+        </button>
         {data ? (
           <div className="w-full pt-padding-y-l flex flex-col">
             <div className="relative mb-margin-y-l">
