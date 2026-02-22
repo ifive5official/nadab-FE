@@ -17,6 +17,9 @@ importers:
       '@capacitor/browser':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.0.2)
+      '@capacitor/camera':
+        specifier: ^8.0.1
+        version: 8.0.1(@capacitor/core@8.0.2)
       '@capacitor/core':
         specifier: ^8.0.2
         version: 8.0.2
@@ -337,6 +340,11 @@ packages:
 
   '@capacitor/browser@8.0.1':
     resolution: {integrity: sha512-cCEYK9DGJvamfCKOh95QP+VafApblySDR/eodOcl1Qt+d/Y+NNPzc8NYm/dztQlRf3aMLJ7ne1HrRCfu2UOMnw==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor/camera@8.0.1':
+    resolution: {integrity: sha512-6F/tqjYXSeSCCmoUqzMEFgIQdGVDrINwAL3Gk6zJS/gpFwP9NcAlNmB3O1QYln2Nl8bGfegA5qMFyRVYdtLpMw==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -3345,6 +3353,10 @@ snapshots:
       '@capacitor/core': 8.0.2
 
   '@capacitor/browser@8.0.1(@capacitor/core@8.0.2)':
+    dependencies:
+      '@capacitor/core': 8.0.2
+
+  '@capacitor/camera@8.0.1(@capacitor/core@8.0.2)':
     dependencies:
       '@capacitor/core': 8.0.2
 

@@ -10,6 +10,9 @@ import clsx from "clsx";
 import ProfileImg from "@/components/ProfileImg";
 import useToastStore from "@/store/toastStore";
 
+import { Capacitor } from "@capacitor/core";
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera"; // 추가
+
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
 
@@ -31,17 +34,28 @@ export default function ProfileImageUploader({
   const { showToast } = useToastStore();
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
+
+  const isNative = Capacitor.isNativePlatform();
+
   const baseModalItems = [
     {
       label: "앨범에서 사진 선택",
       onClick: () => {
-        albumInputRef.current?.click();
+        if (isNative) {
+          handleNativeUpload(CameraSource.Photos);
+        } else {
+          albumInputRef.current?.click();
+        }
       },
     },
     {
       label: "사진 찍기",
       onClick: () => {
-        cameraInputRef.current?.click();
+        if (isNative) {
+          handleNativeUpload(CameraSource.Camera);
+        } else {
+          cameraInputRef.current?.click();
+        }
       },
     },
   ];
@@ -137,11 +151,59 @@ export default function ProfileImageUploader({
       });
     } catch (e) {
       console.error(e);
-      alert("이미지 업로드에 실패했습니다.");
     } finally {
       e.target.value = "";
     }
   }
+
+  // 네이티브 카메라 / 앨범 호출 로직
+  const handleNativeUpload = async (source: CameraSource) => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: source,
+      });
+
+      if (image.webPath) {
+        // 1. 프리뷰 설정
+        setProfileImgUrl(image.webPath);
+
+        // 2. S3 업로드를 위해 Blob으로 변환
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        const file = new File([blob], `profile.${image.format}`, {
+          type: `image/${image.format}`,
+        });
+
+        // 3. 기존 업로드 로직
+        setIsModalOpen(false);
+        const res = await getPresignedUrlMutation.mutateAsync(file.type);
+        await uploadToS3Mutation.mutateAsync({
+          presignedUrl: res.data?.objectKey ?? "",
+          file,
+        });
+        onSuccess(res.data?.uploadUrl ?? "");
+        showToast({
+          message: "프로필 사진이 추가되었어요.",
+          bottom:
+            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
+        });
+      }
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (e: any) {
+      console.error("Native Upload Error:", e);
+      if (e.message.includes("denied") || e.message.includes("permission")) {
+        setIsModalOpen(false);
+        showToast({
+          message: "설정에서 카메라 권한을 허용해 주세요.",
+          bottom:
+            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
+        });
+      }
+    }
+  };
 
   const isUploading =
     getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
