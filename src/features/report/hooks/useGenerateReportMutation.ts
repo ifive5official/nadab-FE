@@ -8,7 +8,7 @@ import { formatISODate } from "@/lib/formatDate";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (reportId: number) => void;
 };
 
 type Req = components["schemas"]["DailyReportRequest"];
@@ -32,7 +32,7 @@ export function useGenerateReportMutation({ onSuccess }: Props) {
       const today = formatISODate(new Date());
       queryClient.invalidateQueries({ queryKey: ["currentUser", "crystals"] });
       queryClient.setQueryData(["currentUser", "report", today], data.data);
-      onSuccess?.();
+      onSuccess?.(data.data?.reportId ?? 0);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);

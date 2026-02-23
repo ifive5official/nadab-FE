@@ -82,7 +82,7 @@ export default function Home() {
               >
                 새로운 질문 받기
               </BlockButton>
-              <Link to="/today" className="w-full">
+              <Link to="/daily" className="w-full">
                 <BlockButton>쓰러가기</BlockButton>
               </Link>
             </div>

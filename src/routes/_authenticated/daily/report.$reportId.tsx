@@ -2,26 +2,43 @@ import { EmotionBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
-import { QuestionSection } from "@/features/today/QuestionSection";
+import { QuestionSection } from "@/features/daily/QuestionSection";
 import { currentUserOptions } from "@/features/user/quries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
   useBlocker,
+  notFound,
 } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { questionOptions } from "@/features/question/queries";
-import { reportOptions } from "@/features/report/quries";
+import { dailyReportOptions } from "@/features/report/quries";
 import emotions from "@/constants/emotions";
 import ReportMessage from "@/features/report/ReportMessage";
+import axios from "axios";
+import ErrorPage from "@/components/ErrorPage";
 
-export const Route = createFileRoute("/_authenticated/today/report")({
+export const Route = createFileRoute("/_authenticated/daily/report/$reportId")({
   component: RouteComponent,
-  loader: ({ context: { queryClient } }) => {
-    queryClient.ensureQueryData(questionOptions);
-    queryClient.ensureQueryData(reportOptions);
+  notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
+  loader: async ({ context: { queryClient }, params: { reportId } }) => {
+    try {
+      await Promise.all([
+        queryClient.ensureQueryData(questionOptions),
+        queryClient.ensureQueryData(dailyReportOptions(Number(reportId))),
+      ]);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 400 || status === 404) {
+          /* eslint-disable @typescript-eslint/no-explicit-any */
+          throw notFound() as any;
+        }
+      }
+      throw err;
+    }
   },
 });
 
@@ -33,9 +50,13 @@ function RouteComponent() {
     },
   });
 
+  const { reportId } = Route.useParams();
+
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { data: question } = useSuspenseQuery(questionOptions);
-  const { data: report } = useSuspenseQuery(reportOptions);
+  const { data: report } = useSuspenseQuery(
+    dailyReportOptions(Number(reportId)),
+  );
   const messages = report.content!.split(/(?<=[.!?])\s/);
 
   const navigate = useNavigate();

@@ -10,7 +10,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { questionOptions } from "@/features/question/queries";
 
-export const Route = createFileRoute("/_authenticated/today/")({
+export const Route = createFileRoute("/_authenticated/daily/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(questionOptions);
@@ -85,7 +85,7 @@ function RouteComponent() {
 
           <BlockButton
             disabled={!isReady}
-            onClick={() => navigate({ to: "/today/write" })}
+            onClick={() => navigate({ to: "/daily/write" })}
           >
             답변하기
           </BlockButton>

@@ -8,14 +8,14 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { useState } from "react";
-import { QuestionSection } from "@/features/today/QuestionSection";
+import { QuestionSection } from "@/features/daily/QuestionSection";
 import Container from "@/components/Container";
 import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
 import useModalStore from "@/store/modalStore";
 
-export const Route = createFileRoute("/_authenticated/today/write")({
+export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(questionOptions);
@@ -29,7 +29,7 @@ function RouteComponent() {
   const canSubmit = answer.trim().length >= 10;
   const { isOpen, showModal, closeModal } = useModalStore();
   const generateResponseMutation = useGenerateReportMutation({
-    onSuccess: () =>
+    onSuccess: (reportId) =>
       showModal({
         title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
         icon: () => (
@@ -50,7 +50,7 @@ function RouteComponent() {
             label: "리포트 보기",
             onClick: () => {
               closeModal();
-              navigate({ to: "/today/report" });
+              navigate({ to: `/daily/report/${reportId}` });
             },
           },
         ],
