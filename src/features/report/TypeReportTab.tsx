@@ -45,6 +45,7 @@ export default function TypeReportTab({ category }: Props) {
                   <Popover
                     isOpen={isPopoverOpen}
                     onClose={() => setIsPopoverOpen(false)}
+                    className="dark:bg-surface-layer-2"
                   />
                 </div>
               )}
@@ -81,7 +82,7 @@ export default function TypeReportTab({ category }: Props) {
         ) : (
           // 레포트 없을 때
           <>
-            <div className="w-full flex-1 flex flex-col gap-gap-y-m px-padding-x-m py-padding-y-xl mt-gap-y-l mb-margin-y-xxl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] bg-cover">
+            <div className="w-full flex-1 flex flex-col gap-gap-y-m px-padding-x-m py-padding-y-xl mt-gap-y-l mb-margin-y-xxl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] dark:bg-[url(/type-report-bg-dark.png)] bg-cover">
               <div className="relative flex justify-between items-center">
                 <Badge>유형 리포트</Badge>
                 <InfoButton onClick={() => setIsPopoverOpen(true)} />
