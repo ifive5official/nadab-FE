@@ -18,7 +18,6 @@ type Props<T extends keyof ReportTypeMap> = {
 export default function useReport<T extends keyof ReportTypeMap>({
   type,
 }: Props<T>) {
-  // const [isPolling, setIsPolling] = useState(false);
   // Todo: 에러 처리
   const { data: reports } = useSuspenseQuery({
     ...periodicReportOptions(type),
@@ -26,10 +25,8 @@ export default function useReport<T extends keyof ReportTypeMap>({
     refetchInterval: (query) => {
       const status = query.state.data?.report?.status;
       if (status === "PENDING" || status === "IN_PROGRESS") {
-        // setIsPolling(true);
         return 1000; // 1초마다 폴링
       }
-      // setIsPolling(false);
       return false;
     },
   });

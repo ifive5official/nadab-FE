@@ -39,6 +39,19 @@ export const periodicReportOptions = <T extends keyof ReportTypeMap>(
   });
 };
 
+type TypeReportRes = components["schemas"]["MyAllTypeReportsResponse"];
+
+// 유형 레포트 전체 가져오기
+export const typeReportOptions = queryOptions({
+  queryKey: ["currentUser", "type-report"],
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<TypeReportRes>>(
+      "/api/v1/type-report",
+    );
+    return res.data.data!;
+  },
+});
+
 type AnswerRes = components["schemas"]["AnswerDetailResponse"];
 
 // 날짜별 질문 + 답변 가져오기 옵션

@@ -30,7 +30,7 @@ const categories = [
   {
     icon: UsersFilledIcon,
     code: "RELATIONSHIP",
-    title: "인간관계",
+    title: "관계",
     description: "누군가와 함께할 때 나는 어떤지 알아봐요.",
   },
   {

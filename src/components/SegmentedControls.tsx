@@ -42,6 +42,7 @@ export default function SegmentedControls({
             {isSelected && (
               <motion.div
                 layoutId={id}
+                layoutDependency={selected}
                 className="absolute inset-0 bg-interactive-bg-default border-[0.5px] border-interactive-border-default shadow-1 rounded-lg"
               />
             )}

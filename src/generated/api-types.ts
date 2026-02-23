@@ -51,6 +51,36 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/type-report/start/{interestCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 유형 리포트 생성 시작
+         * @description 사용자의 유형 리포트 생성을 시작합니다. </br>
+         *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+         *
+         *     선택 가능한 관심 주제 코드는 다음과 같습니다.
+         *
+         *     - **PREFERENCE** : 취향
+         *     - **EMOTION** : 감정
+         *     - **ROUTINE** : 루틴
+         *     - **RELATIONSHIP** : 인간관계
+         *     - **LOVE** : 사랑
+         *     - **VALUES** : 가치관
+         */
+        post: operations["startTypeReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/test/generate/daily-report": {
         parameters: {
             query?: never;
@@ -130,6 +160,28 @@ export interface paths {
          *     크리스탈 또한 환불됩니다.
          */
         post: operations["deleteWeeklyReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/test/delete/type-report/{interestCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * (테스트용) 유형 리포트 삭제 API
+         * @description 특정 주제에 대한 유형 리포트를 삭제합니다. <br/>
+         *     생성된 리포트만 삭제 가능합니다. <br/>
+         *     크리스탈 또한 환불됩니다.
+         */
+        post: operations["deleteTypeReport"];
         delete?: never;
         options?: never;
         head?: never;
@@ -611,7 +663,7 @@ export interface paths {
          *     <br>
          *     **소셜 로그인 계정의 경우:**<br>
          *     - 별도 복구 API가 필요 없습니다.<br>
-         *     - 소셜 로그인(POST /naver/login 또는 POST /google/login)을 시도하면 자동으로 복구됩니다.
+         *     - 소셜 로그인(POST /{provider}/login)을 시도하면 자동으로 복구됩니다.
          */
         post: operations["restoreBasicAccount"];
         delete?: never;
@@ -665,6 +717,35 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/naver/native-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 네이버 Native SDK 로그인
+         * @description Android/iOS 앱에서 네이버 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+         *     <br>
+         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+         */
+        post: operations["naverNativeLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/logout": {
         parameters: {
             query?: never;
@@ -707,6 +788,64 @@ export interface paths {
          *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
          */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/kakao/native-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 카카오 Native SDK 로그인
+         * @description Android/iOS 앱에서 카카오 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+         *     <br>
+         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+         */
+        post: operations["kakaoNativeLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/google/native-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 구글 Native SDK 로그인
+         * @description Android/iOS 앱에서 구글 SDK로 받은 ID Token을 사용하여 로그인을 완료합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+         *     <br>
+         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+         */
+        post: operations["googleNativeLogin"];
         delete?: never;
         options?: never;
         head?: never;
@@ -914,6 +1053,103 @@ export interface paths {
          *     - 로그인 상태에서 자신의 현재 닉네임을 보내면 사용 불가로 처리됩니다.
          */
         get: operations["checkNickname"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 나의 유형 리포트 통합 조회
+         * @description 사용자의 유형 리포트를 관심 주제(```InterestCode```)별로 한 번에 조회합니다. </br></br>
+         *
+         *     응답의 ```reports```는 다음 형태의 Map 입니다. </br>
+         *     - Key: ```InterestCode``` 문자열 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES) </br>
+         *     - Value: ```TypeReportDetailResponse``` </br></br>
+         *
+         *     Value(```TypeReportDetailResponse```)는 단일 조회 응답의 ```report```와 동일한 스키마이며, 다음 3개 영역으로 구성됩니다. </br>
+         *     - ```current```: 현재 조회 가능한 유형 리포트 본문(없으면 null) </br>
+         *     - ```generation```: 새 리포트 생성 작업 상태(진행 중/실패 여부 및 작업 reportId) </br>
+         *     - ```eligibility```: 생성 자격(완료 개수/필요 개수/생성 가능/첫 생성 무료 여부) </br></br>
+         *
+         *     **각 필드 의미** </br>
+         *     **1) ```current```** </br>
+         *     - 생성 완료된 리포트가 있으면 상세 내용이 채워집니다. </br>
+         *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br></br>
+         *
+         *     **2) ```generation```** </br>
+         *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
+         *     - ```status``` 값: ```NONE``` / ```IN_PROGRESS``` / ```FAILED``` </br>
+         *     - ```reportId```는 생성 작업이 존재할 때의 reportId이며, 없으면 null입니다. </br></br>
+         *
+         *     **3) ```eligibility```** </br>
+         *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
+         *     - ```requiredCount```: 생성에 필요한 최소 개수 (현재 30) </br>
+         *     - ```canGenerate```: 현재 생성 조건 충족 여부 </br>
+         *     - ```isFirstFree```: 해당 interest의 첫 생성 무료 대상 여부 </br></br>
+         */
+        get: operations["getMyAllTypeReports"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-report/{interestCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 나의 유형 리포트 단일 조회
+         * @description 특정 관심 주제(interestCode) 1개에 대한 사용자의 유형 리포트 상태를 조회합니다. </br></br>
+         *
+         *     응답의 ```report```는 다음 3개 영역으로 구성됩니다. </br>
+         *     - ```current```: 현재 조회 가능한(사용자가 볼 수 있는) 유형 리포트 본문 </br>
+         *     - ```generation```: 새 리포트 생성 작업의 상태(진행 중/실패 여부 및 작업 reportId) </br>
+         *     - ```eligibility```: 생성 자격(완료한 일간 리포트 개수, 필요 개수, 생성 가능 여부, 첫 생성 무료 여부) </br></br>
+         *
+         *     **1) ```current```** </br>
+         *     - 이미 생성 완료된 리포트가 있으면 ```current```에 상세 내용이 채워집니다. </br>
+         *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br>
+         *     - ```current.status```는 “현재 조회 가능한 리포트 자체의 상태”를 의미합니다(예: COMPLETED). </br></br>
+         *
+         *     **2) ```generation```** </br>
+         *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
+         *     - ```status``` 값: </br>
+         *       - ```NONE```: 생성 작업이 없음(대기/진행/실패 상태가 아님) </br>
+         *       - ```IN_PROGRESS```: 생성 작업 진행 중 </br>
+         *       - ```FAILED```: 생성 작업 실패(환불/처리 등 후속 로직이 완료된 상태) </br>
+         *     - ```reportId```는 ```IN_PROGRESS``` 또는 ```FAILED```인 생성 작업의 대상 reportId이며, 없으면 null입니다. </br></br>
+         *
+         *     **3) ```eligibility```** </br>
+         *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
+         *     - ```requiredCount```: 유형 리포트 생성을 위해 필요한 최소 완료 개수 (현재 30) </br>
+         *     - ```canGenerate```: 현재 시점에 생성 조건을 충족했는지 여부 </br>
+         *     - ```isFirstFree```: 해당 interest의 “첫 유형 리포트 생성 무료” 대상 여부 </br></br>
+         *
+         *     선택 가능한 관심 주제 코드는 다음과 같습니다. </br>
+         *     - **PREFERENCE** : 취향 </br>
+         *     - **EMOTION** : 감정 </br>
+         *     - **ROUTINE** : 루틴 </br>
+         *     - **RELATIONSHIP** : 인간관계 </br>
+         *     - **LOVE** : 사랑 </br>
+         *     - **VALUES** : 가치관 </br>
+         */
+        get: operations["getMyTypeReport"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1182,6 +1418,26 @@ export interface paths {
          * @description 유저의 오늘의 리포트를 조회합니다.
          */
         get: operations["getDailyReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/daily-report/{reportId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ID로 오늘의 리포트 조회 API
+         * @description 리포트 ID로 오늘의 리포트를 조회합니다. COMPLETED 상태의 리포트만 조회 가능합니다.
+         */
+        get: operations["getDailyReportById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1523,6 +1779,26 @@ export interface components {
              */
             contentType: string;
         };
+        /** @description 유형 리포트 생성 시작 응답 */
+        TypeReportStartResponse: {
+            /**
+             * Format: int64
+             * @description 생성 예정 유형 리포트 ID
+             * @example 1
+             */
+            reportId?: number;
+            /**
+             * @description 상태
+             * @example PENDING
+             */
+            status?: string;
+            /**
+             * Format: int64
+             * @description 리포트 작성 후 크리스탈 잔액
+             * @example 100
+             */
+            balanceAfter?: number;
+        };
         /** @description 오늘의 리포트 생성 응답 */
         CreateDailyReportResponse: {
             /**
@@ -1841,6 +2117,14 @@ export interface components {
              */
             newPassword: string;
         };
+        /** @description 네이버 Native SDK 로그인 요청 */
+        NaverNativeLoginRequest: {
+            /**
+             * @description 네이버 SDK로부터 받은 Access Token
+             * @example AAAANv1...
+             */
+            naverAccessToken: string;
+        };
         /** @description 탈퇴 계정 정보 */
         WithdrawnInfoResponse: {
             /**
@@ -1868,6 +2152,22 @@ export interface components {
              * @example password123!
              */
             password: string;
+        };
+        /** @description 카카오 Native SDK 로그인 요청 */
+        KakaoNativeLoginRequest: {
+            /**
+             * @description 카카오 SDK로부터 받은 Access Token
+             * @example AAAANv1...
+             */
+            kakaoAccessToken: string;
+        };
+        /** @description 구글 Native SDK 로그인 요청 */
+        GoogleNativeLoginRequest: {
+            /**
+             * @description 구글 SDK로부터 받은 ID Token (JWT)
+             * @example eyJhbGciOiJSUzI1NiIs...
+             */
+            googleIdToken: string;
         };
         /** @description 유저 프로필 수정 응답 */
         UpdateUserProfileResponse: {
@@ -1938,8 +2238,6 @@ export interface components {
             weekOfMonth?: number;
             /** @description 이런 면도 발견되었어요 */
             discovered?: string;
-            /** @description 이런 점이 좋았어요 */
-            good?: string;
             /** @description 다음엔 이렇게 보완해볼까요? */
             improve?: string;
             /**
@@ -1974,6 +2272,147 @@ export interface components {
              * @example 이미 사용 중인 닉네임입니다.
              */
             reason?: string;
+        };
+        /** @description 나의 유형 리포트 통합 조회 응답 */
+        MyAllTypeReportsResponse: {
+            /**
+             * @description interestCode -> 리포트 상세. 모든 관심 주제 코드 키는 항상 포함되며, 각 값은 최소한 current/generation/eligibility 구조를 가집니다. (current는 없을 수 있음)
+             * @example {
+             *       "LOVE": {
+             *         "current": null,
+             *         "generation": {
+             *           "status": "NONE",
+             *           "reportId": null
+             *         },
+             *         "eligibility": {
+             *           "dailyCompletedCount": 0,
+             *           "requiredCount": 30,
+             *           "canGenerate": false,
+             *           "isFirstFree": true
+             *         }
+             *       },
+             *       "PREFERENCE": {
+             *         "current": {
+             *           "status": "COMPLETED",
+             *           "analysisTypeName": "몽글몽글 낭만주의자",
+             *           "hashTag1": "#분위기",
+             *           "hashTag2": "#취향기록",
+             *           "hashTag3": "#나만의색깔",
+             *           "typeAnalysis": "...",
+             *           "personaTitle1": "...",
+             *           "personaContent1": "...",
+             *           "personaTitle2": "...",
+             *           "personaContent2": "...",
+             *           "typeImageUrl": "https://..."
+             *         },
+             *         "generation": {
+             *           "status": "NONE",
+             *           "reportId": null
+             *         },
+             *         "eligibility": {
+             *           "dailyCompletedCount": 30,
+             *           "requiredCount": 30,
+             *           "canGenerate": true,
+             *           "isFirstFree": false
+             *         }
+             *       },
+             *       "EMOTION": {
+             *         "current": null,
+             *         "generation": {
+             *           "status": "IN_PROGRESS",
+             *           "reportId": 13
+             *         },
+             *         "eligibility": {
+             *           "dailyCompletedCount": 5,
+             *           "requiredCount": 30,
+             *           "canGenerate": false,
+             *           "isFirstFree": true
+             *         }
+             *       },
+             *       "ROUTINE": {
+             *         "current": null,
+             *         "generation": {
+             *           "status": "FAILED",
+             *           "reportId": 21
+             *         },
+             *         "eligibility": {
+             *           "dailyCompletedCount": 30,
+             *           "requiredCount": 30,
+             *           "canGenerate": true,
+             *           "isFirstFree": true
+             *         }
+             *       }
+             *     }
+             */
+            reports?: {
+                [key: string]: components["schemas"]["TypeReportDetailResponse"];
+            };
+        };
+        /** @description 개별 유형 리포트 상세 상태 및 생성 조건 */
+        TypeReportDetailResponse: {
+            /** @description 현재 조회 가능한 유형 리포트 (없거나 생성 전이면 null) */
+            current?: components["schemas"]["TypeReportResponse"];
+            /** @description 리포트 생성 상태 */
+            generation?: components["schemas"]["TypeReportGenerationResponse"];
+            /** @description 리포트 생성 자격 조건 및 현황 */
+            eligibility?: components["schemas"]["TypeReportEligibilityResponse"];
+        };
+        /** @description 유형 리포트 생성 자격 요건 및 현황 */
+        TypeReportEligibilityResponse: {
+            /**
+             * Format: int32
+             * @description 일간 리포트 총 개수
+             * @example 3
+             */
+            dailyCompletedCount?: number;
+            /**
+             * Format: int32
+             * @description 리포트 생성을 위해 필요한 총 질문 개수
+             * @example 30
+             */
+            requiredCount?: number;
+            /**
+             * @description 리포트 생성 가능 여부 (조건 충족 여부)
+             * @example false
+             */
+            canGenerate?: boolean;
+            /**
+             * @description 해당 관심 주제의 유형 리포트 첫 생성 무료 여부
+             * @example true
+             */
+            isFirstFree?: boolean;
+        };
+        /** @description 유형 리포트 생성 상태 */
+        TypeReportGenerationResponse: {
+            /**
+             * @description 생성 상태
+             * @example NONE
+             * @enum {string}
+             */
+            status?: "NONE" | "IN_PROGRESS" | "FAILED";
+            /**
+             * Format: int64
+             * @description 생성 중/실패한 작업의 reportId (없으면 null)
+             */
+            reportId?: number;
+        };
+        TypeReportResponse: {
+            status?: string;
+            analysisTypeName?: string;
+            hashTag1?: string;
+            hashTag2?: string;
+            hashTag3?: string;
+            typeAnalysis?: string;
+            personaTitle1?: string;
+            personaContent1?: string;
+            personaTitle2?: string;
+            personaContent2?: string;
+            typeImageUrl?: string;
+        };
+        /** @description 나의 유형 리포트 단일 조회 응답 */
+        MyTypeReportResponse: {
+            /** @description 유형 리포트 */
+            report?: components["schemas"]["TypeReportDetailResponse"];
         };
         /** @description 약관 동의 상태 확인 응답 */
         TermsCheckResponse: {
@@ -2040,8 +2479,6 @@ export interface components {
             month?: number;
             /** @description 이런 면도 발견되었어요 */
             discovered?: string;
-            /** @description 이런 점이 좋았어요 */
-            good?: string;
             /** @description 다음엔 이렇게 보완해볼까요? */
             improve?: string;
             /**
@@ -2261,6 +2698,34 @@ export interface components {
              */
             isShared?: boolean;
         };
+        /** @description 답변 상세 조회 응답 */
+        AnswerDetailResponse: {
+            /**
+             * @description 질문 내용
+             * @example 오늘 가장 기뻤던 순간은?
+             */
+            questionText?: string;
+            /**
+             * @description 질문 카테고리 (관심분야 코드)
+             * @example EMOTION
+             */
+            interestCode?: string;
+            /**
+             * Format: date
+             * @description 답변 작성일
+             * @example 2025-12-25
+             */
+            answerDate?: string;
+            /** @description 나의 답변 */
+            answer?: string;
+            /** @description 리포트 내용 */
+            content?: string;
+            /**
+             * @description 리포트 감정 상태
+             * @example ACHIEVEMENT
+             */
+            emotion?: string;
+        };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
             /**
@@ -2336,34 +2801,6 @@ export interface components {
              * @example 2025-12-25
              */
             cursor?: string;
-        };
-        /** @description 답변 상세 조회 응답 */
-        AnswerDetailResponse: {
-            /**
-             * @description 질문 내용
-             * @example 오늘 가장 기뻤던 순간은?
-             */
-            questionText?: string;
-            /**
-             * @description 질문 카테고리 (관심분야 코드)
-             * @example EMOTION
-             */
-            interestCode?: string;
-            /**
-             * Format: date
-             * @description 답변 작성일
-             * @example 2025-12-25
-             */
-            answerDate?: string;
-            /** @description 나의 답변 */
-            answer?: string;
-            /** @description 리포트 내용 */
-            content?: string;
-            /**
-             * @description 리포트 감정 상태
-             * @example ACHIEVEMENT
-             */
-            emotion?: string;
         };
         /** @description 캘린더 날짜별 정보 */
         CalendarEntryResponse: {
@@ -2510,6 +2947,64 @@ export interface operations {
             };
         };
     };
+    startTypeReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interestCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 유형 리포트 생성 시작 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeReportStartResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: TYPE_REPORT_NOT_ENOUGH_REPORTS - 유형 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 현재까지 작성된 해당 유형 일간 리포트 수가 포함됩니다.)**
+             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompletedCountResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: TYPE_REPORT_IN_PROGRESS - 현재 유형 리포트를 생성 중임 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     generateDailyReport: {
         parameters: {
             query?: never;
@@ -2602,6 +3097,33 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description 테스트용 주간 리포트 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteTypeReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interestCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 테스트용 월간 리포트 삭제 성공 */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -3440,7 +3962,7 @@ export interface operations {
             header?: never;
             path: {
                 /**
-                 * @description OAuth2 제공자 (naver, google)
+                 * @description OAuth2 제공자 (naver, google, kakao)
                  * @example naver
                  */
                 provider: string;
@@ -3464,7 +3986,7 @@ export interface operations {
             };
             /**
              * @description 잘못된 요청
-             *     - ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver' 또는 'google'이 아닌 경우
+             *     - ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우
              *     - ErrorCode: VALIDATION_FAILED - code 또는 state 값이 누락된 경우
              */
             400: {
@@ -3485,7 +4007,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_DIFFERENT_METHOD - 해당 이메일이 다른 방법으로 이미 가입된 경우 */
+            /**
+             * @description 이메일 중복
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+             */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -3707,6 +4235,57 @@ export interface operations {
             };
         };
     };
+    naverNativeLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NaverNativeLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description 로그인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 네이버로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 이메일 중복
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     logout: {
         parameters: {
             query?: never;
@@ -3786,6 +4365,112 @@ export interface operations {
             };
             /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    kakaoNativeLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KakaoNativeLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description 로그인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 카카오로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 이메일 중복
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    googleNativeLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleNativeLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description 로그인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - ID Token이 누락된 경우 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description ID Token 검증 실패
+             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 구글 ID Token 검증 실패
+             *       (유효하지 않은 토큰, 만료된 토큰, 잘못된 audience, 인증되지 않은 이메일)
+             */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 이메일 중복
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+             */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4164,6 +4849,76 @@ export interface operations {
             };
         };
     };
+    getMyAllTypeReports: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 나의 유형 리포트 통합 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyAllTypeReportsResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMyTypeReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interestCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 나의 유형 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyTypeReportResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getDailyQuestion: {
         parameters: {
             query?: never;
@@ -4461,13 +5216,52 @@ export interface operations {
             };
         };
     };
+    getDailyReportById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reportId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 오늘의 리포트 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerDetailResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getAuthorizationUrl: {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 /**
-                 * @description OAuth2 제공자 (naver, google)
+                 * @description OAuth2 제공자 (naver, google, kakao)
                  * @example naver
                  */
                 provider: string;
@@ -4485,7 +5279,7 @@ export interface operations {
                     "application/json": components["schemas"]["AuthorizationUrlResponse"];
                 };
             };
-            /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver' 또는 'google'이 아닌 경우 */
+            /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우 */
             400: {
                 headers: {
                     [name: string]: unknown;

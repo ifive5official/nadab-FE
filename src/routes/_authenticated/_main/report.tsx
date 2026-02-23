@@ -1,15 +1,18 @@
 import SegmentedControls from "@/components/SegmentedControls";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import PeriodicReportTab from "@/features/report/PeriodicReportTab";
-import TotalReportTab from "@/features/report/TotalReportTab";
+import TypeReportTab from "@/features/report/TypeReportTab";
 import Container from "@/components/Container";
-import { periodicReportOptions } from "@/features/report/quries";
+import {
+  periodicReportOptions,
+  typeReportOptions,
+} from "@/features/report/quries";
 import Loading from "@/components/Loading";
 import categories from "@/constants/categories";
 import clsx from "clsx";
 
-type Tab = "periodic" | "category";
+type Tab = "periodic" | "type";
 
 export const Route = createFileRoute("/_authenticated/_main/report")({
   component: RouteComponent,
@@ -27,7 +30,8 @@ export const Route = createFileRoute("/_authenticated/_main/report")({
           queryClient.ensureQueryData(periodicReportOptions("monthly")),
         ]);
         break;
-      case "category":
+      case "type":
+        queryClient.ensureQueryData(typeReportOptions);
         break;
     }
   },
@@ -37,22 +41,30 @@ export const Route = createFileRoute("/_authenticated/_main/report")({
 });
 
 function RouteComponent() {
-  const [selected, setSelected] = useState("periodic");
+  const tab = Route.useSearch().tab ?? "periodic";
   const [selectedCategory, setSelectedCategory] =
     useState<(typeof categories)[number]["code"]>("PREFERENCE");
+
+  const navigate = useNavigate({ from: Route.fullPath });
+  function handleTabChange(value: string) {
+    navigate({
+      search: (prev) => ({ ...prev, tab: value as Tab }),
+      replace: true,
+    });
+  }
 
   return (
     <Container isMain={true}>
       <SegmentedControls
         options={[
           { label: "주간/월간", value: "periodic" },
-          { label: "유형", value: "category" },
+          { label: "유형", value: "type" },
         ]}
-        selected={selected}
+        selected={tab}
         className="my-padding-y-m"
-        onChange={setSelected}
+        onChange={handleTabChange}
       />
-      {selected === "category" && (
+      {tab === "type" && (
         <ul className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((category) => {
             const selected = category.code === selectedCategory;
@@ -76,10 +88,8 @@ function RouteComponent() {
       <div className="relative -mx-padding-x-m">
         <div className="border-b border-b-interactive-border-default w-full" />
       </div>
-      {selected === "periodic" && <PeriodicReportTab />}
-      {selected === "category" && (
-        <TotalReportTab category={selectedCategory} />
-      )}
+      {tab === "periodic" && <PeriodicReportTab />}
+      {tab === "type" && <TypeReportTab category={selectedCategory} />}
     </Container>
   );
 }
