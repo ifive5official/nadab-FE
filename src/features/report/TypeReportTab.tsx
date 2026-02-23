@@ -1,31 +1,54 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { currentUserOptions } from "../user/quries";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { crystalsOptions, currentUserOptions } from "../user/quries";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
-import type categories from "@/constants/categories";
+import categories from "@/constants/categories";
 import { InfoButton } from "./ReportComponents";
-import { Badge } from "@/components/Badges";
+import { Badge, CrystalBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
+import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
+import useModalStore from "@/store/modalStore";
+import { WarningFilledIcon } from "@/components/Icons";
+import useToastStore from "@/store/toastStore";
 type Props = {
   category: (typeof categories)[number]["code"];
 };
 
 export default function TypeReportTab({ category }: Props) {
+  const { data: crystalData } = useQuery(crystalsOptions);
+  const crystalBalance = crystalData?.crystalBalance ?? 0;
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { reports: typeReports } = useTypeReport();
   const generateTypeReportMutation = useGenerateTypeReportMutation({
     interestCode: category,
+    onSuccess: () => {
+      if (!typeReports![category].eligibility?.isFirstFree) {
+        showToast({
+          message: `100 크리스탈이 소진되었어요.`,
+        });
+      }
+    },
   });
   const typeReport = typeReports![category].current;
   const isGenerating =
     typeReports![category].generation?.status === "IN_PROGRESS";
+
+  const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const deleteTypeReportMutation = useDeleteTypeReportMutation({
+    interestCode: category,
+  });
   return (
     <>
+      <button onClick={() => deleteTypeReportMutation.mutate()}>
+        유형 리포트 삭제(테스트용)
+      </button>
       <section className="relative flex-1 flex flex-col items-center">
-        {typeReport ? (
+        {typeReport && !isGenerating ? (
           // 유형 레포트
           <div className="w-full mt-padding-y-l flex flex-col">
             <div className="relative mb-margin-y-l">
@@ -77,7 +100,31 @@ export default function TypeReportTab({ category }: Props) {
                 </p>
               </div>
             </div>
-            <BlockButton>100 크리스탈로 리포트 새로 받기</BlockButton>
+            <BlockButton
+              isLoading={isGenerating || generateTypeReportMutation.isPending}
+              variant={crystalBalance >= 100 ? "primary" : "disabled"}
+              onClick={() => {
+                if (crystalBalance >= 100) {
+                  generateTypeReportMutation.mutate();
+                } else {
+                  showModal({
+                    icon: WarningFilledIcon,
+                    title: "현재 보유한\n크리스탈이 부족해요.",
+                    children: (
+                      <p className="flex items-center gap-gap-x-s">
+                        <span className="text-caption-m">
+                          남은 크리스탈 개수
+                        </span>
+                        <CrystalBadge crystals={100 - crystalBalance} />
+                      </p>
+                    ),
+                    buttons: [{ label: "확인", onClick: closeModal }],
+                  });
+                }
+              }}
+            >
+              100 크리스탈로 리포트 새로 받기
+            </BlockButton>
           </div>
         ) : (
           // 레포트 없을 때
@@ -112,9 +159,17 @@ export default function TypeReportTab({ category }: Props) {
               </p>
               <BlockButton
                 className="mt-auto"
+                isLoading={isGenerating || generateTypeReportMutation.isPending}
+                variant={
+                  typeReports![category].eligibility?.canGenerate
+                    ? "primary"
+                    : "disabled"
+                }
                 onClick={() => generateTypeReportMutation.mutate()}
               >
-                무료로 리포트 받기
+                {typeReports![category].eligibility?.isFirstFree
+                  ? "무료로 리포트 받기"
+                  : "100 크리스탈로 리포트 새로 받기"}
               </BlockButton>
             </div>
           </>

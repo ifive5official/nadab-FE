@@ -6,6 +6,7 @@ import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import type categories from "@/constants/categories";
+import useModalStore from "@/store/modalStore";
 
 type generateTypeReportRes = components["schemas"]["TypeReportStartResponse"];
 
@@ -34,7 +35,16 @@ export function useGenerateTypeReportMutation({
       onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === `TYPE_REPORT_NOT_ENOUGH_REPORTS`) {
+        useModalStore
+          .getState()
+          .showError(
+            `유형 리포트가 완성되지 못했어요.`,
+            `기록을 열심히 작성해서\n 리포트를 완성해봐요.`,
+          );
+      } else {
+        handleDefaultApiError(err);
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser", "crystals"] });
