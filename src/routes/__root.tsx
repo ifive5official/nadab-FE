@@ -12,10 +12,22 @@ import Toast from "@/components/Toast";
 import ErrorPage from "@/components/ErrorPage";
 
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
-import { StatusBar } from "@capacitor/status-bar";
 import { BackButtonHandler } from "@/hooks/backButtonHandler";
 import { Network } from "@capacitor/network";
+import { registerPlugin } from "@capacitor/core";
 // import { SplashScreen } from "@capacitor/splash-screen";
+
+// status bar 색상 변경 용 커스텀 플러그인
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const ThemeManager = registerPlugin<any>("ThemeManager");
+
+async function changeStatusBarAreaColor(hexColor: string) {
+  try {
+    await ThemeManager.setRootBackgroundColor({ color: hexColor });
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -52,9 +64,7 @@ function RootComponent() {
         await SystemBars.setStyle({
           style: isDarkMode ? SystemBarsStyle.Dark : SystemBarsStyle.Light,
         });
-        await StatusBar.setBackgroundColor({
-          color: isDarkMode ? "#000000" : "#FFFFFF",
-        });
+        await changeStatusBarAreaColor(isDarkMode ? "#000000" : "#FFFFFF");
       }
       syncSystemBars();
     }
