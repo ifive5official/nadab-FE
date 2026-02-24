@@ -4,7 +4,7 @@ import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import { REPORT_CONFIGS } from "./reportConfigs";
 
-type ReportRes = components["schemas"]["DailyReportResponse"];
+type ReportRes = components["schemas"]["AnswerDetailResponse"];
 
 // 아이디로 일간 리포트 조회
 export const dailyReportOptions = (reportId: number) =>

@@ -13,7 +13,6 @@ import {
 } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { questionOptions } from "@/features/question/queries";
 import { dailyReportOptions } from "@/features/report/quries";
 import emotions from "@/constants/emotions";
 import ReportMessage from "@/features/report/ReportMessage";
@@ -25,10 +24,7 @@ export const Route = createFileRoute("/_authenticated/daily/report/$reportId")({
   notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
   loader: async ({ context: { queryClient }, params: { reportId } }) => {
     try {
-      await Promise.all([
-        queryClient.ensureQueryData(questionOptions),
-        queryClient.ensureQueryData(dailyReportOptions(Number(reportId))),
-      ]);
+      await queryClient.ensureQueryData(dailyReportOptions(Number(reportId)));
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
@@ -53,7 +49,6 @@ function RouteComponent() {
   const { reportId } = Route.useParams();
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const { data: question } = useSuspenseQuery(questionOptions);
   const { data: report } = useSuspenseQuery(
     dailyReportOptions(Number(reportId)),
   );
@@ -72,7 +67,12 @@ function RouteComponent() {
       <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
-          <QuestionSection question={question!} />
+          <QuestionSection
+            question={{
+              questionText: report.questionText,
+              interestCode: report.interestCode,
+            }}
+          />
           <div className="border-b border-interactive-border-default" />
           <div className="flex flex-col items-start">
             <EmotionBadge
