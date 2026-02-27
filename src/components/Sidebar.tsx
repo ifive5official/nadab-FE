@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import {
-  CalendarMenuIcon,
-  ChevronRightIcon,
-  HomeMenuIcon,
-  NoticeMenuIcon,
-  ReportMenuIcon,
-  SocialMenuIcon,
-} from "./Icons";
+import { ChevronRightIcon } from "./Icons";
 import { Link, useLocation } from "@tanstack/react-router";
 import useSidebarStore from "@/store/sidebarStore";
 import { motion, AnimatePresence } from "motion/react";
@@ -16,14 +9,14 @@ import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
 
 const MENU_ITEMS = [
-  { to: "/", label: "홈", icon: HomeMenuIcon },
-  { to: "/report", label: "리포트", icon: ReportMenuIcon },
-  { to: "/social", label: "소셜", icon: SocialMenuIcon },
-  { to: "/calendar", label: "캘린더", icon: CalendarMenuIcon },
+  { to: "/", label: "홈", icon: "/icon/home.png" },
+  { to: "/report", label: "리포트", icon: "/icon/report.png" },
+  { to: "/social", label: "소셜", icon: "/icon/social.png" },
+  { to: "/calendar", label: "캘린더", icon: "/icon/calendar.png" },
   {
     to: "https://peat-language-671.notion.site/2e33409bb9b6802fb2e8f474e8cfd162",
     label: "공지사항",
-    icon: NoticeMenuIcon,
+    icon: "/icon/notice.png",
     isExternal: true,
   },
 ] as const;
@@ -77,6 +70,40 @@ export default function Sidebar() {
                   </MenuItem>
                 ))}
               </nav>
+              <div className="py-padding-y-m border-y border-y-interactive-border-default">
+                {[
+                  {
+                    to: "https://docs.google.com/forms/d/e/1FAIpQLSfDuE6xR8Uu93fIt9DIWS4z6KYRa95PtDU7PJuD-DCG7Kk4ag/viewform",
+                    label: "의견 남기기",
+                  },
+                  {
+                    to: "https://www.instagram.com/nadab.app/",
+                    label: "인스타그램 바로가기",
+                  },
+                ].map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.to}
+                    onClick={async (e) => {
+                      if (Capacitor.isNativePlatform()) {
+                        e.preventDefault();
+                        await Browser.open({
+                          url: item.to,
+                        });
+                      }
+                    }}
+                  >
+                    <div className="flex justify-between px-padding-x-xs py-padding-y-xs">
+                      <span className="text-caption-l text-text-secondary">
+                        {item.label}
+                      </span>
+                      <span className="text-icon-muted">
+                        <ChevronRightIcon />
+                      </span>
+                    </div>
+                  </a>
+                ))}
+              </div>
               <footer className="text-text-tertiary text-caption-s py-padding-y-m text-center">
                 © Nadab All Rights Reserved
               </footer>
@@ -90,12 +117,12 @@ export default function Sidebar() {
 
 type MenuItemProps = {
   to: string;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: string;
   isExternal?: boolean;
   children: string;
 };
 
-function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
+function MenuItem({ to, icon, isExternal, children }: MenuItemProps) {
   return (
     <>
       {isExternal ? (
@@ -113,7 +140,7 @@ function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
               "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
             )}
           >
-            <Icon />
+            <img src={icon} alt="메뉴 아이콘" className="w-6 aspect-square" />
             <p className="mr-auto text-title-3">{children}</p>
             <ChevronRightIcon />
           </li>
@@ -126,11 +153,15 @@ function MenuItem({ to, icon: Icon, isExternal, children }: MenuItemProps) {
                 className={clsx(
                   "flex gap-gap-x-s px-padding-x-xs py-padding-y-xs rounded-lg",
                   isActive
-                    ? "text-brand-primary bg-brand-primary-alpha-10"
+                    ? "text-brand-primary bg-surface-layer-1"
                     : "text-text-primary",
                 )}
               >
-                <Icon />
+                <img
+                  src={icon}
+                  alt="메뉴 아이콘"
+                  className="w-6 aspect-square"
+                />
                 <p className="mr-auto text-title-3">{children}</p>
                 <ChevronRightIcon />
               </li>
