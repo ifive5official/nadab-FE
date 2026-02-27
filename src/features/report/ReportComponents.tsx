@@ -15,18 +15,3 @@ export function InfoButton({ onClick }: { onClick: () => void }) {
     </>
   );
 }
-
-export function ReportItem({
-  title,
-  content,
-}: {
-  title: string;
-  content: string;
-}) {
-  return (
-    <div className="flex flex-col gap-gap-y-s text-text-secondary">
-      <h4 className="text-label-l text-text-secondary">{title}</h4>
-      <p className="text-body-2">{content}</p>
-    </div>
-  );
-}

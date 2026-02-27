@@ -19,6 +19,7 @@ export function Question() {
       </div>
 
       <SpeechBalloon
+        className="max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))]"
         textColor="var(--color-text-inverse-primary)"
         bgColor="var(--color-surface-layer-3)"
       >
@@ -32,12 +33,14 @@ export function Question() {
         </div>
       </SpeechBalloon>
       <SpeechBalloon
+        className="max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))]"
         textColor="var(--color-text-inverse-primary)"
         bgColor="var(--color-surface-layer-3)"
       >
         같은 질문에 7명의 친구가 답변했어요!
       </SpeechBalloon>
       <SpeechBalloon
+        className="max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))]"
         direction="send"
         textColor="var(--color-text-primary)"
         bgColor="var(--color-surface-layer-1)"

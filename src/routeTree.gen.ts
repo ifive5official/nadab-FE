@@ -23,7 +23,6 @@ import { Route as AuthenticatedDailyIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
-import { Route as AuthenticatedPrevReportReportTypeRouteImport } from './routes/_authenticated/prev-report/$reportType'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
@@ -42,6 +41,7 @@ import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password
 import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
+import { Route as AuthenticatedReportReportTypePeriodRouteImport } from './routes/_authenticated/report/$reportType.$period'
 import { Route as AuthenticatedDailyReportReportIdRouteImport } from './routes/_authenticated/daily/report.$reportId'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
 
@@ -115,12 +115,6 @@ const AuthenticatedSocialRequestsRoute =
   AuthenticatedSocialRequestsRouteImport.update({
     id: '/social/requests',
     path: '/social/requests',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedPrevReportReportTypeRoute =
-  AuthenticatedPrevReportReportTypeRouteImport.update({
-    id: '/prev-report/$reportType',
-    path: '/prev-report/$reportType',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDetailDateRoute = AuthenticatedDetailDateRouteImport.update({
@@ -218,6 +212,12 @@ const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
   path: '/category',
   getParentRoute: () => authOnboardingRoute,
 } as any)
+const AuthenticatedReportReportTypePeriodRoute =
+  AuthenticatedReportReportTypePeriodRouteImport.update({
+    id: '/report/$reportType/$period',
+    path: '/report/$reportType/$period',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDailyReportReportIdRoute =
   AuthenticatedDailyReportReportIdRouteImport.update({
     id: '/daily/report/$reportId',
@@ -257,7 +257,6 @@ export interface FileRoutesByFullPath {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -265,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -292,7 +292,6 @@ export interface FileRoutesByTo {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -300,6 +299,7 @@ export interface FileRoutesByTo {
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -330,7 +330,6 @@ export interface FileRoutesById {
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/_authenticated/prev-report/$reportType': typeof AuthenticatedPrevReportReportTypeRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
@@ -338,6 +337,7 @@ export interface FileRoutesById {
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/_authenticated/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/_authenticated/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -367,7 +367,6 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
-    | '/prev-report/$reportType'
     | '/social/requests'
     | '/social/search'
     | '/account'
@@ -375,6 +374,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
+    | '/report/$reportType/$period'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -402,7 +402,6 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
-    | '/prev-report/$reportType'
     | '/social/requests'
     | '/social/search'
     | '/account'
@@ -410,6 +409,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
+    | '/report/$reportType/$period'
   id:
     | '__root__'
     | '/'
@@ -439,7 +439,6 @@ export interface FileRouteTypes {
     | '/_authenticated/account/withdraw'
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
-    | '/_authenticated/prev-report/$reportType'
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
     | '/_authenticated/account/'
@@ -447,6 +446,7 @@ export interface FileRouteTypes {
     | '/_authenticated/search/'
     | '/(auth)/auth/$provider/callback'
     | '/_authenticated/daily/report/$reportId'
+    | '/_authenticated/report/$reportType/$period'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -559,13 +559,6 @@ declare module '@tanstack/react-router' {
       path: '/social/requests'
       fullPath: '/social/requests'
       preLoaderRoute: typeof AuthenticatedSocialRequestsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/prev-report/$reportType': {
-      id: '/_authenticated/prev-report/$reportType'
-      path: '/prev-report/$reportType'
-      fullPath: '/prev-report/$reportType'
-      preLoaderRoute: typeof AuthenticatedPrevReportReportTypeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/detail/$date': {
@@ -694,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authOnboardingCategoryRouteImport
       parentRoute: typeof authOnboardingRoute
     }
+    '/_authenticated/report/$reportType/$period': {
+      id: '/_authenticated/report/$reportType/$period'
+      path: '/report/$reportType/$period'
+      fullPath: '/report/$reportType/$period'
+      preLoaderRoute: typeof AuthenticatedReportReportTypePeriodRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/daily/report/$reportId': {
       id: '/_authenticated/daily/report/$reportId'
       path: '/daily/report/$reportId'
@@ -733,13 +733,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
-  AuthenticatedPrevReportReportTypeRoute: typeof AuthenticatedPrevReportReportTypeRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
   AuthenticatedDailyIndexRoute: typeof AuthenticatedDailyIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
   AuthenticatedDailyReportReportIdRoute: typeof AuthenticatedDailyReportReportIdRoute
+  AuthenticatedReportReportTypePeriodRoute: typeof AuthenticatedReportReportTypePeriodRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -749,14 +749,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRoute,
-  AuthenticatedPrevReportReportTypeRoute:
-    AuthenticatedPrevReportReportTypeRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
   AuthenticatedDailyIndexRoute: AuthenticatedDailyIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
   AuthenticatedDailyReportReportIdRoute: AuthenticatedDailyReportReportIdRoute,
+  AuthenticatedReportReportTypePeriodRoute:
+    AuthenticatedReportReportTypePeriodRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

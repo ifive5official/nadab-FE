@@ -2,6 +2,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import { periodicReportOptions } from "../quries";
+import useModalStore from "@/store/modalStore";
 
 type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
 type monthlyReportRes = components["schemas"]["MyMonthlyReportResponse"];
@@ -32,11 +33,22 @@ export default function useReport<T extends keyof ReportTypeMap>({
   });
 
   const status = reports?.report?.status;
+  if (status === "FAILED") {
+    useModalStore
+      .getState()
+      .showError(
+        "리포트 생성 도중 문제가 발생했어요.",
+        "다시 시도해주세요. 사용한 크리스탈은 환불되었어요.",
+      );
+  }
   const isGenerating = status === "PENDING" || status === "IN_PROGRESS";
 
   return {
-    report: reports?.report,
-    prevReport: reports?.previousReport,
+    report: reports?.report?.status !== "FAILED" ? reports?.report : undefined,
+    prevReport:
+      reports?.previousReport?.status !== "FAILED"
+        ? reports?.previousReport
+        : undefined,
     isGenerating,
   };
 }

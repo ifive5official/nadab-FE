@@ -9,6 +9,7 @@ type Props = {
   children: React.ReactNode;
   textColor: string;
   bgColor: string;
+  className?: string;
 };
 
 export default function SpeechBalloon({
@@ -16,13 +17,14 @@ export default function SpeechBalloon({
   children,
   textColor,
   bgColor,
+  className,
 }: Props) {
   return (
     <div
       style={{ backgroundColor: bgColor, color: textColor }}
       className={clsx(
         "relative text-caption-l w-fit rounded-xl",
-        direction === "send" ? "ml-auto" : ""
+        direction === "send" ? "ml-auto" : "",
       )}
     >
       {direction === "receive" && (
@@ -37,7 +39,7 @@ export default function SpeechBalloon({
           className={clsx("absolute top-0 -right-0.5")}
         />
       )}
-      <div className="w-fit max-w-[clamp(calc(272px*0.5),calc((272/390)*100vw),calc(272px*1.2))] px-padding-x-m py-padding-y-xs break-keep">
+      <div className={clsx("w-fit px-padding-x-m py-padding-y-xs", className)}>
         {children}
       </div>
     </div>
