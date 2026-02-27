@@ -57,7 +57,7 @@ function RouteComponent() {
     },
     previous: {
       // 저번주 리포트 보고 있으면
-      label: `${report?.month}월 ${reportType === "weekly" && `${report?.weekOfMonth}주차 `}리포트 보기`,
+      label: `${getPreviousPeriodText(reportType, "current")} 리포트 보기`,
       variant: currentReport ? "primary" : "disabled",
       onclick: () => {
         if (currentReport) {
