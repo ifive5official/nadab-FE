@@ -2,9 +2,10 @@ import clsx from "clsx";
 import { motion } from "motion/react";
 import { useId } from "react";
 
-type Option = {
+export type Option = {
   label: string;
   value: string;
+  hasNotification?: boolean;
 };
 
 type Props = {
@@ -46,7 +47,12 @@ export default function SegmentedControls({
                 className="absolute inset-0 bg-interactive-bg-default border-[0.5px] border-interactive-border-default shadow-1 rounded-lg"
               />
             )}
-            <span className="relative z-1 block py-0.5">{option.label}</span>
+            <div className="flex justify-center items-center relative z-1">
+              <span className="relative z-1 block py-0.5">{option.label}</span>
+              {option.hasNotification && (
+                <div className="rounded-full bg-brand-primary aspect-square h-1.5 ml-gap-x-s" />
+              )}
+            </div>
           </button>
         );
       })}

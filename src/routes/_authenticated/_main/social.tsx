@@ -1,4 +1,4 @@
-import SegmentedControls from "@/components/SegmentedControls";
+import SegmentedControls, { type Option } from "@/components/SegmentedControls";
 import FriendsTab from "@/features/social/FriendsTab";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import FeedTab from "@/features/social/FeedTab";
@@ -9,6 +9,7 @@ import {
   friendsOptions,
 } from "@/features/social/queries";
 import Loading from "@/components/Loading";
+import { useQuery } from "@tanstack/react-query";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -49,10 +50,16 @@ function RouteComponent() {
   const tab = Route.useSearch().tab ?? "feed";
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const tabs = [
+  const { data: friendRequests } = useQuery(friendRequestsOptions);
+
+  const tabs: Option[] = [
     { label: "피드", value: "feed" },
     // { label: "그룹", value: "group" },
-    { label: "친구", value: "friends" },
+    {
+      label: "친구",
+      value: "friends",
+      hasNotification: !!friendRequests?.totalCount,
+    },
   ];
 
   function handleTabChange(value: string) {
