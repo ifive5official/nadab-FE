@@ -71,10 +71,12 @@ function RouteComponent() {
     <>
       <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
       <Container>
-        <ShareBanner
-          type="closable"
-          toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
-        />
+        {isReady && (
+          <ShareBanner
+            type="closable"
+            toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
+          />
+        )}
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection
             question={{
