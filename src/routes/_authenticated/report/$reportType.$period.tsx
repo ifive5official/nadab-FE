@@ -46,7 +46,7 @@ function RouteComponent() {
     current: {
       // 이번주 리포트 보고 있으면
       label: `${getPreviousPeriodText(reportType, "prev")} 리포트 보기`,
-      variant: prevReport ? "secondary" : "disabled",
+      variant: prevReport?.status === "COMPLETED" ? "secondary" : "disabled",
       onclick: () => {
         if (prevReport) {
           navigate({ to: `/report/${reportType}/previous` });
@@ -58,9 +58,9 @@ function RouteComponent() {
     previous: {
       // 저번주 리포트 보고 있으면
       label: `${getPreviousPeriodText(reportType, "current")} 리포트 보기`,
-      variant: currentReport ? "primary" : "disabled",
+      variant: currentReport?.status === "COMPLETED" ? "primary" : "disabled",
       onclick: () => {
-        if (currentReport) {
+        if (currentReport?.status === "COMPLETED") {
           navigate({ to: `/report/${reportType}/current` });
         } else {
           showError(`다음 리포트가\n완성되지 못했어요.`);
@@ -77,6 +77,10 @@ function RouteComponent() {
   useEffect(() => {
     if (!report) {
       useErrorStore.getState().showError("리포트를 불러올 수 없어요.");
+    } else if (report.status !== "COMPLETED") {
+      useErrorStore
+        .getState()
+        .showError("리포트를 생성하는 중이에요.", "조금만 기다려 주세요.");
     }
   }, [report]);
 
