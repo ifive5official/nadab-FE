@@ -4,9 +4,15 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { feedShareStatusOptions } from "@/features/social/queries";
 import { useShareFeedMutation } from "@/features/social/hooks/useShareFeedMutation";
 import { useUnshareFeedMutation } from "@/features/social/hooks/useUnshareFeedMutation";
-import { ShareIcon, StopIcon, WarningFilledIcon } from "./Icons";
+import {
+  BannerCloseIcon,
+  ShareIcon,
+  StopIcon,
+  WarningFilledIcon,
+} from "./Icons";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
+import { useState } from "react";
 
 type SharedBannerConfig = {
   bannerText1: string;
@@ -15,25 +21,41 @@ type SharedBannerConfig = {
   isBtnDisabled?: boolean;
   onButtonClick?: () => void;
   bannerColor: string;
-  btnClass: string;
+  btnClass?: string;
+  closeBtnColor?: string;
 };
 
 type Props = {
   type?: "closable" | "fixed";
   className?: string;
+  toastBottom?: string; // 토스트 위치 조정 위해 사용
 };
 
 // 오늘의 기록 공유 배너
-export default function ShareBanner({ type = "fixed", className }: Props) {
+export default function ShareBanner({
+  type = "fixed",
+  className,
+  toastBottom,
+}: Props) {
+  const [isOpen, setIsOpen] = useState(true);
+
   const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
 
   const { data } = useSuspenseQuery(feedShareStatusOptions);
   const shareFeedMutation = useShareFeedMutation({
-    onSuccess: () => showToast({ message: "오늘의 기록을 친구와 공유했어요." }),
+    onSuccess: () =>
+      showToast({
+        message: "오늘의 기록을 친구와 공유했어요.",
+        bottom: toastBottom,
+      }),
   });
   const unShareFeedMutation = useUnshareFeedMutation({
-    onSuccess: () => showToast({ message: "오늘의 기록 공유를 중단했어요." }),
+    onSuccess: () =>
+      showToast({
+        message: "오늘의 기록 공유를 중단했어요.",
+        bottom: toastBottom,
+      }),
   });
 
   const isShared = data?.isShared;
@@ -59,7 +81,6 @@ export default function ShareBanner({ type = "fixed", className }: Props) {
       ),
       isBtnDisabled: true,
       bannerColor: "bg-surface-layer-1",
-      btnClass: "",
     },
     SHARED: {
       bannerText1: "오늘 내가 쓴 기록을",
@@ -92,6 +113,7 @@ export default function ShareBanner({ type = "fixed", className }: Props) {
       },
       bannerColor: "bg-[#E8F8F3] dark:bg-[#1A404A]",
       btnClass: "text-[#52C19E]! border-[#52C19E]!",
+      closeBtnColor: "text-[#9DDDC9]",
     },
     NOT_SHARED: {
       bannerText1: "오늘 내가 쓴 기록을",
@@ -107,6 +129,7 @@ export default function ShareBanner({ type = "fixed", className }: Props) {
       },
       bannerColor: "bg-brand-primary-alpha-10",
       btnClass: "text-brand-primary! border-brand-primary!",
+      closeBtnColor: "text-[#ADA5FF]",
     },
   };
 
@@ -114,31 +137,47 @@ export default function ShareBanner({ type = "fixed", className }: Props) {
   const shareBannerConfig = configMap[sharedStatus];
   return (
     <>
-      <div
-        className={clsx(
-          "rounded-lg px-padding-x-m py-padding-y-m flex items-center justify-between",
-          shareBannerConfig.bannerColor,
-          className,
-        )}
-      >
-        <div className="flex flex-col">
-          <span className="text-label-m">{shareBannerConfig.bannerText1}</span>
-          <span className="text-title-3">{shareBannerConfig.bannerText2}</span>
-        </div>
-        <InlineButton
-          className={shareBannerConfig.btnClass}
-          variant="tertiary"
-          isLoading={
-            shareFeedMutation.isPending || unShareFeedMutation.isPending
-          }
-          disabled={shareBannerConfig.isBtnDisabled}
-          onClick={shareBannerConfig.onButtonClick}
+      {isOpen && (
+        <div
+          className={clsx(
+            "px-padding-x-m flex items-center gap-padding-x-xs",
+            type === "closable" && "-mx-padding-x-m py-padding-y-l",
+            type === "fixed" && "rounded-lg py-padding-y-m",
+            shareBannerConfig.bannerColor,
+            className,
+          )}
         >
-          <span className="flex gap-gap-x-s items-center">
-            {shareBannerConfig.btnText}
-          </span>
-        </InlineButton>
-      </div>
+          <div className="flex flex-col mr-auto">
+            <span className="text-label-m">
+              {shareBannerConfig.bannerText1}
+            </span>
+            <span className="text-title-3">
+              {shareBannerConfig.bannerText2}
+            </span>
+          </div>
+          <InlineButton
+            className={shareBannerConfig.btnClass}
+            variant="tertiary"
+            isLoading={
+              shareFeedMutation.isPending || unShareFeedMutation.isPending
+            }
+            disabled={shareBannerConfig.isBtnDisabled}
+            onClick={shareBannerConfig.onButtonClick}
+          >
+            <span className="flex gap-gap-x-s items-center">
+              {shareBannerConfig.btnText}
+            </span>
+          </InlineButton>
+          {type === "closable" && (
+            <button
+              className={shareBannerConfig.closeBtnColor}
+              onClick={() => setIsOpen(false)}
+            >
+              <BannerCloseIcon />
+            </button>
+          )}
+        </div>
+      )}
     </>
   );
 }

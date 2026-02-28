@@ -1103,3 +1103,28 @@ export function StopIcon() {
     </svg>
   );
 }
+
+export function BannerCloseIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M0 12L12 0L13.0607 1.06066L1.06066 13.0607L0 12Z"
+        fill="currentColor"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1.06066 0L13.0607 12L12 13.0607L0 1.06066L1.06066 0Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}

@@ -18,13 +18,18 @@ import emotions from "@/constants/emotions";
 import ReportMessage from "@/features/report/ReportMessage";
 import axios from "axios";
 import ErrorPage from "@/components/ErrorPage";
+import ShareBanner from "@/components/ShareBanner";
+import { feedShareStatusOptions } from "@/features/social/queries";
 
 export const Route = createFileRoute("/_authenticated/daily/report/$reportId")({
   component: RouteComponent,
   notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
   loader: async ({ context: { queryClient }, params: { reportId } }) => {
     try {
-      await queryClient.ensureQueryData(dailyReportOptions(Number(reportId)));
+      await Promise.all([
+        queryClient.ensureQueryData(dailyReportOptions(Number(reportId))),
+        queryClient.ensureQueryData(feedShareStatusOptions),
+      ]);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
@@ -66,6 +71,10 @@ function RouteComponent() {
     <>
       <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
       <Container>
+        <ShareBanner
+          type="closable"
+          toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
+        />
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection
             question={{
