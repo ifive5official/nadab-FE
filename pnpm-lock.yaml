@@ -29,9 +29,6 @@ importers:
       '@capacitor/splash-screen':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.0.2)
-      '@capacitor/status-bar':
-        specifier: ^8.0.0
-        version: 8.0.0(@capacitor/core@8.0.2)
       '@capacitor/toast':
         specifier: ^8.0.0
         version: 8.0.0(@capacitor/core@8.0.2)
@@ -68,9 +65,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       motion:
         specifier: ^12.23.24
         version: 12.23.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -120,9 +114,6 @@ importers:
       '@testing-library/react':
         specifier: ^16.2.0
         version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@types/lodash':
-        specifier: ^4.17.20
-        version: 4.17.20
       '@types/node':
         specifier: ^22.10.2
         version: 22.19.0
@@ -363,11 +354,6 @@ packages:
 
   '@capacitor/splash-screen@8.0.1':
     resolution: {integrity: sha512-c/ew/Z3eA7z8l06WoRAtzVF16VwYYrExmHmfGq1Cg675pVzaC/yuucB8/1xG1vhEfnW4fZ1KhSf/kzR1RiVYgg==}
-    peerDependencies:
-      '@capacitor/core': '>=8.0.0'
-
-  '@capacitor/status-bar@8.0.0':
-    resolution: {integrity: sha512-aIj3bc7z8lfPgOen8HlrBrkfnxpFnh21OCx6jCUx4Mvv+B6eEkUQ49b32DOddgVfr+igRHLX2SYi7duqIsNDXg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -1124,9 +1110,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/lodash@4.17.20':
-    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
   '@types/node@22.19.0':
     resolution: {integrity: sha512-xpr/lmLPQEj+TUnHmR+Ab91/glhJvsqcjB+yY0Ix9GO70H6Lb4FHH5GeqdOE5btAx7eIMwuHkp4H2MSkLcqWbA==}
@@ -2220,9 +2203,6 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
@@ -3394,10 +3374,6 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.0.2
 
-  '@capacitor/status-bar@8.0.0(@capacitor/core@8.0.2)':
-    dependencies:
-      '@capacitor/core': 8.0.2
-
   '@capacitor/toast@8.0.0(@capacitor/core@8.0.2)':
     dependencies:
       '@capacitor/core': 8.0.2
@@ -4141,8 +4117,6 @@ snapshots:
       '@types/node': 22.19.0
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/lodash@4.17.20': {}
 
   '@types/node@22.19.0':
     dependencies:
@@ -5410,8 +5384,6 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.merge@4.6.2: {}
-
-  lodash@4.17.21: {}
 
   loose-envify@1.4.0:
     dependencies:
