@@ -43,12 +43,7 @@ export default function InlineButton({
     >
       {isLoading && (
         <div className="absolute">
-          <LoadingIcon
-            height={size === "m" ? 18 : 14}
-            color={
-              variant !== "primary" ? "var(--color-brand-primary)" : "white"
-            }
-          />
+          <LoadingIcon height={size === "m" ? 18 : 14} color="currentColor" />
         </div>
       )}
       <span className={clsx(isLoading && "invisible")}>{children}</span>
