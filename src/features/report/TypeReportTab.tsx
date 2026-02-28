@@ -12,6 +12,7 @@ import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation
 import useModalStore from "@/store/modalStore";
 import { WarningFilledIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
+import { hasLastConsonant } from "@/lib/hasLastConsonant";
 type Props = {
   category: (typeof categories)[number]["code"];
 };
@@ -42,6 +43,7 @@ export default function TypeReportTab({ category }: Props) {
   const deleteTypeReportMutation = useDeleteTypeReportMutation({
     interestCode: category,
   });
+
   return (
     <>
       <button onClick={() => deleteTypeReportMutation.mutate()}>
@@ -59,7 +61,9 @@ export default function TypeReportTab({ category }: Props) {
                   <span className="text-brand-primary">
                     {typeReport.analysisTypeName}
                   </span>
-                  에요.
+                  {hasLastConsonant(typeReport.analysisTypeName!)
+                    ? "이에요."
+                    : "예요."}
                 </p>
                 <InfoButton onClick={() => setIsPopoverOpen(true)} />
               </div>
