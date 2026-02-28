@@ -90,7 +90,12 @@ function RouteComponent() {
               {report?.month}월{" "}
               {reportType === "weekly" && `${report?.weekOfMonth}주차 `}리포트
             </span>
-            <span className="text-title-2">placeholder text</span>
+            {/* eslint-disable react/no-unescaped-entities */}
+            <span className="text-title-2">
+              <span className="italic mr-1">"</span>
+              {report?.summary}
+              <span className="italic">"</span>
+            </span>
           </div>
           <div className="my-padding-y-xl flex flex-col gap-padding-y-xxl">
             <section className="flex flex-col gap-gap-y-l">

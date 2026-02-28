@@ -2261,6 +2261,7 @@ export interface components {
             previousReport?: components["schemas"]["WeeklyReportResponse"];
         };
         ReportContent: {
+            summary?: string;
             discovered?: components["schemas"]["StyledText"];
             improve?: components["schemas"]["StyledText"];
         };
@@ -2283,6 +2284,8 @@ export interface components {
              * @description 해당 달의 몇주차인지
              */
             weekOfMonth?: number;
+            /** @description 리포트 요약 */
+            summary?: string;
             /** @description 이런 면도 발견되었어요 */
             discovered?: string;
             /** @description 다음엔 이렇게 보완해볼까요? */
@@ -2526,6 +2529,8 @@ export interface components {
              * @description 리포트가 작성된 달
              */
             month?: number;
+            /** @description 리포트 요약 */
+            summary?: string;
             /** @description 이런 면도 발견되었어요 */
             discovered?: string;
             /** @description 다음엔 이렇게 보완해볼까요? */
