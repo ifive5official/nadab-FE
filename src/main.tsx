@@ -7,6 +7,7 @@ import { routeTree } from "./routeTree.gen";
 
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
+import AppInitializer from "./components/AppInitializer.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,8 +35,9 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     //<StrictMode>
     <QueryClientProvider client={queryClient}>
+      <AppInitializer router={router} />
       <RouterProvider router={router} />
-    </QueryClientProvider>
+    </QueryClientProvider>,
     // </StrictMode>
   );
 }
