@@ -18,7 +18,7 @@ export default function FriendsTabRecentSearchSection({
   const deleteHistoryMutation = useDeleteFriendHistoryMutation();
 
   return (
-    <section className="px-padding-x-m py-padding-y-s">
+    <section className="py-padding-y-s">
       <div className="flex justify-between items-center">
         <span className="text-label-l">최근 검색어</span>
         <InlineButton

@@ -198,76 +198,81 @@ export default function FriendsTabSearchResultSection({
         )}
         {/* 나에게 친구 요청한 유저 중 검색어와 일치하는 유저 */}
         {hasPendingRequests && (
-          <div className="w-full border-b border-b-interactive-border-default px-padding-x-m py-padding-y-s">
-            <span className="text-caption-m">친구 요청</span>
-            <ul className="w-full pt-padding-y-m flex flex-col gap-margin-y-xl">
-              <>
-                {searchResults?.pages.map((page, i) => {
-                  return (
-                    <Fragment key={i}>
-                      {page?.pendingRequests?.map((request) => {
-                        return (
-                          <FriendItem
-                            key={request.friendshipId}
-                            name={request.nickname!}
-                            profileImgUrl={request.profileImageUrl!}
-                            buttons={[
-                              <InlineButton
-                                key={1}
-                                variant="secondary"
-                                onClick={() => {
-                                  rejectFriendRequestMutation.mutate({
-                                    friendshipId: request.friendshipId!,
-                                  });
-                                  setRejectingIds((prev) =>
-                                    new Set(prev).add(request.friendshipId),
-                                  );
-                                }}
-                                isLoading={rejectingIds.has(
-                                  request.friendshipId,
-                                )}
-                              >
-                                거절
-                              </InlineButton>,
-                              <InlineButton
-                                variant={hasMaxFriends ? "disabled" : "primary"}
-                                key={2}
-                                onClick={() => {
-                                  if (hasMaxFriends) {
-                                    useErrorStore
-                                      .getState()
-                                      .showError(
-                                        `친구는 최대 20명까지\n추가할 수 있어요.`,
-                                      );
-                                  } else {
-                                    acceptFriendRequestMutation.mutate({
+          <>
+            <div className="w-full py-padding-y-s">
+              <span className="text-caption-m">친구 요청</span>
+              <ul className="w-full pt-padding-y-m flex flex-col gap-margin-y-xl">
+                <>
+                  {searchResults?.pages.map((page, i) => {
+                    return (
+                      <Fragment key={i}>
+                        {page?.pendingRequests?.map((request) => {
+                          return (
+                            <FriendItem
+                              key={request.friendshipId}
+                              name={request.nickname!}
+                              profileImgUrl={request.profileImageUrl!}
+                              buttons={[
+                                <InlineButton
+                                  key={1}
+                                  variant="secondary"
+                                  onClick={() => {
+                                    rejectFriendRequestMutation.mutate({
                                       friendshipId: request.friendshipId!,
                                     });
-                                    setAcceptingIds((prev) =>
+                                    setRejectingIds((prev) =>
                                       new Set(prev).add(request.friendshipId),
                                     );
+                                  }}
+                                  isLoading={rejectingIds.has(
+                                    request.friendshipId,
+                                  )}
+                                >
+                                  거절
+                                </InlineButton>,
+                                <InlineButton
+                                  variant={
+                                    hasMaxFriends ? "disabled" : "primary"
                                   }
-                                }}
-                                isLoading={acceptingIds.has(
-                                  request.friendshipId,
-                                )}
-                              >
-                                수락
-                              </InlineButton>,
-                            ]}
-                          />
-                        );
-                      })}
-                    </Fragment>
-                  );
-                })}
-              </>
-            </ul>
-          </div>
+                                  key={2}
+                                  onClick={() => {
+                                    if (hasMaxFriends) {
+                                      useErrorStore
+                                        .getState()
+                                        .showError(
+                                          `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                        );
+                                    } else {
+                                      acceptFriendRequestMutation.mutate({
+                                        friendshipId: request.friendshipId!,
+                                      });
+                                      setAcceptingIds((prev) =>
+                                        new Set(prev).add(request.friendshipId),
+                                      );
+                                    }
+                                  }}
+                                  isLoading={acceptingIds.has(
+                                    request.friendshipId,
+                                  )}
+                                >
+                                  수락
+                                </InlineButton>,
+                              ]}
+                            />
+                          );
+                        })}
+                      </Fragment>
+                    );
+                  })}
+                </>
+              </ul>
+            </div>
+            <div className="-mx-padding-x-m border-b border-b-interactive-border-default" />
+          </>
         )}
         {/* 전체 사용자 검색결과 */}
         {(hasResult || isLoading) && (
-          <div className="w-full px-padding-x-m py-padding-y-s">
+          <div className="w-full mt-margin-y-m">
             <span className="text-caption-m">사용자</span>
             <ul className="w-full py-padding-y-m flex flex-col gap-margin-y-xl">
               {isLoading ? (

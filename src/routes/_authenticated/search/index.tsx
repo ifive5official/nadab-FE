@@ -18,6 +18,7 @@ import { useDeleteHistoryMutation } from "@/features/search/useDeleteHistoryMuta
 import { useDeleteHistoriesMutation } from "@/features/search/useDeleteHistoriesMutation";
 import { useAddHistoryMutation } from "@/features/search/useAddHistoryMutation";
 import NoResult from "@/components/NoResult";
+import clsx from "clsx";
 
 type AnswersReq = components["schemas"]["SearchAnswerEntryRequest"];
 type AnswersRes = components["schemas"]["SearchAnswerEntryResponse"];
@@ -41,14 +42,14 @@ function RouteComponent() {
     searchTerm,
     searchTerm === "" ? 0 : 300,
   );
-  const isSearching = debouncedSearchTerm.trim().length > 0 || !!searchEmotion;
+  const isSearching = debouncedSearchTerm.length > 0 || !!searchEmotion;
   const { ref, inView } = useInView();
   const addHistoryMutation = useAddHistoryMutation();
   const deleteHistoriesMutation = useDeleteHistoriesMutation();
   const deleteHistoryMutation = useDeleteHistoryMutation();
   const {
     data: searchResults,
-    isFetching,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -114,8 +115,8 @@ function RouteComponent() {
       <Container>
         {isSearching ? (
           // 검색어가 있을 때
-          <div className="my-margin-y-l h-full flex flex-col">
-            {isFetching ? (
+          <div className="mt-margin-y-l h-full flex flex-col">
+            {isLoading ? (
               <SearchResultSkeleton />
             ) : (
               <>
@@ -128,7 +129,13 @@ function RouteComponent() {
                 )}
                 {searchResults?.pages.map((page, i) => {
                   return (
-                    <ul key={i} className="list-none flex flex-col gap-gap-y-l">
+                    <ul
+                      key={i}
+                      className={clsx(
+                        "list-none flex flex-col gap-gap-y-l",
+                        page.hasNext && "mb-gap-y-l",
+                      )}
+                    >
                       {page.items?.map((item) => {
                         return (
                           <SearchResultItem
@@ -152,6 +159,9 @@ function RouteComponent() {
                   );
                 })}
                 {isFetchingNextPage && <SearchResultSkeleton />}
+                {hasResult && (
+                  <div ref={ref} className="h-margin-y-l shrink-0" />
+                )}
               </>
             )}
           </div>
@@ -219,7 +229,6 @@ function RouteComponent() {
             </KeywordSection>
           </div>
         )}
-        <div ref={ref} />
       </Container>
     </>
   );
@@ -245,7 +254,7 @@ function SearchResultSkeleton() {
   return (
     <>
       <ul className="list-none flex flex-col gap-gap-y-l">
-        {Array(5)
+        {Array(7)
           .fill(0)
           .map((_, i) => (
             <li

@@ -15,6 +15,7 @@ import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 import FriendsTabRecentSearchSection from "@/features/social/FriendsTabRecentSearchSection";
 import FriendsTabSearchResultSection from "@/features/social/FriendsTabSearchResultSection";
+import Container from "@/components/Container";
 type AnswersReq = components["schemas"]["SearchUserRequest"];
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -99,20 +100,22 @@ function RouteComponent() {
       </SubHeader>
       <div className="h-gap-y-l border-b border-b-interactive-border-default" />
 
-      {isSearching ? (
-        <FriendsTabSearchResultSection
-          hasMaxFriends={(friends?.totalCount ?? 0) >= 20}
-          searchResults={searchResults}
-          isFetching={isFetching}
-          isLoading={isLoading}
-        />
-      ) : (
-        <FriendsTabRecentSearchSection
-          histories={searchHistories?.histories}
-          onItemClick={(keyword: string) => setSearchTerm(keyword)}
-        />
-      )}
-      <div ref={ref} />
+      <Container>
+        {isSearching ? (
+          <FriendsTabSearchResultSection
+            hasMaxFriends={(friends?.totalCount ?? 0) >= 20}
+            searchResults={searchResults}
+            isFetching={isFetching}
+            isLoading={isLoading}
+          />
+        ) : (
+          <FriendsTabRecentSearchSection
+            histories={searchHistories?.histories}
+            onItemClick={(keyword: string) => setSearchTerm(keyword)}
+          />
+        )}
+        <div ref={ref} />
+      </Container>
     </>
   );
 }
