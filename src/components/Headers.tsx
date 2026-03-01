@@ -27,7 +27,7 @@ type MainHeaderProps = {
   profileImgUrl: string | undefined;
 };
 
-type NotificationsRes = components["schemas"]["NotificationListResponse"];
+type NotificationsRes = components["schemas"]["UnreadCountResponse"];
 
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
@@ -39,13 +39,14 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         queryKey: ["currentUser", "notification"],
         queryFn: async () => {
           const res = await api.get<ApiErrResponse<NotificationsRes>>(
-            "/api/v1/notifications",
+            "/api/v1/notifications/unread-count",
           );
           return res.data.data!;
         },
       },
     ],
   });
+  const unreadNotificationCnt = notificationsData?.unreadCount ?? 0;
   const crystals = crystalData?.crystalBalance ?? 0;
 
   return (
@@ -57,12 +58,17 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
       )}
     >
       <img src="/textLogo.png" className="w-[83.9px]" />
-      <button className="ml-auto relative">
-        <BellIcon />
-        <div className="absolute top-0 -right-1 flex justify-center items-center bg-brand-primary rounded-full aspect-square h-3.5 text-badge text-white">
-          {notificationsData?.notifications?.length}
-        </div>
-      </button>
+      <Link to="/notifications" className="ml-auto">
+        <button className="relative">
+          <BellIcon />
+          {unreadNotificationCnt > 0 && (
+            <div className="absolute top-0 -right-1 flex justify-center items-center bg-brand-primary rounded-full aspect-square h-3.5 text-badge text-white">
+              {unreadNotificationCnt > 9 ? "9+" : unreadNotificationCnt}
+            </div>
+          )}
+        </button>
+      </Link>
+
       <button onClick={openSidebar}>
         <MenuIcon />
       </button>

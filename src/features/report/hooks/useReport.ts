@@ -47,6 +47,9 @@ export default function useReport<T extends keyof ReportTypeMap>({
     queryClient.invalidateQueries({
       queryKey: ["currentUser", config.key],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["currentUser", "crystals"],
+    });
   }
   const isGenerating = status === "PENDING" || status === "IN_PROGRESS";
 

@@ -19,6 +19,7 @@ import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authByeRouteImport } from './routes/(auth)/bye'
 import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
+import { Route as AuthenticatedNotificationsIndexRouteImport } from './routes/_authenticated/notifications/index'
 import { Route as AuthenticatedDailyIndexRouteImport } from './routes/_authenticated/daily/index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
@@ -92,6 +93,12 @@ const AuthenticatedSearchIndexRoute =
   AuthenticatedSearchIndexRouteImport.update({
     id: '/search/',
     path: '/search/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedNotificationsIndexRoute =
+  AuthenticatedNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDailyIndexRoute = AuthenticatedDailyIndexRouteImport.update({
@@ -261,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/daily': typeof AuthenticatedDailyIndexRoute
+  '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
@@ -296,6 +304,7 @@ export interface FileRoutesByTo {
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/daily': typeof AuthenticatedDailyIndexRoute
+  '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
@@ -334,6 +343,7 @@ export interface FileRoutesById {
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/daily/': typeof AuthenticatedDailyIndexRoute
+  '/_authenticated/notifications/': typeof AuthenticatedNotificationsIndexRoute
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/_authenticated/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/social/search'
     | '/account'
     | '/daily'
+    | '/notifications'
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/social/search'
     | '/account'
     | '/daily'
+    | '/notifications'
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
@@ -443,6 +455,7 @@ export interface FileRouteTypes {
     | '/_authenticated/social/search'
     | '/_authenticated/account/'
     | '/_authenticated/daily/'
+    | '/_authenticated/notifications/'
     | '/_authenticated/search/'
     | '/(auth)/auth/$provider/callback'
     | '/_authenticated/daily/report/$reportId'
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof AuthenticatedSearchIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/notifications/': {
+      id: '/_authenticated/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/daily/': {
@@ -737,6 +757,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
   AuthenticatedDailyIndexRoute: typeof AuthenticatedDailyIndexRoute
+  AuthenticatedNotificationsIndexRoute: typeof AuthenticatedNotificationsIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
   AuthenticatedDailyReportReportIdRoute: typeof AuthenticatedDailyReportReportIdRoute
   AuthenticatedReportReportTypePeriodRoute: typeof AuthenticatedReportReportTypePeriodRoute
@@ -753,6 +774,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
   AuthenticatedDailyIndexRoute: AuthenticatedDailyIndexRoute,
+  AuthenticatedNotificationsIndexRoute: AuthenticatedNotificationsIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
   AuthenticatedDailyReportReportIdRoute: AuthenticatedDailyReportReportIdRoute,
   AuthenticatedReportReportTypePeriodRoute:
