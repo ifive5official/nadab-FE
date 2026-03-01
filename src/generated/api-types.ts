@@ -312,6 +312,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * FCM 토큰 등록
+         * @description FCM 토큰을 등록합니다. 로그인, 회원가입 또는 FCM 토큰 갱신 시 호출해야 합니다.
+         *
+         *     호출 시점:
+         *     - 로그인/회원가입 완료 후
+         *     - FCM 토큰 갱신 시 (onTokenRefresh 콜백)
+         *     - 앱 재시작 시 (필요한 경우)
+         *
+         *     동작:
+         *     - 동일한 디바이스 ID가 이미 있는 경우 → 토큰만 업데이트
+         *     - 새로운 디바이스인 경우 → 신규 등록
+         *     - 응답의 isNewDevice 필드로 구분 가능
+         *
+         *     참고:
+         *     - 디바이스 ID: 디바이스를 식별할 수 있는 고유 값 (UUID 권장)
+         *     - 플랫폼: IOS 또는 ANDROID
+         */
+        post: operations["registerDevice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 테스트 알림 발송
+         * @description 테스트용 푸시 알림을 발송합니다. 등록된 디바이스로 즉시 전송됩니다.
+         */
+        post: operations["sendTestNotification"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/monthly-report/start": {
         parameters: {
             query?: never;
@@ -939,6 +993,85 @@ export interface paths {
         patch: operations["updateMarketingConsent"];
         trace?: never;
     };
+    "/api/v1/notifications/{notificationId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 알림 읽음 처리
+         * @description 특정 알림을 읽음 상태로 변경합니다.
+         */
+        patch: operations["markAsRead"];
+        trace?: never;
+    };
+    "/api/v1/notifications/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 알림 설정 조회
+         * @description 사용자의 알림 설정을 조회합니다. 그룹별로 3개의 설정이 반환됩니다.
+         *
+         *     - ACTIVITY_REMINDER: 활동 리마인드 알림 (작성 알림 시간 설정 가능)
+         *     - REPORT: 리포트 알림
+         *     - SOCIAL: 소셜 알림 (친구 요청, 수락 등)
+         *
+         *     설정이 없는 경우 기본값으로 생성되어 반환됩니다.
+         */
+        get: operations["getSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 알림 설정 수정
+         * @description 알림 설정을 수정합니다. 배열로 여러 그룹을 한 번에 수정할 수 있습니다.
+         *
+         *     - 1개 그룹만 수정: [{ "group": "ACTIVITY_REMINDER", "enabled": true }]
+         *     - 2개 그룹 수정: [{ "group": "ACTIVITY_REMINDER", ... }, { "group": "REPORT", ... }]
+         *     - 전체 수정: 3개 객체 전송
+         *
+         *     각 객체:
+         *     - group: 알림 그룹 (필수)
+         *     - enabled: 해당 그룹의 알림을 켜거나 끕니다 (필수)
+         *     - dailyWriteTime: ACTIVITY_REMINDER 그룹인 경우만 설정 가능 (선택, 형식: HH:mm)
+         */
+        patch: operations["updateSettings"];
+        trace?: never;
+    };
+    "/api/v1/notifications/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * 전체 알림 읽음 처리
+         * @description 사용자의 모든 미읽음 알림을 읽음 상태로 변경합니다.
+         */
+        patch: operations["markAllAsRead"];
+        trace?: never;
+    };
     "/api/v1/auth/password": {
         parameters: {
             query?: never;
@@ -1188,6 +1321,54 @@ export interface paths {
          * @description 오늘의 질문을 조회합니다.
          */
         get: operations["getDailyQuestion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 알림 목록 조회
+         * @description 사용자의 알림 목록을 커서 기반 페이지네이션으로 조회합니다. 최신순으로 정렬됩니다.
+         *
+         *     - 첫 조회: cursor 없이 요청 (최근 20개)
+         *     - 다음 페이지: 응답의 nextCursor를 사용하여 요청
+         *     - 한 번에 20개씩 조회됩니다.
+         */
+        get: operations["getNotifications"];
+        put?: never;
+        post?: never;
+        /**
+         * 전체 알림 삭제
+         * @description 사용자의 모든 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
+         */
+        delete: operations["deleteAllNotifications"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/unread-count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 미읽음 알림 개수 조회
+         * @description 사용자의 읽지 않은 알림 개수를 조회합니다.
+         */
+        get: operations["getUnreadCount"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1705,6 +1886,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/{notificationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 알림 삭제
+         * @description 특정 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
+         */
+        delete: operations["deleteNotification"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/tokens/{deviceId}/{platform}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * FCM 토큰 삭제
+         * @description 등록된 FCM 토큰을 삭제합니다. 로그아웃 시 호출합니다.
+         *
+         *     로그아웃 시 아래 순서대로 처리하는 것을 권장합니다.
+         *
+         *     1. FCM 토큰 무효화
+         *        - iOS: Messaging.messaging().deleteToken()
+         *        - Android: FirebaseMessaging.getInstance().deleteToken()
+         *
+         *     2. 서버 API 호출 (본 API)
+         *        - 1단계 완료 후 호출
+         *        - 네트워크 실패 시에도 1단계로 인해 토큰이 무효화되어 개인정보가 보호됩니다.
+         */
+        delete: operations["deleteDevice"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/friends/{friendshipId}": {
         parameters: {
             query?: never;
@@ -1977,6 +2208,57 @@ export interface components {
             /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
             rerollUsed?: boolean;
         };
+        /** @description FCM 토큰 등록 응답 */
+        RegisterDeviceResponse: {
+            /**
+             * @description 디바이스 고유 ID
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            deviceId?: string;
+            /**
+             * @description 디바이스 플랫폼
+             * @example IOS
+             * @enum {string}
+             */
+            platform?: "IOS" | "ANDROID";
+            /**
+             * @description 새로 등록된 디바이스인지 여부 (true: 새 등록, false: 기존 토큰 업데이트)
+             * @example true
+             */
+            isNewDevice?: boolean;
+        };
+        /** @description FCM 토큰 등록 요청 */
+        RegisterDeviceRequest: {
+            /**
+             * @description Firebase Cloud Messaging 토큰
+             * @example eFg12HiJKlMnOpQrStUvWxYz:APA91bHb6sT...
+             */
+            fcmToken: string;
+            /**
+             * @description 디바이스를 식별할 수 있는 고유 ID
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            deviceId: string;
+            /**
+             * @description 디바이스 플랫폼 (IOS 또는 ANDROID)
+             * @example IOS
+             * @enum {string}
+             */
+            platform: "IOS" | "ANDROID";
+        };
+        /** @description 테스트 알림 발송 요청 */
+        SendTestNotificationRequest: {
+            /**
+             * @description 알림 제목
+             * @example 테스트 알림입니다
+             */
+            title: string;
+            /**
+             * @description 알림 본문
+             * @example 이것은 푸시 알림 테스트 메시지입니다.
+             */
+            body: string;
+        };
         /** @description 월간 리포트 생성 시작 응답 */
         MonthlyReportStartResponse: {
             /**
@@ -2239,6 +2521,25 @@ export interface components {
              * @example true
              */
             agreed: boolean;
+        };
+        /** @description 알림 설정 업데이트 요청 */
+        UpdateNotificationSettingRequest: {
+            /**
+             * @description 알림 그룹 (ACTIVITY_REMINDER, REPORT, SOCIAL)
+             * @example ACTIVITY_REMINDER
+             * @enum {string}
+             */
+            group: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
+            /**
+             * @description 알림 활성화 여부 (필수)
+             * @example true
+             */
+            enabled: boolean;
+            /**
+             * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만 설정 가능)
+             * @example 20:00
+             */
+            dailyWriteTime?: string;
         };
         /** @description 비밀번호 변경 요청 (마이페이지) */
         ChangePasswordRequest: {
@@ -2521,6 +2822,96 @@ export interface components {
              * @example https://cdn.example.com/profiles/abc123.png
              */
             profileImageUrl?: string;
+        };
+        /** @description 알림 목록 응답 (커서 기반 페이지네이션, 20개씩) */
+        NotificationListResponse: {
+            /** @description 알림 목록 (최신순, 최대 20개) */
+            notifications?: components["schemas"]["NotificationResponse"][];
+            /**
+             * Format: int64
+             * @description 다음 페이지 커서 (마지막 알림 ID, null이면 마지막 페이지)
+             * @example 123
+             */
+            nextCursor?: number;
+            /**
+             * @description 다음 페이지 존재 여부
+             * @example true
+             */
+            hasNext?: boolean;
+        };
+        /** @description 알림 응답 */
+        NotificationResponse: {
+            /**
+             * Format: int64
+             * @description 알림 ID
+             * @example 1
+             */
+            id?: number;
+            /**
+             * @description 알림 타입
+             * @example DAILY_WRITE_REMINDER
+             * @enum {string}
+             */
+            type?: "DAILY_WRITE_REMINDER" | "INACTIVE_USER_REMINDER" | "WEEKLY_REPORT_COMPLETED" | "MONTHLY_REPORT_COMPLETED" | "TYPE_REPORT_COMPLETED" | "WEEKLY_REPORT_AVAILABLE" | "MONTHLY_REPORT_AVAILABLE" | "TYPE_REPORT_AVAILABLE" | "FRIEND_REQUEST_RECEIVED" | "FRIEND_REQUEST_ACCEPTED";
+            /**
+             * @description 알림 제목
+             * @example 오늘의 질문에 답변해주세요
+             */
+            title?: string;
+            /**
+             * @description 알림 본문
+             * @example 아직 답변하지 않은 질문이 있어요
+             */
+            body?: string;
+            /**
+             * @description 알림함 메시지
+             * @example 오늘의 질문에 답변해보세요!
+             */
+            inboxMessage?: string;
+            /**
+             * @description 대상 리소스 ID
+             * @example 123
+             */
+            targetId?: string;
+            /**
+             * @description 읽음 여부
+             * @example false
+             */
+            isRead?: boolean;
+            /**
+             * Format: date-time
+             * @description 생성 시각
+             * @example 2025-01-15T09:00:00+09:00
+             */
+            createdAt?: string;
+        };
+        /** @description 미읽음 알림 개수 응답 */
+        UnreadCountResponse: {
+            /**
+             * Format: int64
+             * @description 미읽음 알림 개수
+             * @example 5
+             */
+            unreadCount?: number;
+        };
+        /** @description 알림 설정 응답 */
+        NotificationSettingResponse: {
+            /**
+             * @description 알림 그룹
+             * @example ACTIVITY_REMINDER
+             * @enum {string}
+             */
+            group?: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
+            /**
+             * @description 활성화 여부
+             * @example true
+             */
+            enabled?: boolean;
+            /**
+             * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만)
+             * @example 20:00
+             */
+            dailyWriteTime?: string;
         };
         /** @description 월간 리포트 조회 응답 */
         MonthlyReportResponse: {
@@ -3437,6 +3828,94 @@ export interface operations {
              *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
              */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    registerDevice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterDeviceRequest"];
+            };
+        };
+        responses: {
+            /** @description FCM 토큰 등록 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterDeviceResponse"];
+                };
+            };
+            /** @description - 요청 데이터 검증 실패 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sendTestNotification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendTestNotificationRequest"];
+            };
+        };
+        responses: {
+            /** @description 테스트 알림 발송 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - 요청 데이터 검증 실패 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4741,6 +5220,149 @@ export interface operations {
             };
         };
     };
+    markAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notificationId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 읽음 처리 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationSettingResponse"];
+                };
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNotificationSettingRequest"][];
+            };
+        };
+        responses: {
+            /** @description 설정 수정 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - 요청 데이터 검증 실패 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    markAllAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 전체 읽음 처리 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     changePassword: {
         parameters: {
             query?: never;
@@ -5005,6 +5627,101 @@ export interface operations {
              *     - ErrorCode: USER_INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없습니다.
              *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
              */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getNotifications: {
+        parameters: {
+            query?: {
+                cursor?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationListResponse"];
+                };
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteAllNotifications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 전체 알림 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getUnreadCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCountResponse"];
+                };
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -5589,6 +6306,92 @@ export interface operations {
                 content?: never;
             };
             /** @description - ErrorCode: SEARCH_HISTORY_NOT_FOUND - 검색어를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteNotification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notificationId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 알림 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteDevice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deviceId: string;
+                platform: "IOS" | "ANDROID";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FCM 토큰 삭제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - 요청 데이터 검증 실패 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: DEVICE_NOT_FOUND - 디바이스를 찾을 수 없음
+             */
             404: {
                 headers: {
                     [name: string]: unknown;

@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
+  BellIcon,
   CloseIcon,
   LogoutMenuIcon,
   MenuIcon,
@@ -12,10 +13,13 @@ import ProfileImg from "./ProfileImg";
 import { useState } from "react";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation";
 import clsx from "clsx";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 
 import { CrystalBadge } from "./Badges";
 import { crystalsOptions } from "@/features/user/quries";
+import { api } from "@/lib/axios";
+import type { ApiErrResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
 
 // Todo: 헤더 리펙토링하거나 파일 분리좀 하자...
 
@@ -23,11 +27,26 @@ type MainHeaderProps = {
   profileImgUrl: string | undefined;
 };
 
+type NotificationsRes = components["schemas"]["NotificationListResponse"];
+
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const { data } = useQuery(crystalsOptions);
-  const crystals = data?.crystalBalance ?? 0;
+  const [{ data: crystalData }, { data: notificationsData }] = useQueries({
+    queries: [
+      crystalsOptions,
+      {
+        queryKey: ["currentUser", "notification"],
+        queryFn: async () => {
+          const res = await api.get<ApiErrResponse<NotificationsRes>>(
+            "/api/v1/notifications",
+          );
+          return res.data.data!;
+        },
+      },
+    ],
+  });
+  const crystals = crystalData?.crystalBalance ?? 0;
 
   return (
     <header
@@ -38,7 +57,13 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
       )}
     >
       <img src="/textLogo.png" className="w-[83.9px]" />
-      <button onClick={openSidebar} className="ml-auto">
+      <button className="ml-auto relative">
+        <BellIcon />
+        <div className="absolute top-0 -right-1 flex justify-center items-center bg-brand-primary rounded-full aspect-square h-3.5 text-badge text-white">
+          {notificationsData?.notifications?.length}
+        </div>
+      </button>
+      <button onClick={openSidebar}>
         <MenuIcon />
       </button>
       <button onClick={() => setIsAccountMenuOpen(true)}>

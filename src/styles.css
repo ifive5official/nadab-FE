@@ -67,6 +67,14 @@ body {
 
 /* typography */
 @layer components {
+  /* 알림 뱃지 */
+  .text-badge {
+    font-weight: 700;
+    font-size: 8.25px;
+    line-height: 100%;
+    letter-spacing: 0;
+  }
+
   .text-hero {
     font-weight: 700;
     font-size: 72px; /* 9xl */
