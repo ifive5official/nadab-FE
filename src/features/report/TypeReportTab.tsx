@@ -10,7 +10,7 @@ import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
 import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
 import useModalStore from "@/store/modalStore";
-import { WarningFilledIcon } from "@/components/Icons";
+import { LoadingSpinnerIcon, WarningFilledIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";
 type Props = {
@@ -35,6 +35,7 @@ export default function TypeReportTab({ category }: Props) {
   const typeReport = typeReports![category].current;
   const isGenerating =
     typeReports![category].generation?.status === "IN_PROGRESS";
+  const isLoading = isGenerating || generateTypeReportMutation.isPending;
 
   const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
@@ -105,7 +106,7 @@ export default function TypeReportTab({ category }: Props) {
               </div>
             </div>
             <BlockButton
-              isLoading={isGenerating || generateTypeReportMutation.isPending}
+              isLoading={isLoading}
               variant={crystalBalance >= 100 ? "primary" : "disabled"}
               onClick={() => {
                 if (crystalBalance >= 100) {
@@ -133,48 +134,58 @@ export default function TypeReportTab({ category }: Props) {
         ) : (
           // 레포트 없을 때
           <>
-            <div className="w-full flex-1 flex flex-col gap-gap-y-m px-padding-x-m py-padding-y-xl mt-gap-y-l mb-margin-y-xxl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] dark:bg-[url(/type-report-bg-dark.png)] bg-cover">
-              <div className="relative flex justify-between items-center">
-                <Badge>유형 리포트</Badge>
-                <InfoButton onClick={() => setIsPopoverOpen(true)} />
-                <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
-                  <Popover
-                    isOpen={isPopoverOpen}
-                    onClose={() => setIsPopoverOpen(false)}
-                  />
+            <div className="relative w-full h-full px-padding-x-m py-padding-y-xl mt-gap-y-l mb-margin-y-xxl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] dark:bg-[url(/type-report-bg-dark.png)] bg-cover">
+              {isGenerating && (
+                <div className="absolute inset-0 bg-white/60 dark:bg-black/30" />
+              )}
+              <div className="relative h-full flex flex-col gap-gap-y-m">
+                <div className="relative flex justify-between items-center">
+                  <Badge>유형 리포트</Badge>
+                  <InfoButton onClick={() => setIsPopoverOpen(true)} />
+                  <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
+                    <Popover
+                      isOpen={isPopoverOpen}
+                      onClose={() => setIsPopoverOpen(false)}
+                    />
+                  </div>
                 </div>
-              </div>
-              <p className="text-title-2">
-                {isGenerating
-                  ? "유형 리포트를 생성 중이에요."
-                  : "유형 리포트를 받아볼까요?"}
-              </p>
-              <p className="text-caption-l">
-                {isGenerating ? (
-                  "리포트 생성에 1~2분 정도 걸릴 수 있어요."
-                ) : (
-                  <>
-                    집, 학교, 직장에서의 나는 모두 달라요.
-                    <br />
-                    주제별 유형 리포트로 다양한 영역에서 나의 유형을
-                    확인해보세요.
-                  </>
+                <p className="text-title-2">
+                  {isGenerating
+                    ? "유형 리포트를 생성 중이에요."
+                    : "유형 리포트를 받아볼까요?"}
+                </p>
+                <p className="text-caption-l">
+                  {isGenerating ? (
+                    "리포트 생성에 2~3분 정도 걸릴 수 있어요."
+                  ) : (
+                    <>
+                      집, 학교, 직장에서의 나는 모두 달라요.
+                      <br />
+                      주제별 유형 리포트로 다양한 영역에서 나의 유형을
+                      확인해보세요.
+                    </>
+                  )}
+                </p>
+                {isGenerating && (
+                  <LoadingSpinnerIcon className="mx-auto my-auto" />
                 )}
-              </p>
-              <BlockButton
-                className="mt-auto"
-                isLoading={isGenerating || generateTypeReportMutation.isPending}
-                variant={
-                  typeReports![category].eligibility?.canGenerate
-                    ? "primary"
-                    : "disabled"
-                }
-                onClick={() => generateTypeReportMutation.mutate()}
-              >
-                {typeReports![category].eligibility?.isFirstFree
-                  ? "무료로 리포트 받기"
-                  : "100 크리스탈로 리포트 새로 받기"}
-              </BlockButton>
+                <BlockButton
+                  className="mt-auto"
+                  disabled={isLoading}
+                  variant={
+                    typeReports![category].eligibility?.canGenerate
+                      ? "primary"
+                      : "disabled"
+                  }
+                  onClick={() => generateTypeReportMutation.mutate()}
+                >
+                  {isGenerating
+                    ? "리포트 생성 중"
+                    : typeReports![category].eligibility?.isFirstFree
+                      ? "무료로 리포트 받기"
+                      : "100 크리스탈로 리포트 새로 받기"}
+                </BlockButton>
+              </div>
             </div>
           </>
         )}
