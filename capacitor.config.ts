@@ -27,12 +27,12 @@ const config: CapacitorConfig = {
       clientName: "nadab",
       urlScheme: "com.nadab.app",
     },
-    // SplashScreen: {
-    //   launchAutoHide: true,
-    //   androidScaleType: "FIT_CENTER",
-    //   // splashFullScreen: true,
-    //   // splashImmersive: true,
-    // },
+    SplashScreen: {
+      launchAutoHide: false,
+      androidScaleType: "FIT_CENTER",
+      // splashFullScreen: true,
+      // splashImmersive: true,
+    },
   },
 };
 

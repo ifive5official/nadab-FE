@@ -6,7 +6,7 @@ import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { backButtonHandler } from "@/hooks/backButtonHandler";
 // import { Network } from "@capacitor/network";
 import { registerPlugin } from "@capacitor/core";
-// import { SplashScreen } from "@capacitor/splash-screen";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 // status bar 색상 변경 용 커스텀 플러그인
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -73,13 +73,16 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
   //     };
   //   }, [isOnline, router]);
 
-  // // 스플래시 스크린 닫기
-  // useEffect(() => {
-  //   if (Capacitor.isNativePlatform()) {
-  //     requestAnimationFrame(async () => {
-  //       await SplashScreen.hide();
-  //     });
-  //   }
-  // }, []);
+  // 스플래시 스크린 닫기
+  useEffect(() => {
+    async function hideSplash() {
+      setTimeout(async () => {
+        await SplashScreen.hide();
+      }, 300);
+    }
+    if (Capacitor.isNativePlatform()) {
+      hideSplash();
+    }
+  }, []);
   return null;
 }
