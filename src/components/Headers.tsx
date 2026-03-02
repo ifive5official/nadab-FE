@@ -36,7 +36,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
     queries: [
       crystalsOptions,
       {
-        queryKey: ["currentUser", "notification"],
+        queryKey: ["currentUser", "notifications", "unreadCount"],
         queryFn: async () => {
           const res = await api.get<ApiErrResponse<NotificationsRes>>(
             "/api/v1/notifications/unread-count",
@@ -62,8 +62,13 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         <button className="relative">
           <BellIcon />
           {unreadNotificationCnt > 0 && (
-            <div className="absolute top-0 -right-1 flex justify-center items-center bg-brand-primary rounded-full aspect-square h-3.5 text-badge text-white">
-              {unreadNotificationCnt > 9 ? "9+" : unreadNotificationCnt}
+            <div
+              className={clsx(
+                "absolute top-0 left-3.5 flex justify-center items-center bg-brand-primary rounded-full h-3.5 text-badge text-white border border-white",
+                unreadNotificationCnt < 10 ? "w-3.5" : "w-[22px]",
+              )}
+            >
+              {unreadNotificationCnt > 10 ? "10+" : unreadNotificationCnt}
             </div>
           )}
         </button>

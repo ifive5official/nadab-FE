@@ -1,42 +1,21 @@
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { ChevronRightIcon } from "@/components/Icons";
-import type { ApiResponse } from "@/generated/api";
+import { notificationsOptions } from "@/features/notifications/queries";
+import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
 import type { components } from "@/generated/api-types";
-import { api } from "@/lib/axios";
 import { formatRelativeDate } from "@/lib/formatDate";
-import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
-  Link,
+  useNavigate,
   type LinkProps,
   type RegisteredRouter,
 } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 
-type NotificationsRes = components["schemas"]["NotificationListResponse"];
 type Notification = components["schemas"]["NotificationResponse"];
-
-const notificationsOptions = infiniteQueryOptions({
-  queryKey: ["currentUser", "notifications"],
-  queryFn: async ({ pageParam }) => {
-    const req = {
-      cursor: pageParam || undefined,
-    };
-    const res = await api.get<ApiResponse<NotificationsRes>>(
-      "/api/v1/notifications",
-      {
-        params: req,
-      },
-    );
-
-    return res.data.data!;
-  },
-  initialPageParam: null as number | null,
-  getNextPageParam: (lastPage) =>
-    lastPage.hasNext ? lastPage.nextCursor : null,
-});
 
 export const Route = createFileRoute("/_authenticated/notifications/")({
   component: RouteComponent,
@@ -46,6 +25,7 @@ export const Route = createFileRoute("/_authenticated/notifications/")({
 });
 
 function RouteComponent() {
+  // 무한스크롤
   const { ref, inView } = useInView();
   const {
     data: notificationsData,
@@ -60,6 +40,7 @@ function RouteComponent() {
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
+  // 이번주/저번주/오래전 섹션 분리
   const groupedNotifications = useMemo(() => {
     const allNotifications =
       notificationsData?.pages.flatMap((page) => page.notifications) ?? [];
@@ -176,7 +157,7 @@ const NOTIFICATION_CONFIG: Record<
     },
   },
   WEEKLY_REPORT_AVAILABLE: {
-    imgSrc: "/icon/report-complete.png",
+    imgSrc: "/icon/check.png",
     title: "리포트 조건 충족",
     body: "주간 리포트를 만들 수 있어요.",
     linkProps: {
@@ -185,7 +166,7 @@ const NOTIFICATION_CONFIG: Record<
     },
   },
   MONTHLY_REPORT_AVAILABLE: {
-    imgSrc: "/icon/report-complete.png",
+    imgSrc: "/icon/check.png",
     title: "리포트 조건 충족",
     body: "월간 리포트를 만들 수 있어요.",
     linkProps: {
@@ -194,7 +175,7 @@ const NOTIFICATION_CONFIG: Record<
     },
   },
   TYPE_REPORT_AVAILABLE: {
-    imgSrc: "/icon/report-complete.png",
+    imgSrc: "/icon/check.png",
     title: "리포트 조건 충족",
     body: "유형 리포트를 만들 수 있어요.",
     linkProps: {
@@ -232,31 +213,37 @@ const NOTIFICATION_CONFIG: Record<
 };
 
 function NotificationItem({ notification }: { notification: Notification }) {
+  const navigate = useNavigate();
+  const readNotificationMutation = useReadNotificationMutation();
   const config = NOTIFICATION_CONFIG[notification.type!];
   return (
-    <Link {...config.linkProps}>
-      <li className="flex items-center gap-gap-x-l py-padding-y-xs">
-        <img
-          src={config.imgSrc}
-          alt="알림 아이콘"
-          className="aspect-square h-13"
-        />
-        <div className="flex flex-col">
-          <p className="text-label-m">{config.title ?? notification.title}</p>
-          <p className="text-caption-m">{config.body ?? notification.body}</p>
-          <p className="text-caption-m text-text-tertiary">
-            {formatRelativeDate(notification.createdAt!)}
-          </p>
-        </div>
-        <div className="flex items-center gap-gap-x-xs text-icon-muted ml-auto">
-          {!notification.isRead && (
-            <div className="aspect-square h-1.5 bg-brand-primary rounded-full" />
-          )}
+    <li
+      className="flex items-center gap-gap-x-l py-padding-y-xs"
+      onClick={() => {
+        readNotificationMutation.mutate({ notificationId: notification.id! });
+        navigate({ ...config.linkProps });
+      }}
+    >
+      <img
+        src={config.imgSrc}
+        alt="알림 아이콘"
+        className="aspect-square h-13"
+      />
+      <div className="flex flex-col">
+        <p className="text-label-m">{config.title ?? notification.title}</p>
+        <p className="text-caption-m">{config.body ?? notification.body}</p>
+        <p className="text-caption-m text-text-tertiary">
+          {formatRelativeDate(notification.createdAt!)}
+        </p>
+      </div>
+      <div className="flex items-center gap-gap-x-xs text-icon-muted ml-auto">
+        {!notification.isRead && (
+          <div className="aspect-square h-1.5 bg-brand-primary rounded-full" />
+        )}
 
-          <ChevronRightIcon />
-        </div>
-      </li>
-    </Link>
+        <ChevronRightIcon />
+      </div>
+    </li>
   );
 }
 
