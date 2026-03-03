@@ -59,10 +59,10 @@ export function SectionItem({
 }: SectionItemProps) {
   return (
     <div
-      onClick={disabled ? undefined : onClick}
+      onClick={onClick}
       className={clsx(
         "py-padding-y-xs flex justify-between items-center cursor-pointer",
-        disabled && "text-text-disabled cursor-default!",
+        disabled && "text-text-disabled",
       )}
     >
       <p className="text-caption-l">{title}</p>

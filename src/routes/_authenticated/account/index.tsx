@@ -44,8 +44,6 @@ function RouteComponent() {
       },
     });
 
-  // Todo: 알림 시간 변경 시 완료 토스트 띄우기
-
   return (
     <>
       <SubHeader>마이페이지</SubHeader>

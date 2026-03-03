@@ -29,7 +29,11 @@ export function useChangeNotificationSettingsMutation({ onSuccess }: Props) {
           if (!oldData) return [variables];
           return oldData.map((old) => {
             if (old.group === variables.group) {
-              return variables;
+              return {
+                group: variables.group,
+                enabled: variables.enabled,
+                dailyWriteTime: variables.dailyWriteTime ?? old.dailyWriteTime,
+              };
             } else {
               return old;
             }

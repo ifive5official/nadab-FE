@@ -2,7 +2,7 @@
 // 아직 알림 시간 변경에만 사용함
 // Todo: 모달과 합칠 수 없나
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import "@ncdai/react-wheel-picker/style.css";
 import {
@@ -29,12 +29,26 @@ const meridiemOptions: WheelPickerOption[] = [
 ];
 
 type Props = {
+  initialTime: string;
   isOpen: boolean;
-  onConfirm: () => void;
+  onConfirm: (time: string) => void;
   onClose: () => void;
 };
 
-export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
+export default function TimePickerModal({
+  initialTime,
+  isOpen,
+  onConfirm,
+  onClose,
+}: Props) {
+  const initialHour = Number(initialTime.slice(0, 2));
+  const initialMinute = Number(initialTime.slice(5, 7));
+  const initialMeridiem = initialTime.slice(8, 10);
+
+  const [hour, setHour] = useState(initialHour);
+  const [minute, setMinute] = useState(initialMinute);
+  const [meridiem, setMeridiem] = useState(initialMeridiem);
+
   // 하단에서 올라오는 애니메이션으로 인한 스크롤 방지
   useEffect(() => {
     if (isOpen) {
@@ -45,6 +59,22 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  function handleConfirm() {
+    let convertedHour = hour;
+
+    if (meridiem === "PM") {
+      if (convertedHour < 12) convertedHour += 12;
+    } else if (meridiem === "AM") {
+      if (convertedHour === 12) convertedHour = 0;
+    }
+
+    const formattedHour = String(convertedHour).padStart(2, "0");
+    const formattedMinute = String(minute).padStart(2, "0");
+    const result = `${formattedHour}:${formattedMinute}`;
+
+    onConfirm(result);
+  }
 
   return createPortal(
     <AnimatePresence>
@@ -70,7 +100,8 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
               <WheelPickerWrapper className="w-50! rounded-md dark:border-zinc-800">
                 <WheelPicker
                   options={hourOptions}
-                  defaultValue={8}
+                  onValueChange={(value) => setHour(value)}
+                  defaultValue={initialHour}
                   infinite
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
@@ -80,7 +111,8 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
                 />
                 <WheelPicker
                   options={minuteOptions}
-                  defaultValue={0}
+                  onValueChange={(value) => setMinute(value)}
+                  defaultValue={initialMinute}
                   infinite
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
@@ -90,7 +122,8 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
                 />
                 <WheelPicker
                   options={meridiemOptions}
-                  defaultValue="AM"
+                  onValueChange={(value) => setMeridiem(value)}
+                  defaultValue={initialMeridiem}
                   classNames={{
                     optionItem: "text-zinc-400 dark:text-zinc-500",
                     highlightWrapper:
@@ -107,7 +140,7 @@ export default function TimePickerModal({ isOpen, onConfirm, onClose }: Props) {
               >
                 취소
               </BlockButton>
-              <BlockButton btnType="inline" onClick={onConfirm}>
+              <BlockButton btnType="inline" onClick={handleConfirm}>
                 확인
               </BlockButton>
             </div>

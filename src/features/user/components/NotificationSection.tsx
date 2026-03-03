@@ -31,6 +31,7 @@ export default function NotificationSection({
     <>
       <Section type="accordion" title="알림 설정">
         <SectionItem
+          disabled={!getSettingByGroup("ACTIVITY_REMINDER").enabled}
           title="활동 알림"
           rightElement={
             <div className="flex gap-gap-x-m">
@@ -41,8 +42,7 @@ export default function NotificationSection({
                 onClick={() => setIsModalOpen(true)}
               >
                 {formatTime(
-                  getSettingByGroup("ACTIVITY_REMINDER").dailyWriteTime ??
-                    "08:00",
+                  getSettingByGroup("ACTIVITY_REMINDER").dailyWriteTime!,
                 )}
               </Badge>
               <Switch
@@ -58,6 +58,7 @@ export default function NotificationSection({
           }
         />
         <SectionItem
+          disabled={!getSettingByGroup("REPORT").enabled}
           title="리포트 알림"
           rightElement={
             <Switch
@@ -72,6 +73,7 @@ export default function NotificationSection({
           }
         />
         <SectionItem
+          disabled={!getSettingByGroup("SOCIAL").enabled}
           title="소셜 알림"
           rightElement={
             <Switch
@@ -87,8 +89,18 @@ export default function NotificationSection({
         />
       </Section>
       <TimePickerModal
+        initialTime={formatTime(
+          getSettingByGroup("ACTIVITY_REMINDER").dailyWriteTime!,
+        )}
         isOpen={isModalOpen}
-        onConfirm={() => setIsModalOpen(false)}
+        onConfirm={(time: string) => {
+          onChange({
+            group: "ACTIVITY_REMINDER",
+            enabled: true,
+            dailyWriteTime: time,
+          });
+          setIsModalOpen(false);
+        }}
         onClose={() => setIsModalOpen(false)}
       />
     </>

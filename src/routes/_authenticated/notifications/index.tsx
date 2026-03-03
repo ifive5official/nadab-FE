@@ -218,7 +218,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
   const config = NOTIFICATION_CONFIG[notification.type!];
   return (
     <li
-      className="flex items-center gap-gap-x-l py-padding-y-xs"
+      className="flex items-center gap-gap-x-l py-padding-y-xs cursor-pointer"
       onClick={() => {
         readNotificationMutation.mutate({ notificationId: notification.id! });
         navigate({ ...config.linkProps });
