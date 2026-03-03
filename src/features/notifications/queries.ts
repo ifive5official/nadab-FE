@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { api } from "@/lib/axios";
-import { infiniteQueryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 
 type NotificationsRes = components["schemas"]["NotificationListResponse"];
 
@@ -23,4 +23,17 @@ export const notificationsOptions = infiniteQueryOptions({
   initialPageParam: null as number | null,
   getNextPageParam: (lastPage) =>
     lastPage.hasNext ? lastPage.nextCursor : null,
+});
+
+type NotificationSettingsRes =
+  components["schemas"]["NotificationSettingResponse"];
+
+export const notificationSettingsOptions = queryOptions({
+  queryKey: ["currentUser", "notificationSettings"],
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<NotificationSettingsRes[]>>(
+      "/api/v1/notifications/settings",
+    );
+    return res.data.data!;
+  },
 });

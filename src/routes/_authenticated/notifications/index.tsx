@@ -4,7 +4,7 @@ import { ChevronRightIcon } from "@/components/Icons";
 import { notificationsOptions } from "@/features/notifications/queries";
 import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
 import type { components } from "@/generated/api-types";
-import { formatRelativeDate } from "@/lib/formatDate";
+import { formatRelativeDate } from "@/lib/formatters";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   createFileRoute,

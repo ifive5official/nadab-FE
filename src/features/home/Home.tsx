@@ -9,7 +9,7 @@ import FriendSection from "./FriendSection";
 import RecordSection from "./RecordSection";
 import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
-import { formatISODate } from "@/lib/formatDate";
+import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
 import { useEffect } from "react";
 

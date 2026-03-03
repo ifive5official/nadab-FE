@@ -2,7 +2,7 @@
 // 카테고리 뱃지 + 날짜 + 질문 섹션
 import { QuestionBadge } from "@/components/Badges";
 import type { components } from "@/generated/api-types";
-import { formatKoreanDate } from "@/lib/formatDate";
+import { formatKoreanDate } from "@/lib/formatters";
 import categories from "@/constants/categories";
 
 type Question = components["schemas"]["DailyQuestionResponse"];

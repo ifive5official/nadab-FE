@@ -4,7 +4,7 @@ import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
-import { formatISODate } from "@/lib/formatDate";
+import { formatISODate } from "@/lib/formatters";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type Props = {

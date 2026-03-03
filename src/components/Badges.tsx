@@ -9,11 +9,22 @@ type BadgeProps = {
   isActive?: boolean;
   size?: "s" | "m";
   children: string;
+  onClick?: () => void;
 };
 
-export function Badge({ isActive = true, size = "s", children }: BadgeProps) {
+export function Badge({
+  isActive = true,
+  size = "s",
+  children,
+  onClick,
+}: BadgeProps) {
   return (
     <div
+      onClick={() => {
+        if (isActive) {
+          onClick?.();
+        }
+      }}
       className={clsx(
         "rounded-full border ",
         size === "s" && "text-caption-m px-padding-x-xs py-padding-y-xxs",

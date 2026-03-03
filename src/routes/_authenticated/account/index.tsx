@@ -1,14 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SubHeader } from "@/components/Headers";
 import { useUpdateInterestMutation } from "@/features/user/hooks/useUpdateInterestMutation";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { SectionDivider } from "@/features/user/components/AccountSectionComponents";
 import InterestSection from "@/features/user/components/InterestSection";
-import { api } from "@/lib/axios";
-import type { ApiResponse } from "@/generated/api";
-import type { components } from "@/generated/api-types";
 import NotificationSection from "@/features/user/components/NotificationSection";
-import { useToggleNotificationMutation } from "@/features/user/hooks/useToggleNotificationMutation";
 import ThemeSection from "@/features/user/components/ThemeSection";
 import useThemeStore from "@/store/useThemeStore";
 import ProfileSection from "@/features/user/components/ProfileSection";
@@ -16,30 +12,22 @@ import { currentUserOptions } from "@/features/user/quries";
 import AccountSection from "@/features/user/components/AccountSection";
 import Container from "@/components/Container";
 import useToastStore from "@/store/toastStore";
-
-const notificationOptions = queryOptions({
-  queryKey: ["currentUser", "notification"],
-  queryFn: async () => {
-    const res = await api.get<ApiResponse<NotificationRes>>(
-      "/api/v1/terms/consent/marketing",
-    );
-    return res.data.data!.agreed!;
-  },
-});
+import { notificationSettingsOptions } from "@/features/notifications/queries";
+import { useChangeNotificationSettingsMutation } from "@/features/notifications/useChangeNotificationSettingsMutation";
 
 export const Route = createFileRoute("/_authenticated/account/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(notificationOptions),
+    queryClient.ensureQueryData(notificationSettingsOptions),
 });
-
-type NotificationRes = components["schemas"]["MarketingConsentResponse"];
 
 function RouteComponent() {
   const { showToast } = useToastStore();
 
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const { data: isNotificationon } = useSuspenseQuery(notificationOptions);
+  const { data: notificationSettings } = useSuspenseQuery(
+    notificationSettingsOptions,
+  );
   const { isDarkMode, toggleTheme } = useThemeStore();
 
   const updateInterestMutation = useUpdateInterestMutation({
@@ -47,13 +35,14 @@ function RouteComponent() {
       showToast({ message: "관심 주제 변경이 완료되었어요." });
     },
   });
-  const toggleNotificationMutation = useToggleNotificationMutation({
-    onSuccess: (newSetting: boolean) => {
-      if (newSetting) {
-        showToast({ message: "알림이 설정되었어요." });
-      }
-    },
-  });
+  const changeNotificationSettingsMutation =
+    useChangeNotificationSettingsMutation({
+      onSuccess: (message: string) => {
+        if (message) {
+          showToast({ message });
+        }
+      },
+    });
 
   // Todo: 알림 시간 변경 시 완료 토스트 띄우기
 
@@ -78,10 +67,8 @@ function RouteComponent() {
             />
             <SectionDivider />
             <NotificationSection
-              isOn={isNotificationon ?? false}
-              onToggle={(prev: boolean) =>
-                toggleNotificationMutation.mutate({ agreed: !prev })
-              }
+              notificationSettings={notificationSettings}
+              onChange={changeNotificationSettingsMutation.mutate}
             />
             <SectionDivider />
             <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />

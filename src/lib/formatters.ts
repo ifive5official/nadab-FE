@@ -51,3 +51,14 @@ export function formatRelativeDate(dateString: string): string {
 
   return `${year}년 ${month}월 ${day}일`;
 }
+
+export function formatTime(time: string) {
+  const [hour, minute] = time.split(":").map(Number);
+  const period = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12; // 0시일 경우 12로 표시
+
+  const formattedHour = String(hour12).padStart(2, "0");
+  const formattedMinute = String(minute).padStart(2, "0");
+
+  return `${formattedHour} : ${formattedMinute} ${period}`;
+}
