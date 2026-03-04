@@ -7,6 +7,7 @@ import { backButtonHandler } from "@/hooks/backButtonHandler";
 // import { Network } from "@capacitor/network";
 import { registerPlugin } from "@capacitor/core";
 import { SplashScreen } from "@capacitor/splash-screen";
+import { usePushNotifications } from "@/hooks/usePushManager";
 
 // status bar 색상 변경 용 커스텀 플러그인
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -50,6 +51,9 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
       syncSystemBars();
     }
   }, [isDarkMode]);
+
+  // 푸쉬알림 설정
+  usePushNotifications();
 
   // 네트워크 상태 확인
   //   useEffect(() => {
