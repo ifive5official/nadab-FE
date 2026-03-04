@@ -62,7 +62,7 @@ export default function PeriodicReportCard({
       handleBtnClick: undefined,
     },
     READY: {
-      title: `지난${reportConfig.periodText} 리포트가 생성되었어요.`,
+      title: `지난${reportConfig.periodText} 리포트를 확인해보세요.`,
       content: `지난${reportConfig.periodText} 기록에서 발견된 점들과\n보완점을 확인해보세요.`,
       btnText: "리포트 보기",
       btnVariant: "primary",

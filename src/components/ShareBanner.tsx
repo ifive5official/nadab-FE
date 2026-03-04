@@ -111,9 +111,9 @@ export default function ShareBanner({
           ],
         });
       },
-      bannerColor: "bg-[#E8F8F3] dark:bg-[#1A404A]",
-      btnClass: "text-[#52C19E]! border-[#52C19E]!",
-      closeBtnColor: "text-[#9DDDC9]",
+      bannerColor: "bg-[#D6F0FF] dark:bg-[#1A304A]",
+      btnClass: "text-[#57B6F6]! border-[#57B6F6]!",
+      closeBtnColor: "text-[#93D4FF]",
     },
     NOT_SHARED: {
       bannerText1: "오늘 내가 쓴 기록을",

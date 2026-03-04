@@ -152,7 +152,7 @@ export default function TypeReportTab({ category }: Props) {
                 <p className="text-title-2">
                   {isGenerating
                     ? "유형 리포트를 생성 중이에요."
-                    : "유형 리포트를 받아볼까요?"}
+                    : "유형 리포트를 확인해보세요."}
                 </p>
                 <p className="text-caption-l">
                   {isGenerating ? (
@@ -161,8 +161,8 @@ export default function TypeReportTab({ category }: Props) {
                     <>
                       집, 학교, 직장에서의 나는 모두 달라요.
                       <br />
-                      주제별 유형 리포트로 다양한 영역에서 나의 유형을
-                      확인해보세요.
+                      주제별 유형 리포트로 다양한 영역에서의 나에 대해
+                      알아보세요.
                     </>
                   )}
                 </p>
