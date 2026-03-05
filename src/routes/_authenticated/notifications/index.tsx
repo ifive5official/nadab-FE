@@ -6,14 +6,10 @@ import { useReadNotificationMutation } from "@/features/notifications/useReadNot
 import type { components } from "@/generated/api-types";
 import { formatRelativeDate } from "@/lib/formatters";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import {
-  createFileRoute,
-  useNavigate,
-  type LinkProps,
-  type RegisteredRouter,
-} from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
+import { NOTIFICATION_CONFIG } from "./notificationConfigs";
 
 type Notification = components["schemas"]["NotificationResponse"];
 
@@ -120,98 +116,6 @@ function RouteComponent() {
   );
 }
 
-const NOTIFICATION_CONFIG: Record<
-  NonNullable<Notification["type"]>,
-  {
-    imgSrc: string;
-    title?: string;
-    body?: string;
-    linkProps: LinkProps<RegisteredRouter["routeTree"]>;
-  }
-> = {
-  WEEKLY_REPORT_COMPLETED: {
-    imgSrc: "/icon/report-complete.png",
-    title: "리포트 완성",
-    body: "주간 리포트가 완성됐어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "periodic" },
-    },
-  },
-  MONTHLY_REPORT_COMPLETED: {
-    imgSrc: "/icon/report-complete.png",
-    title: "리포트 완성",
-    body: "월간 리포트가 완성됐어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "periodic" },
-    },
-  },
-  TYPE_REPORT_COMPLETED: {
-    imgSrc: "/icon/report-complete.png",
-    title: "리포트 완성",
-    body: "유형 리포트가 완성됐어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "type" },
-    },
-  },
-  WEEKLY_REPORT_AVAILABLE: {
-    imgSrc: "/icon/check.png",
-    title: "리포트 조건 충족",
-    body: "주간 리포트를 만들 수 있어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "periodic" },
-    },
-  },
-  MONTHLY_REPORT_AVAILABLE: {
-    imgSrc: "/icon/check.png",
-    title: "리포트 조건 충족",
-    body: "월간 리포트를 만들 수 있어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "periodic" },
-    },
-  },
-  TYPE_REPORT_AVAILABLE: {
-    imgSrc: "/icon/check.png",
-    title: "리포트 조건 충족",
-    body: "유형 리포트를 만들 수 있어요.",
-    linkProps: {
-      to: "/report",
-      search: { tab: "type" },
-    },
-  },
-  FRIEND_REQUEST_RECEIVED: {
-    imgSrc: "/icon/friend-request.png",
-    title: "친구 요청",
-    linkProps: {
-      to: "/social/requests",
-    },
-  },
-  FRIEND_REQUEST_ACCEPTED: {
-    imgSrc: "/icon/friend-accept.png",
-    title: "친구 수락",
-    linkProps: {
-      to: "/social",
-      search: { tab: "friends" },
-    },
-  },
-  DAILY_WRITE_REMINDER: {
-    imgSrc: "string",
-    linkProps: {
-      to: "/",
-    },
-  },
-  INACTIVE_USER_REMINDER: {
-    imgSrc: "string",
-    linkProps: {
-      to: "/",
-    },
-  },
-};
-
 function NotificationItem({ notification }: { notification: Notification }) {
   const navigate = useNavigate();
   const readNotificationMutation = useReadNotificationMutation();
@@ -225,13 +129,17 @@ function NotificationItem({ notification }: { notification: Notification }) {
       }}
     >
       <img
-        src={config.imgSrc}
+        src={config.inboxIconSrc}
         alt="알림 아이콘"
         className="aspect-square h-13"
       />
       <div className="flex flex-col">
-        <p className="text-label-m">{config.title ?? notification.title}</p>
-        <p className="text-caption-m">{config.body ?? notification.body}</p>
+        <p className="text-label-m">
+          {config.inboxTitle ?? notification.title}
+        </p>
+        <p className="text-caption-m">
+          {config.inboxBody ?? notification.body}
+        </p>
         <p className="text-caption-m text-text-tertiary">
           {formatRelativeDate(notification.createdAt!)}
         </p>

@@ -4,6 +4,11 @@ import useAuthStore from "@/store/authStore";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { api } from "@/lib/axios";
+import {
+  type Notification,
+  NOTIFICATION_CONFIG,
+} from "@/routes/_authenticated/notifications/notificationConfigs";
+import { router } from "@/main";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
@@ -29,12 +34,11 @@ export function usePushNotifications() {
       await PushNotifications.createChannel({
         id: "default_channel_id",
         name: "기본 알림",
-        description: "일반적인 서비스 알림을 수신합니다.",
+        description: "기본 알림 수신",
         importance: 5,
         visibility: 1,
         vibration: true,
       });
-      console.log("Push Channel Created");
     } catch (error) {
       console.error("Channel creation error:", error);
     }
@@ -45,7 +49,7 @@ export function usePushNotifications() {
     if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;
 
     try {
-      // 1. 권한 확인 및 요청
+      // 1. 권환 확인 및 요청
       let perm = await PushNotifications.checkPermissions();
       if (perm.receive === "prompt") {
         perm = await PushNotifications.requestPermissions();
@@ -56,6 +60,29 @@ export function usePushNotifications() {
       await setupNotificationChannels();
 
       await PushNotifications.removeAllListeners();
+
+      // 딥링크 처리
+      await PushNotifications.addListener(
+        "pushNotificationActionPerformed",
+        (notification) => {
+          console.log(
+            `notification: ${JSON.stringify(notification.notification.data)}`,
+          );
+          const data = notification.notification.data;
+          const type: Notification["type"] = data.type;
+          const { linkProps } = NOTIFICATION_CONFIG[type!];
+
+          router.navigate({ ...linkProps });
+        },
+      );
+
+      // 포그라운드 알림 처리
+      await PushNotifications.addListener(
+        "pushNotificationReceived",
+        (notification) => {
+          console.log("포그라운드 알림 수신:", notification);
+        },
+      );
 
       await PushNotifications.addListener("registration", async (token) => {
         await api.post("/api/v1/notifications/tokens", {
@@ -71,7 +98,7 @@ export function usePushNotifications() {
     } catch (error) {
       console.error("Push registration error:", error);
     }
-  }, [isLoggedIn, deviceId]);
+  }, [isLoggedIn, deviceId, setupNotificationChannels]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;
