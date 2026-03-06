@@ -8,14 +8,12 @@ export const NOTIFICATION_CONFIG: Record<
   {
     inboxIconSrc: string;
     inboxTitle?: string;
-    inboxBody?: string;
     linkProps: LinkProps<RegisteredRouter["routeTree"]>;
   }
 > = {
   WEEKLY_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
     inboxTitle: "리포트 완성",
-    inboxBody: "주간 리포트가 완성됐어요.",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -24,7 +22,6 @@ export const NOTIFICATION_CONFIG: Record<
   MONTHLY_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
     inboxTitle: "리포트 완성",
-    inboxBody: "월간 리포트가 완성됐어요.",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -33,7 +30,6 @@ export const NOTIFICATION_CONFIG: Record<
   TYPE_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
     inboxTitle: "리포트 완성",
-    inboxBody: "유형 리포트가 완성됐어요.",
     linkProps: {
       to: "/report",
       search: { tab: "type" },
@@ -42,7 +38,6 @@ export const NOTIFICATION_CONFIG: Record<
   WEEKLY_REPORT_AVAILABLE: {
     inboxIconSrc: "/icon/check.png",
     inboxTitle: "리포트 조건 충족",
-    inboxBody: "주간 리포트를 만들 수 있어요.",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -51,7 +46,6 @@ export const NOTIFICATION_CONFIG: Record<
   MONTHLY_REPORT_AVAILABLE: {
     inboxIconSrc: "/icon/check.png",
     inboxTitle: "리포트 조건 충족",
-    inboxBody: "월간 리포트를 만들 수 있어요.",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -60,7 +54,6 @@ export const NOTIFICATION_CONFIG: Record<
   TYPE_REPORT_AVAILABLE: {
     inboxIconSrc: "/icon/check.png",
     inboxTitle: "리포트 조건 충족",
-    inboxBody: "유형 리포트를 만들 수 있어요.",
     linkProps: {
       to: "/report",
       search: { tab: "type" },
@@ -82,13 +75,13 @@ export const NOTIFICATION_CONFIG: Record<
     },
   },
   DAILY_WRITE_REMINDER: {
-    inboxIconSrc: "string",
+    inboxIconSrc: "/icon/write.png",
     linkProps: {
-      to: "/",
+      to: "/daily",
     },
   },
   INACTIVE_USER_REMINDER: {
-    inboxIconSrc: "string",
+    inboxIconSrc: "/icon/write.png",
     linkProps: {
       to: "/",
     },

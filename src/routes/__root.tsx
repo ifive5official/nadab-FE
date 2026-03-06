@@ -12,6 +12,7 @@ import ErrorPage from "@/components/ErrorPage";
 
 import { Capacitor } from "@capacitor/core";
 import { Network } from "@capacitor/network";
+import PushToast from "@/components/PushToast";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -55,6 +56,7 @@ function RootComponent() {
         {isOnline ? <Outlet /> : <ErrorPage error={{}} type="network" />}
         <Modal />
         <Toast />
+        <PushToast />
       </div>
       <Sidebar />
     </>

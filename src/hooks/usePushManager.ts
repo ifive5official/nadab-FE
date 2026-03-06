@@ -7,11 +7,13 @@ import { api } from "@/lib/axios";
 import {
   type Notification,
   NOTIFICATION_CONFIG,
-} from "@/routes/_authenticated/notifications/notificationConfigs";
+} from "@/features/notifications/notificationConfigs";
 import { router } from "@/main";
+import usePushToastStore from "@/store/pushToastStore";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
+  const { showToast } = usePushToastStore();
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
@@ -65,9 +67,6 @@ export function usePushNotifications() {
       await PushNotifications.addListener(
         "pushNotificationActionPerformed",
         (notification) => {
-          console.log(
-            `notification: ${JSON.stringify(notification.notification.data)}`,
-          );
           const data = notification.notification.data;
           const type: Notification["type"] = data.type;
           const { linkProps } = NOTIFICATION_CONFIG[type!];
@@ -80,7 +79,7 @@ export function usePushNotifications() {
       await PushNotifications.addListener(
         "pushNotificationReceived",
         (notification) => {
-          console.log("포그라운드 알림 수신:", notification);
+          showToast(notification);
         },
       );
 
@@ -98,7 +97,7 @@ export function usePushNotifications() {
     } catch (error) {
       console.error("Push registration error:", error);
     }
-  }, [isLoggedIn, deviceId, setupNotificationChannels]);
+  }, [isLoggedIn, deviceId, setupNotificationChannels, showToast]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;

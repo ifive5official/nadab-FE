@@ -9,7 +9,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
-import { NOTIFICATION_CONFIG } from "./notificationConfigs";
+import { NOTIFICATION_CONFIG } from "../../../features/notifications/notificationConfigs";
 
 type Notification = components["schemas"]["NotificationResponse"];
 
@@ -128,18 +128,19 @@ function NotificationItem({ notification }: { notification: Notification }) {
         navigate({ ...config.linkProps });
       }}
     >
-      <img
-        src={config.inboxIconSrc}
-        alt="알림 아이콘"
-        className="aspect-square h-13"
-      />
+      <div className="aspect-square h-13 bg-neutral-100 rounded-full flex justify-center items-center">
+        <img
+          src={config.inboxIconSrc}
+          alt="알림 아이콘"
+          className="aspect-square h-12"
+        />
+      </div>
+
       <div className="flex flex-col">
         <p className="text-label-m">
           {config.inboxTitle ?? notification.title}
         </p>
-        <p className="text-caption-m">
-          {config.inboxBody ?? notification.body}
-        </p>
+        <p className="text-caption-m">{notification.inboxMessage}</p>
         <p className="text-caption-m text-text-tertiary">
           {formatRelativeDate(notification.createdAt!)}
         </p>
