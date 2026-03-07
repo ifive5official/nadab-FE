@@ -1,10 +1,10 @@
 import { MainHeader } from "@/components/Headers";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { currentUserOptions } from "../user/quries";
 import Tabs from "@/components/Tabs";
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import FriendSection from "./FriendSection";
 import RecordSection from "./RecordSection";
 import { questionOptions } from "../question/queries";
@@ -12,6 +12,7 @@ import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
 import { useEffect } from "react";
+import useModalStore from "@/store/modalStore";
 
 export default function Home() {
   // 배경색이 하단바에 비치게 함
@@ -20,10 +21,40 @@ export default function Home() {
     return () => document.documentElement.classList.remove("no-safe-padding");
   }, []);
 
-  const { data: currentUser } = useSuspenseQuery(currentUserOptions);
-  const { data: question } = useSuspenseQuery(questionOptions);
-  const { data: homeData } = useSuspenseQuery(homeOptions);
+  const navigate = useNavigate();
+  const { showModal, closeModal } = useModalStore();
+
+  const [{ data: currentUser }, { data: question }, { data: homeData }] =
+    useSuspenseQueries({
+      queries: [currentUserOptions, questionOptions, homeOptions],
+    });
   const rerollQuestionMutation = useRerollQuestionMutation();
+
+  useEffect(() => {
+    if (!question) {
+      // 이미 해당 카테고리의 모든 질문에 답한 경우
+      showModal({
+        icon: () => (
+          <img
+            src="/mainLogo.png"
+            alt="모달 아이콘"
+            className="aspect-square h-[33px] p-[11px] box-content"
+          />
+        ),
+        title: "잠깐, 다른 주제를 골라볼까요?",
+        children: "선택한 주제의 질문에 모두 답했어요.",
+        buttons: [
+          {
+            label: "주제 고르기",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/account" });
+            },
+          },
+        ],
+      });
+    }
+  }, [question, showModal, closeModal, navigate]);
 
   return (
     <>
@@ -33,9 +64,13 @@ export default function Home() {
         <div className="flex-1 flex flex-col justify-evenly">
           {/* 질문 */}
           <p className="relative text-title-2 text-center">
-            {currentUser.nickname}님,
-            <br />
-            {question?.questionText}
+            {question && (
+              <>
+                {currentUser.nickname}님,
+                <br />
+                {question?.questionText}
+              </>
+            )}
           </p>
           {/* 구슬 */}
           <div className="flex items-center justify-center">

@@ -38,6 +38,7 @@ export function useUpdateInterestMutation({ onSuccess }: Props) {
       return { previousUser };
     },
     onSuccess: (_, { interestCode }) => {
+      queryClient.resetQueries({ queryKey: ["currentUser", "question"] });
       onSuccess?.(interestCode);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>, _newInterest, context) => {
