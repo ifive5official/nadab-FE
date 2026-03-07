@@ -113,7 +113,7 @@ function RouteComponent() {
                   이런 면도 발견되었어요
                 </span>
               </div>
-              <div className="text-body-2 bg-surface-layer-1 border border-border-base rounded-xl px-padding-x-m py-padding-y-m">
+              <div className="text-body-2 bg-surface-layer-1 border border-border-base rounded-xl px-padding-x-m py-padding-y-m allow-copy">
                 {report?.content?.discovered?.segments?.map((segment, i) => {
                   if (segment.marks!.length > 0) {
                     return (
@@ -141,7 +141,7 @@ function RouteComponent() {
                   나답의 한 마디
                 </span>
               </div>
-              <div className="flex flex-col gap-gap-y-l px-padding-x-m">
+              <div className="flex flex-col gap-gap-y-l px-padding-x-m allow-copy">
                 {comments?.map((comment, i) => (
                   <SpeechBalloon
                     key={i}

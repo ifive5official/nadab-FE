@@ -13,6 +13,7 @@ export default function PushToast() {
   if (!notification) return null;
   const type = notification.data.type;
   const config = NOTIFICATION_CONFIG[type!];
+  if (!config) return null; // undefined 참조 에러 땜빵
   return createPortal(
     <AnimatePresence>
       {isOpen && notification && (

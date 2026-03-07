@@ -7,6 +7,37 @@
     -apple-system;
 
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* 텍스트 선택 방지 */
+  -webkit-user-select: none; /* iOS Safari, Android 웹뷰 */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* 터치 시 발생하는 하이라이트(파란색 박스 등) 제거 */
+  -webkit-tap-highlight-color: transparent;
+
+  /* 롱 프레스 시 시스템 메뉴(복사, 이미지 저장 등)가 뜨는 것 방지 */
+  -webkit-touch-callout: none;
+}
+
+/* 입력창(Input, Textarea)에서는 복사/붙여넣기가 가능해야 하므로 예외 처리 */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* 이미지 저장 방지 */
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+.allow-copy {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default; /* 시스템 메뉴 허용 */
 }
 
 html {

@@ -84,10 +84,10 @@ export default function TypeReportTab({ category }: Props) {
               <Badge size="m">{typeReport.hashTag2!}</Badge>
               <Badge size="m">{typeReport.hashTag3!}</Badge>
             </div>
-            <p className="text-body-2 text-text-secondary">
+            <p className="text-body-2 text-text-secondary allow-copy">
               {typeReport.typeAnalysis}
             </p>
-            <div className="my-gap-y-xl flex flex-col gap-gap-y-l">
+            <div className="my-gap-y-xl flex flex-col gap-gap-y-l allow-copy">
               <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
                 <p className="text-interactive-text-default text-label-l">
                   {typeReport.personaTitle1}

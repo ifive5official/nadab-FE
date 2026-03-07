@@ -120,6 +120,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
   const navigate = useNavigate();
   const readNotificationMutation = useReadNotificationMutation();
   const config = NOTIFICATION_CONFIG[notification.type!];
+  if (!config) return null; // undefined 참조 에러 나서 땜빵...
   return (
     <li
       className="flex items-center gap-gap-x-l py-padding-y-xs cursor-pointer"
