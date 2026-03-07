@@ -73,7 +73,7 @@ export default function Sidebar() {
               <div className="py-padding-y-m border-y border-y-interactive-border-default">
                 {[
                   {
-                    to: "https://docs.google.com/forms/d/e/1FAIpQLSfDuE6xR8Uu93fIt9DIWS4z6KYRa95PtDU7PJuD-DCG7Kk4ag/viewform",
+                    to: "https://docs.google.com/forms/d/e/1FAIpQLSdFvRmWaPdfOo3mT6qqbtlsqX8bJqUCa1A_FiofQkpIpYM7cg/viewform",
                     label: "의견 남기기",
                   },
                   {

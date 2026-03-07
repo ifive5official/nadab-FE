@@ -14,6 +14,7 @@ import Container from "@/components/Container";
 import useToastStore from "@/store/toastStore";
 import { notificationSettingsOptions } from "@/features/notifications/queries";
 import { useChangeNotificationSettingsMutation } from "@/features/notifications/useChangeNotificationSettingsMutation";
+import { Capacitor } from "@capacitor/core";
 
 export const Route = createFileRoute("/_authenticated/account/")({
   component: RouteComponent,
@@ -64,11 +65,15 @@ function RouteComponent() {
               isPending={updateInterestMutation.isPending}
             />
             <SectionDivider />
-            <NotificationSection
-              notificationSettings={notificationSettings}
-              onChange={changeNotificationSettingsMutation.mutate}
-            />
-            <SectionDivider />
+            {Capacitor.isNativePlatform() && (
+              <>
+                <NotificationSection
+                  notificationSettings={notificationSettings}
+                  onChange={changeNotificationSettingsMutation.mutate}
+                />
+                <SectionDivider />
+              </>
+            )}
             <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
             <SectionDivider />
             <AccountSection />
