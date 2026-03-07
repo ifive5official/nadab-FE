@@ -4,7 +4,7 @@ import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { QuestionSection } from "@/features/daily/QuestionSection";
 import { currentUserOptions } from "@/features/user/quries";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
@@ -19,7 +19,10 @@ import ReportMessage from "@/features/report/ReportMessage";
 import axios from "axios";
 import ErrorPage from "@/components/ErrorPage";
 import ShareBanner from "@/components/ShareBanner";
-import { feedShareStatusOptions } from "@/features/social/queries";
+import {
+  feedShareStatusOptions,
+  friendsOptions,
+} from "@/features/social/queries";
 
 export const Route = createFileRoute("/_authenticated/daily/report/$reportId")({
   component: RouteComponent,
@@ -57,6 +60,8 @@ function RouteComponent() {
   const { data: report } = useSuspenseQuery(
     dailyReportOptions(Number(reportId)),
   );
+  const { data: friends } = useQuery(friendsOptions);
+
   const messages = report.content!.split(/(?<=[.!?])\s/);
 
   const navigate = useNavigate();
@@ -71,7 +76,7 @@ function RouteComponent() {
     <>
       <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
       <Container>
-        {isReady && (
+        {isReady && (friends?.totalCount ?? 0) > 0 && (
           <ShareBanner
             type="closable"
             toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
