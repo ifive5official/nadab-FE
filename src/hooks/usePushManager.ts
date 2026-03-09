@@ -82,7 +82,6 @@ export function usePushNotifications() {
           deviceId: deviceId,
           platform: "ANDROID",
         });
-        console.log("Push Token Registered");
       });
 
       // 3. FCM 등록 시작

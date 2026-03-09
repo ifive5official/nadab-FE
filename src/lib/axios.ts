@@ -4,7 +4,9 @@ import axios from "axios";
 import { Capacitor } from "@capacitor/core";
 
 export const api = axios.create({
-  baseURL: Capacitor.isNativePlatform() ? import.meta.env.VITE_API_URL : "/",
+  baseURL: Capacitor.isNativePlatform()
+    ? import.meta.env.VITE_API_BASE_URL
+    : "/",
   withCredentials: true, // refresh token 쿠키 포함
 });
 
