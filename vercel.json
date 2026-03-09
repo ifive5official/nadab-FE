@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://nadab-dev.n-e.kr/api/:path*"
+      "destination": "https://r9k2m7q3.shop/api/:path*"
     },
     {
       "source": "/((?!api/).*)",
