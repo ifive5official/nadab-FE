@@ -1,24 +1,30 @@
 import { AccordionIcon } from "@/components/Icons";
 import clsx from "clsx";
-import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 type SectionProps = {
   type?: "normal" | "accordion";
+  isOpen?: boolean;
+  onToggleAccordion?: () => void;
   title: string;
   children?: React.ReactNode;
 };
 
-export function Section({ type = "normal", title, children }: SectionProps) {
-  const [isSectionOpen, setIsSectionOpen] = useState(false);
+export function Section({
+  type = "normal",
+  isOpen = true,
+  onToggleAccordion,
+  title,
+  children,
+}: SectionProps) {
   return (
     <li className="py-padding-y-xs px-padding-x-m">
       <div className="flex items-center">
         <p className="text-title-3 py-padding-y-xs mr-auto">{title}</p>
         {type === "accordion" && (
-          <button onClick={() => setIsSectionOpen((prev) => !prev)}>
+          <button onClick={onToggleAccordion}>
             <motion.div
-              animate={{ rotate: isSectionOpen ? 180 : 0 }}
+              animate={{ rotate: isOpen ? 180 : 0 }}
               transition={{ duration: 0.3 }}
             >
               <AccordionIcon />
@@ -27,7 +33,7 @@ export function Section({ type = "normal", title, children }: SectionProps) {
         )}
       </div>
       <AnimatePresence initial={false}>
-        {(type === "normal" || (type === "accordion" && isSectionOpen)) && (
+        {(type === "normal" || (type === "accordion" && isOpen)) && (
           <motion.div
             key="content"
             initial={{ height: 0 }}

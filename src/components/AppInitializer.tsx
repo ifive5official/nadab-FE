@@ -7,6 +7,7 @@ import { backButtonHandler } from "@/hooks/backButtonHandler";
 // import { Network } from "@capacitor/network";
 import { registerPlugin } from "@capacitor/core";
 import { SplashScreen } from "@capacitor/splash-screen";
+import { PushNotifications } from "@capacitor/push-notifications";
 import { usePushNotifications } from "@/hooks/usePushManager";
 
 // status bar 색상 변경 용 커스텀 플러그인
@@ -24,11 +25,10 @@ async function changeStatusBarAreaColor(hexColor: string) {
 // Todo: 네트워크 에러 처리 로직도 여기로 옮기기
 export default function AppInitializer({ router }: { router: AnyRouter }) {
   //   const [isOnline, setIsOnline] = useState(true);
+  const { registerPush } = usePushNotifications();
 
   // 뒤로가기 버튼과 히스토리 api 연동
-  if (Capacitor.isNativePlatform()) {
-    backButtonHandler(router);
-  }
+  backButtonHandler(router);
 
   // 다크모드 적용
   const isDarkMode = useThemeStore.use.isDarkMode();
@@ -52,8 +52,16 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
     }
   }, [isDarkMode]);
 
-  // 푸쉬알림 설정
-  usePushNotifications();
+  // 푸쉬알림 리스너 등록 및 토큰 갱신
+  useEffect(() => {
+    async function registerNotifications() {
+      const perm = await PushNotifications.checkPermissions();
+      if (perm.receive === "granted") {
+        registerPush();
+      }
+    }
+    registerNotifications();
+  }, [registerPush]);
 
   // 네트워크 상태 확인
   //   useEffect(() => {

@@ -13,16 +13,65 @@ import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
 import { useEffect } from "react";
 import useModalStore from "@/store/modalStore";
+import { PushNotifications } from "@capacitor/push-notifications";
+import { Capacitor } from "@capacitor/core";
+import useToastStore from "@/store/toastStore";
+import { usePushNotifications } from "@/hooks/usePushManager";
 
 export default function Home() {
-  // 배경색이 하단바에 비치게 함
+  const navigate = useNavigate();
+  const { registerPush } = usePushNotifications();
+  const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
+
+  // 앱 상에서 배경색이 하단바에 비치게 함
   useEffect(() => {
     document.documentElement.classList.add("no-safe-padding");
     return () => document.documentElement.classList.remove("no-safe-padding");
   }, []);
 
-  const navigate = useNavigate();
-  const { showModal, closeModal } = useModalStore();
+  // 최초 진입 시 알림 권한 설정 모달 띄움
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    async function checkNotificationPerm() {
+      let perm = await PushNotifications.checkPermissions();
+      const state = perm.receive;
+      if (state === "prompt") {
+        showModal({
+          icon: () => (
+            <img
+              src="/mainLogo.png"
+              alt="모달 아이콘"
+              className="aspect-square h-[33px] p-[11px] box-content"
+            />
+          ),
+          title: "나답으로부터 알림을 받아볼래요?",
+          children: <>마이페이지에서 언제든지 설정을 변경할 수 있어요.</>,
+          buttons: [
+            {
+              label: "다음",
+              onClick: async () => {
+                closeModal();
+                try {
+                  // 권환 확인 및 요청
+                  perm = await PushNotifications.requestPermissions();
+                  if (perm.receive === "granted") {
+                    await registerPush();
+                    showToast({ message: "알림 권한이 허용되었어요." });
+                  } else {
+                    showToast({ message: "알림 권한이 거부되었어요." });
+                  }
+                } catch (error) {
+                  console.error(error);
+                }
+              },
+            },
+          ],
+        });
+      }
+    }
+    checkNotificationPerm();
+  }, [showModal, closeModal, showToast, registerPush]);
 
   const [{ data: currentUser }, { data: question }, { data: homeData }] =
     useSuspenseQueries({

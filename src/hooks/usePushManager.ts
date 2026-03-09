@@ -51,14 +51,7 @@ export function usePushNotifications() {
     if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;
 
     try {
-      // 1. 권환 확인 및 요청
-      let perm = await PushNotifications.checkPermissions();
-      if (perm.receive === "prompt") {
-        perm = await PushNotifications.requestPermissions();
-      }
-      if (perm.receive !== "granted") return;
-
-      // 2. 리스너 등록
+      // 리스너 등록
       await setupNotificationChannels();
 
       await PushNotifications.removeAllListeners();
@@ -99,12 +92,5 @@ export function usePushNotifications() {
     }
   }, [isLoggedIn, deviceId, setupNotificationChannels, showToast]);
 
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;
-    registerPush();
-
-    return () => {
-      PushNotifications.removeAllListeners();
-    };
-  }, [registerPush, isLoggedIn, deviceId]); // 로그인 상태가 바뀔 때마다 실행
+  return { registerPush };
 }
