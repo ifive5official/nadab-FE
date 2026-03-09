@@ -3,7 +3,7 @@ import useThemeStore from "@/store/useThemeStore";
 import { useEffect } from "react";
 import type { AnyRouter } from "@tanstack/react-router";
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
-import { backButtonHandler } from "@/hooks/backButtonHandler";
+import { registerBackButtonHandler } from "@/hooks/backButtonHandler";
 // import { Network } from "@capacitor/network";
 import { registerPlugin } from "@capacitor/core";
 import { SplashScreen } from "@capacitor/splash-screen";
@@ -28,7 +28,13 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
   const { registerPush } = usePushNotifications();
 
   // 뒤로가기 버튼과 히스토리 api 연동
-  backButtonHandler(router);
+  useEffect(() => {
+    const handlerPromise = registerBackButtonHandler(router);
+
+    return () => {
+      handlerPromise.then((h) => h.remove());
+    };
+  }, [router]);
 
   // 다크모드 적용
   const isDarkMode = useThemeStore.use.isDarkMode();

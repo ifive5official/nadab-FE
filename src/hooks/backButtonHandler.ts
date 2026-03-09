@@ -4,14 +4,14 @@ import { App } from "@capacitor/app";
 import { Toast } from "@capacitor/toast";
 import { type AnyRouter } from "@tanstack/react-router";
 
-export function backButtonHandler(router: AnyRouter) {
+export function registerBackButtonHandler(router: AnyRouter) {
   let lastPressTime = 0;
 
   const listener = App.addListener("backButton", async () => {
     const isRootPath = router.state.location.pathname === "/";
 
     if (!isRootPath) {
-      window.history.back();
+      router.history.back();
     } else {
       const currentTime = new Date().getTime();
       const timeDiff = currentTime - lastPressTime;
