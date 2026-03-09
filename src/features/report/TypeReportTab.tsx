@@ -8,7 +8,7 @@ import { Badge, CrystalBadge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
-import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
+// import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
 import useModalStore from "@/store/modalStore";
 import { LoadingSpinnerIcon, WarningFilledIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
@@ -41,15 +41,15 @@ export default function TypeReportTab({ category }: Props) {
   const { showToast } = useToastStore();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const deleteTypeReportMutation = useDeleteTypeReportMutation({
-    interestCode: category,
-  });
+  // const deleteTypeReportMutation = useDeleteTypeReportMutation({
+  //   interestCode: category,
+  // });
 
   return (
     <>
-      <button onClick={() => deleteTypeReportMutation.mutate()}>
+      {/* <button onClick={() => deleteTypeReportMutation.mutate()}>
         유형 리포트 삭제(테스트용)
-      </button>
+      </button> */}
       <section className="relative flex-1 flex flex-col items-center">
         {typeReport && !isGenerating ? (
           // 유형 레포트
