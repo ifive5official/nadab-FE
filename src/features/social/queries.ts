@@ -1,9 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
-import type { ApiErrResponse, ApiResponse } from "@/generated/api";
+import type { ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
-import type { AxiosError } from "axios";
-import axios from "axios";
 
 // 피드 기능 =============================================
 
@@ -22,30 +20,10 @@ type feedShareStatusRes = components["schemas"]["ShareStatusResponse"];
 export const feedShareStatusOptions = queryOptions({
   queryKey: ["currentUser", "feedShareStatus"],
   queryFn: async () => {
-    try {
-      const res = await api.get<ApiResponse<feedShareStatusRes>>(
-        "/api/v1/feed/share/status",
-      );
-      return res.data.data!;
-    } catch (err) {
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.data?.code === "DAILY_REPORT_NOT_FOUND"
-      ) {
-        return {
-          isShared: undefined,
-        };
-      }
-      throw err;
-    }
-  },
-  retry: (failureCount, err: AxiosError<ApiErrResponse<null>>) => {
-    // 아직 오늘의 질문에 답하지 않았다고 응답이 오면 재시도 하지 않음
-    if (err.response?.data?.code === "DAILY_REPORT_NOT_FOUND") {
-      return false;
-    }
-    // 그 외의 에러는 기본값
-    return failureCount < 3;
+    const res = await api.get<ApiResponse<feedShareStatusRes>>(
+      "/api/v1/feed/share/status",
+    );
+    return res.data.data!;
   },
 });
 

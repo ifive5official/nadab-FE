@@ -5942,13 +5942,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     getDailyReport: {

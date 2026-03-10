@@ -4,12 +4,14 @@ import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import useModalStore from "@/store/modalStore";
 
 type Props = {
   onSuccess?: () => void;
 };
 
 export function useShareFeedMutation({ onSuccess }: Props) {
+  const { showError } = useModalStore();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
@@ -23,7 +25,14 @@ export function useShareFeedMutation({ onSuccess }: Props) {
       });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === "DAILY_REPORT_NOT_FOUND") {
+        showError(
+          "아직 오늘의 질문에 답하지 않았어요.",
+          "오늘의 질문에 답하고 친구들과 공유해보세요.",
+        );
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }

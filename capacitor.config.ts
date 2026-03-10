@@ -1,5 +1,8 @@
-import "dotenv/config";
+import * as dotenv from "dotenv";
+import path from "path";
 import type { CapacitorConfig } from "@capacitor/cli";
+
+dotenv.config({ path: path.resolve(__dirname, ".env.production") });
 
 const config: CapacitorConfig = {
   appId: "com.nadab.app",
