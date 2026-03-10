@@ -5,6 +5,7 @@ import type { AxiosError } from "axios";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { formatISODate } from "@/lib/formatters";
+import useModalStore from "@/store/modalStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
 type Props = {
@@ -15,6 +16,7 @@ type Req = components["schemas"]["DailyReportRequest"];
 type Res = components["schemas"]["CreateDailyReportResponse"];
 
 export function useGenerateReportMutation({ onSuccess }: Props) {
+  const { showError } = useModalStore();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -35,7 +37,18 @@ export function useGenerateReportMutation({ onSuccess }: Props) {
       onSuccess?.(data.data?.reportId ?? 0);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (
+        err.response?.data?.code === "AI_RESPONSE_PARSE_FAILED" ||
+        err.response?.data?.code === "AI_RESPONSE_FORMAT_INVALID" ||
+        err.response?.data?.code === "AI_NO_RESPONSE"
+      ) {
+        showError(
+          "리포트 생성 도중 문제가 발생했어요.",
+          "다시 한번 시도해 주세요.",
+        );
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }

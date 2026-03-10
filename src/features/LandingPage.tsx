@@ -1,20 +1,21 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
-import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
+import { GoogleIcon, RoundEmailIcon } from "@/components/Icons";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
 
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
-import { CapacitorNaverLogin } from "@team-lepisode/capacitor-naver-login";
+// import { CapacitorNaverLogin } from "@team-lepisode/capacitor-naver-login";
 import useAuthStore from "@/store/authStore";
 import axios from "axios";
 import useModalStore from "@/store/modalStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
+import { Browser } from "@capacitor/browser";
 
 type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
@@ -89,37 +90,37 @@ export function LandingPage() {
     }
   }
 
-  async function sdkNaverLogin() {
-    try {
-      const user = await CapacitorNaverLogin.login();
-      const res = await api.post("/api/v1/auth/naver/native-login", {
-        naverAccessToken: user.accessToken,
-      });
-      const { accessToken, signupStatus } = res.data.data!;
+  // async function sdkNaverLogin() {
+  //   try {
+  //     const user = await CapacitorNaverLogin.login();
+  //     const res = await api.post("/api/v1/auth/naver/native-login", {
+  //       naverAccessToken: user.accessToken,
+  //     });
+  //     const { accessToken, signupStatus } = res.data.data!;
 
-      useAuthStore.getState().setAccessToken(accessToken!);
+  //     useAuthStore.getState().setAccessToken(accessToken!);
 
-      if (signupStatus === "PROFILE_INCOMPLETE") {
-        navigate({
-          to: "/signup/terms",
-          replace: true,
-          search: { type: "social" },
-        });
-      }
-    } catch (err) {
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
-      ) {
-        // 이미 일반 로그인으로 가입한 계정일 시
-        useModalStore
-          .getState()
-          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
-      } else if (axios.isAxiosError(err)) {
-        handleDefaultApiError(err);
-      }
-    }
-  }
+  //     if (signupStatus === "PROFILE_INCOMPLETE") {
+  //       navigate({
+  //         to: "/signup/terms",
+  //         replace: true,
+  //         search: { type: "social" },
+  //       });
+  //     }
+  //   } catch (err) {
+  //     if (
+  //       axios.isAxiosError(err) &&
+  //       err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
+  //     ) {
+  //       // 이미 일반 로그인으로 가입한 계정일 시
+  //       useModalStore
+  //         .getState()
+  //         .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+  //     } else if (axios.isAxiosError(err)) {
+  //       handleDefaultApiError(err);
+  //     }
+  //   }
+  // }
 
   return (
     <div className="flex-1 flex flex-col px-padding-x-m">
@@ -143,7 +144,7 @@ export function LandingPage() {
       <div className="flex-1 w-full flex flex-col justify-center py-padding-y-m">
         <div className="flex flex-col gap-gap-y-xl">
           <div className="flex flex-col gap-gap-y-m">
-            <BlockButton
+            {/* <BlockButton
               variant="white"
               onClick={() => {
                 if (Capacitor.isNativePlatform()) {
@@ -159,7 +160,7 @@ export function LandingPage() {
                 </span>
                 <span>네이버로 로그인</span>
               </div>
-            </BlockButton>
+            </BlockButton> */}
             <BlockButton
               variant="white"
               onClick={() => {
@@ -197,7 +198,42 @@ export function LandingPage() {
             <BlockButton>회원가입</BlockButton>
           </Link>
           <p className="text-center text-label-s text-text-tertiary">
-            가입을 진행할 경우, 이용약관과 개인정보 수집 및 이용
+            가입을 진행할 경우,{" "}
+            <a
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+              href="https://peat-language-671.notion.site/2a93409bb9b680df9622d528417a6f5b"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (Capacitor.isNativePlatform()) {
+                  e.preventDefault();
+                  await Browser.open({
+                    url: "https://peat-language-671.notion.site/2a93409bb9b680df9622d528417a6f5b",
+                  });
+                }
+              }}
+            >
+              이용약관
+            </a>
+            과{" "}
+            <a
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+              href="https://peat-language-671.notion.site/2a03409bb9b6808bba61fffff6d03c56"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (Capacitor.isNativePlatform()) {
+                  e.preventDefault();
+                  await Browser.open({
+                    url: "https://peat-language-671.notion.site/2a03409bb9b6808bba61fffff6d03c56",
+                  });
+                }
+              }}
+            >
+              개인정보 수집 및 이용
+            </a>
             <br />에 대해 동의한 것으로 간주돼요.
           </p>
         </div>

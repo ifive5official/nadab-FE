@@ -13,7 +13,7 @@ export const NOTIFICATION_CONFIG: Record<
 > = {
   WEEKLY_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
-    inboxTitle: "리포트 완성",
+    inboxTitle: "주간 리포트 완성",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -21,7 +21,7 @@ export const NOTIFICATION_CONFIG: Record<
   },
   MONTHLY_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
-    inboxTitle: "리포트 완성",
+    inboxTitle: "월간 리포트 완성",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
@@ -29,7 +29,7 @@ export const NOTIFICATION_CONFIG: Record<
   },
   TYPE_REPORT_COMPLETED: {
     inboxIconSrc: "/icon/report-complete.png",
-    inboxTitle: "리포트 완성",
+    inboxTitle: "유형 리포트 완성",
     linkProps: {
       to: "/report",
       search: { tab: "type" },
