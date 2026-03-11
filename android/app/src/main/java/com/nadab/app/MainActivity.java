@@ -9,6 +9,7 @@ import com.getcapacitor.BridgeActivity;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.WindowManager;
+import androidx.core.view.WindowCompat;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -16,7 +17,8 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(ThemeManagerPlugin.class);
 
         super.onCreate(savedInstanceState);
-
+//        구버전 안드로이드에서도 edge to edge 강제
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         // 상단바 하단바 투명 설정
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
