@@ -52,6 +52,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-legacy": "^7.2.1",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.3.1",
     "eslint": "^9.39.1",
@@ -59,6 +60,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.0.0",
     "openapi-typescript": "^7.10.1",
+    "postcss": "^8.5.8",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.1.7",
@@ -67,5 +69,8 @@
   },
   "optionalDependencies": {
     "@capacitor/cli": "latest"
-  }
+  },
+  "browserslist": [
+    "chrome 80"
+  ]
 }

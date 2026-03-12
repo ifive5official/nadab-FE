@@ -128,12 +128,12 @@ export function LandingPage() {
       <div className="pt-padding-y-m flex-1 flex flex-col justify-center items-center">
         <img
           src="/mainLogo.png"
-          className="h-[calc((112.8/796)*100dvh)] w-auto"
+          className="h-[calc((112.8/796)*100*var(--dvh))] w-auto"
         />
         <div className="mt-padding-y-xxl mb-margin-y-m">
           <img
             src="/textLogo.png"
-            className="h-[calc((26.76/796)*100dvh)] w-auto"
+            className="h-[calc((26.76/796)*100*var(--dvh))] w-auto"
           />
         </div>
         <p className="text-label-m text-brand-primary-alpha-60">

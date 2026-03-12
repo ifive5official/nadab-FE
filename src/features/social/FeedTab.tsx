@@ -21,7 +21,7 @@ export default function FeedTab() {
           <NoResult
             title="아직은 친구가 없어요."
             description="친구 탭에서 친구를 추가하고 기록을 나눠보세요."
-            className="mt-[calc((160/796)*100dvh)]"
+            className="mt-[calc((160/796)*100*var(--dvh))]"
           />
         ) : (
           <>
@@ -32,7 +32,7 @@ export default function FeedTab() {
                 <NoResult
                   title="아직 공유된 글이 없어요."
                   description="친구의 기록이 공유되면 피드에서 확인할 수 있어요."
-                  className="mt-[calc((110/796)*100dvh)]"
+                  className="mt-[calc((110/796)*100*var(--dvh))]"
                 />
               )}
               {feeds?.map((feed) => (

@@ -137,8 +137,8 @@ export default function FriendsTab() {
               className={clsx(
                 "mb-auto",
                 friendsCount === 0
-                  ? "mt-[calc((110/796)*100dvh)]"
-                  : "mt-[calc((70/796)*100dvh)]",
+                  ? "mt-[calc((110/796)*100*var(--dvh))]"
+                  : "mt-[calc((70/796)*100*var(--dvh))]",
               )}
               title="아직은 친구가 없어요."
               description="검색을 통해 친구를 추가하고 기록을 나눠보세요."

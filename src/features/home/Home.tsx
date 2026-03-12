@@ -123,7 +123,7 @@ export default function Home() {
           </p>
           {/* 구슬 */}
           <div className="flex items-center justify-center">
-            <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100svh))] sm:w-[calc((267/390)*412px)] aspect-square ">
+            <div className="relative w-[min(calc((267/390)*100vw),calc((267/796)*100*var(--dvh)))] sm:w-[calc((267/390)*412px)] aspect-square ">
               <img
                 src="/video.webp"
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"

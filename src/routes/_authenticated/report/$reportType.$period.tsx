@@ -89,7 +89,7 @@ function RouteComponent() {
       <SubHeader>{config.label}</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col">
-          <div className="-mx-padding-x-m flex flex-col items-center justify-center gap-margin-y-s bg-[url(/periodic-report-bg.png)] bg-cover h-[calc((150/796)*100dvh)]">
+          <div className="-mx-padding-x-m flex flex-col items-center justify-center gap-margin-y-s bg-[url(/periodic-report-bg.png)] bg-cover h-[calc((150/796)*100*var(--dvh))]">
             <span className="text-caption-m text-text-secondary">
               {report?.month}월{" "}
               {reportType === "weekly" && `${report?.weekOfMonth}주차 `}리포트
