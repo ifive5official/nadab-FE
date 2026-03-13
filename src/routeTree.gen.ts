@@ -24,6 +24,7 @@ import { Route as AuthenticatedDailyIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
+import { Route as AuthenticatedSocialBlockedRouteImport } from './routes/_authenticated/social/blocked'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
@@ -122,6 +123,12 @@ const AuthenticatedSocialRequestsRoute =
   AuthenticatedSocialRequestsRouteImport.update({
     id: '/social/requests',
     path: '/social/requests',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSocialBlockedRoute =
+  AuthenticatedSocialBlockedRouteImport.update({
+    id: '/social/blocked',
+    path: '/social/blocked',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDetailDateRoute = AuthenticatedDetailDateRouteImport.update({
@@ -264,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByTo {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
@@ -339,6 +348,7 @@ export interface FileRoutesById {
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/_authenticated/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
@@ -377,6 +387,7 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
+    | '/social/blocked'
     | '/social/requests'
     | '/social/search'
     | '/account'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
+    | '/social/blocked'
     | '/social/requests'
     | '/social/search'
     | '/account'
@@ -451,6 +463,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/withdraw'
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
+    | '/_authenticated/social/blocked'
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
     | '/_authenticated/account/'
@@ -579,6 +592,13 @@ declare module '@tanstack/react-router' {
       path: '/social/requests'
       fullPath: '/social/requests'
       preLoaderRoute: typeof AuthenticatedSocialRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/social/blocked': {
+      id: '/_authenticated/social/blocked'
+      path: '/social/blocked'
+      fullPath: '/social/blocked'
+      preLoaderRoute: typeof AuthenticatedSocialBlockedRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/detail/$date': {
@@ -753,6 +773,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
+  AuthenticatedSocialBlockedRoute: typeof AuthenticatedSocialBlockedRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
@@ -770,6 +791,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRoute,
+  AuthenticatedSocialBlockedRoute: AuthenticatedSocialBlockedRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,

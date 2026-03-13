@@ -20,8 +20,12 @@ export function useBlockFriendMutation({ onSuccess }: Props) {
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
+      // 차단 후 친구 목록 및 피드 리셋
+      await queryClient.resetQueries({
         queryKey: ["currentUser", "friends"],
+      });
+      await queryClient.resetQueries({
+        queryKey: ["currentUser", "feeds"],
       });
       onSuccess?.();
     },

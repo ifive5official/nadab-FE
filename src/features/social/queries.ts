@@ -49,6 +49,17 @@ export const friendRequestsOptions = queryOptions({
     return res.data.data!;
   },
 });
+type BlockedFriendsRes = components["schemas"]["BlockedUserListResponse"];
+
+export const blockedFriendsOptions = queryOptions({
+  queryKey: ["currentUser", "friends", "blocked"],
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<BlockedFriendsRes>>(
+      "/api/v1/moderation/blocks",
+    );
+    return res.data.data!;
+  },
+});
 
 type FriendSearchHistoriesRes =
   components["schemas"]["SearchHistoryListResponse"];
