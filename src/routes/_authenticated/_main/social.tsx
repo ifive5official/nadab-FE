@@ -3,6 +3,7 @@ import FriendsTab from "@/features/social/FriendsTab";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import FeedTab from "@/features/social/FeedTab";
 import {
+  blockedFriendsOptions,
   feedOptions,
   feedShareStatusOptions,
   friendRequestsOptions,
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
         await Promise.all([
           queryClient.ensureQueryData(friendRequestsOptions),
           queryClient.ensureQueryData(friendsOptions),
+          queryClient.ensureQueryData(blockedFriendsOptions),
         ]);
         break;
     }
