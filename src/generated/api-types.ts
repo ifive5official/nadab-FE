@@ -387,6 +387,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/moderation/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 공유글 신고 API
+         * @description 공유된 DailyReport를 신고합니다.
+         *
+         *     요청 필드:
+         *     - dailyReportId (필수): 신고할 공유글의 DailyReport ID(GET /api/v1/feed 호출 시 필드에서 확인 가능)
+         *     - reason (필수): 신고 사유
+         *       - PROFANITY_HATE_SPEECH: 욕설 / 혐오 표현
+         *       - SEXUAL_CONTENT: 성적으로 부적절한 언행
+         *       - SELF_HARM: 자해 / 자살 조장
+         *       - OTHER: 기타 (customReason 필수)
+         *     - customReason: reason이 OTHER일 때만 필수, 200자 이하
+         *
+         *     신고 후 동작:
+         *     - 동일 공유글 중복 신고 불가
+         *     - 신고한 공유글은 신고자의 피드에서 숨겨짐
+         *     - 누적 신고 10건 이상 & 신고자 2명 이상 시 작성자의 소셜 활동 자동 중지(공유하기 시도 시 status로 SUSPENDED 반환)
+         */
+        post: operations["reportContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/moderation/blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 차단 사용자 목록 조회
+         * @description 내가 차단한 사용자 목록을 조회합니다.
+         */
+        get: operations["getBlockedUsers"];
+        put?: never;
+        /**
+         * 사용자 차단
+         * @description 특정 사용자를 차단합니다.
+         *
+         *     - 차단 즉시 기존 친구 관계(수락/대기 포함)를 제거합니다.
+         *     - 상호 검색 결과 및 상호 피드 노출이 즉시 중단됩니다.
+         */
+        post: operations["blockUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/friends/search/histories": {
         parameters: {
             query?: never;
@@ -527,6 +588,10 @@ export interface paths {
         /**
          * 공유 시작 API
          * @description 당일 DailyReport를 친구들에게 공유합니다.
+         *
+         *     응답 상태:
+         *     - SHARED: 공유가 정상적으로 시작됨
+         *     - SUSPENDED: 신고 10건 이상 & 서로 다른 신고자 2명 이상으로 인해 피드 공유 활동이 차단됨
          */
         post: operations["startSharing"];
         delete?: never;
@@ -1936,6 +2001,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/moderation/blocks/{userBlockId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * 사용자 차단 해제
+         * @description 차단 관계를 해제합니다.
+         */
+        delete: operations["unblockUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/friends/{friendshipId}": {
         parameters: {
             query?: never;
@@ -2279,6 +2364,34 @@ export interface components {
              */
             balanceAfter?: number;
         };
+        /** @description 공유글 신고 요청 */
+        ReportContentRequest: {
+            /**
+             * Format: int64
+             * @description 신고할 DailyReport ID
+             * @example 123
+             */
+            dailyReportId: number;
+            /**
+             * @description 신고 사유 (PROFANITY_HATE_SPEECH, SEXUAL_CONTENT, SELF_HARM, OTHER)
+             * @example OTHER
+             * @enum {string}
+             */
+            reason: "PROFANITY_HATE_SPEECH" | "SEXUAL_CONTENT" | "SELF_HARM" | "OTHER";
+            /**
+             * @description 기타 사유 (reason이 OTHER일 때 필수, 200자 이하)
+             * @example 부적절한 내용입니다
+             */
+            customReason?: string;
+        };
+        /** @description 사용자 차단 요청 */
+        BlockUserRequest: {
+            /**
+             * @description 차단할 사용자 닉네임
+             * @example 모래
+             */
+            blockedNickname: string;
+        };
         /** @description 친구 검색 기록 저장 요청 */
         SaveFriendSearchRequest: {
             /**
@@ -2303,6 +2416,16 @@ export interface components {
              * @example 춤추는사막여우
              */
             receiverNickname: string;
+        };
+        /** @description 공유 시작 요청 응답 */
+        ShareStartResponse: {
+            /**
+             * @description - SHARED: 공유 성공
+             *     - SUSPENDED: 공유 차단됨 (신고 10건 이상 & 서로 다른 신고자 2명 이상)
+             * @example SUSPENDED
+             * @enum {string}
+             */
+            status?: "SHARED" | "SUSPENDED";
         };
         /** @description 이메일 인증 코드 발송 요청 */
         SendVerificationCodeRequest: {
@@ -2941,6 +3064,36 @@ export interface components {
             /** @description 이전 월간 리포트 */
             previousReport?: components["schemas"]["MonthlyReportResponse"];
         };
+        /** @description 차단 사용자 목록 응답 */
+        BlockedUserListResponse: {
+            /**
+             * Format: int32
+             * @description 총 차단 사용자 수
+             * @example 2
+             */
+            totalCount?: number;
+            /** @description 차단 사용자 목록 */
+            blockedUsers?: components["schemas"]["BlockedUserResponse"][];
+        };
+        /** @description 차단 사용자 정보 */
+        BlockedUserResponse: {
+            /**
+             * Format: int64
+             * @description 차단 관계 ID
+             * @example 12
+             */
+            userBlockId?: number;
+            /**
+             * @description 닉네임
+             * @example 모래
+             */
+            nickname?: string;
+            /**
+             * @description 프로필 이미지 URL
+             * @example https://cdn.example.com/profiles/abc123.png
+             */
+            profileImageUrl?: string;
+        };
         /** @description 홈화면 요약 정보 응답 */
         HomeResponse: {
             /**
@@ -3106,6 +3259,12 @@ export interface components {
         };
         /** @description 피드 응답 */
         FeedResponse: {
+            /**
+             * Format: int64
+             * @description DailyReport ID (신고 시 사용)
+             * @example 123
+             */
+            dailyReportId?: number;
             /**
              * @description 친구 닉네임
              * @example 모래
@@ -3982,6 +4141,129 @@ export interface operations {
             };
         };
     };
+    reportContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportContentRequest"];
+            };
+        };
+        responses: {
+            /** @description 신고 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: CONTENT_REPORT_INVALID - 잘못된 신고 요청 (기타 사유 미입력 또는 200자 초과) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 공유글을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: CONTENT_REPORT_ALREADY_EXISTS - 이미 신고한 공유글 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getBlockedUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BlockedUserListResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    blockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlockUserRequest"];
+            };
+        };
+        responses: {
+            /** @description 차단 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: MODERATION_CANNOT_BLOCK_SELF - 본인 차단 불가
+             *     - ErrorCode: MODERATION_ALREADY_BLOCKED - 이미 차단한 사용자
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: USER_NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getRecentSearches_1: {
         parameters: {
             query?: never;
@@ -4172,7 +4454,10 @@ export interface operations {
                     "*/*": components["schemas"]["ApiResponseDto"];
                 };
             };
-            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청 */
+            /**
+             * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
+             *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -4225,6 +4510,7 @@ export interface operations {
             /**
              * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
              *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과
+             *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
              */
             400: {
                 headers: {
@@ -4296,12 +4582,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 공유 시작 성공 */
-            204: {
+            /** @description 공유 요청 처리 완료 (SHARED 또는 SUSPENDED 반환) */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ShareStartResponse"];
+                };
             };
             /** @description 인증 실패 */
             401: {
@@ -6385,6 +6673,42 @@ export interface operations {
              * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
              *     - ErrorCode: DEVICE_NOT_FOUND - 디바이스를 찾을 수 없음
              */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    unblockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userBlockId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 차단 해제 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ErrorCode: MODERATION_BLOCK_NOT_FOUND - 차단 관계를 찾을 수 없음 */
             404: {
                 headers: {
                     [name: string]: unknown;

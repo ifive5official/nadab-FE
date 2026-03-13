@@ -1,6 +1,5 @@
 // 프로필 이미지 + 업로드 로직 모아둔 파일
 import { useState, useRef } from "react";
-import BottomModal from "@/components/BottomModal";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
@@ -12,6 +11,7 @@ import useToastStore from "@/store/toastStore";
 
 import { Capacitor } from "@capacitor/core";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera"; // 추가
+import useBottomModalStore from "@/store/bottomModalStore";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -30,7 +30,7 @@ export default function ProfileImageUploader({
   className,
 }: Props) {
   const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const { showToast } = useToastStore();
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
@@ -68,7 +68,7 @@ export default function ProfileImageUploader({
         ...baseModalItems,
         {
           label: "취소",
-          onClick: () => setIsModalOpen(false),
+          onClick: () => closeBottomModal(),
         },
       ],
     },
@@ -81,7 +81,7 @@ export default function ProfileImageUploader({
           onClick: () => {
             setProfileImgUrl(undefined);
             onSuccess("");
-            setIsModalOpen(false);
+            closeBottomModal();
           },
         },
         ...baseModalItems,
@@ -90,6 +90,10 @@ export default function ProfileImageUploader({
   };
 
   const { buttonText, modalTitle, modalItems } = uiConfig[mode];
+  const bottomModalConfig = {
+    title: modalTitle,
+    items: modalItems,
+  };
 
   // presigned url 생성
   const getPresignedUrlMutation = useMutation({
@@ -132,7 +136,7 @@ export default function ProfileImageUploader({
       return;
     }
 
-    setIsModalOpen(false);
+    closeBottomModal();
 
     const previewUrl = URL.createObjectURL(file);
     setProfileImgUrl(previewUrl);
@@ -178,7 +182,7 @@ export default function ProfileImageUploader({
         });
 
         // 3. 기존 업로드 로직
-        setIsModalOpen(false);
+        closeBottomModal();
         const res = await getPresignedUrlMutation.mutateAsync(file.type);
         await uploadToS3Mutation.mutateAsync({
           presignedUrl: res.data?.objectKey ?? "",
@@ -195,7 +199,7 @@ export default function ProfileImageUploader({
     } catch (e: any) {
       console.error("Native Upload Error:", e);
       if (e.message.includes("denied") || e.message.includes("permission")) {
-        setIsModalOpen(false);
+        closeBottomModal();
         showToast({
           message: "설정에서 카메라 권한을 허용해 주세요.",
           bottom:
@@ -217,7 +221,7 @@ export default function ProfileImageUploader({
       <button
         type="button"
         className="text-button-tertiary-text-default text-label-m underline"
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => showBottomModal(bottomModalConfig)}
         disabled={isUploading}
       >
         {buttonText}
@@ -236,13 +240,6 @@ export default function ProfileImageUploader({
         accept="image/jpeg,image/png"
         capture="environment"
         onChange={handleFileChange}
-      />
-
-      <BottomModal
-        isOpen={isModalOpen}
-        title={modalTitle}
-        items={modalItems}
-        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );

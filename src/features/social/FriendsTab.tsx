@@ -1,17 +1,21 @@
 import Container from "@/components/Container";
-import { ChevronRightIcon, WarningFilledIcon } from "@/components/Icons";
+import {
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+  WarningFilledIcon,
+} from "@/components/Icons";
 import SearchBar from "@/components/SearchBar";
 import clsx from "clsx";
 import FriendItem from "./FriendItem";
 import { Link } from "@tanstack/react-router";
 import NoResult from "@/components/NoResult";
-import InlineButton from "@/components/InlineButton";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import { friendRequestsOptions, friendsOptions } from "./queries";
 import ProfileImg from "@/components/ProfileImg";
 import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
+import useBottomModalStore from "@/store/bottomModalStore";
 
 export default function FriendsTab() {
   const [friendsQuery, requestsQuery] = useSuspenseQueries({
@@ -26,6 +30,7 @@ export default function FriendsTab() {
     onSuccess: () => showToast({ message: "친구가 삭제되었어요." }),
   });
 
+  const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
 
@@ -98,35 +103,51 @@ export default function FriendsTab() {
                     name={friend.nickname!}
                     profileImgUrl={friend.profileImageUrl!}
                     buttons={[
-                      <InlineButton
-                        key={1}
-                        variant="secondary"
-                        onClick={() => {
-                          showModal({
-                            icon: WarningFilledIcon,
-                            title: `${friend.nickname!}님을 친구에서 삭제하겠어요?`,
-                            children: " 친구 삭제 이후에 복구가 불가능해요.",
-                            buttons: [
+                      <button
+                        key={"button"}
+                        onClick={() =>
+                          showBottomModal({
+                            title: "친구 편집",
+                            items: [
                               {
-                                label: "취소",
-                                onClick: closeModal,
+                                label: "차단",
+                                type: "warning",
+                                onClick: () => {},
                               },
                               {
-                                label: "확인",
+                                label: "삭제",
+                                type: "warning",
                                 onClick: () => {
-                                  closeModal();
-                                  deleteFriendMutation.mutate({
-                                    friendshipId: friend.friendshipId!,
+                                  showModal({
+                                    icon: WarningFilledIcon,
+                                    title: `${friend.nickname!}님을 친구에서 삭제하겠어요?`,
+                                    children:
+                                      " 친구 삭제 이후에 복구가 불가능해요.",
+                                    buttons: [
+                                      {
+                                        label: "취소",
+                                        onClick: closeModal,
+                                      },
+                                      {
+                                        label: "확인",
+                                        onClick: () => {
+                                          closeModal();
+                                          closeBottomModal();
+                                          deleteFriendMutation.mutate({
+                                            friendshipId: friend.friendshipId!,
+                                          });
+                                        },
+                                      },
+                                    ],
                                   });
                                 },
                               },
                             ],
-                          });
-                        }}
-                        isLoading={deleteFriendMutation.isPending}
+                          })
+                        }
                       >
-                        삭제
-                      </InlineButton>,
+                        <MoreHorizontalIcon />
+                      </button>,
                     ]}
                   />
                 );
