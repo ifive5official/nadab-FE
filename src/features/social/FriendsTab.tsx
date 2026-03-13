@@ -16,6 +16,7 @@ import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
 import useBottomModalStore from "@/store/bottomModalStore";
+import { useBlockFriendMutation } from "./hooks/useBlockFriendMutation";
 
 export default function FriendsTab() {
   const [friendsQuery, requestsQuery] = useSuspenseQueries({
@@ -26,6 +27,9 @@ export default function FriendsTab() {
   const friendRequests = requestsQuery.data;
   const requestsCount = friendRequests?.totalCount ?? 0;
 
+  const blockFriendMutation = useBlockFriendMutation({
+    onSuccess: () => showToast({ message: "친구가 차단되었어요." }),
+  });
   const deleteFriendMutation = useDeleteFriendMutation({
     onSuccess: () => showToast({ message: "친구가 삭제되었어요." }),
   });
@@ -112,7 +116,30 @@ export default function FriendsTab() {
                               {
                                 label: "차단",
                                 type: "warning",
-                                onClick: () => {},
+                                onClick: () => {
+                                  showModal({
+                                    icon: WarningFilledIcon,
+                                    title: `${friend.nickname!}님을\n차단하겠어요?`,
+                                    children:
+                                      "친구 차단 시 상호 간 친구 삭제가 이루어져요.",
+                                    buttons: [
+                                      {
+                                        label: "취소",
+                                        onClick: closeModal,
+                                      },
+                                      {
+                                        label: "확인",
+                                        onClick: () => {
+                                          closeModal();
+                                          closeBottomModal();
+                                          blockFriendMutation.mutate({
+                                            blockedNickname: friend.nickname!,
+                                          });
+                                        },
+                                      },
+                                    ],
+                                  });
+                                },
                               },
                               {
                                 label: "삭제",
@@ -120,9 +147,9 @@ export default function FriendsTab() {
                                 onClick: () => {
                                   showModal({
                                     icon: WarningFilledIcon,
-                                    title: `${friend.nickname!}님을 친구에서 삭제하겠어요?`,
+                                    title: `${friend.nickname!}님을\n친구에서 삭제하겠어요?`,
                                     children:
-                                      " 친구 삭제 이후에 복구가 불가능해요.",
+                                      "친구 삭제 이후에 복구가 불가능해요.",
                                     buttons: [
                                       {
                                         label: "취소",
