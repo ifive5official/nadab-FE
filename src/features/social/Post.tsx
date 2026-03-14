@@ -5,12 +5,18 @@ import type { components } from "@/generated/api-types";
 import ProfileImg from "@/components/ProfileImg";
 import type categories from "@/constants/categories";
 import type emotions from "@/constants/emotions";
+import { MoreHorizontalIcon } from "@/components/Icons";
+import useBottomModalStore from "@/store/bottomModalStore";
+import { useNavigate } from "@tanstack/react-router";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
 };
 
 export default function Post({ feed }: Props) {
+  const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const navigate = useNavigate();
+
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false); // 텍스트가 넘치는가?
   const answerRef = useRef<HTMLParagraphElement>(null);
@@ -31,7 +37,26 @@ export default function Post({ feed }: Props) {
     <section className="px-padding-x-m py-padding-y-m rounded-2xl bg-surface-layer-1 border border-border-base shadow-1">
       <div className="flex items-center gap-margin-x-s">
         <ProfileImg width={35} src={feed.friendProfileImageUrl} />
-        <span className="text-button-1">{feed.friendNickname}</span>
+        <span className="text-button-1 mr-auto">{feed.friendNickname}</span>
+        <button
+          onClick={() =>
+            showBottomModal({
+              title: "게시글 신고",
+              items: [
+                {
+                  label: "신고",
+                  type: "warning",
+                  onClick: () => {
+                    closeBottomModal();
+                    navigate({ to: "/flag" });
+                  },
+                },
+              ],
+            })
+          }
+        >
+          <MoreHorizontalIcon />
+        </button>
       </div>
       <div className="border-b border-b-surface-layer-2 my-margin-y-m" />
       <div className="flex justify-start">
