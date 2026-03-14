@@ -39,16 +39,26 @@ export default function ShareBanner({
 }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
-  const { showModal, closeModal } = useModalStore();
+  const { showModal, showError, closeModal } = useModalStore();
   const { showToast } = useToastStore();
 
   const { data } = useSuspenseQuery(feedShareStatusOptions);
   const shareFeedMutation = useShareFeedMutation({
-    onSuccess: () =>
-      showToast({
-        message: "오늘의 기록을 친구와 공유했어요.",
-        bottom: toastBottom,
-      }),
+    onSuccess: (status) => {
+      if (status === "SHARED") {
+        // 공유 성공
+        showToast({
+          message: "오늘의 기록을 친구와 공유했어요.",
+          bottom: toastBottom,
+        });
+      } else {
+        // 신고 누적으로 공유 불가
+        showError(
+          "신고 누적으로 소셜 활동이 중지되었어요.",
+          "내 글이 다른 사람의 피드에 보이지 않아요.",
+        );
+      }
+    },
   });
   const unShareFeedMutation = useUnshareFeedMutation({
     onSuccess: () =>

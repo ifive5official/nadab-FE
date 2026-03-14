@@ -2,12 +2,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
-import type { ApiErrResponse } from "@/generated/api";
+import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import useModalStore from "@/store/modalStore";
+import type { components } from "@/generated/api-types";
+
+type Res = components["schemas"]["ShareStartResponse"];
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (status: "SHARED" | "SUSPENDED") => void;
 };
 
 export function useShareFeedMutation({ onSuccess }: Props) {
@@ -15,11 +18,11 @@ export function useShareFeedMutation({ onSuccess }: Props) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const res = await api.post("/api/v1/feed/share");
+      const res = await api.post<ApiResponse<Res>>("/api/v1/feed/share");
       return res.data;
     },
-    onSuccess: () => {
-      onSuccess?.();
+    onSuccess: (data) => {
+      onSuccess?.(data?.data?.status ?? "SHARED");
       queryClient.setQueryData(["currentUser", "feedShareStatus"], {
         isShared: true,
       });
