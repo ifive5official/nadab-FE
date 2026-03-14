@@ -105,6 +105,7 @@ export default function FriendsTab() {
                     key={friend.friendshipId}
                     name={friend.nickname!}
                     profileImgUrl={friend.profileImageUrl!}
+                    isWithdrawn={friend.isWithdrawn}
                     buttons={[
                       <button
                         key={"button"}
