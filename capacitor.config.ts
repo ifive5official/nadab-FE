@@ -33,8 +33,6 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchAutoHide: false,
       androidScaleType: "FIT_CENTER",
-      // splashFullScreen: true,
-      // splashImmersive: true,
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound"],
