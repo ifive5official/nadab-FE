@@ -139,6 +139,10 @@ function NotificationItem({ notification }: { notification: Notification }) {
 
       <div className="flex flex-col">
         <p className="text-label-m">
+          {/* 유형 레포트의 경우 앞에 유형까지 명시 */}
+          {(notification.type === "TYPE_REPORT_COMPLETED" ||
+            notification.type === "TYPE_REPORT_AVAILABLE") &&
+            notification.inboxMessage?.split(" ")[0]}{" "}
           {config.inboxTitle ?? notification.title}
         </p>
         <p className="text-caption-m">{notification.inboxMessage}</p>

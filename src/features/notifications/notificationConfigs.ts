@@ -12,7 +12,7 @@ export const NOTIFICATION_CONFIG: Record<
   }
 > = {
   WEEKLY_REPORT_COMPLETED: {
-    inboxIconSrc: "/icon/report-complete.png",
+    inboxIconSrc: "/icon/weekly-report.png",
     inboxTitle: "주간 리포트 완성",
     linkProps: {
       to: "/report",
@@ -20,7 +20,7 @@ export const NOTIFICATION_CONFIG: Record<
     },
   },
   MONTHLY_REPORT_COMPLETED: {
-    inboxIconSrc: "/icon/report-complete.png",
+    inboxIconSrc: "/icon/monthly-report.png",
     inboxTitle: "월간 리포트 완성",
     linkProps: {
       to: "/report",
@@ -28,7 +28,7 @@ export const NOTIFICATION_CONFIG: Record<
     },
   },
   TYPE_REPORT_COMPLETED: {
-    inboxIconSrc: "/icon/report-complete.png",
+    inboxIconSrc: "/icon/type-report.png",
     inboxTitle: "유형 리포트 완성",
     linkProps: {
       to: "/report",
@@ -36,24 +36,24 @@ export const NOTIFICATION_CONFIG: Record<
     },
   },
   WEEKLY_REPORT_AVAILABLE: {
-    inboxIconSrc: "/icon/check.png",
-    inboxTitle: "리포트 조건 충족",
+    inboxIconSrc: "/icon/weekly-report.png",
+    inboxTitle: "주간 리포트 조건 충족",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
     },
   },
   MONTHLY_REPORT_AVAILABLE: {
-    inboxIconSrc: "/icon/check.png",
-    inboxTitle: "리포트 조건 충족",
+    inboxIconSrc: "/icon/monthly-report.png",
+    inboxTitle: "월간 리포트 조건 충족",
     linkProps: {
       to: "/report",
       search: { tab: "periodic" },
     },
   },
   TYPE_REPORT_AVAILABLE: {
-    inboxIconSrc: "/icon/check.png",
-    inboxTitle: "리포트 조건 충족",
+    inboxIconSrc: "/icon/type-report.png",
+    inboxTitle: "유형 리포트 조건 충족",
     linkProps: {
       to: "/report",
       search: { tab: "type" },
