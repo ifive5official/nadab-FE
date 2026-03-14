@@ -2,14 +2,17 @@ import BlockButton from "@/components/BlockButton";
 import CheckBox from "@/components/Checkbox";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
-import { createFileRoute } from "@tanstack/react-router";
+import { useFlagMutation } from "@/features/social/hooks/useFlagMutation";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-export const Route = createFileRoute("/_authenticated/flag/")({
+export const Route = createFileRoute("/_authenticated/flag/$reportId")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { reportId } = Route.useParams();
+
   const initialReasons = [
     { id: "PROFANITY_HATE_SPEECH", label: "욕설 / 혐오 표현", checked: false },
     { id: "SEXUAL_CONTENT", label: "성적으로 부적절한 언행", checked: false },
@@ -18,8 +21,15 @@ function RouteComponent() {
   ];
 
   const [reasons, setReasons] = useState(initialReasons);
-  const isSomeReasonSelected = reasons.some((reason) => reason.checked);
+  const selectedReason = reasons.find((reason) => reason.checked);
   const [otherDetail, setOtherDetail] = useState("");
+
+  const navigate = useNavigate();
+  const flagMutation = useFlagMutation({
+    onSuccess: () => {
+      navigate({ to: "/social", search: { tab: "feed" } });
+    },
+  });
 
   return (
     <>
@@ -39,7 +49,7 @@ function RouteComponent() {
                   prev.map((item) =>
                     item.id === reason.id
                       ? { ...item, checked: !item.checked }
-                      : item,
+                      : { ...item, checked: false },
                   ),
                 );
               }}
@@ -47,7 +57,7 @@ function RouteComponent() {
             />
           ))}
           {reasons.find((reason) => reason.id === "OTHER")?.checked && (
-            <div>
+            <div className="flex flex-col">
               <textarea
                 maxLength={200}
                 value={otherDetail}
@@ -55,7 +65,7 @@ function RouteComponent() {
                 placeholder="신고 사유를 입력해주세요."
                 className="h-[180px] w-full px-padding-x-xs py-padding-y-xs text-caption-m rounded-lg border border-border-base placeholder:text-text-disabled resize-none"
               ></textarea>
-              <div className="text-caption-s mt-margin-y-xs">
+              <div className="ml-auto text-caption-s mt-margin-y-xs">
                 <span>{otherDetail.length}</span>
                 <span className="text-text-disabled">/200자</span>
               </div>
@@ -64,7 +74,15 @@ function RouteComponent() {
         </div>
 
         <BlockButton
-          disabled={!isSomeReasonSelected}
+          onClick={() =>
+            flagMutation.mutate({
+              dailyReportId: Number(reportId),
+              reason: selectedReason!.id,
+              customReason: otherDetail,
+            })
+          }
+          isLoading={flagMutation.isPending}
+          disabled={!selectedReason}
           className="mt-padding-y-xxl"
         >
           완료

@@ -48,7 +48,7 @@ export default function Post({ feed }: Props) {
                   type: "warning",
                   onClick: () => {
                     closeBottomModal();
-                    navigate({ to: "/flag" });
+                    navigate({ to: `/flag/${feed.dailyReportId}` });
                   },
                 },
               ],
