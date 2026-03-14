@@ -23,6 +23,8 @@ function RouteComponent() {
   const [reasons, setReasons] = useState(initialReasons);
   const selectedReason = reasons.find((reason) => reason.checked);
   const [otherDetail, setOtherDetail] = useState("");
+  const canSubmit =
+    selectedReason?.id === "OTHER" ? !!otherDetail : !!selectedReason;
 
   const navigate = useNavigate();
   const flagMutation = useFlagMutation({
@@ -82,7 +84,7 @@ function RouteComponent() {
             })
           }
           isLoading={flagMutation.isPending}
-          disabled={!selectedReason}
+          disabled={!canSubmit}
           className="mt-padding-y-xxl"
         >
           완료

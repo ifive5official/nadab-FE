@@ -8,7 +8,6 @@ import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import AppInitializer from "./components/AppInitializer.tsx";
-import { Capacitor } from "@capacitor/core";
 
 const queryClient = new QueryClient();
 
@@ -36,7 +35,7 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     //<StrictMode>
     <QueryClientProvider client={queryClient}>
-      {Capacitor.isNativePlatform() && <AppInitializer router={router} />}
+      <AppInitializer router={router} />
       <RouterProvider router={router} />
     </QueryClientProvider>,
     // </StrictMode>
