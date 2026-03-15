@@ -3,9 +3,16 @@ import { createPortal } from "react-dom";
 import { CloseBigIcon, ToastCircleCheckFilledIcon } from "./Icons";
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
+import { useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export default function Toast() {
   const { isOpen, config, closeToast } = useToastStore();
+  const location = useLocation();
+
+  useEffect(() => {
+    closeToast();
+  }, [location.pathname, closeToast]);
 
   return createPortal(
     <AnimatePresence>

@@ -1,6 +1,7 @@
 // 아래쪽에 뜨는 모달
 // 선으로 버튼 구분
 import useBottomModalStore from "@/store/bottomModalStore";
+import { useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect } from "react";
@@ -8,7 +9,7 @@ import { createPortal } from "react-dom";
 
 export default function BottomModal() {
   const { isOpen, closeBottomModal, config } = useBottomModalStore();
-
+  const location = useLocation();
   // 하단에서 올라오는 애니메이션으로 인한 스크롤 방지
   useEffect(() => {
     if (isOpen) {
@@ -19,6 +20,10 @@ export default function BottomModal() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    closeBottomModal();
+  }, [location.pathname, closeBottomModal]);
 
   return createPortal(
     <AnimatePresence>

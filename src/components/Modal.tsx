@@ -3,9 +3,11 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
 import useModalStore from "@/store/modalStore";
+import { useLocation } from "@tanstack/react-router";
 
 export default function Modal() {
-  const { isOpen, config } = useModalStore();
+  const { isOpen, closeModal, config } = useModalStore();
+  const location = useLocation();
 
   useEffect(() => {
     if (isOpen) {
@@ -17,6 +19,10 @@ export default function Modal() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    closeModal();
+  }, [location.pathname, closeModal]);
 
   const Icon = config?.icon;
 
