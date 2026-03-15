@@ -49,12 +49,20 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
 
     if (Capacitor.isNativePlatform()) {
       async function syncSystemBars() {
+        await SplashScreen.hide();
+
         await SystemBars.setStyle({
           style: isDarkMode ? SystemBarsStyle.Dark : SystemBarsStyle.Light,
         });
         await changeStatusBarAreaColor(isDarkMode ? "#000000" : "#FFFFFF");
       }
       syncSystemBars();
+
+      // 구형 기기에서 첫 접속 시 테마가 바뀌지 않는 문제 대응
+      const timer = setTimeout(() => {
+        syncSystemBars();
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isDarkMode]);
 
