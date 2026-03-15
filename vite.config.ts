@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { fileURLToPath, URL } from "node:url";
+import TailwindLegacyPlugin from "vite-plugin-tailwind-legacy";
 import legacy from "@vitejs/plugin-legacy";
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +14,12 @@ export default defineConfig({
     }),
     viteReact(),
     tailwindcss(),
+    TailwindLegacyPlugin({
+      tailwindConfig: "tailwind.config.legacy.js",
+      assetsDir: "dist/assets",
+      publicPath: "assets/",
+      injectInHTML: false,
+    }),
     legacy({
       targets: ["chrome >= 80"], // api 30 이상 대응
       modernPolyfills: true,

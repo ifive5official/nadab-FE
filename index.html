@@ -22,6 +22,49 @@
         autocapture: { elementInteractions: true },
       });
     </script>
+    <script>
+      (function () {
+        var MIN_CHROME = 111; // 이 버전 미만일 때만 구형으로 간주
+        var ua = navigator.userAgent;
+        var isLegacy = false;
+
+        // 1. 크롬 버전 정확히 추출 (가짜 Safari 버전에 속지 않음)
+        var chromeMatch = ua.match(/Chrome\/([0-9]+)/);
+        if (chromeMatch) {
+          var chromeVersion = parseInt(chromeMatch[1], 10);
+          if (chromeVersion < MIN_CHROME) {
+            isLegacy = true;
+          }
+        }
+        // 크롬이 아닌 경우 (예: 진짜 구형 아이폰) 처리가 필요하다면
+        // 아이폰 전용 정규식을 따로 써야 하지만, 안드로이드 타겟이라면 생략 가능합니다.
+
+        // 2. 구형 기기일 때만 Fallback CSS 주입 및 기존 CSS 제거
+        if (isLegacy) {
+          // 레거시 CSS 찔러넣기
+          var link = document.createElement("link");
+          link.rel = "stylesheet";
+          // ⚠️ 주의: 빌드 환경에 따라 경로가 다를 수 있습니다. (예: '/assets/tailwind-v3-legacy.css')
+          link.href = "/assets/tailwind-v3-legacy.css";
+          document.head.appendChild(link);
+
+          // DOM 로드 완료 후 기존 v4 CSS와 Style 태그 모조리 삭제
+          document.addEventListener("DOMContentLoaded", function () {
+            document
+              .querySelectorAll('link[rel="stylesheet"]')
+              .forEach(function (el) {
+                // 방금 추가한 레거시 CSS는 지우지 않음
+                if (el.href.indexOf("tailwind-v3-legacy") === -1) {
+                  el.remove();
+                }
+              });
+            document.querySelectorAll("style").forEach(function (el) {
+              el.remove();
+            });
+          });
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="push-root"></div>
