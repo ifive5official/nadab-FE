@@ -89,7 +89,7 @@ export default function TimePickerModal({
             onClick={onClose}
           />
           <motion.div
-            className="z-30 fixed bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base dark:bg-surface-layer-1 shadow-3 border border-border-base rounded-2xl"
+            className="z-30 fixed bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col gap-gap-y-xl px-padding-x-xl py-padding-y-xl bg-surface-base dark:bg-surface-layer-1 shadow-3 border border-border-base rounded-2xl"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}

@@ -465,6 +465,9 @@ module.exports = {
           bottom: "0",
           right: "0",
         },
+        ".bottom-support-legacy": {
+          bottom: "16px !important",
+        },
       });
     },
   ],

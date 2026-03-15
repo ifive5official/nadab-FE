@@ -23,7 +23,7 @@ export default function Toast() {
             className={clsx(
               "fixed inset-x-padding-x-m bottom-(--safe-bottom) sm:mx-auto sm:w-[412px]",
               config.bottom ??
-                "bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))]",
+                "bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
               "bg-surface-alpha-inverse border border-border-alpha-inverse rounded-full text-text-inverse-primary backdrop-blur-sm",
             )}
