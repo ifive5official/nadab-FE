@@ -6,12 +6,15 @@ import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import useAuthStore from "@/store/authStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import { usePushNotifications } from "@/hooks/usePushManager";
 
 export function useWithDrawMutation() {
   const clearAuth = useAuthStore.use.clearAuth();
+  const { unregisterPush } = usePushNotifications();
 
   return useMutation({
     mutationFn: async () => {
+      await unregisterPush();
       await api.post("/api/v1/auth/withdrawal");
     },
     onSuccess: () => {

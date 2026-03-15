@@ -91,5 +91,15 @@ export function usePushNotifications() {
     }
   }, [isLoggedIn, deviceId, setupNotificationChannels, showToast]);
 
-  return { registerPush };
+  async function unregisterPush() {
+    if (!Capacitor.isNativePlatform() || !deviceId) return;
+
+    const perm = await PushNotifications.checkPermissions();
+    if (perm.receive === "granted") {
+      await api.delete(`/api/v1/notifications/tokens/${deviceId}/ANDROID`);
+      await PushNotifications.removeAllListeners();
+    }
+  }
+
+  return { registerPush, unregisterPush };
 }

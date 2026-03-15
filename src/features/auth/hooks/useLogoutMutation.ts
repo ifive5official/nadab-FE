@@ -4,19 +4,15 @@ import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import useAuthStore from "@/store/authStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
-import { Capacitor } from "@capacitor/core";
-import { PushNotifications } from "@capacitor/push-notifications";
+import { usePushNotifications } from "@/hooks/usePushManager";
 
 export function useLogoutMutation() {
   const clearAuth = useAuthStore.use.clearAuth();
-  const deviceId = useAuthStore.use.deviceId();
+  const { unregisterPush } = usePushNotifications();
 
   return useMutation({
     mutationFn: async () => {
-      if (Capacitor.isNativePlatform() && deviceId) {
-        await api.delete(`/api/v1/notifications/tokens/${deviceId}/ANDROID`);
-        await PushNotifications.removeAllListeners();
-      }
+      await unregisterPush();
       await api.post("/api/v1/auth/logout");
     },
     onSuccess: () => {
