@@ -23,7 +23,8 @@ function RouteComponent() {
       <Container>
         <form
           className="flex-1 flex flex-col"
-          onSubmit={() => {
+          onSubmit={(e) => {
+            e.preventDefault();
             withDrawMutation.mutate();
           }}
         >

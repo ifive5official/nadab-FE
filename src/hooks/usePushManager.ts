@@ -34,12 +34,13 @@ export function usePushNotifications() {
 
     try {
       await PushNotifications.createChannel({
-        id: "default_channel_id",
+        id: "default_push",
         name: "기본 알림",
         description: "기본 알림 수신",
         importance: 5,
         visibility: 1,
         vibration: true,
+        sound: "default",
       });
     } catch (error) {
       console.error("Channel creation error:", error);
