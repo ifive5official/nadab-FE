@@ -9,6 +9,7 @@ import PeriodicReportCard from "./PeriodicReportCard";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";
 import { REPORT_CONFIGS } from "./reportConfigs";
 import useToastStore from "@/store/toastStore";
+import Seperator from "@/components/Seperator";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
@@ -42,6 +43,7 @@ export default function PeriodicReportTab() {
   const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation(); // 테스트용
   return (
     <>
+      <Seperator />
       {!import.meta.env.VITE_IS_PRODUCTION && (
         <button onClick={() => deleteWeeklyReportMutation.mutate()}>
           주간 리포트 삭제(테스트용)

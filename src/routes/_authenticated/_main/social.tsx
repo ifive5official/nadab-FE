@@ -11,6 +11,7 @@ import {
 } from "@/features/social/queries";
 import Loading from "@/components/Loading";
 import { useQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -26,26 +27,21 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
   loader: async ({ deps: { tab }, context: { queryClient } }) => {
     switch (tab) {
       case "feed":
-        await Promise.all([
-          queryClient.ensureQueryData(feedOptions),
-          queryClient.ensureQueryData(friendsOptions),
-          queryClient.ensureQueryData(feedShareStatusOptions),
-        ]);
+        queryClient.ensureQueryData(feedOptions);
+        queryClient.ensureQueryData(friendsOptions);
+        queryClient.ensureQueryData(feedShareStatusOptions);
+
         break;
       case "group":
         break;
       case "friends":
-        await Promise.all([
-          queryClient.ensureQueryData(friendRequestsOptions),
-          queryClient.ensureQueryData(friendsOptions),
-          queryClient.ensureQueryData(blockedFriendsOptions),
-        ]);
+        queryClient.ensureQueryData(friendRequestsOptions);
+        queryClient.ensureQueryData(friendsOptions);
+        queryClient.ensureQueryData(blockedFriendsOptions);
+
         break;
     }
   },
-  pendingComponent: () => <Loading />,
-  pendingMs: 200, // 0.2초 이상 걸릴 때만 로딩 컴포넌트 표시
-  pendingMinMs: 200,
 });
 
 function RouteComponent() {
@@ -79,9 +75,11 @@ function RouteComponent() {
         onChange={handleTabChange}
         className="my-padding-y-m mx-padding-x-m"
       />
-      {tab === "feed" && <FeedTab />}
-      {/* {tab === "group" && <GroupTab />} */}
-      {tab === "friends" && <FriendsTab />}
+      <Suspense fallback={<Loading />}>
+        {tab === "feed" && <FeedTab />}
+        {/* {tab === "group" && <GroupTab />} */}
+        {tab === "friends" && <FriendsTab />}
+      </Suspense>
     </>
   );
 }

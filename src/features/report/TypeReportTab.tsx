@@ -13,28 +13,30 @@ import useModalStore from "@/store/modalStore";
 import { LoadingSpinnerIcon, WarningFilledIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";
-type Props = {
-  category: (typeof categories)[number]["code"];
-};
+import clsx from "clsx";
+import Seperator from "@/components/Seperator";
 
-export default function TypeReportTab({ category }: Props) {
+export default function TypeReportTab() {
+  const [selectedCategory, setSelectedCategory] =
+    useState<(typeof categories)[number]["code"]>("PREFERENCE");
+
   const { data: crystalData } = useQuery(crystalsOptions);
   const crystalBalance = crystalData?.crystalBalance ?? 0;
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { reports: typeReports } = useTypeReport();
   const generateTypeReportMutation = useGenerateTypeReportMutation({
-    interestCode: category,
+    interestCode: selectedCategory,
     onSuccess: () => {
-      if (!typeReports![category].eligibility?.isFirstFree) {
+      if (!typeReports![selectedCategory].eligibility?.isFirstFree) {
         showToast({
           message: `100 크리스탈이 소진되었어요.`,
         });
       }
     },
   });
-  const typeReport = typeReports![category].current;
+  const typeReport = typeReports![selectedCategory].current;
   const isGenerating =
-    typeReports![category].generation?.status === "IN_PROGRESS";
+    typeReports![selectedCategory].generation?.status === "IN_PROGRESS";
   const isLoading = isGenerating || generateTypeReportMutation.isPending;
 
   const { showModal, closeModal } = useModalStore();
@@ -42,11 +44,31 @@ export default function TypeReportTab({ category }: Props) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const deleteTypeReportMutation = useDeleteTypeReportMutation({
-    interestCode: category,
+    interestCode: selectedCategory,
   });
 
   return (
     <>
+      <ul className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {categories.map((category) => {
+          const selected = category.code === selectedCategory;
+          return (
+            <li
+              onClick={() => setSelectedCategory(category.code)}
+              key={category.code}
+              className={clsx(
+                "rounded-lg px-padding-x-m py-1.5 text-button-2 whitespace-pre border",
+                selected
+                  ? "bg-brand-primary border-brand-primary text-button-primary-text-default"
+                  : "bg-surface-layer-1 border-button-tertiary-border-default text-interactive-text-hover",
+              )}
+            >
+              {category.title}
+            </li>
+          );
+        })}
+      </ul>
+      <Seperator />
       {!import.meta.env.VITE_IS_PRODUCTION && (
         <button onClick={() => deleteTypeReportMutation.mutate()}>
           유형 리포트 삭제(테스트용)
@@ -80,7 +102,10 @@ export default function TypeReportTab({ category }: Props) {
                 </div>
               )}
             </div>
-            <img src={typeReport.typeImageUrl} className="mx-margin-x-l" />
+            <img
+              src={typeReport.typeImageUrl}
+              className="mx-margin-x-l aspect-square"
+            />
             <div className="flex gap-gap-x-s my-gap-y-l">
               <Badge size="m">{typeReport.hashTag1!}</Badge>
               <Badge size="m">{typeReport.hashTag2!}</Badge>
@@ -175,7 +200,7 @@ export default function TypeReportTab({ category }: Props) {
                   className="mt-auto"
                   disabled={isLoading}
                   variant={
-                    typeReports![category].eligibility?.canGenerate
+                    typeReports![selectedCategory].eligibility?.canGenerate
                       ? "primary"
                       : "disabled"
                   }
@@ -183,7 +208,7 @@ export default function TypeReportTab({ category }: Props) {
                 >
                   {isGenerating
                     ? "리포트 생성 중"
-                    : typeReports![category].eligibility?.isFirstFree
+                    : typeReports![selectedCategory].eligibility?.isFirstFree
                       ? "무료로 리포트 받기"
                       : "100 크리스탈로 리포트 새로 받기"}
                 </BlockButton>
