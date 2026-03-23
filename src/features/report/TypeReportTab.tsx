@@ -17,13 +17,27 @@ import clsx from "clsx";
 import Seperator from "@/components/Seperator";
 
 export default function TypeReportTab() {
-  const [selectedCategory, setSelectedCategory] =
-    useState<(typeof categories)[number]["code"]>("PREFERENCE");
-
   const { data: crystalData } = useQuery(crystalsOptions);
   const crystalBalance = crystalData?.crystalBalance ?? 0;
   const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { reports: typeReports } = useTypeReport();
+
+  const typesWithReport: (typeof categories)[number]["code"][] = [];
+  const typesWithoutReport: (typeof categories)[number]["code"][] = [];
+
+  Object.entries(typeReports!)?.forEach(([type, report]) => {
+    if (report.current !== null) {
+      typesWithReport.push(type as (typeof categories)[number]["code"]);
+    } else {
+      typesWithoutReport.push(type as (typeof categories)[number]["code"]);
+    }
+  });
+
+  // 리포트가 있는 유형 우선 선택
+  const [selectedCategory, setSelectedCategory] = useState(
+    typesWithReport?.[0] ?? typesWithoutReport[0],
+  );
+
   const generateTypeReportMutation = useGenerateTypeReportMutation({
     interestCode: selectedCategory,
     onSuccess: () => {
@@ -50,12 +64,13 @@ export default function TypeReportTab() {
   return (
     <>
       <ul className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {categories.map((category) => {
-          const selected = category.code === selectedCategory;
+        {[...typesWithReport, ...typesWithoutReport].map((type) => {
+          const selected = type === selectedCategory;
+          const categoryItem = categories.find((item) => item.code === type)!;
           return (
             <li
-              onClick={() => setSelectedCategory(category.code)}
-              key={category.code}
+              onClick={() => setSelectedCategory(type)}
+              key={type}
               className={clsx(
                 "rounded-lg px-padding-x-m py-1.5 text-button-2 whitespace-pre border",
                 selected
@@ -63,7 +78,7 @@ export default function TypeReportTab() {
                   : "bg-surface-layer-1 border-button-tertiary-border-default text-interactive-text-hover",
               )}
             >
-              {category.title}
+              {categoryItem.title}
             </li>
           );
         })}
