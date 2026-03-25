@@ -15,6 +15,7 @@ import useToastStore from "@/store/toastStore";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";
 import clsx from "clsx";
 import Seperator from "@/components/Seperator";
+import TopNotification from "@/components/TopNotification";
 
 export default function TypeReportTab() {
   const { data: crystalData } = useQuery(crystalsOptions);
@@ -38,6 +39,10 @@ export default function TypeReportTab() {
     typesWithReport?.[0] ?? typesWithoutReport[0],
   );
 
+  const selectedCategoryName = categories.find(
+    (item) => item.code === selectedCategory,
+  )!.title;
+
   const generateTypeReportMutation = useGenerateTypeReportMutation({
     interestCode: selectedCategory,
     onSuccess: () => {
@@ -48,7 +53,7 @@ export default function TypeReportTab() {
       }
     },
   });
-  const typeReport = typeReports![selectedCategory].current;
+  const typeReport = typeReports![selectedCategory];
   const isGenerating =
     typeReports![selectedCategory].generation?.status === "IN_PROGRESS";
   const isLoading = isGenerating || generateTypeReportMutation.isPending;
@@ -56,6 +61,7 @@ export default function TypeReportTab() {
   const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const isTopNotificationVisible = !typeReport.current && !isGenerating;
 
   const deleteTypeReportMutation = useDeleteTypeReportMutation({
     interestCode: selectedCategory,
@@ -84,13 +90,22 @@ export default function TypeReportTab() {
         })}
       </ul>
       <Seperator />
+      {isTopNotificationVisible && (
+        <TopNotification
+          className="mt-gap-y-m"
+          typeName={selectedCategoryName}
+          canGenerate={typeReport.eligibility?.canGenerate ?? false}
+          dailyCompletedCount={typeReport.eligibility?.dailyCompletedCount ?? 0}
+          requiredCount={typeReport.eligibility?.requiredCount ?? 0}
+        />
+      )}
       {!import.meta.env.VITE_IS_PRODUCTION && (
         <button onClick={() => deleteTypeReportMutation.mutate()}>
           유형 리포트 삭제(테스트용)
         </button>
       )}
       <section className="relative flex-1 flex flex-col items-center">
-        {typeReport && !isGenerating ? (
+        {typeReport.current && !isGenerating ? (
           // 유형 레포트
           <div className="w-full mt-padding-y-l flex flex-col">
             <div className="relative mb-margin-y-l">
@@ -99,9 +114,9 @@ export default function TypeReportTab() {
                   {currentUser.nickname}님은
                   <br />
                   <span className="text-brand-primary">
-                    {typeReport.analysisTypeName}
+                    {typeReport.current.analysisTypeName}
                   </span>
-                  {hasLastConsonant(typeReport.analysisTypeName!)
+                  {hasLastConsonant(typeReport.current.analysisTypeName!)
                     ? "이에요."
                     : "예요."}
                 </p>
@@ -118,32 +133,32 @@ export default function TypeReportTab() {
               )}
             </div>
             <img
-              src={typeReport.typeImageUrl}
+              src={typeReport.current.typeImageUrl}
               className="mx-margin-x-l aspect-square"
             />
             <div className="flex gap-gap-x-s my-gap-y-l">
-              <Badge size="m">{typeReport.hashTag1!}</Badge>
-              <Badge size="m">{typeReport.hashTag2!}</Badge>
-              <Badge size="m">{typeReport.hashTag3!}</Badge>
+              <Badge size="m">{typeReport.current.hashTag1!}</Badge>
+              <Badge size="m">{typeReport.current.hashTag2!}</Badge>
+              <Badge size="m">{typeReport.current.hashTag3!}</Badge>
             </div>
             <p className="text-body-2 text-text-secondary allow-copy">
-              {typeReport.typeAnalysis}
+              {typeReport.current.typeAnalysis}
             </p>
             <div className="my-gap-y-xl flex flex-col gap-gap-y-l allow-copy">
               <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
                 <p className="text-interactive-text-default text-label-l">
-                  {typeReport.personaTitle1}
+                  {typeReport.current.personaTitle1}
                 </p>
                 <p className="text-text-secondary text-body-2">
-                  {typeReport.personaContent1}
+                  {typeReport.current.personaContent1}
                 </p>
               </div>
               <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
                 <p className="text-interactive-text-default text-label-l">
-                  {typeReport.personaTitle2}
+                  {typeReport.current.personaTitle2}
                 </p>
                 <p className="text-text-secondary text-body-2">
-                  {typeReport.personaContent2}
+                  {typeReport.current.personaContent2}
                 </p>
               </div>
             </div>
@@ -176,7 +191,12 @@ export default function TypeReportTab() {
         ) : (
           // 레포트 없을 때
           <>
-            <div className="relative w-full h-full px-padding-x-m py-padding-y-xl mt-gap-y-l mb-margin-y-xxl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] dark:bg-[url(/type-report-bg-dark.png)] bg-cover">
+            <div
+              className={clsx(
+                "relative w-full h-full px-padding-x-m py-padding-y-xl rounded-2xl shadow-1 bg-[url(/type-report-bg.png)] dark:bg-[url(/type-report-bg-dark.png)] bg-cover",
+                isTopNotificationVisible ? "mt-margin-y-s" : "mt-margin-y-l",
+              )}
+            >
               {isGenerating && (
                 <div className="absolute inset-0 bg-white/60 dark:bg-black/30" />
               )}
@@ -193,8 +213,8 @@ export default function TypeReportTab() {
                 </div>
                 <p className="text-title-2">
                   {isGenerating
-                    ? "유형 리포트를 생성 중이에요."
-                    : "유형 리포트를 확인해보세요."}
+                    ? `나만의 ${selectedCategoryName} 리포트를 생성 중이에요.`
+                    : `나만의 ${selectedCategoryName} 리포트를 확인해보세요.`}
                 </p>
                 <p className="text-caption-l">
                   {isGenerating ? (
@@ -215,15 +235,13 @@ export default function TypeReportTab() {
                   className="mt-auto"
                   disabled={isLoading}
                   variant={
-                    typeReports![selectedCategory].eligibility?.canGenerate
-                      ? "primary"
-                      : "disabled"
+                    typeReport.eligibility?.canGenerate ? "primary" : "disabled"
                   }
                   onClick={() => generateTypeReportMutation.mutate()}
                 >
                   {isGenerating
                     ? "리포트 생성 중"
-                    : typeReports![selectedCategory].eligibility?.isFirstFree
+                    : typeReport.eligibility?.isFirstFree
                       ? "무료로 리포트 받기"
                       : "100 크리스탈로 리포트 새로 받기"}
                 </BlockButton>

@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { LoadingIcon } from "./Icons";
 
 type Props = {
-  size?: "m" | "s";
+  size?: "m" | "s" | "xs";
   variant?: "primary" | "secondary" | "tertiary" | "disabled";
   children: React.ReactNode;
   className?: string;
@@ -22,7 +22,7 @@ export default function InlineButton({
   return (
     <button
       className={clsx(
-        "relative flex items-center justify-center rounded-[20px]",
+        "relative flex items-center justify-center",
         variant === "primary" &&
           !disabled &&
           "bg-button-primary-bg-default text-button-primary-text-default",
@@ -34,8 +34,11 @@ export default function InlineButton({
           "bg-button-tertiary-bg-default text-button-tertiary-text-default border border-button-tertiary-border-default",
         (disabled || variant === "disabled") &&
           "bg-button-disabled-bg text-button-disabled-text",
-        size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
-        size === "s" && "text-button-3 px-padding-x-xs py-1.5",
+        size === "m" &&
+          "text-button-2 px-padding-x-m py-padding-y-xs rounded-[20px]",
+        size === "s" && "text-button-3 px-padding-x-xs py-1.5 rounded-[20px]",
+        size === "xs" &&
+          "text-caption-s px-padding-x-s py-padding-y-xxs rounded-lg",
         className,
       )}
       {...props}
