@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Popover } from "@/components/Popover";
 import categories from "@/constants/categories";
 import { InfoButton } from "./ReportComponents";
-import { Badge, CrystalBadge } from "@/components/Badges";
+import { Badge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
 import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
-import { LoadingSpinnerIcon, WarningFilledIcon } from "@/components/Icons";
+import { LoadingSpinnerIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
 import clsx from "clsx";
 import Seperator from "@/components/Seperator";
@@ -68,7 +68,10 @@ export default function TypeReportTab() {
           const categoryItem = categories.find((item) => item.code === type)!;
           return (
             <li
-              onClick={() => setSelectedCategory(type)}
+              onClick={() => {
+                setIsPopoverOpen(false);
+                setSelectedCategory(type);
+              }}
               key={type}
               className={clsx(
                 "rounded-lg px-padding-x-m py-1.5 text-button-2 whitespace-pre border",
@@ -92,17 +95,19 @@ export default function TypeReportTab() {
           requiredCount={typeReport.eligibility?.requiredCount ?? 0}
         />
       )}
-      {/* {!import.meta.env.VITE_IS_PRODUCTION && (
+      {!import.meta.env.VITE_IS_PRODUCTION && (
         <button onClick={() => deleteTypeReportMutation.mutate()}>
           유형 리포트 삭제(테스트용)
         </button>
-      )} */}
+      )}
       <section className="relative flex-1 flex flex-col items-center">
         {typeReport.current && !isGenerating ? (
           // 유형 레포트
           <TypeReportSlides
             typeName={selectedCategoryName}
             typeReport={typeReport.current}
+            isLoading={isLoading}
+            onGenerate={generateTypeReportMutation.mutate}
             isPopoverOpen={isPopoverOpen}
             handlePopoverOpen={() => setIsPopoverOpen(true)}
             handlePooverClose={() => setIsPopoverOpen(false)}

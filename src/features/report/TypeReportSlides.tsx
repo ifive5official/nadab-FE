@@ -6,7 +6,7 @@ import "swiper/css/navigation";
 // @ts-ignore
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { crystalsOptions, currentUserOptions } from "../user/quries";
 import useModalStore from "@/store/modalStore";
@@ -14,13 +14,18 @@ import type { components } from "@/generated/api-types";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";
 import { InfoButton } from "./ReportComponents";
 import { Popover } from "@/components/Popover";
-import { Badge } from "@/components/Badges";
+import { Badge, CrystalBadge } from "@/components/Badges";
 import { findEmotionByCode } from "@/constants/emotions";
-import { motion, animate, useMotionValue, useTransform } from "motion/react";
+import Chart from "./Chart";
+import BlockButton from "@/components/BlockButton";
+import { WarningFilledIcon } from "@/components/Icons";
+import clsx from "clsx";
 
 type Props = {
   typeName: string;
   typeReport: components["schemas"]["TypeReportResponse"];
+  isLoading: boolean;
+  onGenerate: () => void;
   isPopoverOpen: boolean;
   handlePopoverOpen: () => void;
   handlePooverClose: () => void;
@@ -29,6 +34,8 @@ type Props = {
 export default function TypeReportSlides({
   typeName,
   typeReport,
+  isLoading,
+  onGenerate,
   isPopoverOpen,
   handlePopoverOpen,
   handlePooverClose,
@@ -79,7 +86,7 @@ export default function TypeReportSlides({
               />
               <img
                 src={typeReport.typeImageUrl}
-                className="w-[180px] aspect-square mx-auto"
+                className="w-[180px] aspect-square my-auto mx-auto"
               />
               <div className="flex gap-gap-x-s mt-gap-y-s mb-gap-y-l">
                 <Badge
@@ -124,121 +131,60 @@ export default function TypeReportSlides({
                 handlePopoverOpen={handlePopoverOpen}
                 handlePopoverClose={handlePooverClose}
               />
-              <div className="flex-1 flex gap-gap-x-s mb-gap-y-l">
-                {typeReport.emotionStats?.emotions?.map((emotion) => {
-                  return (
-                    <div
-                      key={emotion.emotionName}
-                      className="h-full flex-1 flex flex-col items-center justify-end gap-gap-y-xs"
-                    >
-                      <span className="text-label-s">
-                        <AnimatedNumber
-                          value={emotion.percent!}
-                          isActive={true}
-                        />
-                        %
-                      </span>
-                      <div
-                        style={{
-                          backgroundColor: findEmotionByCode(
-                            emotion.emotionCode!,
-                          )?.color,
-                          height: `${(emotion.percent! / (typeReport.emotionStats?.emotions?.[0].percent ?? 100)) * 80}%`,
-                        }}
-                        className="rounded-t-lg w-full"
-                      />
-
-                      <span className="text-label-s text-text-secondary">
-                        {emotion.emotionName}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <Chart typeReport={typeReport} />
               <TypeReportDesctiptionSection
                 content={`긍정 감정이 전체의 81%를 차지했어요. 새로운 걸 발견할 때 에너지를 얻는 탐색형 성향이 나타나고 있어요.`}
               ></TypeReportDesctiptionSection>
             </TypeReportSlide>
           </SwiperSlide>
-          {/* <div className="w-full mt-padding-y-l flex flex-col">
-          <div className="relative mb-margin-y-l">
-            <div className="flex items-end">
-              <p className="text-title-3 mr-auto">
-                {currentUser.nickname}님은
-                <br />
-                <span className="text-brand-primary">
-                  {typeReport.current.analysisTypeName}
-                </span>
-                {hasLastConsonant(typeReport.current.analysisTypeName!)
-                  ? "이에요."
-                  : "예요."}
-              </p>
-              <InfoButton onClick={() => setIsPopoverOpen(true)} />
-            </div>
-            {isPopoverOpen && (
-              <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
-                <Popover
-                  isOpen={isPopoverOpen}
-                  onClose={() => setIsPopoverOpen(false)}
-                  className="dark:bg-surface-layer-2"
+          <SwiperSlide>
+            <TypeReportSlide>
+              <div className="h-full flex flex-col gap-gap-y-l">
+                <TypeReportTitleSection
+                  prefix="이런 태도가 주로 발견됐어요."
+                  isPopoverOpen={isPopoverOpen}
+                  handlePopoverOpen={handlePopoverOpen}
+                  handlePopoverClose={handlePooverClose}
                 />
+                <div className="my-auto flex flex-col gap-gap-y-l">
+                  <TypeReportDesctiptionSection
+                    title={typeReport.personaTitle1}
+                    content={typeReport.personaContent1!}
+                  />
+                  <TypeReportDesctiptionSection
+                    title={typeReport.personaTitle2}
+                    content={typeReport.personaContent2!}
+                  />
+                </div>
+
+                <BlockButton
+                  isLoading={isLoading}
+                  variant={crystalBalance >= 100 ? "primary" : "disabled"}
+                  onClick={() => {
+                    if (crystalBalance >= 100) {
+                      onGenerate();
+                    } else {
+                      showModal({
+                        icon: WarningFilledIcon,
+                        title: "현재 보유한\n크리스탈이 부족해요.",
+                        children: (
+                          <p className="flex items-center gap-gap-x-s">
+                            <span className="text-caption-m">
+                              남은 크리스탈 개수
+                            </span>
+                            <CrystalBadge crystals={100 - crystalBalance} />
+                          </p>
+                        ),
+                        buttons: [{ label: "확인", onClick: closeModal }],
+                      });
+                    }
+                  }}
+                >
+                  100 크리스탈로 리포트 새로 받기
+                </BlockButton>
               </div>
-            )}
-          </div>
-          <img
-            src={typeReport.current.typeImageUrl}
-            className="mx-margin-x-l aspect-square"
-          />
-          <div className="flex gap-gap-x-s my-gap-y-l">
-            <Badge size="m">{typeReport.current.hashTag1!}</Badge>
-            <Badge size="m">{typeReport.current.hashTag2!}</Badge>
-            <Badge size="m">{typeReport.current.hashTag3!}</Badge>
-          </div>
-          <p className="text-body-2 text-text-secondary allow-copy">
-            {typeReport.current.typeAnalysis}
-          </p>
-          <div className="my-gap-y-xl flex flex-col gap-gap-y-l allow-copy">
-            <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
-              <p className="text-interactive-text-default text-label-l">
-                {typeReport.current.personaTitle1}
-              </p>
-              <p className="text-text-secondary text-body-2">
-                {typeReport.current.personaContent1}
-              </p>
-            </div>
-            <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
-              <p className="text-interactive-text-default text-label-l">
-                {typeReport.current.personaTitle2}
-              </p>
-              <p className="text-text-secondary text-body-2">
-                {typeReport.current.personaContent2}
-              </p>
-            </div>
-          </div>
-          <BlockButton
-            isLoading={isLoading}
-            variant={crystalBalance >= 100 ? "primary" : "disabled"}
-            onClick={() => {
-              if (crystalBalance >= 100) {
-                generateTypeReportMutation.mutate();
-              } else {
-                showModal({
-                  icon: WarningFilledIcon,
-                  title: "현재 보유한\n크리스탈이 부족해요.",
-                  children: (
-                    <p className="flex items-center gap-gap-x-s">
-                      <span className="text-caption-m">남은 크리스탈 개수</span>
-                      <CrystalBadge crystals={100 - crystalBalance} />
-                    </p>
-                  ),
-                  buttons: [{ label: "확인", onClick: closeModal }],
-                });
-              }
-            }}
-          >
-            100 크리스탈로 리포트 새로 받기
-          </BlockButton>
-        </div> */}
+            </TypeReportSlide>
+          </SwiperSlide>
         </Swiper>
       </div>
 
@@ -257,8 +203,8 @@ function TypeReportSlide({ children }: { children: React.ReactNode }) {
 
 type TypeReportTitleSectionProps = {
   prefix: string;
-  highlight: string;
-  suffix: string;
+  highlight?: string;
+  suffix?: string;
   isPopoverOpen: boolean;
   handlePopoverOpen: () => void;
   handlePopoverClose: () => void;
@@ -297,38 +243,27 @@ function TypeReportTitleSection({
 }
 
 type TypeReportDescriptionSectionProps = {
+  title?: string;
   content: string;
 };
 
 function TypeReportDesctiptionSection({
+  title,
   content,
 }: TypeReportDescriptionSectionProps) {
   return (
-    <div className="bg-surface-base text-body-2 px-padding-x-s py-padding-y-s rounded-xl border border-border-base">
-      {content}
+    <div
+      className={clsx(
+        "flex flex-col gap-padding-y-xs bg-surface-base border border-border-base",
+        title
+          ? "px-padding-x-m py-padding-y-m rounded-2xl"
+          : "px-padding-x-s py-padding-y-s rounded-xl",
+      )}
+    >
+      {title && <span className="text-label-l">{title}</span>}
+      <p className={clsx("text-body-2", title && "text-text-secondary")}>
+        {content}
+      </p>
     </div>
   );
-}
-
-function AnimatedNumber({
-  value,
-  isActive,
-}: {
-  value: number;
-  isActive: boolean;
-}) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
-
-  useEffect(() => {
-    if (isActive) {
-      const controls = animate(count, value, {
-        duration: 0.5,
-        ease: [0.25, 1, 0.5, 1],
-      });
-      return controls.stop;
-    }
-  }, [isActive, value, count]);
-
-  return <motion.span>{rounded}</motion.span>;
 }
