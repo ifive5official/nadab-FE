@@ -113,7 +113,7 @@ export default function TypeReportTab() {
           유형 리포트 삭제(테스트용)
         </button>
       )}
-      <section className="relative flex-1 flex flex-col items-center">
+      <section className="relative z-0 flex-1 flex flex-col items-center">
         {typeReport.current && !isGenerating ? (
           // 유형 레포트
           <TypeReportSlides

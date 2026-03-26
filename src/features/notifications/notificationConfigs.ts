@@ -77,7 +77,7 @@ export const NOTIFICATION_CONFIG: Record<
   DAILY_WRITE_REMINDER: {
     inboxIconSrc: "/icon/write.png",
     linkProps: {
-      to: "/daily",
+      to: "/",
     },
   },
   INACTIVE_USER_REMINDER: {
