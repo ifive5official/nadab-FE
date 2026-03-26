@@ -65,6 +65,10 @@ export default function TypeReportTab() {
       <ul className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {[...typesWithReport, ...typesWithoutReport].map((type) => {
           const selected = type === selectedCategory;
+          const canGenerate =
+            typeReports![type].eligibility?.canGenerate &&
+            !typeReports![type].current &&
+            typeReports![type].generation?.status !== "IN_PROGRESS";
           const categoryItem = categories.find((item) => item.code === type)!;
           return (
             <li
@@ -74,13 +78,22 @@ export default function TypeReportTab() {
               }}
               key={type}
               className={clsx(
-                "rounded-lg px-padding-x-m py-1.5 text-button-2 whitespace-pre border",
+                "relative rounded-lg pl-padding-x-m py-1.5 text-button-2 whitespace-pre border",
                 selected
                   ? "bg-brand-primary border-brand-primary text-button-primary-text-default"
                   : "bg-surface-layer-1 border-button-tertiary-border-default text-interactive-text-hover",
+                canGenerate ? "pr-padding-x-l" : "pr-padding-x-m",
               )}
             >
               {categoryItem.title}
+              {canGenerate && (
+                <div
+                  className={clsx(
+                    "absolute top-1.5 right-2 w-1.5 aspect-square rounded-full",
+                    selected ? "bg-white" : "bg-brand-primary",
+                  )}
+                />
+              )}
             </li>
           );
         })}
