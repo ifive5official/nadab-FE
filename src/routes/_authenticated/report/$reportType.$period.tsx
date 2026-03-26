@@ -14,6 +14,7 @@ import useModalStore from "@/store/modalStore";
 import { splitSegmentsBySentence } from "@/features/report/splitSegmentsBySentence";
 import SpeechBalloon from "@/components/Speechballoon";
 import type { components } from "@/generated/api-types";
+import { StyledSegments } from "@/features/report/ReportComponents";
 
 type weeklyReportsRes = components["schemas"]["WeeklyReportResponse"];
 
@@ -114,20 +115,10 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="text-body-2 bg-surface-layer-1 border border-border-base rounded-xl px-padding-x-m py-padding-y-m allow-copy">
-                {report?.content?.discovered?.segments?.map((segment, i) => {
-                  if (segment.marks!.length > 0) {
-                    return (
-                      <span
-                        key={i}
-                        className="font-bold! bg-[linear-gradient(transparent_50%,var(--color-brand-primary-alpha-10)_50%)] dark:bg-[linear-gradient(transparent_50%,var(--color-brand-primary-alpha-50)_50%)]"
-                      >
-                        {segment.text}
-                      </span>
-                    );
-                  } else {
-                    return segment.text;
-                  }
-                })}
+                <StyledSegments
+                  segments={report?.content?.discovered?.segments ?? []}
+                  type="mix"
+                />
               </div>
             </section>
             <section className="flex flex-col gap-gap-y-l">
@@ -148,17 +139,7 @@ function RouteComponent() {
                     textColor="var(--color-text-primary)"
                     bgColor="var(--color-surface-layer-1)"
                   >
-                    {comment?.map((segment, i) => {
-                      if (segment.marks!.length > 0) {
-                        return (
-                          <span key={i} className="font-bold!">
-                            {segment.text}
-                          </span>
-                        );
-                      } else {
-                        return segment.text;
-                      }
-                    })}
+                    <StyledSegments segments={comment} type="bold" />
                   </SpeechBalloon>
                 ))}
               </div>

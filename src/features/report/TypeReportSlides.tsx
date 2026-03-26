@@ -12,7 +12,7 @@ import { crystalsOptions, currentUserOptions } from "../user/quries";
 import useModalStore from "@/store/modalStore";
 import type { components } from "@/generated/api-types";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";
-import { InfoButton } from "./ReportComponents";
+import { InfoButton, StyledSegments } from "./ReportComponents";
 import { Popover } from "@/components/Popover";
 import { Badge, CrystalBadge } from "@/components/Badges";
 import { findEmotionByCode } from "@/constants/emotions";
@@ -108,9 +108,14 @@ export default function TypeReportSlides({
                   {typeReport.hashTag3!}
                 </Badge>
               </div>
-              <TypeReportDesctiptionSection
-                content={typeReport.typeAnalysis!}
-              ></TypeReportDesctiptionSection>
+              <TypeReportDesctiptionSection>
+                <StyledSegments
+                  segments={
+                    typeReport.typeAnalysisContent?.styledText?.segments ?? []
+                  }
+                  type="mix"
+                />
+              </TypeReportDesctiptionSection>
             </TypeReportSlide>
           </SwiperSlide>
           <SwiperSlide>
@@ -132,9 +137,14 @@ export default function TypeReportSlides({
                 handlePopoverClose={handlePooverClose}
               />
               <Chart typeReport={typeReport} />
-              <TypeReportDesctiptionSection
-                content={`긍정 감정이 전체의 81%를 차지했어요. 새로운 걸 발견할 때 에너지를 얻는 탐색형 성향이 나타나고 있어요.`}
-              ></TypeReportDesctiptionSection>
+              <TypeReportDesctiptionSection>
+                <StyledSegments
+                  segments={
+                    typeReport.emotionSummaryContent?.styledText?.segments ?? []
+                  }
+                  type="bold"
+                />
+              </TypeReportDesctiptionSection>
             </TypeReportSlide>
           </SwiperSlide>
           <SwiperSlide>
@@ -149,12 +159,14 @@ export default function TypeReportSlides({
                 <div className="my-auto flex flex-col gap-gap-y-l">
                   <TypeReportDesctiptionSection
                     title={typeReport.personaTitle1}
-                    content={typeReport.personaContent1!}
-                  />
+                  >
+                    {typeReport.personaContent1!}
+                  </TypeReportDesctiptionSection>
                   <TypeReportDesctiptionSection
                     title={typeReport.personaTitle2}
-                    content={typeReport.personaContent2!}
-                  />
+                  >
+                    {typeReport.personaContent2!}
+                  </TypeReportDesctiptionSection>
                 </div>
 
                 <BlockButton
@@ -244,12 +256,12 @@ function TypeReportTitleSection({
 
 type TypeReportDescriptionSectionProps = {
   title?: string;
-  content: string;
+  children: React.ReactNode;
 };
 
 function TypeReportDesctiptionSection({
   title,
-  content,
+  children,
 }: TypeReportDescriptionSectionProps) {
   return (
     <div
@@ -262,7 +274,7 @@ function TypeReportDesctiptionSection({
     >
       {title && <span className="text-label-l">{title}</span>}
       <p className={clsx("text-body-2", title && "text-text-secondary")}>
-        {content}
+        {children}
       </p>
     </div>
   );

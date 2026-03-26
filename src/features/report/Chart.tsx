@@ -61,7 +61,7 @@ export default function Chart({ typeReport }: Props) {
               className="rounded-t-lg w-full"
             />
 
-            <span className="text-label-s text-text-secondary">
+            <span className="text-label-s text-text-secondary text-nowrap">
               {emotion.emotionName}
             </span>
           </div>
