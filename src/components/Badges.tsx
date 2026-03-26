@@ -7,7 +7,8 @@ import emotions from "@/constants/emotions";
 // 텍스트와 테마색 테두리가 있는 작은 버튼 컴포넌트
 type BadgeProps = {
   isActive?: boolean;
-  size?: "s" | "m";
+  size?: "s" | "m" | "variable";
+  className?: string;
   children: string;
   onClick?: () => void;
 };
@@ -15,6 +16,7 @@ type BadgeProps = {
 export function Badge({
   isActive = true,
   size = "s",
+  className,
   children,
   onClick,
 }: BadgeProps) {
@@ -29,6 +31,7 @@ export function Badge({
         "rounded-full border ",
         size === "s" && "text-caption-m px-padding-x-xs py-padding-y-xxs",
         size === "m" && "text-button-2 px-padding-x-m py-padding-y-xs",
+        className,
         isActive
           ? "text-brand-primary border-brand-primary"
           : "text-field-text-disabled border-field-text-disabled",

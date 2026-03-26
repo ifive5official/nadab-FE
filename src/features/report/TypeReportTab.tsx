@@ -1,5 +1,3 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { crystalsOptions, currentUserOptions } from "../user/quries";
 import { useState } from "react";
 import { Popover } from "@/components/Popover";
 import categories from "@/constants/categories";
@@ -9,18 +7,14 @@ import BlockButton from "@/components/BlockButton";
 import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
 import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
-import useModalStore from "@/store/modalStore";
 import { LoadingSpinnerIcon, WarningFilledIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
-import { hasLastConsonant } from "@/lib/hasLastConsonant";
 import clsx from "clsx";
 import Seperator from "@/components/Seperator";
 import TopNotification from "@/components/TopNotification";
+import TypeReportSlides from "./TypeReportSlides";
 
 export default function TypeReportTab() {
-  const { data: crystalData } = useQuery(crystalsOptions);
-  const crystalBalance = crystalData?.crystalBalance ?? 0;
-  const { data: currentUser } = useSuspenseQuery(currentUserOptions);
   const { reports: typeReports } = useTypeReport();
 
   const typesWithReport: (typeof categories)[number]["code"][] = [];
@@ -58,7 +52,6 @@ export default function TypeReportTab() {
     typeReports![selectedCategory].generation?.status === "IN_PROGRESS";
   const isLoading = isGenerating || generateTypeReportMutation.isPending;
 
-  const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const isTopNotificationVisible = !typeReport.current && !isGenerating;
@@ -99,97 +92,23 @@ export default function TypeReportTab() {
           requiredCount={typeReport.eligibility?.requiredCount ?? 0}
         />
       )}
-      {!import.meta.env.VITE_IS_PRODUCTION && (
+      {/* {!import.meta.env.VITE_IS_PRODUCTION && (
         <button onClick={() => deleteTypeReportMutation.mutate()}>
           유형 리포트 삭제(테스트용)
         </button>
-      )}
+      )} */}
       <section className="relative flex-1 flex flex-col items-center">
         {typeReport.current && !isGenerating ? (
           // 유형 레포트
-          <div className="w-full mt-padding-y-l flex flex-col">
-            <div className="relative mb-margin-y-l">
-              <div className="flex items-end">
-                <p className="text-title-3 mr-auto">
-                  {currentUser.nickname}님은
-                  <br />
-                  <span className="text-brand-primary">
-                    {typeReport.current.analysisTypeName}
-                  </span>
-                  {hasLastConsonant(typeReport.current.analysisTypeName!)
-                    ? "이에요."
-                    : "예요."}
-                </p>
-                <InfoButton onClick={() => setIsPopoverOpen(true)} />
-              </div>
-              {isPopoverOpen && (
-                <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
-                  <Popover
-                    isOpen={isPopoverOpen}
-                    onClose={() => setIsPopoverOpen(false)}
-                    className="dark:bg-surface-layer-2"
-                  />
-                </div>
-              )}
-            </div>
-            <img
-              src={typeReport.current.typeImageUrl}
-              className="mx-margin-x-l aspect-square"
-            />
-            <div className="flex gap-gap-x-s my-gap-y-l">
-              <Badge size="m">{typeReport.current.hashTag1!}</Badge>
-              <Badge size="m">{typeReport.current.hashTag2!}</Badge>
-              <Badge size="m">{typeReport.current.hashTag3!}</Badge>
-            </div>
-            <p className="text-body-2 text-text-secondary allow-copy">
-              {typeReport.current.typeAnalysis}
-            </p>
-            <div className="my-gap-y-xl flex flex-col gap-gap-y-l allow-copy">
-              <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
-                <p className="text-interactive-text-default text-label-l">
-                  {typeReport.current.personaTitle1}
-                </p>
-                <p className="text-text-secondary text-body-2">
-                  {typeReport.current.personaContent1}
-                </p>
-              </div>
-              <div className="rounded-2xl px-padding-x-m py-padding-y-m bg-field-bg-hover border border-border-base flex flex-col gap-padding-y-xs">
-                <p className="text-interactive-text-default text-label-l">
-                  {typeReport.current.personaTitle2}
-                </p>
-                <p className="text-text-secondary text-body-2">
-                  {typeReport.current.personaContent2}
-                </p>
-              </div>
-            </div>
-            <BlockButton
-              isLoading={isLoading}
-              variant={crystalBalance >= 100 ? "primary" : "disabled"}
-              onClick={() => {
-                if (crystalBalance >= 100) {
-                  generateTypeReportMutation.mutate();
-                } else {
-                  showModal({
-                    icon: WarningFilledIcon,
-                    title: "현재 보유한\n크리스탈이 부족해요.",
-                    children: (
-                      <p className="flex items-center gap-gap-x-s">
-                        <span className="text-caption-m">
-                          남은 크리스탈 개수
-                        </span>
-                        <CrystalBadge crystals={100 - crystalBalance} />
-                      </p>
-                    ),
-                    buttons: [{ label: "확인", onClick: closeModal }],
-                  });
-                }
-              }}
-            >
-              100 크리스탈로 리포트 새로 받기
-            </BlockButton>
-          </div>
+          <TypeReportSlides
+            typeName={selectedCategoryName}
+            typeReport={typeReport.current}
+            isPopoverOpen={isPopoverOpen}
+            handlePopoverOpen={() => setIsPopoverOpen(true)}
+            handlePooverClose={() => setIsPopoverOpen(false)}
+          />
         ) : (
-          // 레포트 없을 때
+          // 레포트 표지(?)
           <>
             <div
               className={clsx(

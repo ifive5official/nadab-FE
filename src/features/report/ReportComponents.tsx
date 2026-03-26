@@ -8,7 +8,7 @@ export function InfoButton({ onClick }: { onClick: () => void }) {
         className="bg-button-tertiary-bg-default border border-button-tertiary-border-default rounded-lg px-padding-x-xs py-padding-y-xxs flex items-center gap-gap-x-xs"
       >
         <InfoIcon />
-        <span className="text-caption-s text-interactive-border-info">
+        <span className="text-caption-s text-interactive-border-info whitespace-nowrap">
           더 알아보기
         </span>
       </button>

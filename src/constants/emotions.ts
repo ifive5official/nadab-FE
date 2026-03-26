@@ -10,3 +10,7 @@ const emotions = [
 ] as const;
 
 export default emotions;
+
+export function findEmotionByCode(code: string) {
+  return emotions.find((emotion) => emotion.code === code);
+}
