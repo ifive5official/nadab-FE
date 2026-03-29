@@ -4,6 +4,7 @@ import type { components } from "@/generated/api-types";
 import { periodicReportOptions } from "../quries";
 import useModalStore from "@/store/modalStore";
 import { REPORT_CONFIGS } from "../reportConfigs";
+import { useEffect } from "react";
 
 type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
 type monthlyReportRes = components["schemas"]["MyMonthlyReportResponse"];
@@ -37,20 +38,24 @@ export default function useReport<T extends keyof ReportTypeMap>({
   });
 
   const status = reports?.report?.status;
-  if (status === "FAILED") {
-    useModalStore
-      .getState()
-      .showError(
-        "리포트 생성 도중 문제가 발생했어요.",
-        "다시 시도해주세요. 사용한 크리스탈은 환불되었어요.",
-      );
-    queryClient.invalidateQueries({
-      queryKey: ["currentUser", config.key],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["currentUser", "crystals"],
-    });
-  }
+
+  useEffect(() => {
+    if (status === "FAILED") {
+      useModalStore
+        .getState()
+        .showError(
+          `${config.label} 생성 도중 문제가 발생했어요.`,
+          "다시 시도해주세요. 사용한 크리스탈은 환불되었어요.",
+        );
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser", config.key],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser", "crystals"],
+      });
+    }
+  }, [status, queryClient, config.key]);
+
   const isGenerating = status === "PENDING" || status === "IN_PROGRESS";
 
   return {

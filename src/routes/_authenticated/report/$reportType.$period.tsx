@@ -90,13 +90,13 @@ function RouteComponent() {
       <SubHeader>{config.label}</SubHeader>
       <Container>
         <div className="flex-1 flex flex-col">
-          <div className="-mx-padding-x-m flex flex-col items-center justify-center gap-margin-y-s bg-[url(/periodic-report-bg.png)] bg-cover h-[calc((150/796)*100*var(--dvh))]">
+          <div className="-mx-padding-x-m px-padding-x-m flex flex-col items-center justify-center gap-margin-y-s bg-[url(/periodic-report-bg.png)] bg-cover h-[calc((150/796)*100*var(--dvh))]">
             <span className="text-caption-m text-text-secondary">
               {report?.month}월{" "}
               {reportType === "weekly" && `${report?.weekOfMonth}주차 `}리포트
             </span>
             {/* eslint-disable react/no-unescaped-entities */}
-            <span className="text-title-2">
+            <span className="text-title-2 text-center break-keep">
               <span className="italic mr-1">"</span>
               {report?.summary}
               <span className="italic">"</span>

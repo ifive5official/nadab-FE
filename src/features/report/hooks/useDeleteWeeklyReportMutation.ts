@@ -36,6 +36,9 @@ export function useDeleteMonthlyReportMutation() {
       queryClient.removeQueries({
         queryKey: ["currentUser", "monthly-report"],
       });
+      queryClient.removeQueries({
+        queryKey: ["currentUser", "crystals"],
+      });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);
