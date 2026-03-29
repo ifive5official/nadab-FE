@@ -1,5 +1,5 @@
 // 프로필 이미지 + 업로드 로직 모아둔 파일
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
@@ -219,6 +219,16 @@ export default function ProfileImageUploader({
       }
     }
   };
+
+  // 메모리 누수 방지
+  useEffect(() => {
+    const currentUrl = profileImgUrl;
+    return () => {
+      if (currentUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(currentUrl);
+      }
+    };
+  }, [profileImgUrl]);
 
   const isUploading =
     getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
