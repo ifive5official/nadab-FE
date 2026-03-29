@@ -57,7 +57,7 @@ export function useLoginMutation({ onEmailInvalid, onPasswordInvalid }: Props) {
           onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
           break;
         case "USER_NOT_FOUND":
-          onPasswordInvalid("올바른 이메일 주소를 입력해주세요.");
+          onEmailInvalid("올바른 이메일 주소를 입력해주세요.");
           break;
         case "AUTH_REFRESH_TOKEN_NOT_FOUND":
           // onPasswordInvalid("잘못된 비밀번호예요. 다시 확인하세요.");
