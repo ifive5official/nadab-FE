@@ -27,7 +27,7 @@ function RouteComponent() {
   const { data: question } = useSuspenseQuery(questionOptions);
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 10;
-  const { isOpen, showModal, closeModal } = useModalStore();
+  const { isOpen, showModal, showError, closeModal } = useModalStore();
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) =>
       showModal({
@@ -108,12 +108,19 @@ function RouteComponent() {
           </div>
         </div>
         <BlockButton
-          disabled={!canSubmit}
+          variant={canSubmit ? "primary" : "disabled"}
           onClick={() => {
-            generateResponseMutation.mutate({
-              questionId: question?.questionId ?? 0,
-              answer,
-            });
+            if (canSubmit) {
+              generateResponseMutation.mutate({
+                questionId: question?.questionId ?? 0,
+                answer,
+              });
+            } else {
+              showError(
+                "10글자 이상 작성해 주세요.",
+                "정교한 분석을 위해 조금만 더 자세히 답변해 주세요.",
+              );
+            }
           }}
           isLoading={generateResponseMutation.isPending}
         >

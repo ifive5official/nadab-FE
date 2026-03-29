@@ -12,6 +12,10 @@ export const UserSchema = z.object({
     })
     .regex(/^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]+$/, {
       message: "닉네임은 한글/영문만 사용할 수 있어요.",
+    })
+    .regex(/^[^ㄱ-ㅎㅏ-ㅣ]+$/, {
+      message:
+        "모음 또는 자음만으로 이뤄진 문자가 포함된 닉네임은 사용할 수 없어요.",
     }),
   email: z.string().email({ message: "올바른 이메일 형식이 아니에요." }),
   password: z

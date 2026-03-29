@@ -12,6 +12,7 @@ import useToastStore from "@/store/toastStore";
 import { Capacitor } from "@capacitor/core";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera"; // 추가
 import useBottomModalStore from "@/store/bottomModalStore";
+import useModalStore from "@/store/modalStore";
 
 type UploadUrlRes =
   components["schemas"]["CreateProfileImageUploadUrlResponse"];
@@ -30,6 +31,7 @@ export default function ProfileImageUploader({
   className,
 }: Props) {
   const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
+  const { showError } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const { showToast } = useToastStore();
   const albumInputRef = useRef<HTMLInputElement | null>(null);
@@ -155,6 +157,10 @@ export default function ProfileImageUploader({
       });
     } catch (e) {
       console.error(e);
+      showError(
+        "이미지 업로드 중 문제가 발생했어요.",
+        "다시 한번 시도해 주세요.",
+      );
     } finally {
       e.target.value = "";
     }
@@ -205,6 +211,11 @@ export default function ProfileImageUploader({
           bottom:
             "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
         });
+      } else {
+        showError(
+          "이미지 업로드 중 문제가 발생했어요.",
+          "다시 한번 시도해 주세요.",
+        );
       }
     }
   };
