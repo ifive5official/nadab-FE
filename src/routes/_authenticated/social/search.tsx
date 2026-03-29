@@ -107,6 +107,8 @@ function RouteComponent() {
             searchResults={searchResults}
             isFetching={isFetching}
             isLoading={isLoading}
+            isFetchingNextPage={isFetchingNextPage}
+            triggerRef={ref}
           />
         ) : (
           <FriendsTabRecentSearchSection
@@ -114,7 +116,6 @@ function RouteComponent() {
             onItemClick={(keyword: string) => setSearchTerm(keyword)}
           />
         )}
-        <div ref={ref} />
       </Container>
     </>
   );

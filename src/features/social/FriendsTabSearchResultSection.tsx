@@ -15,6 +15,7 @@ import useErrorStore from "@/store/modalStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
 import { useAddFriendHistoryMutation } from "./hooks/useAddFriendHistoryMutation";
+import clsx from "clsx";
 
 type AnswersRes = components["schemas"]["SearchUserListResponse"];
 
@@ -23,6 +24,8 @@ type Props = {
   searchResults: InfiniteData<AnswersRes> | undefined;
   isFetching: boolean;
   isLoading: boolean;
+  isFetchingNextPage: boolean;
+  triggerRef: React.ForwardedRef<HTMLDivElement>;
 };
 
 type RelationshipStatus =
@@ -42,6 +45,8 @@ export default function FriendsTabSearchResultSection({
   searchResults,
   isFetching,
   isLoading,
+  isFetchingNextPage,
+  triggerRef,
 }: Props) {
   // 유저 검색 결과가 하나라도 있는가?
   const hasResult = searchResults?.pages.some(
@@ -271,76 +276,77 @@ export default function FriendsTabSearchResultSection({
           </>
         )}
         {/* 전체 사용자 검색결과 */}
-        {(hasResult || isLoading) && (
+        {hasResult && (
           <div className="w-full mt-margin-y-m">
             <span className="text-caption-m">사용자</span>
             <ul className="w-full py-padding-y-m flex flex-col gap-margin-y-xl">
-              {isLoading ? (
-                <>
-                  {Array(7)
-                    .fill(0)
-                    .map((_, i) => (
-                      <FriendItemSkeleton key={i} />
-                    ))}
-                </>
-              ) : (
-                <>
-                  {searchResults?.pages.map((page, i) => {
-                    return (
-                      <Fragment key={i}>
-                        {page?.searchResults?.map((result) => {
-                          const btnConfig =
-                            REQUESTBTN_CONFIG[result.relationshipStatus!];
-                          const targetId =
-                            result.friendshipId || result.nickname;
-                          const isBtnLoading = activeIds.has(targetId);
-                          const isBtnDisabled =
-                            result.relationshipStatus === "NONE" &&
-                            hasMaxFriends;
-                          return (
-                            <FriendItem
-                              key={result.nickname}
-                              name={result.nickname!}
-                              profileImgUrl={result.profileImageUrl!}
-                              buttons={[
-                                btnConfig && (
-                                  <InlineButton
-                                    key="action"
-                                    variant={
-                                      isBtnDisabled ? "disabled" : "secondary"
-                                    }
-                                    isLoading={isBtnLoading}
-                                    onClick={() => {
-                                      if (hasMaxFriends) {
-                                        useErrorStore
-                                          .getState()
-                                          .showError(
-                                            `친구는 최대 20명까지\n추가할 수 있어요.`,
-                                          );
-                                      }
-                                      {
-                                        btnConfig.onClick?.({
-                                          nickname: result.nickname!,
-                                          id: result.friendshipId ?? 0,
-                                        });
-                                      }
-                                    }}
-                                  >
-                                    {btnConfig.label}
-                                  </InlineButton>
-                                ),
-                              ]}
-                            />
-                          );
-                        })}
-                      </Fragment>
-                    );
-                  })}
-                </>
-              )}
+              {searchResults?.pages.map((page, i) => {
+                return (
+                  <Fragment key={i}>
+                    {page?.searchResults?.map((result) => {
+                      const btnConfig =
+                        REQUESTBTN_CONFIG[result.relationshipStatus!];
+                      const targetId = result.friendshipId || result.nickname;
+                      const isBtnLoading = activeIds.has(targetId);
+                      const isBtnDisabled =
+                        result.relationshipStatus === "NONE" && hasMaxFriends;
+                      return (
+                        <FriendItem
+                          key={result.nickname}
+                          name={result.nickname!}
+                          profileImgUrl={result.profileImageUrl!}
+                          buttons={[
+                            btnConfig && (
+                              <InlineButton
+                                key="action"
+                                variant={
+                                  isBtnDisabled ? "disabled" : "secondary"
+                                }
+                                isLoading={isBtnLoading}
+                                onClick={() => {
+                                  if (hasMaxFriends) {
+                                    useErrorStore
+                                      .getState()
+                                      .showError(
+                                        `친구는 최대 20명까지\n추가할 수 있어요.`,
+                                      );
+                                  }
+                                  {
+                                    btnConfig.onClick?.({
+                                      nickname: result.nickname!,
+                                      id: result.friendshipId ?? 0,
+                                    });
+                                  }
+                                }}
+                              >
+                                {btnConfig.label}
+                              </InlineButton>
+                            ),
+                          ]}
+                        />
+                      );
+                    })}
+                  </Fragment>
+                );
+              })}
             </ul>
           </div>
         )}
+        {(isLoading || isFetchingNextPage) && (
+          <ul
+            className={clsx(
+              "w-full flex flex-col gap-margin-y-xl",
+              hasResult ? "pb-padding-y-m" : "py-padding-y-m",
+            )}
+          >
+            {Array(10)
+              .fill(0)
+              .map((_, i) => (
+                <FriendItemSkeleton key={i} />
+              ))}
+          </ul>
+        )}
+        {hasResult && <div ref={triggerRef} />}
       </section>
     </>
   );
