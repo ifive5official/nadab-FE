@@ -48,3 +48,7 @@ const categories = [
 ] as const;
 
 export default categories;
+
+export function findCategoryByCode(code: string) {
+  return categories.find((category) => category.code === code);
+}
