@@ -14,11 +14,17 @@ type LoginRes = components["schemas"]["TokenResponse"];
 export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
   component: RouteComponent,
   validateSearch: z.object({
-    code: z.string(),
-    state: z.string(),
+    code: z.string().optional(),
+    state: z.string().optional(),
+    error: z.string().optional(),
+    error_description: z.string().optional(),
   }),
-  loaderDeps: ({ search: { code, state } }) => ({ code, state }),
-  loader: async ({ deps: { code, state }, params: { provider } }) => {
+  loaderDeps: ({ search }) => ({ ...search }),
+  loader: async ({ deps: { code, state, error }, params: { provider } }) => {
+    // 취소 시 홈으로 리다이렉트
+    if (error || !code) {
+      throw redirect({ to: "/", replace: true });
+    }
     try {
       const res = await api.post<ApiResponse<LoginRes>>(
         `/api/v1/auth/${provider}/login`,
