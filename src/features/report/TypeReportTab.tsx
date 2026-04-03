@@ -13,6 +13,7 @@ import clsx from "clsx";
 import Seperator from "@/components/Seperator";
 import TopNotification from "@/components/TopNotification";
 import TypeReportSlides from "./TypeReportSlides";
+import ScrollContainer from "react-indiana-drag-scroll";
 
 export default function TypeReportTab() {
   const { reports: typeReports } = useTypeReport();
@@ -62,7 +63,10 @@ export default function TypeReportTab() {
 
   return (
     <>
-      <ul className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ScrollContainer
+        component="ul"
+        className="shrink-0 flex items-center gap-gap-x-s mb-margin-y-l overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         {[...typesWithReport, ...typesWithoutReport].map((type) => {
           const selected = type === selectedCategory;
           const canGenerate =
@@ -97,7 +101,7 @@ export default function TypeReportTab() {
             </li>
           );
         })}
-      </ul>
+      </ScrollContainer>
       <Seperator />
       {isTopNotificationVisible && (
         <TopNotification
