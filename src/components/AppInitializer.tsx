@@ -25,6 +25,9 @@ async function changeStatusBarAreaColor(hexColor: string) {
 // Todo: 네트워크 에러 처리 로직도 여기로 옮기기
 export default function AppInitializer({ router }: { router: AnyRouter }) {
   //   const [isOnline, setIsOnline] = useState(true);
+  const platform = Capacitor.getPlatform();
+  document.documentElement.classList.add(`cap-${platform}`);
+
   const { registerPush } = usePushNotifications();
 
   // 뒤로가기 버튼과 히스토리 api 연동

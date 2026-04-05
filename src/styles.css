@@ -50,6 +50,10 @@ img {
   -webkit-touch-callout: default; /* 시스템 메뉴 허용 */
 }
 
+.cap-ios {
+  --safe-top: env(safe-area-inset-top);
+}
+
 html {
   padding-bottom: var(--safe-bottom);
 }
