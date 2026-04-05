@@ -6,6 +6,7 @@
     Pretendard,
     -apple-system;
 
+  --safe-bottom: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* 텍스트 선택 방지 */
@@ -50,12 +51,12 @@ img {
   -webkit-touch-callout: default; /* 시스템 메뉴 허용 */
 }
 
-.cap-ios {
-  --safe-top: env(safe-area-inset-top);
-}
-
 html {
   padding-bottom: var(--safe-bottom);
+}
+
+html.cap-ios {
+  padding-top: var(--safe-top);
 }
 
 /* 홈, 질문 온보딩 페이지에서 사용 */
