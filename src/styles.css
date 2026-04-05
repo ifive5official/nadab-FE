@@ -6,7 +6,6 @@
     Pretendard,
     -apple-system;
 
-  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* 텍스트 선택 방지 */
@@ -56,6 +55,7 @@ html {
 }
 
 html.cap-ios {
+  --safe-top: env(safe-area-inset-top, 0px);
   padding-top: var(--safe-top);
 }
 
