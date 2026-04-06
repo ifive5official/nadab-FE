@@ -101,7 +101,10 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
     <>
       {isOpen && (
         <>
-          <div className="z-20 fixed inset-0" onClick={onClose} />
+          <div
+            className="z-20 fixed inset-0 top-(safe-top)!"
+            onClick={onClose}
+          />
           {/* 헤더 영역만큼 비워두기...*/}
           <div className="z-30 fixed top-header-height right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
             <div className="flex flex-col top-0 w-fit px-padding-x-s py-padding-y-xs bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
