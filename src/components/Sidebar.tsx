@@ -51,7 +51,7 @@ export default function Sidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed z-2 inset-0 top-(safe-top)! bg-neutral-dark-50"
+              className="fixed z-2 inset-0 top-(--safe-top)! bg-neutral-dark-50"
               onClick={closeSidebar}
             />
             {/* 사이드바 */}

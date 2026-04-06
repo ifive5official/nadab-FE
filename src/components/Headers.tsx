@@ -102,7 +102,7 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
       {isOpen && (
         <>
           <div
-            className="z-20 fixed inset-0 top-(safe-top)!"
+            className="z-20 fixed inset-0 top-(--safe-top)!"
             onClick={onClose}
           />
           {/* 헤더 영역만큼 비워두기...*/}
