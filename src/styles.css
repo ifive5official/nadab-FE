@@ -54,6 +54,11 @@ html {
   padding-bottom: var(--safe-bottom);
 }
 
+html.cap-android,
+html.cap-web {
+  --safe-top: 0px;
+}
+
 html.cap-ios {
   --safe-top: env(safe-area-inset-top, 0px);
   padding-top: var(--safe-top);
