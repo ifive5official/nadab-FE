@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>나답</string>
+	<string>나답</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,5 +45,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>프로필 사진 촬영을 위해 카메라 접근 권한이 필요해요.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>프로필 사진을 업로드하기 위해 앨범 접근 권한이 필요해요.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>사진을 앨범에 저장하기 위해 권한이 필요해요.</string>
 </dict>
 </plist>
