@@ -67,6 +67,7 @@ export function LandingPage() {
   async function sdkGoogleLogin() {
     try {
       const user = await GoogleAuth.signIn();
+      console.log("id token: ", user.authentication.idToken);
       const res = await api.post("/api/v1/auth/google/native-login", {
         googleIdToken: user.authentication.idToken,
       });
