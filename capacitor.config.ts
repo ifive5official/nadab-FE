@@ -21,7 +21,7 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ["profile", "email"],
-      serverClientId: process.env.VITE_GOOGLE_CLIENT_ID,
+      serverClientId: process.env.VITE_GOOGLE_CLIENT_ID_SERVER,
       forceCodeForRefreshToken: true,
     },
     CapacitorNaverLogin: {

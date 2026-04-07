@@ -49,9 +49,16 @@ export function LandingPage() {
   // 구글 SDK 설정
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
+      const platform = Capacitor.getPlatform();
+
+      const clientId =
+        platform === "ios"
+          ? import.meta.env.VITE_GOOGLE_CLIENT_ID_IOS
+          : import.meta.env.VITE_GOOGLE_CLIENT_ID_ANDROID;
+
       GoogleAuth.initialize({
         scopes: ["profile", "email"],
-        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        clientId: clientId,
         grantOfflineAccess: true,
       });
     }
