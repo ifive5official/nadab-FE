@@ -30,8 +30,6 @@ export function usePushNotifications() {
   }, [deviceId, setDeviceId]);
 
   const setupNotificationChannels = useCallback(async () => {
-    if (Capacitor.getPlatform() !== "android") return;
-
     try {
       await PushNotifications.createChannel({
         id: "default_push",
@@ -51,10 +49,13 @@ export function usePushNotifications() {
     // 웹이거나 로그인 안 되어 있으면 아무것도 안 함
     if (!Capacitor.isNativePlatform() || !isLoggedIn || !deviceId) return;
 
+    const platform = Capacitor.getPlatform().toUpperCase();
+
     try {
       // 리스너 등록
-      await setupNotificationChannels();
-
+      if (platform === "ANDROID") {
+        await setupNotificationChannels();
+      }
       await PushNotifications.removeAllListeners();
 
       // 딥링크 처리
@@ -81,7 +82,7 @@ export function usePushNotifications() {
         await api.post("/api/v1/notifications/tokens", {
           fcmToken: token.value,
           deviceId: deviceId,
-          platform: "ANDROID",
+          platform: platform,
         });
       });
 
@@ -94,10 +95,11 @@ export function usePushNotifications() {
 
   async function unregisterPush() {
     if (!Capacitor.isNativePlatform() || !deviceId) return;
+    const platform = Capacitor.getPlatform().toUpperCase();
 
     const perm = await PushNotifications.checkPermissions();
     if (perm.receive === "granted") {
-      await api.delete(`/api/v1/notifications/tokens/${deviceId}/ANDROID`);
+      await api.delete(`/api/v1/notifications/tokens/${deviceId}/${platform}`);
       await PushNotifications.removeAllListeners();
     }
   }
