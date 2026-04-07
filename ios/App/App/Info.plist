@@ -30,6 +30,16 @@
 				<string>com.googleusercontent.apps.650501637678-afjddul4hp81ca4gssf47hc2lems2poe</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>NaverLogin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.nadab.app</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
