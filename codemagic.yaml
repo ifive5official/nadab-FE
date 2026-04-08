@@ -20,7 +20,7 @@ workflows:
           corepack enable
           corepack prepare pnpm@latest --activate
       - name: Install dependencies
-        script: pm install --no-frozen-lockfile
+        script: pnpm install --no-frozen-lockfile
       - name: Web build
         script: pnpm build
       - name: Capacitor Sync
