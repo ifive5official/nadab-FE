@@ -15,8 +15,10 @@ workflows:
         XCODE_SCHEME: "App"
       node: latest
     scripts:
-      - name: Install pnpm
-        script: npm install -g pnpm
+      - name: Set up pnpm
+        script: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
       - name: Install dependencies
         script: pnpm install
       - name: Web build
