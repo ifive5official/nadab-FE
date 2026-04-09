@@ -6,6 +6,8 @@ workflows:
     integrations:
       app_store_connect: MyAppleKey
     environment:
+      groups:
+        - ios
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.nadab.app
@@ -21,6 +23,18 @@ workflows:
           corepack prepare pnpm@latest --activate
       - name: Install dependencies
         script: pnpm install --no-frozen-lockfile
+      - name: Create .env file
+        script: |
+          echo "VITE_NAVER_CLIENT_SECRET=$VITE_NAVER_CLIENT_SECRET" >> .env
+          echo "VITE_NAVER_CLIENT_ID=$VITE_NAVER_CLIENT_ID" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID_IOS=$VITE_GOOGLE_CLIENT_ID_IOS" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID_SERVER=$VITE_GOOGLE_CLIENT_ID_SERVER" >> .env
+          echo "VITE_IS_PRODUCTION=$VITE_IS_PRODUCTION" >> .env
+          echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> .env
+
+      - name: Decode GoogleService-Info.plist
+        script: |
+          echo $GOOGLE_SERVICES_BASE64 | base64 --decode > ios/App/App/GoogleService-Info.plist
       - name: Web build
         script: pnpm build
       - name: Capacitor Sync
