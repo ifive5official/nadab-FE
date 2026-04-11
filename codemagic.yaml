@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2 # 최신 M2 맥에서 빌드
     integrations:
-      app_store_connect: MyAppleKey
+      app_store_connect: NadabKey
     environment:
       groups:
         - ios
