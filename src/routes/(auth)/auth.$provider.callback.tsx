@@ -55,10 +55,7 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
       if (isRedirect(err)) {
         throw err;
       }
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
-      ) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
         // 이미 일반 로그인으로 가입한 계정일 시
         useErrorStore
           .getState()

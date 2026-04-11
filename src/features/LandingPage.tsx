@@ -1,7 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import useSignupStore from "@/store/signupStore";
 import BlockButton from "@/components/BlockButton";
-import { NaverIcon, GoogleIcon, RoundEmailIcon } from "@/components/Icons";
+import {
+  NaverIcon,
+  GoogleIcon,
+  RoundEmailIcon,
+  KakaoIcon,
+} from "@/components/Icons";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
@@ -24,18 +29,24 @@ export function LandingPage() {
   const { data: socialLoginUrls } = useQuery({
     queryKey: ["socialLoginUrls"],
     queryFn: async () => {
-      const [naverRes, googleRes] = await Promise.all([
+      const [naverRes, googleRes, kakaoRes] = await Promise.all([
         api.get<ApiResponse<UrlRes>>("/api/v1/auth/naver/url"),
         api.get<ApiResponse<UrlRes>>("/api/v1/auth/google/url"),
+        api.get<ApiResponse<UrlRes>>("/api/v1/auth/kakao/url"),
       ]);
 
       const naverUrl = naverRes.data.data!.authorizationUrl;
       const googleUrl = googleRes.data.data!.authorizationUrl;
+      const kakaoUrl = kakaoRes.data.data!.authorizationUrl;
       const REDIRECT_BASE = import.meta.env.VITE_REDIRECT_BASE;
 
       return {
         naver: naverUrl!.replace("https://nadab-fe.vercel.app/", REDIRECT_BASE),
         google: googleUrl!.replaceAll(
+          "https://nadab-fe.vercel.app/",
+          REDIRECT_BASE,
+        ),
+        kakao: kakaoUrl!.replaceAll(
           "https://nadab-fe.vercel.app/",
           REDIRECT_BASE,
         ),
@@ -135,7 +146,7 @@ export function LandingPage() {
       <div className="pt-padding-y-m flex-1 flex flex-col justify-center items-center">
         <img
           src="/mainLogo.png"
-          className="h-[calc((112.8/796)*100*var(--dvh))] w-auto"
+          className="h-[calc((111.8/796)*100*var(--dvh))] w-auto"
         />
         <div className="mt-padding-y-xxl mb-margin-y-m">
           <img
@@ -166,6 +177,23 @@ export function LandingPage() {
                   <NaverIcon />
                 </span>
                 <span>네이버로 로그인</span>
+              </div>
+            </BlockButton>
+            <BlockButton
+              variant="white"
+              onClick={() => {
+                if (Capacitor.isNativePlatform()) {
+                  // Todo
+                } else {
+                  window.location.href = socialLoginUrls?.kakao ?? "";
+                }
+              }}
+            >
+              <div>
+                <span className="absolute left-padding-x-m">
+                  <KakaoIcon />
+                </span>
+                <span>카카오로 로그인</span>
               </div>
             </BlockButton>
             <BlockButton
