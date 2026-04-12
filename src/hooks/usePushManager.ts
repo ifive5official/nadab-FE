@@ -25,11 +25,15 @@ export function usePushNotifications() {
     let listener: any;
 
     const setupListener = async () => {
-      listener = await App.addListener("appStateChange", ({ isActive }) => {
-        if (isActive) {
-          Badge.set({ count: 0 });
-        }
-      });
+      listener = await App.addListener(
+        "appStateChange",
+        async ({ isActive }) => {
+          if (isActive) {
+            await Badge.set({ count: 0 });
+            await PushNotifications.removeAllDeliveredNotifications();
+          }
+        },
+      );
     };
 
     setupListener();
@@ -99,8 +103,11 @@ export function usePushNotifications() {
       // 포그라운드 알림 처리
       await PushNotifications.addListener(
         "pushNotificationReceived",
-        (notification) => {
+        async (notification) => {
           showToast(notification);
+          // 앱을 보고 있는 중에는 배지가 쌓일 필요가 없으므로 바로 지움
+          await Badge.set({ count: 0 });
+          await PushNotifications.removeAllDeliveredNotifications();
         },
       );
 
