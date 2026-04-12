@@ -59,7 +59,11 @@ export const Route = createFileRoute("/(auth)/auth/$provider/callback")({
         // 이미 일반 로그인으로 가입한 계정일 시
         useErrorStore
           .getState()
-          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+          .showError(
+            "이미 가입한 계정이에요.",
+            "다른 계정으로 가입해보세요.",
+            true,
+          );
       } else if (axios.isAxiosError(err)) {
         handleDefaultApiError(err);
       }

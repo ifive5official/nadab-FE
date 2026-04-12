@@ -21,8 +21,10 @@ export default function Modal() {
   }, [isOpen]);
 
   useEffect(() => {
-    closeModal();
-  }, [location.pathname, closeModal]);
+    if (!config?.openOnNavigate) {
+      closeModal();
+    }
+  }, [location.pathname, closeModal, config?.openOnNavigate]);
 
   const Icon = config?.icon;
 
