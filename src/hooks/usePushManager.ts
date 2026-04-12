@@ -10,6 +10,7 @@ import {
 } from "@/features/notifications/notificationConfigs";
 import { router } from "@/main";
 import usePushToastStore from "@/store/pushToastStore";
+import { FCM } from "@capacitor-community/fcm";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
@@ -79,8 +80,14 @@ export function usePushNotifications() {
       );
 
       await PushNotifications.addListener("registration", async (token) => {
+        let fcmToken = token.value;
+
+        if (platform === "IOS") {
+          const res = await FCM.getToken();
+          fcmToken = res.token;
+        }
         await api.post("/api/v1/notifications/tokens", {
-          fcmToken: token.value,
+          fcmToken: fcmToken,
           deviceId: deviceId,
           platform: platform,
         });
