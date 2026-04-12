@@ -11,10 +11,35 @@ import {
 import { router } from "@/main";
 import usePushToastStore from "@/store/pushToastStore";
 import { FCM } from "@capacitor-community/fcm";
+import { App } from "@capacitor/app";
+import { Badge } from "@capawesome/capacitor-badge";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
   const { showToast } = usePushToastStore();
+
+  // ios에서 앱이 활성화될 때마다 배지 초기화
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    let listener: any;
+
+    const setupListener = async () => {
+      listener = await App.addListener("appStateChange", ({ isActive }) => {
+        if (isActive) {
+          Badge.set({ count: 0 });
+        }
+      });
+    };
+
+    setupListener();
+
+    return () => {
+      if (listener) {
+        listener.remove();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {

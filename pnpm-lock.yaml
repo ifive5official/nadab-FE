@@ -44,6 +44,9 @@ importers:
       '@capacitor/toast':
         specifier: ^8.0.0
         version: 8.0.0(@capacitor/core@8.0.2)
+      '@capawesome/capacitor-badge':
+        specifier: ^8.0.1
+        version: 8.0.1(@capacitor/core@8.0.2)
       '@codetrix-studio/capacitor-google-auth':
         specifier: 3.4.0-rc.4
         version: 3.4.0-rc.4(@capacitor/core@8.0.2)
@@ -855,6 +858,11 @@ packages:
 
   '@capacitor/toast@8.0.0':
     resolution: {integrity: sha512-khWSYsBd+kc28s+nTfswxEfTQ3edY2f0BbvPZmEoBnXclunZbC7Bn1/ZyjKtM9wEA1RC5Umq4RUeFh8TtP+02g==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capawesome/capacitor-badge@8.0.1':
+    resolution: {integrity: sha512-gfci9Ugwh1+2/2JNeQdRKCVtTNRZRDwx9vj994P7OMel6kPg0zzKVobYW6/Tkj65qwaKeMEKT5HADbNL8HN2gQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -4619,6 +4627,10 @@ snapshots:
       '@capacitor/core': 8.0.2
 
   '@capacitor/toast@8.0.0(@capacitor/core@8.0.2)':
+    dependencies:
+      '@capacitor/core': 8.0.2
+
+  '@capawesome/capacitor-badge@8.0.1(@capacitor/core@8.0.2)':
     dependencies:
       '@capacitor/core': 8.0.2
 
