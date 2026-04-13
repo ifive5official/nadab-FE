@@ -31,3 +31,6 @@ project(':codetrix-studio-capacitor-google-auth').projectDir = new File('../node
 
 include ':team-lepisode-capacitor-naver-login'
 project(':team-lepisode-capacitor-naver-login').projectDir = new File('../node_modules/.pnpm/@team-lepisode+capacitor-na_234ab78a729801e01732e7b06dc0a185/node_modules/@team-lepisode/capacitor-naver-login/android')
+
+include ':capacitor3-kakao-login'
+project(':capacitor3-kakao-login').projectDir = new File('../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.0.2/node_modules/capacitor3-kakao-login/android')

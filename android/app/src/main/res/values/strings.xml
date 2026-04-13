@@ -4,4 +4,6 @@
     <string name="title_activity_main">나답</string>
     <string name="package_name">com.nadab.app</string>
     <string name="custom_url_scheme">com.nadab.app</string>
+
+    <string name="kakaolink_host">kakaolink</string>
 </resources>

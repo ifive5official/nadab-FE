@@ -11,7 +11,6 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
-
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { CapacitorNaverLogin } from "@team-lepisode/capacitor-naver-login";
 import useAuthStore from "@/store/authStore";
@@ -21,6 +20,7 @@ import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
 import { Browser } from "@capacitor/browser";
+import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
 
 type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
@@ -57,11 +57,11 @@ export function LandingPage() {
 
   const navigate = useNavigate();
 
-  // 구글 SDK 설정
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
       const platform = Capacitor.getPlatform();
 
+      // 구글 SDK 설정
       const clientId =
         platform === "ios"
           ? import.meta.env.VITE_GOOGLE_CLIENT_ID_IOS
@@ -72,8 +72,14 @@ export function LandingPage() {
         clientId: clientId,
         grantOfflineAccess: true,
       });
+
+      // 카카오 SDK 설정
+      Capacitor3KakaoLogin.initializeKakao({
+        app_key: import.meta.env.VITE_KAKAO_APP_KEY,
+        web_key: import.meta.env.VITE_KAKAO_WEB_KEY,
+      });
     }
-  });
+  }, []);
 
   async function sdkGoogleLogin() {
     try {
@@ -113,6 +119,38 @@ export function LandingPage() {
       const user = await CapacitorNaverLogin.login();
       const res = await api.post("/api/v1/auth/naver/native-login", {
         naverAccessToken: user.accessToken,
+      });
+      const { accessToken, signupStatus } = res.data.data!;
+
+      useAuthStore.getState().setAccessToken(accessToken!);
+
+      if (signupStatus === "PROFILE_INCOMPLETE") {
+        navigate({
+          to: "/signup/terms",
+          replace: true,
+          search: { type: "social" },
+        });
+      }
+    } catch (err) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.data?.code === "AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC"
+      ) {
+        // 이미 일반 로그인으로 가입한 계정일 시
+        useModalStore
+          .getState()
+          .showError("이미 가입한 계정이에요.", "다른 계정으로 가입해보세요.");
+      } else if (axios.isAxiosError(err)) {
+        handleDefaultApiError(err);
+      }
+    }
+  }
+
+  async function sdkKakaoLogin() {
+    try {
+      const user = await Capacitor3KakaoLogin.kakaoLogin();
+      const res = await api.post("/api/v1/auth/kakao/native-login", {
+        kakaoAccessToken: user.value,
       });
       const { accessToken, signupStatus } = res.data.data!;
 
@@ -183,7 +221,7 @@ export function LandingPage() {
               variant="white"
               onClick={() => {
                 if (Capacitor.isNativePlatform()) {
-                  // Todo
+                  sdkKakaoLogin();
                 } else {
                   window.location.href = socialLoginUrls?.kakao ?? "";
                 }

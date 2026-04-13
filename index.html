@@ -14,6 +14,7 @@
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>나답</title>
+    <!-- amplitude -->
     <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
     <script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.25.0-min.js.gz"></script>
     <script>
@@ -22,6 +23,13 @@
         autocapture: { elementInteractions: true },
       });
     </script>
+    <!-- kakao login -->
+    <script
+      src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js"
+      integrity="sha384-OL+ylM/iuPLtW5U3XcvLSGhE8JzReKDank5InqlHGWPhb4140/yrBw0bg0y7+C9J"
+      crossorigin="anonymous"
+    ></script>
+    <!-- lagacy CSS -->
     <script>
       (function () {
         var MIN_CHROME = 100; // 이 버전 미만일 때만 구형으로 간주

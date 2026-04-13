@@ -71,6 +71,9 @@ importers:
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      capacitor3-kakao-login:
+        specifier: ^0.8.7
+        version: 0.8.7(@capacitor/core@8.0.2)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1930,6 +1933,12 @@ packages:
 
   caniuse-lite@1.0.30001777:
     resolution: {integrity: sha512-tmN+fJxroPndC74efCdp12j+0rk0RHwV5Jwa1zWaFVyw2ZxAuPeG8ZgWC3Wz7uSjT3qMRQ5XHZ4COgQmsCMJAQ==}
+
+  capacitor3-kakao-login@0.8.7:
+    resolution: {integrity: sha512-GSElGfcwB/iVjPXxr28ACBmkGNdDsWZK1AvqT6Q9M3NOlf4QbFF5j/hy8AlahwR3ltrB3Lw2+ktUvA+6PwRs4Q==}
+    engines: {node: 22.14.0}
+    peerDependencies:
+      '@capacitor/core': ^8.0.0
 
   chai@5.3.3:
     resolution: {integrity: sha512-4zNhdJD/iOjSH0A05ea+Ke6MU5mmpQcbQsSOkgdaUMJ9zTlDTD/GYlwohmIE2u0gaxHYiVHEn1Fw9mZ/ktJWgw==}
@@ -5797,6 +5806,10 @@ snapshots:
   callsites@3.1.0: {}
 
   caniuse-lite@1.0.30001777: {}
+
+  capacitor3-kakao-login@0.8.7(@capacitor/core@8.0.2):
+    dependencies:
+      '@capacitor/core': 8.0.2
 
   chai@5.3.3:
     dependencies:

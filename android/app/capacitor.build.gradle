@@ -19,6 +19,7 @@ dependencies {
     implementation project(':capacitor-toast')
     implementation project(':codetrix-studio-capacitor-google-auth')
     implementation project(':team-lepisode-capacitor-naver-login')
+    implementation project(':capacitor3-kakao-login')
 
 }
 
