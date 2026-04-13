@@ -100,10 +100,13 @@ export default function Sidebar() {
                     href={item.to}
                     onClick={async (e) => {
                       if (Capacitor.isNativePlatform()) {
-                        e.preventDefault();
-                        await Browser.open({
-                          url: item.to,
-                        });
+                        const isEmail = item.to.startsWith("mailto:");
+                        if (!isEmail) {
+                          e.preventDefault();
+                          await Browser.open({
+                            url: item.to,
+                          });
+                        }
                       }
                     }}
                   >

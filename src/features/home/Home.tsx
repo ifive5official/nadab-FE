@@ -11,7 +11,7 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useModalStore from "@/store/modalStore";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { Capacitor } from "@capacitor/core";
@@ -24,6 +24,8 @@ export default function Home() {
   const { showModal, closeModal } = useModalStore();
   const { showToast } = useToastStore();
 
+  const hasShownPrompt = useRef(false);
+
   // 앱 상에서 배경색이 하단바에 비치게 함
   useEffect(() => {
     document.documentElement.classList.add("no-safe-padding");
@@ -32,11 +34,12 @@ export default function Home() {
 
   // 최초 진입 시 알림 권한 설정 모달 띄움
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (!Capacitor.isNativePlatform() || hasShownPrompt.current) return;
     async function checkNotificationPerm() {
       let perm = await PushNotifications.checkPermissions();
       const state = perm.receive;
       if (state === "prompt") {
+        hasShownPrompt.current = true;
         showModal({
           icon: () => (
             <img
