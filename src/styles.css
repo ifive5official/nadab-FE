@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 
 :root {
   font-family:
-    Pretendard,
+    Pretendard Variable,
     -apple-system;
 
   --safe-bottom: env(safe-area-inset-bottom, 0px);

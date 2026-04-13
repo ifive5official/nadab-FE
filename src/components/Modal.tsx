@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
@@ -8,6 +8,7 @@ import { useLocation } from "@tanstack/react-router";
 export default function Modal() {
   const { isOpen, closeModal, config } = useModalStore();
   const location = useLocation();
+  const lastPathname = useRef(location.pathname);
 
   useEffect(() => {
     if (isOpen) {
@@ -21,10 +22,13 @@ export default function Modal() {
   }, [isOpen]);
 
   useEffect(() => {
-    if (!config?.openOnNavigate) {
-      closeModal();
+    if (lastPathname.current !== location.pathname) {
+      if (!config?.openOnNavigate) {
+        closeModal();
+      }
+      lastPathname.current = location.pathname;
     }
-  }, [location.pathname, closeModal, config?.openOnNavigate]);
+  }, [location.pathname, config?.openOnNavigate, closeModal]);
 
   const Icon = config?.icon;
 

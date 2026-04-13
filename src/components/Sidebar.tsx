@@ -75,14 +75,28 @@ export default function Sidebar() {
                   {
                     to: "https://docs.google.com/forms/d/e/1FAIpQLSdFvRmWaPdfOo3mT6qqbtlsqX8bJqUCa1A_FiofQkpIpYM7cg/viewform",
                     label: "의견 남기기",
+                    hasRightIcon: true,
                   },
                   {
                     to: "https://www.instagram.com/nadab.app/",
                     label: "인스타그램 바로가기",
+                    hasRightIcon: true,
                   },
-                ].map((item) => (
+                  {
+                    to: "mailto:ifive5.official@gmail.com",
+                    label: (
+                      <>
+                        1:1 문의 :{" "}
+                        <span className="underline underline-offset-3">
+                          ifive5.official@gmail.com
+                        </span>
+                      </>
+                    ),
+                    hasRightIcon: false,
+                  },
+                ].map((item, i) => (
                   <a
-                    key={item.label}
+                    key={i}
                     href={item.to}
                     onClick={async (e) => {
                       if (Capacitor.isNativePlatform()) {
@@ -97,9 +111,11 @@ export default function Sidebar() {
                       <span className="text-caption-l text-text-secondary">
                         {item.label}
                       </span>
-                      <span className="text-icon-muted">
-                        <ChevronRightIcon />
-                      </span>
+                      {item.hasRightIcon && (
+                        <span className="text-icon-muted">
+                          <ChevronRightIcon />
+                        </span>
+                      )}
                     </div>
                   </a>
                 ))}

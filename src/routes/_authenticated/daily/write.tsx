@@ -108,7 +108,7 @@ function RouteComponent() {
           </div>
         </div>
         <BlockButton
-          variant={canSubmit ? "primary" : "disabled"}
+          variant="primary"
           onClick={() => {
             if (canSubmit) {
               generateResponseMutation.mutate({
