@@ -10,10 +10,40 @@ import {
 } from "@/features/notifications/notificationConfigs";
 import { router } from "@/main";
 import usePushToastStore from "@/store/pushToastStore";
+import { FCM } from "@capacitor-community/fcm";
+import { App } from "@capacitor/app";
+import { Badge } from "@capawesome/capacitor-badge";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
   const { showToast } = usePushToastStore();
+
+  // ios에서 앱이 활성화될 때마다 배지 초기화
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    let listener: any;
+
+    const setupListener = async () => {
+      listener = await App.addListener(
+        "appStateChange",
+        async ({ isActive }) => {
+          if (isActive) {
+            await Badge.set({ count: 0 });
+            await PushNotifications.removeAllDeliveredNotifications();
+          }
+        },
+      );
+    };
+
+    setupListener();
+
+    return () => {
+      if (listener) {
+        listener.remove();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
@@ -73,14 +103,23 @@ export function usePushNotifications() {
       // 포그라운드 알림 처리
       await PushNotifications.addListener(
         "pushNotificationReceived",
-        (notification) => {
+        async (notification) => {
           showToast(notification);
+          // 앱을 보고 있는 중에는 배지가 쌓일 필요가 없으므로 바로 지움
+          await Badge.set({ count: 0 });
+          await PushNotifications.removeAllDeliveredNotifications();
         },
       );
 
       await PushNotifications.addListener("registration", async (token) => {
+        let fcmToken = token.value;
+
+        if (platform === "IOS") {
+          const res = await FCM.getToken();
+          fcmToken = res.token;
+        }
         await api.post("/api/v1/notifications/tokens", {
-          fcmToken: token.value,
+          fcmToken: fcmToken,
           deviceId: deviceId,
           platform: platform,
         });

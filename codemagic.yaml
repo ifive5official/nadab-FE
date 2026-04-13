@@ -1,0 +1,65 @@
+workflows:
+  ios-testflight-workflow:
+    name: iOS TestFlight Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m2 # 최신 M2 맥에서 빌드
+    integrations:
+      app_store_connect: NadabKey
+    environment:
+      groups:
+        - ios
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.nadab.app
+      vars:
+        APP_STORE_APPLE_ID: 6761776437
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: latest
+    scripts:
+      - name: Set up pnpm
+        script: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+      - name: Install dependencies
+        script: pnpm install --no-frozen-lockfile
+      - name: Create .env file
+        script: |
+          echo "VITE_NAVER_CLIENT_SECRET=$VITE_NAVER_CLIENT_SECRET" >> .env
+          echo "VITE_NAVER_CLIENT_ID=$VITE_NAVER_CLIENT_ID" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID_IOS=$VITE_GOOGLE_CLIENT_ID_IOS" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID_SERVER=$VITE_GOOGLE_CLIENT_ID_SERVER" >> .env
+          echo "VITE_IS_PRODUCTION=$VITE_IS_PRODUCTION" >> .env
+          echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> .env
+
+      - name: Decode GoogleService-Info.plist
+        script: |
+          echo $GOOGLE_SERVICES_BASE64 | base64 --decode > ios/App/App/GoogleService-Info.plist
+      - name: Web build
+        script: pnpm build
+      - name: Capacitor Sync
+        script: npx cap sync ios
+      - name: Cocoapods installation
+        script: |
+          cd ios/App && pod install
+      - name: Set up code signing settings
+        script: xcode-project use-profiles
+      # - name: Increment build number
+      #   script: |
+      #     cd ios/App
+      #     LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+      #     agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - "i-five"
