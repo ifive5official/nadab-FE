@@ -9,6 +9,7 @@ type PushData = {
   targetId: number;
   type: Notification["type"];
   inboxMessage: string;
+  notificationId: number;
 };
 
 export interface PushNotification extends PushNotificationSchema {

@@ -5,11 +5,14 @@ import { BannerCloseIcon } from "./Icons";
 import usePushToastStore from "@/store/pushToastStore";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
 
 // 포그라운드 알림용 토스트
 export default function PushToast() {
   const { isOpen, notification, closeToast } = usePushToastStore();
+  const readNotificationMutation = useReadNotificationMutation();
   const navigate = useNavigate();
+
   if (!notification) return null;
   const type = notification.data.type;
   const config = NOTIFICATION_CONFIG[type!];
@@ -36,7 +39,12 @@ export default function PushToast() {
             <InlineButton
               className="ml-auto border border-brand-primary shrink-0 bg-button-tertiary-bg-default!"
               variant="secondary"
-              onClick={() => navigate({ ...config.linkProps })}
+              onClick={() => {
+                readNotificationMutation.mutate({
+                  notificationId: notification.data.notificationId,
+                });
+                navigate({ ...config.linkProps });
+              }}
             >
               바로가기
             </InlineButton>

@@ -971,6 +971,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/apple/native-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 애플 Native SDK 로그인 (iOS 전용)
+         * @description iOS 앱에서 Sign in with Apple SDK로 받은 Authorization Code를 사용하여 로그인을 완료합니다.<br>
+         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+         *     <br>
+         *     중요: iOS 클라이언트 설정<br>
+         *     - request.requestedScopes = [.email] 설정 필수<br>
+         *     - email scope를 포함해야 첫 로그인 시 이메일을 받을 수 있습니다<br>
+         *     <br>
+         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+         *     <br>
+         *     **signupStatus:**<br>
+         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+         */
+        post: operations["appleNativeLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me": {
         parameters: {
             query?: never;
@@ -2623,6 +2656,14 @@ export interface components {
              * @example eyJhbGciOiJSUzI1NiIs...
              */
             googleIdToken: string;
+        };
+        /** @description 애플 Native SDK 로그인 요청 */
+        AppleNativeLoginRequest: {
+            /**
+             * @description 애플 SDK로부터 받은 Authorization Code
+             * @example c1234567890abcdef
+             */
+            code: string;
         };
         /** @description 유저 프로필 수정 응답 */
         UpdateUserProfileResponse: {
@@ -4868,6 +4909,7 @@ export interface operations {
             };
             /**
              * @description 이메일 중복
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
@@ -5131,8 +5173,8 @@ export interface operations {
                 content?: never;
             };
             /**
-             * @description 이메일 중복
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
@@ -5268,10 +5310,10 @@ export interface operations {
                 content?: never;
             };
             /**
-             * @description 이메일 중복
+             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
              */
             409: {
@@ -5323,7 +5365,62 @@ export interface operations {
                 content?: never;
             };
             /**
-             * @description 이메일 중복
+             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    appleNativeLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppleNativeLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description 로그인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description ErrorCode: VALIDATION_FAILED - Authorization Code가 누락된 경우 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description Authorization Code 검증 실패
+             *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - 애플 토큰 발급 실패(유효하지 않은 코드, 만료된 코드)
+             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 애플 ID Token 파싱 실패
+             */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
              *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨

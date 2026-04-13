@@ -13,14 +13,16 @@ import usePushToastStore from "@/store/pushToastStore";
 import { FCM } from "@capacitor-community/fcm";
 import { App } from "@capacitor/app";
 import { Badge } from "@capawesome/capacitor-badge";
+import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
   const { showToast } = usePushToastStore();
+  const readNotificationMutation = useReadNotificationMutation();
 
   // ios에서 앱이 활성화될 때마다 배지 초기화
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (!(Capacitor.getPlatform() === "ios")) return;
     /* eslint-disable @typescript-eslint/no-explicit-any */
     let listener: any;
 
@@ -92,6 +94,9 @@ export function usePushNotifications() {
       await PushNotifications.addListener(
         "pushNotificationActionPerformed",
         (notification) => {
+          readNotificationMutation.mutate({
+            notificationId: notification.notification.data.notificationId,
+          });
           const data = notification.notification.data;
           const type: Notification["type"] = data.type;
           const { linkProps } = NOTIFICATION_CONFIG[type!];
@@ -130,7 +135,13 @@ export function usePushNotifications() {
     } catch (error) {
       console.error("Push registration error:", error);
     }
-  }, [isLoggedIn, deviceId, setupNotificationChannels, showToast]);
+  }, [
+    isLoggedIn,
+    deviceId,
+    setupNotificationChannels,
+    showToast,
+    readNotificationMutation,
+  ]);
 
   async function unregisterPush() {
     if (!Capacitor.isNativePlatform() || !deviceId) return;

@@ -9,7 +9,7 @@
     "serve": "vite preview",
     "test": "vitest run",
     "gen:api": "openapi-typescript https://nadab-dev.n-e.kr/v3/api-docs --output src/generated/api-types.ts",
-    "app:sync": "pnpm run build && npx cap sync"
+    "app:sync": "pnpm run build && npx cap sync android"
   },
   "dependencies": {
     "@capacitor-community/fcm": "^8.1.0",
