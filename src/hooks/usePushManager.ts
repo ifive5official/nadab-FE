@@ -94,10 +94,13 @@ export function usePushNotifications() {
       await PushNotifications.addListener(
         "pushNotificationActionPerformed",
         (notification) => {
-          readNotificationMutation.mutate({
-            notificationId: notification.notification.data.notificationId,
-          });
           const data = notification.notification.data;
+          const notificationId = data.notificationId;
+          if (notificationId && notificationId !== "null") {
+            readNotificationMutation.mutate({
+              notificationId: notificationId,
+            });
+          }
           const type: Notification["type"] = data.type;
           const { linkProps } = NOTIFICATION_CONFIG[type!];
 

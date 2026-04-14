@@ -15,6 +15,7 @@ export default function PushToast() {
 
   if (!notification) return null;
   const type = notification.data.type;
+  const notificationId = notification.data.notificationId;
   const config = NOTIFICATION_CONFIG[type!];
   if (!config) return null; // undefined 참조 에러 땜빵
   return createPortal(
@@ -40,9 +41,11 @@ export default function PushToast() {
               className="ml-auto border border-brand-primary shrink-0 bg-button-tertiary-bg-default!"
               variant="secondary"
               onClick={() => {
-                readNotificationMutation.mutate({
-                  notificationId: notification.data.notificationId,
-                });
+                if (notificationId && notificationId !== "null") {
+                  readNotificationMutation.mutate({
+                    notificationId: Number(notificationId),
+                  });
+                }
                 navigate({ ...config.linkProps });
               }}
             >
