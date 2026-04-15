@@ -31,7 +31,6 @@ target 'App' do
   # Add your Pods here
   pod 'FirebaseCore'
   pod 'FirebaseMessaging'
-  pod 'Capacitor3KakaoLogin', :path => '../node_modules/capacitor3-kakao-login'
 end
 
 post_install do |installer|
