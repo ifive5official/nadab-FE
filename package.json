@@ -12,6 +12,7 @@
     "app:sync": "pnpm run build && npx cap sync android"
   },
   "dependencies": {
+    "@capacitor-community/apple-sign-in": "^7.1.0",
     "@capacitor-community/fcm": "^8.1.0",
     "@capacitor/android": "^8.0.2",
     "@capacitor/app": "^8.0.0",
