@@ -40,6 +40,14 @@
 				<string>com.nadab.app</string>
 			</array>
 		</dict>
+		<dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>kakao$(KAKAO_NATIVE_APP_KEY)</string>
+        </array>
+    </dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -80,5 +88,18 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>KAKAO_APP_KEY</key>
+	<string>$(KAKAO_NATIVE_APP_KEY)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakao$(KAKAO_NATIVE_APP_KEY)</string>
+		<string>kakaokompassauth</string>
+		<string>storykompassauth</string>
+		<string>kakaolink</string>
+		<string>storylink</string>
+		<string>kakaotalk</string>
+		<string>kakaotalk-5.9.7</string>
+		<string>kakaostory-2.9.0</string>
+  </array>
 </dict>
 </plist>

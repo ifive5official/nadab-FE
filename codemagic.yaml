@@ -35,6 +35,9 @@ workflows:
       - name: Decode GoogleService-Info.plist
         script: |
           echo $GOOGLE_SERVICES_BASE64 | base64 --decode > ios/App/App/GoogleService-Info.plist
+      - name: Inject Kakao Key
+        script: |
+          sed -i '' "s/\$(KAKAO_NATIVE_APP_KEY)/$KAKAO_NATIVE_APP_KEY/g" ios/App/App/Info.plist
       - name: Web build
         script: pnpm build
       - name: Capacitor Sync
