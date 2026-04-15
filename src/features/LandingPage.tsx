@@ -1,12 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import useSignupStore from "@/store/signupStore";
-import BlockButton from "@/components/BlockButton";
-import {
-  NaverIcon,
-  GoogleIcon,
-  RoundEmailIcon,
-  KakaoIcon,
-} from "@/components/Icons";
+import { NaverIcon, KakaoIcon, AppleIcon } from "@/components/Icons";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
@@ -21,6 +15,7 @@ import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
 import { Browser } from "@capacitor/browser";
 import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
+import clsx from "clsx";
 
 type UrlRes = components["schemas"]["AuthorizationUrlResponse"];
 
@@ -198,78 +193,51 @@ export function LandingPage() {
       </div>
       {/* 아래 절반 */}
       <div className="flex-1 w-full flex flex-col justify-center py-padding-y-m">
-        <div className="flex flex-col gap-gap-y-xl">
-          <div className="flex flex-col gap-gap-y-m">
-            <BlockButton
-              variant="white"
-              onClick={() => {
-                if (Capacitor.isNativePlatform()) {
-                  sdkNaverLogin();
-                } else {
-                  window.location.href = socialLoginUrls?.naver ?? "";
-                }
-              }}
-            >
-              <div>
-                <span className="absolute left-padding-x-m">
-                  <NaverIcon />
-                </span>
-                <span>네이버로 로그인</span>
-              </div>
-            </BlockButton>
-            <BlockButton
-              variant="white"
-              onClick={() => {
-                if (Capacitor.isNativePlatform()) {
-                  sdkKakaoLogin();
-                } else {
-                  window.location.href = socialLoginUrls?.kakao ?? "";
-                }
-              }}
-            >
-              <div>
-                <span className="absolute left-padding-x-m">
-                  <KakaoIcon />
-                </span>
-                <span>카카오로 로그인</span>
-              </div>
-            </BlockButton>
-            <BlockButton
-              variant="white"
-              onClick={() => {
-                if (Capacitor.isNativePlatform()) {
-                  sdkGoogleLogin();
-                } else {
-                  window.location.href = socialLoginUrls?.google ?? "";
-                }
-              }}
-            >
-              <div>
-                <span className="absolute left-padding-x-m">
-                  <GoogleIcon />
-                </span>
-                <span>구글로 로그인</span>
-              </div>
-            </BlockButton>
-            <Link to="/login" onClick={reset}>
-              <BlockButton variant="white">
-                <div>
-                  <span className="absolute left-padding-x-m">
-                    <RoundEmailIcon />
-                  </span>
-                  <span>메일로 로그인</span>
-                </div>
-              </BlockButton>
-            </Link>
-          </div>
+        <div className="flex flex-col gap-gap-y-m">
+          <SocialLoginButton
+            onNativeClick={sdkNaverLogin}
+            url={socialLoginUrls?.naver}
+            icon={NaverIcon}
+            title="네이버로 로그인"
+            className="bg-[#03C75A] text-white"
+          />
+          <SocialLoginButton
+            onNativeClick={sdkKakaoLogin}
+            url={socialLoginUrls?.kakao}
+            icon={KakaoIcon}
+            title="카카오로 로그인"
+            className="bg-[#FEE500] text-[#0D0000]"
+          />
+          <SocialLoginButton
+            onNativeClick={sdkGoogleLogin}
+            url={socialLoginUrls?.google}
+            icon={() => (
+              <img className="w-3.5 aspect-square" src="icon/googleIcon.png" />
+            )}
+            title="구글로 로그인"
+            className="bg-[#F2F2F2] text-[#1F1F1F]"
+          />
+          <SocialLoginButton
+            onNativeClick={() => {}}
+            icon={AppleIcon}
+            title="Apple로 로그인"
+            className="bg-black dark:bg-white text-white border dark:text-black border-[#4D4D4D]"
+          />
+        </div>
+        <div className="pt-padding-y-l pb-padding-y-xs flex flex-col gap-gap-y-l">
           <div className="flex items-center gap-5">
             <hr className="flex-1 border-t border-border-layer-1" />
             <span className="text-text-disabled text-caption-m">또는</span>
             <hr className="flex-1 border-t border-border-layer-1" />
           </div>
-          <Link to="/signup/terms" onClick={reset}>
-            <BlockButton>회원가입</BlockButton>
-          </Link>
+          <div className="flex justify-center gap-gap-x-xl underline text-label-m">
+            <Link to="/signup/terms" onClick={reset}>
+              회원가입
+            </Link>
+            <Link to="/login" onClick={reset}>
+              이메일로 로그인
+            </Link>
+          </div>
           <p className="text-center text-label-s text-text-tertiary">
             가입을 진행할 경우,{" "}
             <a
@@ -312,5 +280,40 @@ export function LandingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+type SocialLoginButtonProps = {
+  onNativeClick: () => void;
+  icon: React.ComponentType;
+  title: string;
+  url?: string;
+  className: string; // 글자색 및 배경색
+};
+
+function SocialLoginButton({
+  onNativeClick,
+  icon: Icon,
+  title,
+  url,
+  className,
+}: SocialLoginButtonProps) {
+  return (
+    <button
+      className={clsx(
+        "py-padding-y-m rounded-[14px] flex items-center justify-center gap-[5px] font-semibold text-[19px] leading-6",
+        className,
+      )}
+      onClick={() => {
+        if (Capacitor.isNativePlatform()) {
+          onNativeClick();
+        } else {
+          window.location.href = url ?? "";
+        }
+      }}
+    >
+      <Icon />
+      <span>{title}</span>
+    </button>
   );
 }
