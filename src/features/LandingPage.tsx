@@ -90,6 +90,8 @@ export function LandingPage() {
               options: {
                 scopes: ["email", "profile"],
                 forceRefreshToken: true,
+                forcePrompt: true,
+                prompt: "select_account",
               },
             });
             const result = response.result as GoogleLoginResponseOnline;
