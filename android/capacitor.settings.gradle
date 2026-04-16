@@ -35,8 +35,8 @@ project(':capacitor-toast').projectDir = new File('../node_modules/.pnpm/@capaci
 include ':capawesome-capacitor-badge'
 project(':capawesome-capacitor-badge').projectDir = new File('../node_modules/.pnpm/@capawesome+capacitor-badge@8.0.1_@capacitor+core@8.0.2/node_modules/@capawesome/capacitor-badge/android')
 
-include ':codetrix-studio-capacitor-google-auth'
-project(':codetrix-studio-capacitor-google-auth').projectDir = new File('../node_modules/.pnpm/@codetrix-studio+capacitor-_c72adc005ba8650449c96370c662d9e4/node_modules/@codetrix-studio/capacitor-google-auth/android')
+include ':capgo-capacitor-social-login'
+project(':capgo-capacitor-social-login').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-social-login@8.3.14_@capacitor+core@8.0.2/node_modules/@capgo/capacitor-social-login/android')
 
 include ':team-lepisode-capacitor-naver-login'
 project(':team-lepisode-capacitor-naver-login').projectDir = new File('../node_modules/.pnpm/@team-lepisode+capacitor-na_234ab78a729801e01732e7b06dc0a185/node_modules/@team-lepisode/capacitor-naver-login/android')

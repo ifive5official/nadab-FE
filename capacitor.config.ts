@@ -19,11 +19,6 @@ const config: CapacitorConfig = {
     CapacitorCookies: {
       enabled: true,
     },
-    GoogleAuth: {
-      scopes: ["profile", "email"],
-      serverClientId: process.env.VITE_GOOGLE_CLIENT_ID_SERVER,
-      forceCodeForRefreshToken: true,
-    },
     CapacitorNaverLogin: {
       clientId: process.env.VITE_NAVER_CLIENT_ID,
       clientSecret: process.env.VITE_NAVER_CLIENT_SECRET,

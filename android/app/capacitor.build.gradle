@@ -20,7 +20,7 @@ dependencies {
     implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-toast')
     implementation project(':capawesome-capacitor-badge')
-    implementation project(':codetrix-studio-capacitor-google-auth')
+    implementation project(':capgo-capacitor-social-login')
     implementation project(':team-lepisode-capacitor-naver-login')
     implementation project(':capacitor3-kakao-login')
 

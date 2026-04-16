@@ -5,7 +5,10 @@ import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
 import type { ApiResponse } from "@/generated/api";
-import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import {
+  SocialLogin,
+  type GoogleLoginResponseOnline,
+} from "@capgo/capacitor-social-login";
 import { CapacitorNaverLogin } from "@team-lepisode/capacitor-naver-login";
 import useAuthStore from "@/store/authStore";
 import axios from "axios";
@@ -58,20 +61,14 @@ export function LandingPage() {
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      const platform = Capacitor.getPlatform();
-
-      // 구글 SDK 설정
-      const clientId =
-        platform === "ios"
-          ? import.meta.env.VITE_GOOGLE_CLIENT_ID_IOS
-          : import.meta.env.VITE_GOOGLE_CLIENT_ID_ANDROID;
-
-      GoogleAuth.initialize({
-        scopes: ["profile", "email"],
-        clientId: clientId,
-        grantOfflineAccess: true,
+      SocialLogin.initialize({
+        google: {
+          webClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID_SERVER,
+          iOSClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID_IOS,
+          iOSServerClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID_SERVER,
+          mode: "online",
+        },
       });
-
       // 카카오 SDK 설정
       Capacitor3KakaoLogin.initializeKakao({
         app_key: import.meta.env.VITE_KAKAO_APP_KEY,
@@ -88,9 +85,16 @@ export function LandingPage() {
       switch (provider) {
         case "google":
           {
-            const user = await GoogleAuth.signIn();
+            const response = await SocialLogin.login({
+              provider: "google",
+              options: {
+                scopes: ["email", "profile"],
+                forceRefreshToken: true,
+              },
+            });
+            const result = response.result as GoogleLoginResponseOnline;
             res = await api.post("/api/v1/auth/google/native-login", {
-              googleIdToken: user.authentication.idToken,
+              googleIdToken: result.idToken,
             });
           }
           break;
