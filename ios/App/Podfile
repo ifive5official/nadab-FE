@@ -11,6 +11,7 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@8.3.0_@capacitor+core@8.0.2/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@8.3.0_@capacitor+core@8.0.2/node_modules/@capacitor/ios'
+  pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/.pnpm/@capacitor-community+apple-_7153663cc12cfe478db56fe9bb0052b9/node_modules/@capacitor-community/apple-sign-in'
   pod 'CapacitorCommunityFcm', :path => '../../node_modules/.pnpm/@capacitor-community+fcm@8.1.0_@capacitor+core@8.0.2/node_modules/@capacitor-community/fcm'
   pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/app'
   pod 'CapacitorBrowser', :path => '../../node_modules/.pnpm/@capacitor+browser@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/browser'
@@ -21,7 +22,7 @@ def capacitor_pods
   pod 'CapacitorSplashScreen', :path => '../../node_modules/.pnpm/@capacitor+splash-screen@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/splash-screen'
   pod 'CapacitorToast', :path => '../../node_modules/.pnpm/@capacitor+toast@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/toast'
   pod 'CapawesomeCapacitorBadge', :path => '../../node_modules/.pnpm/@capawesome+capacitor-badge@8.0.1_@capacitor+core@8.0.2/node_modules/@capawesome/capacitor-badge'
-  pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/.pnpm/@codetrix-studio+capacitor-_c72adc005ba8650449c96370c662d9e4/node_modules/@codetrix-studio/capacitor-google-auth'
+  pod 'CapgoCapacitorSocialLogin', :path => '../../node_modules/.pnpm/@capgo+capacitor-social-login@8.3.14_@capacitor+core@8.0.2/node_modules/@capgo/capacitor-social-login'
   pod 'TeamLepisodeCapacitorNaverLogin', :path => '../../node_modules/.pnpm/@team-lepisode+capacitor-na_234ab78a729801e01732e7b06dc0a185/node_modules/@team-lepisode/capacitor-naver-login'
   pod 'Capacitor3KakaoLogin', :path => '../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.0.2/node_modules/capacitor3-kakao-login'
 end
