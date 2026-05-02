@@ -651,6 +651,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/daily-report/image/upload-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 답변 이미지 업로드 PresignedURL 생성
+         * @description 답변에 포함되는 이미지를 업로드할 수 있는 PresignedURL을 생성합니다.
+         *
+         *     - HTTP Method: PUT
+         *     - Headers:
+         *         - Content-Type(필수): image/jpeg, image/png만 허용
+         *     - Body: 이미지 파일
+         *     - URL 만료 시간: 5분
+         */
+        post: operations["createAnswerImageUploadUrl"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/daily-report/generate": {
         parameters: {
             query?: never;
@@ -666,6 +692,15 @@ export interface paths {
          *     생성 실패 시에도 이 API를 다시 호출하면 됩니다. <br/>
          *     이 때 유저의 답변은 기존의 답변으로 자동으로 사용됩니다. <br/>
          *     소요 시간이 최대 3~4초밖에 안 되어 동기처리로 구현했습니다. <br/>
+         *
+         *     이미지 미포함의 경우 objectKey는 null로 보내주시면 됩니다. <br/>
+         *
+         *     <이미지가 포함된 경우> <br/>
+         *     **5MB 이하의 이미지 파일만 허용됩니다.** <br/>
+         *     POST /daily-report/image/upload-url 엔드포인트로
+         *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
+         *     해당 엔드포인트에서 반환된 objectKey를 이 요청에 포함시켜야 합니다. <br/>
+         *
          *
          *     | 응답의 emotion | 해당 감정 |
          *     | :--- | :--- |
@@ -2219,6 +2254,8 @@ export interface components {
              * @example 100
              */
             balanceAfter?: number;
+            /** @description 이미지 URL */
+            imageUrl?: string;
         };
         /** @description 테스트용 오늘의 리포트 생성 요청 */
         TestDailyReportRequest: {
@@ -2259,6 +2296,8 @@ export interface components {
              * @example false
              */
             isShared?: boolean;
+            /** @description 이미지 URL */
+            imageUrl?: string;
         };
         /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
         PromptTestDailyReportRequest: {
@@ -2507,6 +2546,27 @@ export interface components {
              */
             verificationType: string;
         };
+        /** @description 답변 이미지 업로드 PresignedURL 생성 응답 */
+        CreateAnswerImageUploadUrlResponse: {
+            /**
+             * @description 답변 이미지 업로드 PresignedURL
+             * @example https://nadab-profile-images.s3.amazonaws.com/...
+             */
+            uploadUrl?: string;
+            /**
+             * @description 답변 이미지 Object Key. 일간 리포트 생성에 사용됩니다.
+             * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+             */
+            objectKey?: string;
+        };
+        /** @description 답변 이미지 업로드 PresignedURL 생성 요청 */
+        CreateAnswerImageUploadUrlRequest: {
+            /**
+             * @description 파일 확장자 (image/png, image/jpeg만 허용)
+             * @example image/png
+             */
+            contentType: string;
+        };
         /** @description 오늘의 리포트 생성 요청 */
         DailyReportRequest: {
             /**
@@ -2517,6 +2577,11 @@ export interface components {
             questionId: number;
             /** @description 유저의 답변 내용 */
             answer: string;
+            /**
+             * @description 이 값은 presignedURL 생성 API의 응답에서 받은 objectKey여야 합니다.
+             * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+             */
+            objectKey?: string;
         };
         /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
         TokenResponse: {
@@ -3372,6 +3437,8 @@ export interface components {
              * @example ACHIEVEMENT
              */
             emotionCode?: string;
+            /** @description 이미지 URL */
+            imageUrl?: string;
         };
         /** @description 피드 공유 상태 응답 */
         ShareStatusResponse: {
@@ -3408,6 +3475,8 @@ export interface components {
              * @example ACHIEVEMENT
              */
             emotion?: string;
+            /** @description 이미지 URL */
+            imageUrl?: string;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -4774,6 +4843,44 @@ export interface operations {
             };
             /** @description ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 인증 요청을 찾을 수 없음 (발송 이력 없음) */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createAnswerImageUploadUrl: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAnswerImageUploadUrlRequest"];
+            };
+        };
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateAnswerImageUploadUrlResponse"];
+                };
+            };
+            /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

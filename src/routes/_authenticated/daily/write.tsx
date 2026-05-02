@@ -14,6 +14,7 @@ import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
 import useModalStore from "@/store/modalStore";
+import InputAccessoryView from "@/components/InputAccessoryView";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -84,6 +85,20 @@ function RouteComponent() {
     },
   });
 
+  function handleComplete() {
+    if (canSubmit) {
+      generateResponseMutation.mutate({
+        questionId: question?.questionId ?? 0,
+        answer,
+      });
+    } else {
+      showError(
+        "10글자 이상 작성해 주세요.",
+        "정교한 분석을 위해 조금만 더 자세히 답변해 주세요.",
+      );
+    }
+  }
+
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
@@ -109,23 +124,12 @@ function RouteComponent() {
         </div>
         <BlockButton
           variant="primary"
-          onClick={() => {
-            if (canSubmit) {
-              generateResponseMutation.mutate({
-                questionId: question?.questionId ?? 0,
-                answer,
-              });
-            } else {
-              showError(
-                "10글자 이상 작성해 주세요.",
-                "정교한 분석을 위해 조금만 더 자세히 답변해 주세요.",
-              );
-            }
-          }}
+          onClick={handleComplete}
           isLoading={generateResponseMutation.isPending}
         >
           완료
         </BlockButton>
+        <InputAccessoryView />
       </Container>
     </>
   );
