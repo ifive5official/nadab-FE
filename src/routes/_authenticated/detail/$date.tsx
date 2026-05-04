@@ -18,6 +18,7 @@ import {
   friendsOptions,
 } from "@/features/social/queries";
 import ErrorPage from "@/components/ErrorPage";
+import AnswerImage from "@/components/AnswerImage";
 
 export const Route = createFileRoute("/_authenticated/detail/$date")({
   component: RouteComponent,
@@ -83,8 +84,9 @@ function RouteComponent() {
           <h2 className="text-title-2 mt-margin-y-s mb-margin-y-l break-keep">
             {data.questionText}
           </h2>
-          <section className="bg-interactive-bg-default border border-border-base px-padding-x-m py-padding-y-m rounded-2xl flex flex-col gap-padding-y-xs">
+          <section className="bg-interactive-bg-default border border-border-base px-padding-x-m py-padding-y-m rounded-2xl flex flex-col gap-gap-y-l">
             <h3 className="text-title-3">나의 답변</h3>
+            {data.imageUrl && <AnswerImage imageUrl={data.imageUrl} />}
             <p className="text-body-2 text-text-tertiary">{data.answer}</p>
           </section>
           <section className="bg-interactive-bg-default border border-border-base px-padding-x-m py-padding-y-m rounded-2xl flex flex-col gap-gap-y-l mt-margin-y-s">

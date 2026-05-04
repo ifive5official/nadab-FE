@@ -3,7 +3,7 @@
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { api } from "@/lib/axios";
-import { Camera, CameraResultType, type CameraSource } from "@capacitor/camera";
+import { Camera } from "@capacitor/camera";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -27,7 +27,10 @@ export function useImageUploader({
   onUploadSuccess,
   onUploadError,
 }: ImageUploaderProps) {
-  const [imageUrl, setImageUrl] = useState(initialImageUrl);
+  const [tempImageUrl, setTempImageUrl] = useState(initialImageUrl);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | undefined>(
+    undefined,
+  );
 
   // presigned url 생성
   const getPresignedUrlMutation = useMutation({
@@ -60,26 +63,23 @@ export function useImageUploader({
 
   // 공통 업로드 프로세스
   async function processUpload(file: File | Blob) {
-    try {
-      const res = await getPresignedUrlMutation.mutateAsync(file.type);
+    const res = await getPresignedUrlMutation.mutateAsync(file.type);
 
-      let presignedUrl = "";
-      let uploadUrl = "";
+    let presignedUrl = "";
+    let uploadUrl = "";
 
-      // 예외처리
-      if (apiUrl.includes("/user/me/profile-image/upload-url")) {
-        presignedUrl = res.data?.objectKey ?? "";
-        uploadUrl = res.data?.uploadUrl ?? "";
-      } else {
-        presignedUrl = res.data?.uploadUrl ?? "";
-        uploadUrl = res.data?.objectKey ?? "";
-      }
-
-      await uploadToS3Mutation.mutateAsync({ presignedUrl, file });
-      onUploadSuccess?.(uploadUrl);
-    } catch (error) {
-      onUploadError?.(error);
+    // 예외처리
+    if (apiUrl.includes("/user/me/profile-image/upload-url")) {
+      presignedUrl = res.data?.objectKey ?? "";
+      uploadUrl = res.data?.uploadUrl ?? "";
+    } else {
+      presignedUrl = res.data?.uploadUrl ?? "";
+      uploadUrl = res.data?.objectKey ?? "";
     }
+
+    await uploadToS3Mutation.mutateAsync({ presignedUrl, file });
+    setUploadedImageUrl(uploadUrl);
+    onUploadSuccess?.(uploadUrl);
   }
 
   // 웹용 파일 핸들러
@@ -95,7 +95,7 @@ export function useImageUploader({
       onUpload?.();
 
       const previewUrl = URL.createObjectURL(file);
-      setImageUrl(previewUrl);
+      setTempImageUrl(previewUrl);
       await processUpload(file);
     } catch (err) {
       onUploadError?.(err);
@@ -105,27 +105,36 @@ export function useImageUploader({
   }
 
   // 네이티브용 핸들러
-  async function handleNativeUpload(source: CameraSource) {
+  async function handleNativeUpload(source: "camera" | "gallery") {
     try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.Uri,
-        source,
-      });
+      let image: any;
+
+      if (source === "camera") {
+        image = await Camera.takePhoto({
+          quality: 90,
+          editable: "in-app",
+        });
+      } else if (source === "gallery") {
+        const { results } = await Camera.chooseFromGallery({
+          quality: 90,
+          limit: 1,
+        });
+        image = results[0];
+      }
+
+      if (!image) return;
 
       onUpload?.();
 
       if (image.webPath) {
-        setImageUrl(image.webPath);
+        setTempImageUrl(image.webPath);
         const response = await fetch(image.webPath);
         const blob = await response.blob();
-        const file = new File([blob], `profile.${image.format}`, {
-          type: `image/${image.format}`,
-        });
+        const file = new File([blob], `profile_image`, { type: blob.type });
         await processUpload(file);
       }
     } catch (err) {
+      clearImage();
       onUploadError?.(err);
     }
   }
@@ -133,19 +142,25 @@ export function useImageUploader({
   const isUploading =
     getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
 
+  function clearImage() {
+    setTempImageUrl(undefined);
+    setUploadedImageUrl("");
+  }
+
   // 메모리 누수 방지
   useEffect(() => {
     return () => {
-      if (imageUrl?.startsWith("blob:")) {
-        URL.revokeObjectURL(imageUrl);
+      if (tempImageUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(tempImageUrl);
       }
     };
-  }, [imageUrl]);
+  }, [tempImageUrl]);
 
   return {
-    imageUrl,
-    setImageUrl,
+    tempImageUrl,
+    uploadedImageUrl,
     isUploading,
+    clearImage,
     handleWebFileChange,
     handleNativeUpload,
   };

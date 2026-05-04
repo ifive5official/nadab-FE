@@ -6,7 +6,6 @@ import ProfileImg from "@/components/ProfileImg";
 import useToastStore from "@/store/toastStore";
 
 import { Capacitor } from "@capacitor/core";
-import { CameraSource } from "@capacitor/camera"; // 추가
 import useBottomModalStore from "@/store/bottomModalStore";
 import useModalStore from "@/store/modalStore";
 import { useImageUploader } from "@/hooks/useImageUpload";
@@ -33,8 +32,8 @@ export default function ProfileImageUploader({
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
-    imageUrl,
-    setImageUrl,
+    tempImageUrl,
+    clearImage,
     isUploading,
     handleWebFileChange,
     handleNativeUpload,
@@ -79,7 +78,7 @@ export default function ProfileImageUploader({
       label: "앨범에서 사진 선택",
       onClick: () => {
         if (isNative) {
-          handleNativeUpload(CameraSource.Photos);
+          handleNativeUpload("gallery");
         } else {
           albumInputRef.current?.click();
         }
@@ -89,7 +88,7 @@ export default function ProfileImageUploader({
       label: "사진 찍기",
       onClick: () => {
         if (isNative) {
-          handleNativeUpload(CameraSource.Camera);
+          handleNativeUpload("camera");
         } else {
           cameraInputRef.current?.click();
         }
@@ -116,7 +115,7 @@ export default function ProfileImageUploader({
         {
           label: "기본 프로필로 변경",
           onClick: () => {
-            setImageUrl(undefined);
+            clearImage();
             onSuccess("");
             closeBottomModal();
           },
@@ -134,7 +133,7 @@ export default function ProfileImageUploader({
 
   return (
     <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
-      {!isUploading && <ProfileImg width={64} src={imageUrl} />}
+      {!isUploading && <ProfileImg width={64} src={tempImageUrl} />}
       {isUploading && (
         <div className="bg-neutral-300 h-16 w-16 rounded-full animate-pulse" />
       )}

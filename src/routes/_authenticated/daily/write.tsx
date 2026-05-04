@@ -15,6 +15,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
 import useModalStore from "@/store/modalStore";
 import InputAccessoryView from "@/components/InputAccessoryView";
+import { useImageUploader } from "@/hooks/useImageUpload";
+import { Keyboard } from "@capacitor/keyboard";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -29,6 +31,22 @@ function RouteComponent() {
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 10;
   const { isOpen, showModal, showError, closeModal } = useModalStore();
+  const imageUploader = useImageUploader({
+    apiUrl: "/api/v1/daily-report/image/upload-url",
+    onUploadError: (e) => {
+      if (e.message?.toLowerCase().includes("cancelled")) {
+        return;
+      }
+      Keyboard.hide();
+      console.error(e);
+      showError(
+        "이미지 업로드 중 문제가 발생했어요.",
+        "다시 한번 시도해 주세요.",
+      );
+    },
+  });
+  const { uploadedImageUrl, isUploading: isImageUploading } = imageUploader;
+
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) =>
       showModal({
@@ -90,6 +108,7 @@ function RouteComponent() {
       generateResponseMutation.mutate({
         questionId: question?.questionId ?? 0,
         answer,
+        objectKey: uploadedImageUrl,
       });
     } else {
       showError(
@@ -125,11 +144,15 @@ function RouteComponent() {
         <BlockButton
           variant="primary"
           onClick={handleComplete}
-          isLoading={generateResponseMutation.isPending}
+          isLoading={generateResponseMutation.isPending || isImageUploading}
         >
           완료
         </BlockButton>
-        <InputAccessoryView />
+        <InputAccessoryView
+          imageUploader={imageUploader}
+          isLoading={generateResponseMutation.isPending}
+          onComplete={handleComplete}
+        />
       </Container>
     </>
   );
