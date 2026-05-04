@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import InlineButton from "./InlineButton";
 import { motion, AnimatePresence } from "motion/react";
 import { CameraIcon, CloseFilledIcon, GalleryIcon } from "./Icons";
-import { Capacitor } from "@capacitor/core";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import ProfileImg from "./ProfileImg";
 
@@ -20,26 +19,11 @@ export default function InputAccessoryView({
   isLoading,
   onComplete,
 }: Props) {
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [bottomOffset, setBottomOffset] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
   const { tempImageUrl, clearImage, isUploading, handleNativeUpload } =
     imageUploader;
-
-  const platform = Capacitor.getPlatform();
-
-  const transitions = {
-    ios: {
-      type: "tween",
-      ease: [0.2, 0.8, 0.2, 1],
-      duration: 0.25,
-    },
-    android: {
-      type: "tween",
-      ease: "linear",
-      duration: 0.2,
-    },
-  } as const;
 
   useEffect(() => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -47,22 +31,46 @@ export default function InputAccessoryView({
     let hideHandle: any;
 
     const setupListeners = async () => {
-      showHandle = await Keyboard.addListener("keyboardWillShow", (info) => {
-        setKeyboardHeight(info.keyboardHeight);
+      showHandle = await Keyboard.addListener("keyboardWillShow", () => {
         setIsVisible(true);
       });
 
       hideHandle = await Keyboard.addListener("keyboardWillHide", () => {
-        setKeyboardHeight(0);
         setIsVisible(false);
+        setBottomOffset(0);
       });
     };
 
     setupListeners();
 
+    const handleViewportChange = () => {
+      if (!window.visualViewport) return;
+
+      const offset =
+        window.innerHeight -
+        (window.visualViewport.height + window.visualViewport.offsetTop);
+
+      setBottomOffset(Math.max(0, offset));
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleViewportChange);
+      window.visualViewport.addEventListener("scroll", handleViewportChange);
+    }
+
     return () => {
       if (showHandle) showHandle.remove();
       if (hideHandle) hideHandle.remove();
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener(
+          "resize",
+          handleViewportChange,
+        );
+        window.visualViewport.removeEventListener(
+          "scroll",
+          handleViewportChange,
+        );
+      }
     };
   }, []);
 
@@ -70,10 +78,10 @@ export default function InputAccessoryView({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ y: 0, opacity: 0 }}
-          animate={{ y: -keyboardHeight, opacity: 1 }}
-          exit={{ y: 0, opacity: 0 }}
-          transition={transitions[platform === "ios" ? "ios" : "android"]}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{ bottom: bottomOffset }}
           className="fixed bottom-0 inset-x-0 px-padding-x-m py-padding-y-s bg-surface-layer-1 border border-border-base flex gap-gap-x-m items-center"
           // 엑세서리 바 누를 때 포커스 이탈 방지
           onPointerDown={(e) => e.preventDefault()}
