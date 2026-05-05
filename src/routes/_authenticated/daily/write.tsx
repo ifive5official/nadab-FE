@@ -35,9 +35,18 @@ function RouteComponent() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageUploader = useImageUploader({
     apiUrl: "/api/v1/daily-report/image/upload-url",
+    onUpload: () => {
+      if (textareaRef.current) {
+        textareaRef.current.blur();
+      }
+      Keyboard.hide();
+    },
     onUploadError: (e) => {
       if (e.message?.toLowerCase().includes("canceled")) {
         return;
+      }
+      if (textareaRef.current) {
+        textareaRef.current.blur();
       }
       Keyboard.hide();
       console.error(e);
