@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v2/question/reroll": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 새로운 질문 받기
+         * @description 오늘의 질문을 새로 받습니다. 하루에 5번까지 가능합니다.
+         */
+        post: operations["rerollDailyQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/weekly-report/start": {
         parameters: {
             query?: never;
@@ -305,7 +325,7 @@ export interface paths {
          * 새로운 질문 받기
          * @description 오늘의 질문을 새로 받습니다. 하루에 한 번만 가능합니다.
          */
-        post: operations["rerollDailyQuestion"];
+        post: operations["rerollDailyQuestion_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1229,6 +1249,26 @@ export interface paths {
         patch: operations["changePassword"];
         trace?: never;
     };
+    "/api/v2/question": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 오늘의 질문 조회
+         * @description 오늘의 질문을 조회합니다.
+         */
+        get: operations["getDailyQuestion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/weekly-report": {
         parameters: {
             query?: never;
@@ -1467,7 +1507,7 @@ export interface paths {
          * 오늘의 질문 조회
          * @description 오늘의 질문을 조회합니다.
          */
-        get: operations["getDailyQuestion"];
+        get: operations["getDailyQuestion_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2167,6 +2207,46 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description 오늘의 질문 응답 */
+        DailyQuestionResponseV2: {
+            /**
+             * Format: int64
+             * @description 질문 ID
+             */
+            questionId?: number;
+            /**
+             * @description 관심 주제 코드
+             * @example PREFERENCE
+             */
+            interestCode?: string;
+            /**
+             * @description 질문 텍스트
+             * @example 요즘 자주 찾는 색깔은 무엇인가요?
+             */
+            questionText?: string;
+            /**
+             * @description 공감 가이드 텍스트
+             * @example 색깔 하나로 기분이 달라질 때가 있어요.
+             */
+            empathyGuide?: string;
+            /**
+             * @description 힌트 가이드 텍스트
+             * @example 지금 입은 옷이나 주변 소품을 보세요.
+             */
+            hintGuide?: string;
+            /**
+             * @description 도입 질문 가이드 텍스트
+             * @example 그 색을 보면 어떤 기분이 드나요?
+             */
+            leadingQuestionGuide?: string;
+            /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
+            answered?: boolean;
+            /**
+             * Format: int32
+             * @description 사용자의 오늘의 질문을 새로 받기 남은 횟수
+             */
+            rerollRemainingCount?: number;
+        };
         /** @description 주간 리포트 생성 시작 응답 */
         WeeklyReportStartResponse: {
             /**
@@ -3602,6 +3682,54 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    rerollDailyQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyQuestionResponseV2"];
+                };
+            };
+            /** @description 사용자 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
+             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없습니다.
+             *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 5번까지만 새로 받을 수 있습니다.
+             *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     startWeeklyReport: {
         parameters: {
             query?: never;
@@ -4092,7 +4220,7 @@ export interface operations {
             };
         };
     };
-    rerollDailyQuestion: {
+    rerollDailyQuestion_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -5933,6 +6061,44 @@ export interface operations {
             };
         };
     };
+    getDailyQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyQuestionResponseV2"];
+                };
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
+             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없습니다.
+             *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getMyWeeklyReport: {
         parameters: {
             query?: never;
@@ -6125,7 +6291,7 @@ export interface operations {
             };
         };
     };
-    getDailyQuestion: {
+    getDailyQuestion_1: {
         parameters: {
             query?: never;
             header?: never;
