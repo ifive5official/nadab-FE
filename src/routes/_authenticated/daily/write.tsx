@@ -7,7 +7,7 @@ import {
   useBlocker,
   useNavigate,
 } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { QuestionSection } from "@/features/daily/QuestionSection";
 import Container from "@/components/Container";
 import { questionOptions } from "@/features/question/queries";
@@ -17,6 +17,7 @@ import useModalStore from "@/store/modalStore";
 import InputAccessoryView from "@/components/InputAccessoryView";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import { Keyboard } from "@capacitor/keyboard";
+import { ImageCropper } from "@/components/ImageCropper";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -31,10 +32,11 @@ function RouteComponent() {
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 10;
   const { isOpen, showModal, showError, closeModal } = useModalStore();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageUploader = useImageUploader({
     apiUrl: "/api/v1/daily-report/image/upload-url",
     onUploadError: (e) => {
-      if (e.message?.toLowerCase().includes("cancelled")) {
+      if (e.message?.toLowerCase().includes("canceled")) {
         return;
       }
       Keyboard.hide();
@@ -45,7 +47,13 @@ function RouteComponent() {
       );
     },
   });
-  const { uploadedImageUrl, isUploading: isImageUploading } = imageUploader;
+  const {
+    uploadedImageUrl,
+    isUploading: isImageUploading,
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
+  } = imageUploader;
 
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) =>
@@ -103,6 +111,13 @@ function RouteComponent() {
     },
   });
 
+  function closeCropperAndRefocus() {
+    setCropTarget(null);
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 100);
+  }
+
   function handleComplete() {
     if (canSubmit) {
       generateResponseMutation.mutate({
@@ -127,6 +142,7 @@ function RouteComponent() {
           <div>
             <div className="border-b border-interactive-border-default" />
             <textarea
+              ref={textareaRef}
               rows={6}
               maxLength={200}
               className="w-full resize-none outline-0 my-margin-y-m text-caption-l placeholder:text-text-disabled"
@@ -154,6 +170,16 @@ function RouteComponent() {
           onComplete={handleComplete}
         />
       </Container>
+      {cropTarget && (
+        <ImageCropper
+          image={cropTarget}
+          onConfirm={(pixels) => {
+            handleCropComplete(pixels);
+            closeCropperAndRefocus();
+          }}
+          onCancel={closeCropperAndRefocus}
+        />
+      )}
     </>
   );
 }

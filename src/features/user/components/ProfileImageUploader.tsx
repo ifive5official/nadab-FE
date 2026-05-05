@@ -9,6 +9,7 @@ import { Capacitor } from "@capacitor/core";
 import useBottomModalStore from "@/store/bottomModalStore";
 import useModalStore from "@/store/modalStore";
 import { useImageUploader } from "@/hooks/useImageUpload";
+import { ImageCropper } from "@/components/ImageCropper";
 
 type Props = {
   mode: "create" | "edit";
@@ -34,6 +35,9 @@ export default function ProfileImageUploader({
   const {
     tempImageUrl,
     clearImage,
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
     isUploading,
     handleWebFileChange,
     handleNativeUpload,
@@ -50,7 +54,7 @@ export default function ProfileImageUploader({
       });
     },
     onUploadError: (e) => {
-      if (e.message?.toLowerCase().includes("cancelled")) {
+      if (e.message?.toLowerCase().includes("canceled")) {
         return;
       }
       console.error(e);
@@ -160,6 +164,13 @@ export default function ProfileImageUploader({
         capture="environment"
         onChange={handleWebFileChange}
       />
+      {cropTarget && (
+        <ImageCropper
+          image={cropTarget}
+          onConfirm={handleCropComplete}
+          onCancel={() => setCropTarget(null)}
+        />
+      )}
     </div>
   );
 }
