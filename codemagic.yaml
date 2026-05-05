@@ -45,10 +45,10 @@ workflows:
       - name: Cocoapods installation
         script: |
           # pod 리셋(임시)
-          cd ios/App
-          rm -rf Pods
-          pod install --repo-update
-          # cd ios/App && pod install
+          # cd ios/App
+          # rm -rf Pods
+          # pod install --repo-update
+          cd ios/App && pod install
       - name: Set up code signing settings
         script: xcode-project use-profiles
       # - name: Increment build number
