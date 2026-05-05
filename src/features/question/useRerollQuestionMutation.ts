@@ -15,7 +15,7 @@ export function useRerollQuestionMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      const res = await api.post<ApiResponse<Res>>("/api/v1/question/reroll");
+      const res = await api.post<ApiResponse<Res>>("/api/v2/question/reroll");
       return res.data;
     },
     onSuccess: (data) => {

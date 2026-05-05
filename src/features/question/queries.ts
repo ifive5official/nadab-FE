@@ -10,7 +10,7 @@ export const questionOptions = queryOptions({
   queryKey: ["currentUser", "question"],
   queryFn: async () => {
     try {
-      const res = await api.get<ApiResponse<QuestionRes>>("/api/v1/question");
+      const res = await api.get<ApiResponse<QuestionRes>>("/api/v2/question");
       return res.data.data!;
     } catch (err) {
       if (
