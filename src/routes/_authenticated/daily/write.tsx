@@ -16,7 +16,6 @@ import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateRe
 import useModalStore from "@/store/modalStore";
 import InputAccessoryView from "@/components/InputAccessoryView";
 import { useImageUploader } from "@/hooks/useImageUpload";
-import { Keyboard } from "@capacitor/keyboard";
 import { ImageCropper } from "@/components/ImageCropper";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
@@ -39,7 +38,6 @@ function RouteComponent() {
       if (textareaRef.current) {
         textareaRef.current.blur();
       }
-      Keyboard.hide();
     },
     onUploadError: (e) => {
       if (e.message?.toLowerCase().includes("canceled")) {
@@ -48,7 +46,6 @@ function RouteComponent() {
       if (textareaRef.current) {
         textareaRef.current.blur();
       }
-      Keyboard.hide();
       console.error(e);
       showError(
         "이미지 업로드 중 문제가 발생했어요.",
