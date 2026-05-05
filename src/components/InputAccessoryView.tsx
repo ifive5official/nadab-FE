@@ -1,6 +1,5 @@
 // 키보드 위에 올라오는 악세서리 뷰
 // 현재는 질문 답변 시에만 사용
-import { Keyboard } from "@capacitor/keyboard";
 import { useEffect, useState } from "react";
 import InlineButton from "./InlineButton";
 import { motion, AnimatePresence } from "motion/react";
@@ -26,41 +25,25 @@ export default function InputAccessoryView({
     imageUploader;
 
   useEffect(() => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    let showHandle: any;
-    let hideHandle: any;
-
-    const setupListeners = async () => {
-      showHandle = await Keyboard.addListener("keyboardWillShow", () => {
-        setIsVisible(true);
-      });
-
-      hideHandle = await Keyboard.addListener("keyboardWillHide", () => {
-        setIsVisible(false);
-        setBottomOffset(0);
-      });
-    };
-
-    setupListeners();
-
     const handleViewportChange = () => {
-      if (!window.visualViewport) return;
+      const viewport = window.visualViewport;
+      if (!viewport) return;
 
-      const offset =
-        window.innerHeight -
-        (window.visualViewport.height + window.visualViewport.offsetTop);
+      const offset = window.innerHeight - viewport.height;
 
-      setBottomOffset(Math.max(0, offset));
+      const keyboardOpen = offset > 100;
+
+      setIsVisible(keyboardOpen);
+      setBottomOffset(keyboardOpen ? offset : 0);
     };
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", handleViewportChange);
       window.visualViewport.addEventListener("scroll", handleViewportChange);
+      handleViewportChange();
     }
 
     return () => {
-      if (showHandle) showHandle.remove();
-      if (hideHandle) hideHandle.remove();
       if (window.visualViewport) {
         window.visualViewport.removeEventListener(
           "resize",
@@ -73,6 +56,13 @@ export default function InputAccessoryView({
       }
     };
   }, []);
+
+  const handleComplete = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur(); // 키보드 닫기
+    }
+    onComplete();
+  };
 
   return (
     <AnimatePresence>
@@ -115,10 +105,7 @@ export default function InputAccessoryView({
           </button>
           <InlineButton
             isLoading={isUploading || isLoading}
-            onClick={() => {
-              Keyboard.hide();
-              onComplete();
-            }}
+            onClick={handleComplete}
             className="ml-auto"
           >
             완료

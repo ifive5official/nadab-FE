@@ -5,7 +5,6 @@ import type { components } from "@/generated/api-types";
 import { api } from "@/lib/axios";
 import { getCroppedImg } from "@/lib/cropImage";
 import { Camera } from "@capacitor/camera";
-import { Keyboard } from "@capacitor/keyboard";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -121,7 +120,6 @@ export function useImageUploader({
       if (!["image/jpeg", "image/png"].includes(file.type)) {
         throw new Error("INVALID_FORMAT");
       }
-      Keyboard.hide();
       onUpload?.();
       const readerURL = URL.createObjectURL(file);
       setCropTarget(readerURL); // 바로 업로드하지 않고 크롭 타겟으로 설정
@@ -151,7 +149,6 @@ export function useImageUploader({
 
       if (!image) return;
 
-      Keyboard.hide();
       onUpload?.();
       setCropTarget(image.webPath); // 크롭 타겟으로 설정
     } catch (err) {
