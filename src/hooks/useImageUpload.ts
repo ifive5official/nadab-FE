@@ -3,7 +3,9 @@
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { api } from "@/lib/axios";
+import { getCroppedImg } from "@/lib/cropImage";
 import { Camera } from "@capacitor/camera";
+import { Keyboard } from "@capacitor/keyboard";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -31,6 +33,34 @@ export function useImageUploader({
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | undefined>(
     undefined,
   );
+  const [cropTarget, setCropTarget] = useState<string | null>(null);
+  const [isCropping, setIsCropping] = useState(false);
+
+  // 크롭 완료 후 호출
+  async function handleCropComplete(pixels: any) {
+    const imageToCrop = cropTarget;
+    setCropTarget(null);
+
+    if (!imageToCrop) return;
+
+    try {
+      setIsCropping(true);
+      const croppedBlob = await getCroppedImg(imageToCrop, pixels);
+
+      const previewUrl = URL.createObjectURL(croppedBlob);
+      setTempImageUrl(previewUrl);
+
+      const file = new File([croppedBlob], "profile.jpg", {
+        type: "image/jpeg",
+      });
+
+      await processUpload(file);
+    } catch (err) {
+      onUploadError?.(err);
+    } finally {
+      setIsCropping(false);
+    }
+  }
 
   // presigned url 생성
   const getPresignedUrlMutation = useMutation({
@@ -91,12 +121,10 @@ export function useImageUploader({
       if (!["image/jpeg", "image/png"].includes(file.type)) {
         throw new Error("INVALID_FORMAT");
       }
-
+      Keyboard.hide();
       onUpload?.();
-
-      const previewUrl = URL.createObjectURL(file);
-      setTempImageUrl(previewUrl);
-      await processUpload(file);
+      const readerURL = URL.createObjectURL(file);
+      setCropTarget(readerURL); // 바로 업로드하지 않고 크롭 타겟으로 설정
     } catch (err) {
       onUploadError?.(err);
     } finally {
@@ -112,7 +140,6 @@ export function useImageUploader({
       if (source === "camera") {
         image = await Camera.takePhoto({
           quality: 90,
-          editable: "in-app",
         });
       } else if (source === "gallery") {
         const { results } = await Camera.chooseFromGallery({
@@ -124,15 +151,9 @@ export function useImageUploader({
 
       if (!image) return;
 
+      Keyboard.hide();
       onUpload?.();
-
-      if (image.webPath) {
-        setTempImageUrl(image.webPath);
-        const response = await fetch(image.webPath);
-        const blob = await response.blob();
-        const file = new File([blob], `profile_image`, { type: blob.type });
-        await processUpload(file);
-      }
+      setCropTarget(image.webPath); // 크롭 타겟으로 설정
     } catch (err) {
       clearImage();
       onUploadError?.(err);
@@ -140,7 +161,9 @@ export function useImageUploader({
   }
 
   const isUploading =
-    getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
+    isCropping ||
+    getPresignedUrlMutation.isPending ||
+    uploadToS3Mutation.isPending;
 
   function clearImage() {
     setTempImageUrl(undefined);
@@ -160,6 +183,9 @@ export function useImageUploader({
     tempImageUrl,
     uploadedImageUrl,
     isUploading,
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
     clearImage,
     handleWebFileChange,
     handleNativeUpload,
