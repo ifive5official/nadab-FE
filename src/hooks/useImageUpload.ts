@@ -16,7 +16,7 @@ type ImageUploaderProps = {
   apiUrl: string;
   initialImageUrl?: string;
   onUpload?: () => void; // 이미지 선택 직후 동작(모달 닫는 등)
-  onUploadSuccess?: (objectKey: string, webpKey?: string) => void;
+  onUploadSuccess?: (objectKey: string) => void;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   onUploadError?: (error: any) => void;
 };
@@ -32,6 +32,7 @@ export function useImageUploader({
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | undefined>(
     undefined,
   );
+  const [webpKey, setWebpKey] = useState<string | undefined>(undefined);
   const [cropTarget, setCropTarget] = useState<string | null>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
@@ -123,7 +124,7 @@ export function useImageUploader({
 
     let presignedUrl = "";
     let uploadUrl = "";
-    const webpKey = data?.webpKey;
+    setWebpKey(data?.webpKey);
 
     // 예외처리
     if (apiUrl.includes("/user/me/profile-image/upload-url")) {
@@ -145,7 +146,7 @@ export function useImageUploader({
       }
     }
     setUploadedImageUrl(uploadUrl);
-    onUploadSuccess?.(uploadUrl, webpKey);
+    onUploadSuccess?.(uploadUrl);
   }
 
   // 웹용 파일 핸들러
@@ -217,6 +218,7 @@ export function useImageUploader({
   return {
     tempImageUrl,
     uploadedImageUrl,
+    webpKey,
     isUploading,
     cropTarget,
     setCropTarget,

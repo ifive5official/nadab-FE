@@ -69,6 +69,7 @@ function RouteComponent() {
   });
   const {
     uploadedImageUrl,
+    webpKey,
     isUploading: isImageUploading,
     cropTarget,
     setCropTarget,
@@ -144,6 +145,7 @@ function RouteComponent() {
         questionId: question?.questionId ?? 0,
         answer,
         objectKey: uploadedImageUrl,
+        webpKey,
       });
     } else {
       showError(
