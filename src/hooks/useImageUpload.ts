@@ -9,14 +9,14 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-type UploadUrlRes =
-  components["schemas"]["CreateProfileImageUploadUrlResponse"];
+type UploadUrlRes = components["schemas"]["CreateAnswerImageUploadUrlResponse"];
+type StatusRes = components["schemas"]["ImageStatusResponse"];
 
 type ImageUploaderProps = {
   apiUrl: string;
   initialImageUrl?: string;
   onUpload?: () => void; // 이미지 선택 직후 동작(모달 닫는 등)
-  onUploadSuccess?: (url: string) => void;
+  onUploadSuccess?: (objectKey: string, webpKey?: string) => void;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   onUploadError?: (error: any) => void;
 };
@@ -34,6 +34,32 @@ export function useImageUploader({
   );
   const [cropTarget, setCropTarget] = useState<string | null>(null);
   const [isCropping, setIsCropping] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
+
+  // WebP 상태 조회를 위한 폴링 함수
+  async function pollWebpStatus(key: string) {
+    const MAX_RETRY_TIME = 7000; // 7초
+    const INTERVAL = 500; // 1초 간격
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < MAX_RETRY_TIME) {
+      try {
+        const res = await api.get<ApiResponse<StatusRes>>(
+          "/api/v1/daily-report/image/status",
+          { params: { key } },
+        );
+
+        if (res.data?.data?.status === "READY") {
+          return true;
+        }
+      } catch (err) {
+        console.error("WebP status check failed", err);
+      }
+      // 1초 대기
+      await new Promise((resolve) => setTimeout(resolve, INTERVAL));
+    }
+    return false; // 7초 초과
+  }
 
   // 크롭 완료 후 호출
   async function handleCropComplete(pixels: any) {
@@ -93,22 +119,33 @@ export function useImageUploader({
   // 공통 업로드 프로세스
   async function processUpload(file: File | Blob) {
     const res = await getPresignedUrlMutation.mutateAsync(file.type);
+    const data = res.data;
 
     let presignedUrl = "";
     let uploadUrl = "";
+    const webpKey = data?.webpKey;
 
     // 예외처리
     if (apiUrl.includes("/user/me/profile-image/upload-url")) {
-      presignedUrl = res.data?.objectKey ?? "";
-      uploadUrl = res.data?.uploadUrl ?? "";
+      presignedUrl = data?.objectKey ?? "";
+      uploadUrl = data?.uploadUrl ?? "";
     } else {
-      presignedUrl = res.data?.uploadUrl ?? "";
-      uploadUrl = res.data?.objectKey ?? "";
+      presignedUrl = data?.uploadUrl ?? "";
+      uploadUrl = data?.objectKey ?? "";
     }
 
     await uploadToS3Mutation.mutateAsync({ presignedUrl, file });
+    if (apiUrl.includes("daily-report/image/upload-url") && webpKey) {
+      setIsPolling(true);
+      const isReady = await pollWebpStatus(webpKey);
+      setIsPolling(false);
+
+      if (!isReady) {
+        throw new Error("WEBP_CONVERSION_TIMEOUT"); // 7초 경과 시 에러 발생
+      }
+    }
     setUploadedImageUrl(uploadUrl);
-    onUploadSuccess?.(uploadUrl);
+    onUploadSuccess?.(uploadUrl, webpKey);
   }
 
   // 웹용 파일 핸들러
@@ -160,7 +197,8 @@ export function useImageUploader({
   const isUploading =
     isCropping ||
     getPresignedUrlMutation.isPending ||
-    uploadToS3Mutation.isPending;
+    uploadToS3Mutation.isPending ||
+    isPolling;
 
   function clearImage() {
     setTempImageUrl(undefined);

@@ -17,6 +17,8 @@ import useModalStore from "@/store/modalStore";
 import InputAccessoryView from "@/components/InputAccessoryView";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import { ImageCropper } from "@/components/ImageCropper";
+import useToastStore from "@/store/toastStore";
+import { Capacitor } from "@capacitor/core";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -31,6 +33,7 @@ function RouteComponent() {
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 10;
   const { isOpen, showModal, showError, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageUploader = useImageUploader({
     apiUrl: "/api/v1/daily-report/image/upload-url",
@@ -40,17 +43,28 @@ function RouteComponent() {
       }
     },
     onUploadError: (e) => {
+      console.log("답변 이미지 업로드 에러:", e);
       if (e.message?.toLowerCase().includes("canceled")) {
         return;
       }
       if (textareaRef.current) {
         textareaRef.current.blur();
       }
-      console.error(e);
-      showError(
-        "이미지 업로드 중 문제가 발생했어요.",
-        "다시 한번 시도해 주세요.",
-      );
+      if (
+        Capacitor.isNativePlatform() &&
+        (e.message.includes("denied") || e.message.includes("permission"))
+      ) {
+        showToast({
+          message: "설정에서 카메라 권한을 허용해 주세요.",
+          bottom:
+            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
+        });
+      } else {
+        showError(
+          "이미지 업로드 중 문제가 발생했어요.",
+          "다시 한번 시도해 주세요.",
+        );
+      }
     },
   });
   const {
