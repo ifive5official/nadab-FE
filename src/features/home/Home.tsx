@@ -175,7 +175,7 @@ export default function Home() {
                   <span className="text-button-1 text-button-secondary-text-default">
                     새로운 질문 받기
                   </span>
-                  <span className="text-caption-s text-button-tertiary-text-default">
+                  <span className="text-caption-s text-neutral-1000">
                     남은 새로고침 {question?.rerollRemainingCount}번
                   </span>
                 </div>
