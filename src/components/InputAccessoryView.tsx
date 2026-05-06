@@ -29,12 +29,13 @@ export default function InputAccessoryView({
       const viewport = window.visualViewport;
       if (!viewport) return;
 
-      const offset = window.innerHeight - viewport.height;
+      const offset =
+        window.innerHeight - (viewport.height + viewport.offsetTop);
 
-      const keyboardOpen = offset > 100;
+      const keyboardOpen = window.innerHeight - viewport.height > 100;
 
       setIsVisible(keyboardOpen);
-      setBottomOffset(keyboardOpen ? offset : 0);
+      setBottomOffset(Math.max(0, offset));
     };
 
     if (window.visualViewport) {
@@ -71,7 +72,10 @@ export default function InputAccessoryView({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{ bottom: bottomOffset }}
+          style={{
+            transform: `translateY(-${bottomOffset}px)`,
+            bottom: 0,
+          }}
           className="fixed bottom-0 inset-x-0 px-padding-x-m py-padding-y-s bg-surface-layer-1 border border-border-base flex gap-gap-x-m items-center"
           // 엑세서리 바 누를 때 포커스 이탈 방지
           onPointerDown={(e) => e.preventDefault()}
