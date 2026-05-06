@@ -20,13 +20,14 @@ export function useGenerateReportMutation({ onSuccess }: Props) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ questionId, answer, objectKey }: Req) => {
+    mutationFn: async ({ questionId, answer, objectKey, webpKey }: Req) => {
       const res = await api.post<ApiResponse<Res>>(
         `/api/v1/daily-report/generate`,
         {
           questionId,
           answer,
           objectKey,
+          webpKey,
         },
       );
       return res.data;
