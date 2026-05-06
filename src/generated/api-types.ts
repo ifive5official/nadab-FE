@@ -713,13 +713,16 @@ export interface paths {
          *     이 때 유저의 답변은 기존의 답변으로 자동으로 사용됩니다. <br/>
          *     소요 시간이 최대 3~4초밖에 안 되어 동기처리로 구현했습니다. <br/>
          *
-         *     이미지 미포함의 경우 objectKey는 null로 보내주시면 됩니다. <br/>
+         *     이미지 미포함의 경우 objectKey와 webpKey는 null로 보내주시면 됩니다. <br/>
          *
          *     <이미지가 포함된 경우> <br/>
          *     **5MB 이하의 이미지 파일만 허용됩니다.** <br/>
          *     POST /daily-report/image/upload-url 엔드포인트로
          *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
-         *     해당 엔드포인트에서 반환된 objectKey를 이 요청에 포함시켜야 합니다. <br/>
+         *     해당 엔드포인트에서 반환된 objectKey와 webpKey를 이 요청에 포함시켜야 합니다. <br/>
+         *     또한 GET /daily-report/image/status 엔드포인트를 통해 이미지 업로드 후 webp 변환이 완료되었는지 확인한 후, <br/>
+         *     webp 변환이 완료된 경우에만 요청에 포함합니다.<br/>
+         *     <br/>
          *
          *
          *     | 응답의 emotion | 해당 감정 |
@@ -1850,6 +1853,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/daily-report/image/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 답변 이미지(webp) 상태 조회
+         * @description 답변에 포함되는 이미지의 webp 변환 상태를 조회합니다. <br/>
+         *     POST /daily-report/image/upload-url 엔드포인트로 이미지를 업로드한 후, 해당 엔드포인트에서 반환된 webpKey를 이 API의 key 파라미터로 전달하여 이미지 상태를 조회할 수 있습니다. <br/>
+         *
+         *     프론트엔드에서는 이 API를 주기적으로 호출하여 이미지 업로드 후 webp 변환이 완료되었는지 확인해야 합니다. <br/>
+         *     최대 7초 동안 이 API를 호출하여 status가 READY로 변경되었는지 확인하고, <br/>
+         *     7초가 지나면 실패로 간주하고 사용자에게 이미지 업로드 실패 메시지를 보여주면 됩니다. <br/>
+         *
+         *     - status가 READY인 경우: 이미지 업로드 및 webp 변환이 모두 완료되어 이미지 URL을 사용할 수 있음
+         *     - status가 PROCESSING인 경우: 이미지 업로드는 완료되었으나 webp 변환이 아직 완료되지 않음. 잠시 후 다시 확인 필요
+         */
+        get: operations["getImageStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/{provider}/url": {
         parameters: {
             query?: never;
@@ -2638,6 +2669,11 @@ export interface components {
              * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
              */
             objectKey?: string;
+            /**
+             * @description 답변 이미지 Webp Key. 일간 리포트 생성에 사용됩니다.
+             * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
+             */
+            webpKey?: string;
         };
         /** @description 답변 이미지 업로드 PresignedURL 생성 요청 */
         CreateAnswerImageUploadUrlRequest: {
@@ -2662,6 +2698,11 @@ export interface components {
              * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
              */
             objectKey?: string;
+            /**
+             * @description 이 값은 presignedURL 생성 API의 응답에서 받은 webpKey여야 합니다.
+             * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
+             */
+            webpKey?: string;
         };
         /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
         TokenResponse: {
@@ -3557,6 +3598,13 @@ export interface components {
             emotion?: string;
             /** @description 이미지 URL */
             imageUrl?: string;
+        };
+        ImageStatusResponse: {
+            /**
+             * @description 이미지 상태
+             * @example READY, PROCESSING
+             */
+            status?: string;
         };
         /** @description OAuth2 Authorization URL 응답 */
         AuthorizationUrlResponse: {
@@ -5038,7 +5086,10 @@ export interface operations {
                     "application/json": components["schemas"]["CreateDailyReportResponse"];
                 };
             };
-            /** @description - ErrorCode: DAILY_QUESTION_MISMATCH - 요청한 질문이 사용자에게 할당된 오늘의 질문과 일치하지 않음 */
+            /**
+             * @description - ErrorCode: DAILY_QUESTION_MISMATCH - 요청한 질문이 사용자에게 할당된 오늘의 질문과 일치하지 않음
+             *     - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6708,6 +6759,42 @@ export interface operations {
              *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
              */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getImageStatus: {
+        parameters: {
+            query: {
+                key: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImageStatusResponse"];
+                };
+            };
+            /** @description - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 (JWT 토큰 관련) */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

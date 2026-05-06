@@ -4,7 +4,7 @@ import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import axios from "axios";
 
-type QuestionRes = components["schemas"]["DailyQuestionResponse"];
+type QuestionRes = components["schemas"]["DailyQuestionResponseV2"];
 
 export const questionOptions = queryOptions({
   queryKey: ["currentUser", "question"],
