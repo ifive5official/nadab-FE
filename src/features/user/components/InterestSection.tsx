@@ -21,7 +21,7 @@ export default function InterestSection({
   }));
 
   return (
-    <Section title="관심 주제">
+    <Section title="선택 주제">
       <div className="grid grid-cols-3 gap-gap-x-s py-padding-y-xs">
         {categories.map((category) => {
           return (

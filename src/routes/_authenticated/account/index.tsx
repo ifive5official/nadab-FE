@@ -33,7 +33,7 @@ function RouteComponent() {
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
-      showToast({ message: "관심 주제 변경이 완료되었어요." });
+      showToast({ message: "선택 주제 변경이 완료되었어요." });
     },
   });
   const changeNotificationSettingsMutation =

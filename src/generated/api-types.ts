@@ -4,7339 +4,7363 @@
  */
 
 export interface paths {
-    "/api/v2/question/reroll": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 새로운 질문 받기
-         * @description 오늘의 질문을 새로 받습니다. 하루에 5번까지 가능합니다.
-         */
-        post: operations["rerollDailyQuestion"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/weekly-report/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 주간 리포트 생성 시작
-         * @description 사용자의 (지난 주에 대한) 주간 리포트 생성을 시작합니다. </br>
-         *     비동기로 처리되기 때문에, id로 주간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
-         */
-        post: operations["startWeeklyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/user/me/profile-image/upload-url": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 프로필 이미지 업로드 PresignedURL 생성
-         * @description 프로필 이미지를 업로드할 수 있는 PresignedURL을 생성합니다.
-         *
-         *     - HTTP Method: PUT
-         *     - Headers:
-         *         - Content-Type(필수): image/jpeg, image/png만 허용
-         *     - Body: 이미지 파일
-         *     - URL 만료 시간: 5분
-         */
-        post: operations["createProfileImageUploadUrl"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-report/start/{interestCode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 유형 리포트 생성 시작
-         * @description 사용자의 유형 리포트 생성을 시작합니다. </br>
-         *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
-         *
-         *     선택 가능한 관심 주제 코드는 다음과 같습니다.
-         *
-         *     - **PREFERENCE** : 취향
-         *     - **EMOTION** : 감정
-         *     - **ROUTINE** : 루틴
-         *     - **RELATIONSHIP** : 인간관계
-         *     - **LOVE** : 사랑
-         *     - **VALUES** : 가치관
-         */
-        post: operations["startTypeReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/test/generate/daily-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 오늘의 리포트 생성 API
-         * @description 오늘의 리포트 생성 테스트입니다. <br/>
-         *     프롬프트는 현재 서버에 배포된 프롬프트와 동일하게 적용됩니다. <br/>
-         */
-        post: operations["generateDailyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/test/generate/daily-report-with-prompt": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 오늘의 리포트 생성 API (프롬프트 포함)
-         * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
-         *     1.
-         *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
-         *     ```json
-         *     {
-         *          "message": "(분석 내용)",
-         *          "emotion": "(감정 키워드)"
-         *     }
-         *     ```
-         *     2.
-         *     분석 대상을 명시해야 합니다.
-         *     예시)
-         *     ```json
-         *     [분석 대상]
-         *     질문: {question}
-         *     답변: {answer}
-         *     ```
-         *     이하는 temperature에 대한 설명입니다.<br/>
-         *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
-         *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
-         *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
-         *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
-         *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
-         */
-        post: operations["generateDailyReport_1"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/test/delete/weekly-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 주간 리포트 삭제 API
-         * @description 이번 주에 생성된 주간 리포트를 삭제합니다. <br/>
-         *     생성된 리포트만 삭제 가능합니다. <br/>
-         *     크리스탈 또한 환불됩니다.
-         */
-        post: operations["deleteWeeklyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/test/delete/type-report/{interestCode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 유형 리포트 삭제 API
-         * @description 특정 주제에 대한 유형 리포트를 삭제합니다. <br/>
-         *     생성된 리포트만 삭제 가능합니다. <br/>
-         *     크리스탈 또한 환불됩니다.
-         */
-        post: operations["deleteTypeReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/test/delete/monthly-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * (테스트용) 월간 리포트 삭제 API
-         * @description 이번 달에 생성된 월간 리포트를 삭제합니다. <br/>
-         *     생성된 리포트만 삭제 가능합니다. <br/>
-         *     크리스탈 또한 환불됩니다.
-         */
-        post: operations["deleteMonthlyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/terms/consent": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 약관 동의 상태 확인
-         * @description 현재 사용자가 모든 활성 약관에 동의했는지 확인합니다.
-         *
-         *     - requiresConsent가 true이면 재동의가 필요합니다.
-         *     - missingTerms에 재동의가 필요한 약관 타입이 반환됩니다 (필수/선택 약관 모두 포함).
-         *     - 홈화면 진입 시 호출하여 약관 업데이트 알림을 표시할 수 있습니다.
-         *     - 선택 약관(MARKETING)도 버전 업데이트 시 재동의가 필요하며, 사용자는 동의/거부를 선택할 수 있습니다.
-         *
-         *     **응답 필드 사용 가이드:**
-         *
-         *     1. **재동의 여부 확인 (홈화면)**
-         *     - requiresConsent: true이면 재동의 페이지로 이동
-         *     - missingTerms: 어떤 약관이 필요한지 확인
-         *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태
-         *
-         *     2. **재동의 페이지 구현**
-         *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태이므로 초기값으로 사용
-         *     - 사용자가 이미 동의한 약관은 그대로 표시하고 missingTerms에 포함된 새로 동의를 받아야할 약관만 다르게 표시하여 사용자에게 안내
-         */
-        get: operations["checkTermsConsent"];
-        put?: never;
-        /**
-         * 약관 동의
-         * @description 약관에 동의합니다.
-         *
-         *     - 소셜 로그인 온보딩(PROFILE_INCOMPLETE 상태): 로그인 후 약관 동의 필수
-         *     - 약관 재동의: 약관 업데이트 시 재동의
-         *     - 일반 회원가입은 POST /auth/signup에서 약관 동의를 함께 처리하므로, 이 API를 사용하지 않습니다.
-         *
-         *     필수 약관(SERVICE, PRIVACY, AGE_VERIFICATION)에 모두 동의해야 합니다.
-         *     마케팅 약관(MARKETING)은 선택 사항입니다.
-         */
-        post: operations["agreeToTerms"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/search/histories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 최근 검색어 조회
-         * @description 최근 검색어 10개를 조회합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
-         */
-        get: operations["getRecentSearches"];
-        put?: never;
-        /**
-         * 검색어 저장
-         * @description 사용자가 검색어를 확정했을 때 검색어를 저장합니다.
-         *
-         *     - 엔터를 치거나 검색 버튼을 누르거나 답변 검색 결과를 클릭했을 때 호출됩니다.
-         *     - 이미 존재하는 검색어는 최신 순서로 갱신됩니다.
-         *     - 빈 문자열이나 공백만 있는 경우 저장되지 않습니다.
-         *
-         *     ### 에러 처리
-         *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
-         */
-        post: operations["saveSearchHistory"];
-        /**
-         * 전체 검색어 삭제
-         * @description 모든 검색어를 삭제합니다.
-         */
-        delete: operations["deleteAllSearchHistories"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/question/reroll": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 새로운 질문 받기
-         * @description 오늘의 질문을 새로 받습니다. 하루에 한 번만 가능합니다.
-         */
-        post: operations["rerollDailyQuestion_1"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications/tokens": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * FCM 토큰 등록
-         * @description FCM 토큰을 등록합니다. 로그인, 회원가입 또는 FCM 토큰 갱신 시 호출해야 합니다.
-         *
-         *     호출 시점:
-         *     - 로그인/회원가입 완료 후
-         *     - FCM 토큰 갱신 시 (onTokenRefresh 콜백)
-         *     - 앱 재시작 시 (필요한 경우)
-         *
-         *     동작:
-         *     - 동일한 디바이스 ID가 이미 있는 경우 → 토큰만 업데이트
-         *     - 새로운 디바이스인 경우 → 신규 등록
-         *     - 응답의 isNewDevice 필드로 구분 가능
-         *
-         *     참고:
-         *     - 디바이스 ID: 디바이스를 식별할 수 있는 고유 값 (UUID 권장)
-         *     - 플랫폼: IOS 또는 ANDROID
-         */
-        post: operations["registerDevice"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications/test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 테스트 알림 발송
-         * @description 테스트용 푸시 알림을 발송합니다. 등록된 디바이스로 즉시 전송됩니다.
-         */
-        post: operations["sendTestNotification"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/monthly-report/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 월간 리포트 생성 시작
-         * @description 사용자의 (지난 달에 대한) 월간 리포트 생성을 시작합니다. </br>
-         *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
-         */
-        post: operations["startMonthlyReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/moderation/reports": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 공유글 신고 API
-         * @description 공유된 DailyReport를 신고합니다.
-         *
-         *     요청 필드:
-         *     - dailyReportId (필수): 신고할 공유글의 DailyReport ID(GET /api/v1/feed 호출 시 필드에서 확인 가능)
-         *     - reason (필수): 신고 사유
-         *       - PROFANITY_HATE_SPEECH: 욕설 / 혐오 표현
-         *       - SEXUAL_CONTENT: 성적으로 부적절한 언행
-         *       - SELF_HARM: 자해 / 자살 조장
-         *       - OTHER: 기타 (customReason 필수)
-         *     - customReason: reason이 OTHER일 때만 필수, 200자 이하
-         *
-         *     신고 후 동작:
-         *     - 동일 공유글 중복 신고 불가
-         *     - 신고한 공유글은 신고자의 피드에서 숨겨짐
-         *     - 누적 신고 10건 이상 & 신고자 2명 이상 시 작성자의 소셜 활동 자동 중지(공유하기 시도 시 status로 SUSPENDED 반환)
-         */
-        post: operations["reportContent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/moderation/blocks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 차단 사용자 목록 조회
-         * @description 내가 차단한 사용자 목록을 조회합니다.
-         */
-        get: operations["getBlockedUsers"];
-        put?: never;
-        /**
-         * 사용자 차단
-         * @description 특정 사용자를 차단합니다.
-         *
-         *     - 차단 즉시 기존 친구 관계(수락/대기 포함)를 제거합니다.
-         *     - 상호 검색 결과 및 상호 피드 노출이 즉시 중단됩니다.
-         */
-        post: operations["blockUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/search/histories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 최근 검색어 조회
-         * @description 최근 검색한 유저 5명을 조회합니다. 응답 리스트는 최신순입니다.
-         */
-        get: operations["getRecentSearches_1"];
-        put?: never;
-        /**
-         * 친구 검색 기록 저장
-         * @description 사용자가 친구 검색 결과를 클릭했을 때 검색 기록을 저장합니다.
-         *
-         *     - 프로필을 조회했을 때 호출됩니다.
-         *     - 이미 존재하는 검색 기록은 최신 순서로 갱신됩니다.
-         *     - 최대 100개까지 저장되며, 초과 시 오래된 것부터 삭제됩니다.
-         *
-         *     ### 에러 처리
-         *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
-         */
-        post: operations["saveSearchHistory_1"];
-        /**
-         * 전체 검색어 삭제
-         * @description 모든 검색 기록을 삭제합니다.
-         */
-        delete: operations["deleteAllSearchHistories_1"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/requests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 받은 친구 요청 목록 조회
-         * @description 받은 친구 요청 목록을 조회합니다.
-         *
-         *     - totalCount: 총 요청 수
-         *     - requests: 전체 요청 목록 (최신순)
-         */
-        get: operations["getReceivedRequests"];
-        put?: never;
-        /**
-         * 친구 요청 보내기
-         * @description 닉네임으로 유저를 찾아 친구 요청을 보냅니다.
-         *
-         *     - 본인에게는 요청 불가
-         *     - 이미 친구이거나 요청이 존재하면 불가
-         *     - 발신자/수신자 모두 친구 수 20명 미만이어야 함
-         */
-        post: operations["sendFriendRequest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/requests/{friendshipId}/reject": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 친구 요청 거절
-         * @description 받은 친구 요청을 거절합니다.
-         */
-        post: operations["rejectFriendRequest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/requests/{friendshipId}/accept": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 친구 요청 수락
-         * @description 받은 친구 요청을 수락합니다.
-         *
-         *     - 양쪽 모두 친구 수 20명 미만이어야 함
-         */
-        post: operations["acceptFriendRequest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/feed/unshare": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 공유 중단 API
-         * @description 당일 DailyReport 공유를 중단합니다.
-         */
-        post: operations["stopSharing"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/feed/share": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 공유 시작 API
-         * @description 당일 DailyReport를 친구들에게 공유합니다.
-         *
-         *     응답 상태:
-         *     - SHARED: 공유가 정상적으로 시작됨
-         *     - SUSPENDED: 신고 10건 이상 & 서로 다른 신고자 2명 이상으로 인해 피드 공유 활동이 차단됨
-         */
-        post: operations["startSharing"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/email/code": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 이메일 인증 코드 발송
-         * @description 회원가입 또는 비밀번호 재설정을 위한 이메일 인증 코드를 발송합니다.<br>
-         *     6자리 숫자 인증 코드가 이메일로 전송되며, 유효기간은 3분입니다.<br>
-         *     동일한 이메일과 인증 타입으로 재요청 시, 기존 인증 코드는 제거되고 새로운 코드가 생성됩니다.<br>
-         *     <br>
-         *     **검증 사항:**<br>
-         *     - SIGNUP: 이메일 중복 확인 (이미 사용 중인 이메일은 발송 불가)<br>
-         *     - PASSWORD_RESET: 사용자 존재 확인 + 탈퇴한 계정 차단 + 소셜 로그인 계정 차단<br>
-         *     <br>
-         *     <b>주의:</b> 이메일 발송은 비동기로 처리되며, SMTP 실패 시에도 200 응답이 반환됩니다.
-         *     이메일을 받지 못한 경우 동일한 API를 재호출하여 새로운 인증 코드를 발급받을 수 있습니다.
-         */
-        post: operations["sendVerificationCode"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/email/code/verification": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 이메일 인증 코드 검증
-         * @description 이메일로 받은 6자리 인증 코드를 검증합니다.<br>
-         *     인증 성공 시, 이후 회원가입 또는 비밀번호 재설정을 진행할 수 있습니다.<br>
-         *     인증 코드는 3분 후 자동 만료되며, 만료된 코드는 재발송이 필요합니다.
-         */
-        post: operations["verifyCode"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report/image/upload-url": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 답변 이미지 업로드 PresignedURL 생성
-         * @description 답변에 포함되는 이미지를 업로드할 수 있는 PresignedURL을 생성합니다.
-         *
-         *     - HTTP Method: PUT
-         *     - Headers:
-         *         - Content-Type(필수): image/jpeg, image/png만 허용
-         *     - Body: 이미지 파일
-         *     - URL 만료 시간: 5분
-         */
-        post: operations["createAnswerImageUploadUrl"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report/generate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 오늘의 리포트 생성 API
-         * @description 유저의 오늘의 리포트를 생성합니다. <br/>
-         *     생성 실패 시에도 이 API를 다시 호출하면 됩니다. <br/>
-         *     이 때 유저의 답변은 기존의 답변으로 자동으로 사용됩니다. <br/>
-         *     소요 시간이 최대 3~4초밖에 안 되어 동기처리로 구현했습니다. <br/>
-         *
-         *     이미지 미포함의 경우 objectKey와 webpKey는 null로 보내주시면 됩니다. <br/>
-         *
-         *     <이미지가 포함된 경우> <br/>
-         *     **5MB 이하의 이미지 파일만 허용됩니다.** <br/>
-         *     POST /daily-report/image/upload-url 엔드포인트로
-         *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
-         *     해당 엔드포인트에서 반환된 objectKey와 webpKey를 이 요청에 포함시켜야 합니다. <br/>
-         *     또한 GET /daily-report/image/status 엔드포인트를 통해 이미지 업로드 후 webp 변환이 완료되었는지 확인한 후, <br/>
-         *     webp 변환이 완료된 경우에만 요청에 포함합니다.<br/>
-         *     <br/>
-         *
-         *
-         *     | 응답의 emotion | 해당 감정 |
-         *     | :--- | :--- |
-         *     | `ACHIEVEMENT` | 성취 |
-         *     | `INTEREST` | 흥미 |
-         *     | `PEACE` | 평온 |
-         *     | `PLEASURE` | 즐거움 |
-         *     | `WILL` | 의지 |
-         *     | `DEPRESSION` | 우울 |
-         *     | `REGRET` | 후회 |
-         *     | `ETC` | 기타 |
-         */
-        post: operations["generateDailyReport_2"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/{provider}/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * OAuth2 로그인
-         * @description 소셜 로그인 제공자로부터 받은 Authorization Code와 State를 사용하여 로그인을 완료합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
-         *     <br>
-         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["oauth2Login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/withdrawal": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 회원 탈퇴
-         * @description 회원 탈퇴를 진행합니다.<br>
-         *     - 탈퇴 후 14일 동안 복구 가능합니다.<br>
-         *     - 모든 기기에서 자동 로그아웃됩니다.<br>
-         *     - 14일 후 자동으로 완전 삭제됩니다.
-         */
-        post: operations["withdrawUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/signup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 일반 회원가입
-         * @description 이메일 인증 완료 후 회원가입을 진행합니다.<br>
-         *     일반 회원가입 시 약관 동의를 함께 처리합니다. 필수 약관(서비스 이용약관, 개인정보 처리방침, 만 14세 이상 확인)에 모두 동의해야 합니다.<br>
-         *     <br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     회원가입 완료 후 signupStatus가 PROFILE_INCOMPLETE 상태이므로, 이 후 온보딩에서 프로필을 완성해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요
-         */
-        post: operations["signup"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/restore": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 회원 복구 (일반 로그인)
-         * @description 탈퇴한 일반 계정을 복구합니다.<br>
-         *     - 이메일과 비밀번호로 본인 확인을 합니다.<br>
-         *     - 14일 이내에만 복구 가능합니다.<br>
-         *     - 복구 후 자동으로 로그인됩니다.<br>
-         *     <br>
-         *     **소셜 로그인 계정의 경우:**<br>
-         *     - 별도 복구 API가 필요 없습니다.<br>
-         *     - 소셜 로그인(POST /{provider}/login)을 시도하면 자동으로 복구됩니다.
-         */
-        post: operations["restoreBasicAccount"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 토큰 재발급
-         * @description Access Token이 만료되었을 때, HttpOnly 쿠키의 Refresh Token을 사용하여 새로운 Access Token과 signupStatus를 발급받습니다.<br>
-         *     보안을 위해 Refresh Token Rotation 방식을 사용하며, 기존 Refresh Token은 무효화되고 새로운 Refresh Token이 쿠키에 자동 설정됩니다.<br>
-         *     프론트엔드는 Access Token을 localStorage나 메모리에 저장하여 API 요청 시 Authorization 헤더에 포함해야 합니다.
-         */
-        post: operations["refresh"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/password/reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 비밀번호 찾기
-         * @description 이메일 인증 완료 후 비밀번호를 재설정합니다.<br>
-         *     - 이메일 인증(PASSWORD_RESET)을 먼저 완료해야 합니다
-         *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다
-         *     - 재설정 후 모든 기기에서 자동 로그아웃됩니다
-         */
-        post: operations["resetPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/naver/native-login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 네이버 Native SDK 로그인
-         * @description Android/iOS 앱에서 네이버 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
-         *     <br>
-         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["naverNativeLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 로그아웃
-         * @description 현재 로그인한 사용자의 모든 Refresh Token을 삭제하여 로그아웃합니다.<br>
-         *     DB에 저장된 Refresh Token과 브라우저 쿠키가 모두 제거되므로, 해당 사용자의 모든 기기에서 로그아웃 효과가 발생합니다.<br>
-         *     Access Token은 Bearer 형식으로 Authorization 헤더에 포함하여 요청해야 합니다.
-         */
-        post: operations["logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 일반 로그인
-         * @description 이메일과 비밀번호로 로그인합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (온보딩 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/kakao/native-login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 카카오 Native SDK 로그인
-         * @description Android/iOS 앱에서 카카오 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
-         *     <br>
-         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["kakaoNativeLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/google/native-login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 구글 Native SDK 로그인
-         * @description Android/iOS 앱에서 구글 SDK로 받은 ID Token을 사용하여 로그인을 완료합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
-         *     <br>
-         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["googleNativeLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/apple/native-login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 애플 Native SDK 로그인 (iOS 전용)
-         * @description iOS 앱에서 Sign in with Apple SDK로 받은 Authorization Code를 사용하여 로그인을 완료합니다.<br>
-         *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
-         *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
-         *     <br>
-         *     중요: iOS 클라이언트 설정<br>
-         *     - request.requestedScopes = [.email] 설정 필수<br>
-         *     - email scope를 포함해야 첫 로그인 시 이메일을 받을 수 있습니다<br>
-         *     <br>
-         *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
-         *     <br>
-         *     **signupStatus:**<br>
-         *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
-         *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
-         *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
-         */
-        post: operations["appleNativeLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/user/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 나의 프로필 조회
-         * @description 로그인한 사용자의 프로필 정보를 조회합니다.
-         */
-        get: operations["getMyProfile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 나의 프로필 수정
-         * @description 로그인한 사용자의 프로필 정보를 수정합니다.
-         *     닉네임과 프로필 이미지를 하나씩만, 또는 둘 다 수정할 수 있습니다.
-         *     **적어도 하나의 필드를 포함해야 합니다.**
-         *     **5MB 이하의 이미지 파일만 허용됩니다.**
-         *
-         *     (예) 프로필 이미지만 수정 시 nickname은 null
-         *
-         *     프로필 이미지 수정의 경우,
-         *     POST /user/me/profile-image/upload-url 엔드포인트로
-         *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
-         *     해당 엔드포인트에서 반환된 objectKey를 이 요청에 포함시켜야 합니다.
-         */
-        patch: operations["updateUserProfile"];
-        trace?: never;
-    };
-    "/api/v1/user/interest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 유저 관심 주제 업데이트
-         * @description 유저의 관심 주제를 업데이트합니다. 하나만 선택 가능합니다. 온보딩 시에도 사용됩니다.
-         *
-         *     선택 가능한 관심 주제 코드는 다음과 같습니다.
-         *
-         *     - **PREFERENCE** : 취향
-         *     - **EMOTION** : 감정
-         *     - **ROUTINE** : 루틴
-         *     - **RELATIONSHIP** : 인간관계
-         *     - **LOVE** : 사랑
-         *     - **VALUES** : 가치관
-         */
-        patch: operations["updateUserInterests"];
-        trace?: never;
-    };
-    "/api/v1/terms/consent/marketing": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 마케팅 동의 상태 조회
-         * @description 현재 사용자의 마케팅 수신 동의 여부를 조회합니다.
-         */
-        get: operations["getMarketingConsent"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 마케팅 동의 변경
-         * @description 마케팅 수신 동의를 변경합니다.
-         */
-        patch: operations["updateMarketingConsent"];
-        trace?: never;
-    };
-    "/api/v1/notifications/{notificationId}/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 알림 읽음 처리
-         * @description 특정 알림을 읽음 상태로 변경합니다.
-         */
-        patch: operations["markAsRead"];
-        trace?: never;
-    };
-    "/api/v1/notifications/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 알림 설정 조회
-         * @description 사용자의 알림 설정을 조회합니다. 그룹별로 3개의 설정이 반환됩니다.
-         *
-         *     - ACTIVITY_REMINDER: 활동 리마인드 알림 (작성 알림 시간 설정 가능)
-         *     - REPORT: 리포트 알림
-         *     - SOCIAL: 소셜 알림 (친구 요청, 수락 등)
-         *
-         *     설정이 없는 경우 기본값으로 생성되어 반환됩니다.
-         */
-        get: operations["getSettings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 알림 설정 수정
-         * @description 알림 설정을 수정합니다. 배열로 여러 그룹을 한 번에 수정할 수 있습니다.
-         *
-         *     - 1개 그룹만 수정: [{ "group": "ACTIVITY_REMINDER", "enabled": true }]
-         *     - 2개 그룹 수정: [{ "group": "ACTIVITY_REMINDER", ... }, { "group": "REPORT", ... }]
-         *     - 전체 수정: 3개 객체 전송
-         *
-         *     각 객체:
-         *     - group: 알림 그룹 (필수)
-         *     - enabled: 해당 그룹의 알림을 켜거나 끕니다 (필수)
-         *     - dailyWriteTime: ACTIVITY_REMINDER 그룹인 경우만 설정 가능 (선택, 형식: HH:mm)
-         */
-        patch: operations["updateSettings"];
-        trace?: never;
-    };
-    "/api/v1/notifications/read-all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 전체 알림 읽음 처리
-         * @description 사용자의 모든 미읽음 알림을 읽음 상태로 변경합니다.
-         */
-        patch: operations["markAllAsRead"];
-        trace?: never;
-    };
-    "/api/v1/auth/password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * 비밀번호 변경
-         * @description 로그인 상태(마이페이지)에서 비밀번호를 변경합니다.<br>
-         *     - 현재 비밀번호 확인이 필수입니다<br>
-         *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다<br>
-         *     - 변경 후 다른 기기에서는 자동 로그아웃됩니다<br>
-         *     - 현재 기기는 새로운 Access Token과 Refresh Token이 자동으로 발급되어 로그인 상태가 유지됩니다
-         */
-        patch: operations["changePassword"];
-        trace?: never;
-    };
-    "/api/v2/question": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 오늘의 질문 조회
-         * @description 오늘의 질문을 조회합니다.
-         */
-        get: operations["getDailyQuestion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/weekly-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 나의 주간 리포트 조회
-         * @description 사용자의 (지난 주에 대한) 주간 리포트와 이전 주간 리포트를 조회합니다. </br>
-         *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
-         *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
-         *     **<```report```의 state>** </br>
-         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
-         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
-         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
-         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     주간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
-         *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
-         */
-        get: operations["getMyWeeklyReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/weekly-report/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * id로 주간 리포트 조회
-         * @description 주간 리포트를 id로 조회합니다. </br>
-         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
-         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
-         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
-         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     주간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
-         *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
-         */
-        get: operations["getWeeklyReportById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/wallet/balance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 크리스탈 조회
-         * @description 사용자의 현재 크리스탈을 조회합니다.
-         */
-        get: operations["getWalletBalance"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/user/check-nickname": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 닉네임 사용 가능 여부 조회
-         * @description 닉네임이 사용 가능한지 종합적으로 검사합니다.
-         *     - 닉네임은 2자 이상 10자 이하이어야 합니다.
-         *     - 한글과 영어 대소문자만 허용됩니다.
-         *     - 닉네임은 공백으로 시작하거나 끝날 수 없습니다.
-         *     - 이미 사용 중인 닉네임은 사용할 수 없습니다.
-         *     - 예약어(admin, root 등)는 사용할 수 없습니다.
-         *     - 비속어 및 부적절한 단어가 포함된 닉네임은 사용할 수 없습니다.
-         *     - 로그인 상태에서 자신의 현재 닉네임을 보내면 사용 불가로 처리됩니다.
-         */
-        get: operations["checkNickname"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 나의 유형 리포트 통합 조회
-         * @description 사용자의 유형 리포트를 관심 주제(```InterestCode```)별로 한 번에 조회합니다. </br></br>
-         *
-         *     응답의 ```reports```는 다음 형태의 Map 입니다. </br>
-         *     - Key: ```InterestCode``` 문자열 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES) </br>
-         *     - Value: ```TypeReportDetailResponse``` </br></br>
-         *
-         *     Value(```TypeReportDetailResponse```)는 단일 조회 응답의 ```report```와 동일한 스키마이며, 다음 3개 영역으로 구성됩니다. </br>
-         *     - ```current```: 현재 조회 가능한 유형 리포트 본문(없으면 null) </br>
-         *     - ```generation```: 새 리포트 생성 작업 상태(진행 중/실패 여부 및 작업 reportId) </br>
-         *     - ```eligibility```: 생성 자격(완료 개수/필요 개수/생성 가능/첫 생성 무료 여부) </br></br>
-         *
-         *     **각 필드 의미** </br>
-         *     **1) ```current```** </br>
-         *     - 생성 완료된 리포트가 있으면 상세 내용이 채워집니다. </br>
-         *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br></br>
-         *
-         *     **2) ```generation```** </br>
-         *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
-         *     - ```status``` 값: ```NONE``` / ```IN_PROGRESS``` / ```FAILED``` </br>
-         *     - ```reportId```는 생성 작업이 존재할 때의 reportId이며, 없으면 null입니다. </br></br>
-         *
-         *     **3) ```eligibility```** </br>
-         *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
-         *     - ```requiredCount```: 생성에 필요한 최소 개수 (현재 30) </br>
-         *     - ```canGenerate```: 현재 생성 조건 충족 여부 </br>
-         *     - ```isFirstFree```: 해당 interest의 첫 생성 무료 대상 여부 </br></br>
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     유형 리포트는 강조 표현을 위해 ```typeAnalysisContent```와 ```emotionSummaryContent``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     각 필드는 ```styledText```에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         */
-        get: operations["getMyAllTypeReports"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-report/{interestCode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 나의 유형 리포트 단일 조회
-         * @description 특정 관심 주제(interestCode) 1개에 대한 사용자의 유형 리포트 상태를 조회합니다. </br></br>
-         *
-         *     응답의 ```report```는 다음 3개 영역으로 구성됩니다. </br>
-         *     - ```current```: 현재 조회 가능한(사용자가 볼 수 있는) 유형 리포트 본문 </br>
-         *     - ```generation```: 새 리포트 생성 작업의 상태(진행 중/실패 여부 및 작업 reportId) </br>
-         *     - ```eligibility```: 생성 자격(완료한 일간 리포트 개수, 필요 개수, 생성 가능 여부, 첫 생성 무료 여부) </br></br>
-         *
-         *     **1) ```current```** </br>
-         *     - 이미 생성 완료된 리포트가 있으면 ```current```에 상세 내용이 채워집니다. </br>
-         *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br>
-         *     - ```current.status```는 “현재 조회 가능한 리포트 자체의 상태”를 의미합니다(예: COMPLETED). </br></br>
-         *
-         *     **2) ```generation```** </br>
-         *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
-         *     - ```status``` 값: </br>
-         *       - ```NONE```: 생성 작업이 없음(대기/진행/실패 상태가 아님) </br>
-         *       - ```IN_PROGRESS```: 생성 작업 진행 중 </br>
-         *       - ```FAILED```: 생성 작업 실패(환불/처리 등 후속 로직이 완료된 상태) </br>
-         *     - ```reportId```는 ```IN_PROGRESS``` 또는 ```FAILED```인 생성 작업의 대상 reportId이며, 없으면 null입니다. </br></br>
-         *
-         *     **3) ```eligibility```** </br>
-         *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
-         *     - ```requiredCount```: 유형 리포트 생성을 위해 필요한 최소 완료 개수 (현재 30) </br>
-         *     - ```canGenerate```: 현재 시점에 생성 조건을 충족했는지 여부 </br>
-         *     - ```isFirstFree```: 해당 interest의 “첫 유형 리포트 생성 무료” 대상 여부 </br></br>
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     유형 리포트는 강조 표현을 위해 ```typeAnalysisContent```와 ```emotionSummaryContent``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     각 필드는 ```styledText```에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         *
-         *     선택 가능한 관심 주제 코드는 다음과 같습니다. </br>
-         *     - **PREFERENCE** : 취향 </br>
-         *     - **EMOTION** : 감정 </br>
-         *     - **ROUTINE** : 루틴 </br>
-         *     - **RELATIONSHIP** : 인간관계 </br>
-         *     - **LOVE** : 사랑 </br>
-         *     - **VALUES** : 가치관 </br>
-         */
-        get: operations["getMyTypeReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/question": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 오늘의 질문 조회
-         * @description 오늘의 질문을 조회합니다.
-         */
-        get: operations["getDailyQuestion_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 알림 목록 조회
-         * @description 사용자의 알림 목록을 커서 기반 페이지네이션으로 조회합니다. 최신순으로 정렬됩니다.
-         *
-         *     - 첫 조회: cursor 없이 요청 (최근 20개)
-         *     - 다음 페이지: 응답의 nextCursor를 사용하여 요청
-         *     - 한 번에 20개씩 조회됩니다.
-         */
-        get: operations["getNotifications"];
-        put?: never;
-        post?: never;
-        /**
-         * 전체 알림 삭제
-         * @description 사용자의 모든 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
-         */
-        delete: operations["deleteAllNotifications"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications/unread-count": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 미읽음 알림 개수 조회
-         * @description 사용자의 읽지 않은 알림 개수를 조회합니다.
-         */
-        get: operations["getUnreadCount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/monthly-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 나의 월간 리포트 조회
-         * @description 사용자의 (지난 달에 대한) 월간 리포트와 이전 월간 리포트를 조회합니다. </br>
-         *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
-         *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
-         *     **<```report```의 state>** </br>
-         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
-         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
-         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
-         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     월간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
-         *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
-         */
-        get: operations["getMyMonthlyReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/monthly-report/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * id로 월간 리포트 조회
-         * @description 월간 리포트를 id로 조회합니다. </br>
-         *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
-         *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
-         *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
-         *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
-         *
-         *     **<텍스트 스타일(styled) 지원>** </br>
-         *     월간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
-         *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
-         *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
-         *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
-         *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
-         *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
-         *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
-         */
-        get: operations["getMonthlyReportById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/home": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 홈화면 정보 조회 API
-         * @description 홈화면에 표시할 답변 관련 정보를 조회합니다.
-         *
-         *     ### 제공 정보
-         *     1. 주간 답변 상태: 이번 주(월~일) 답변한 날짜 목록
-         *     2. 연속 기록(Streak): 현재 연속 답변 일수
-         *     3. 총 기록 일수: 실제 답변한 날짜의 총 개수
-         *     4. 친구 프로필: 나와 같은 오늘의 질문에 답변한 친구들의 프로필 사진 URL (최대 5개)
-         *     5. 친구 답변 수: 나와 같은 오늘의 질문에 답변한 친구의 총 수
-         *
-         *     ### 친구 프로필 조회 기준
-         *     - 나의 오늘의 질문과 동일한 질문에 답변한 친구만 표시
-         *     - 답변 시간 최신순 정렬 (가장 최근에 답변한 친구부터)
-         *     - 탈퇴 예정 친구는 제외
-         *     - 오늘의 질문이 없거나, 친구가 없거나, 같은 질문에 답변한 친구가 없으면 빈 리스트 및 0 반환
-         *     - 프로필 URL은 최대 5개, 총 수는 전체 인원수
-         *
-         *     ### 계산 기준
-         *     - 주 시작: 월요일, 주 종료: 일요일
-         *     - Streak: 현재까지 매일 연속 답변한 총 일수
-         *       * 오늘 답변 있음 → 오늘까지 포함한 연속 일수
-         *       * 오늘 답변 없음 → 어제까지의 연속 일수
-         *       * 어제도 답변 없음 → 0
-         *     - 총 기록 일수: 실제 답변을 작성한 날짜의 개수
-         *
-         *     ### 예시
-         *     - 첫 답변: 2025-12-27
-         *     - 12월 27일~31일 매일 답변 (5일)
-         *     - 1월 1일~3일 답변 안 함
-         *     - 1월 4일~15일 매일 답변 (12일)
-         *     - 오늘: 2026-01-15
-         *     - 8명의 친구가 같은 질문에 답변
-         *
-         *     응답:
-         *     - answeredDates: ["2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15"]
-         *     - streakCount: 12 (1월 4일부터 15일까지 연속)
-         *     - totalRecordDays: 17 (5+ 12 = 총 17일 답변)
-         *     - answeredFriendProfiles: [최신 5명의 프로필 URL]
-         *     - answeredFriendCount: 8
-         */
-        get: operations["getHomeData"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 친구 목록 조회
-         * @description 친구 목록을 조회합니다.
-         *
-         *     - totalCount: 총 친구 수
-         *     - friends: 친구 목록 (최신순)
-         */
-        get: operations["getFriends"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 유저 검색
-         * @description 닉네임으로 유저를 검색합니다. (Cursor-based Pagination)
-         *
-         *     ### 검색 모드
-         *     - 닉네임 부분 매칭: 검색어가 닉네임의 앞, 중간, 끝 어디에 있어도 검색됨
-         *       * 예: "모래" 검색 시 → "모래", "모래사장", "나모래다", "예쁜모래" 모두 검색
-         *     - 정렬: 관련도 순
-         *       * 1순위: 완전 일치 (닉네임 = 검색어)
-         *       * 2순위: 시작 매칭 (닉네임이 검색어로 시작)
-         *       * 3순위: 부분 매칭 (그 외)
-         *       * 같은 순위 내에서는 닉네임 가나다순 정렬
-         *     - 페이지 크기: 30개 고정
-         *     - 제외 대상: 탈퇴한 유저는 검색 결과에서 제외됨
-         *
-         *     ### Request Parameters
-         *     - keyword (필수): 검색 키워드 (닉네임, 1~255자)
-         *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
-         *
-         *     ### Response
-         *     - pendingRequests: 나한테 친구 요청 보낸 사람들 중 검색어와 일치하는 사람들
-         *       * 첫 페이지 (cursor=null): 요청 보낸 사람들 포함 (탈퇴한 유저 제외)
-         *       * 이후 페이지 (cursor 있음): 빈 배열 반환
-         *       * 프론트엔드에서는 첫 페이지에서 받은 값을 계속 유지하면 됩니다.
-         *     - searchResults: 검색 결과 리스트 (항상 정확히 30개, 본인 포함 가능)
-         *       * 제외 대상: 받은 친구 요청 유저 (pendingRequests에 표시), 탈퇴한 유저
-         *       * 본인이 검색되면 relationshipStatus는 SELF로 표시됨
-         *       * 중복 없음: 받은 요청 유저는 pendingRequests에만 표시되고 searchResults에는 포함 안 됨
-         *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
-         *     - hasNext: 다음 페이지 존재 여부
-         *
-         *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
-         *     1. 첫 페이지: GET /api/v1/friends/search?keyword=모래
-         *        → pendingRequests: [친구 요청 보낸 사람들], searchResults: [검색 결과 30개]
-         *     2. 다음 페이지: GET /api/v1/friends/search?keyword=모래&cursor=모래가나
-         *        → pendingRequests: [], searchResults: [다음 30개]
-         *        (response의 nextCursor 값을 cursor 파라미터로 전달)
-         *     3. hasNext=false가 될 때까지 반복
-         */
-        get: operations["searchUsers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/feed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 피드 조회 API
-         * @description 친구들의 공유된 DailyReport 목록을 조회합니다. ACCEPTED 상태의 친구만 조회됩니다.
-         */
-        get: operations["getFeeds"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/feed/share/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 공유 상태 조회 API
-         * @description 당일 DailyReport의 공유 상태를 조회합니다.
-         *
-         *     이 API는 상세보기 화면에서 오늘 날짜 답변일 때 공유 버튼 상태를 확인하기 위해 사용됩니다.
-         */
-        get: operations["getShareStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 오늘의 리포트 조회 API
-         * @description 유저의 오늘의 리포트를 조회합니다.
-         */
-        get: operations["getDailyReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report/{reportId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ID로 오늘의 리포트 조회 API
-         * @description 리포트 ID로 오늘의 리포트를 조회합니다. COMPLETED 상태의 리포트만 조회 가능합니다.
-         */
-        get: operations["getDailyReportById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/daily-report/image/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 답변 이미지(webp) 상태 조회
-         * @description 답변에 포함되는 이미지의 webp 변환 상태를 조회합니다. <br/>
-         *     POST /daily-report/image/upload-url 엔드포인트로 이미지를 업로드한 후, 해당 엔드포인트에서 반환된 webpKey를 이 API의 key 파라미터로 전달하여 이미지 상태를 조회할 수 있습니다. <br/>
-         *
-         *     프론트엔드에서는 이 API를 주기적으로 호출하여 이미지 업로드 후 webp 변환이 완료되었는지 확인해야 합니다. <br/>
-         *     최대 7초 동안 이 API를 호출하여 status가 READY로 변경되었는지 확인하고, <br/>
-         *     7초가 지나면 실패로 간주하고 사용자에게 이미지 업로드 실패 메시지를 보여주면 됩니다. <br/>
-         *
-         *     - status가 READY인 경우: 이미지 업로드 및 webp 변환이 모두 완료되어 이미지 URL을 사용할 수 있음
-         *     - status가 PROCESSING인 경우: 이미지 업로드는 완료되었으나 webp 변환이 아직 완료되지 않음. 잠시 후 다시 확인 필요
-         */
-        get: operations["getImageStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/{provider}/url": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * OAuth2 Authorization URL 조회
-         * @description 소셜 로그인 시작을 위한 Authorization URL을 생성합니다.<br>
-         *     반환된 URL로 사용자를 리다이렉트하면, 소셜 로그인 제공자의 인증 페이지로 이동합니다.<br>
-         *     인증 완료 후 redirect_uri로 code와 state가 전달되며, 이를 POST /{provider}/login에 전달하여 로그인을 완료합니다.
-         */
-        get: operations["getAuthorizationUrl"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/answers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 답변 검색 및 전체 조회
-         * @description 키워드 또는 감정 코드로 답변을 검색하거나, 전체 답변 목록을 조회합니다. (Cursor-based Pagination)
-         *
-         *     ### 검색 모드
-         *     - 전체 조회: 모든 파라미터 생략 시 전체 답변 목록 반환
-         *     - 키워드 검색: 질문 또는 답변 내용에서 검색
-         *     - 감정 필터링: 특정 감정 코드로 필터링
-         *     - 복합 검색: 키워드 + 감정 동시 검색
-         *     - 정렬: 최신순 (date DESC)
-         *     - 페이지 크기: 20개 고정
-         *
-         *     ### Request Parameters (모두 선택)
-         *     - keyword (선택): 검색어 (1~100자, 생략 시 키워드 검색 안 함)
-         *     - emotionCode (선택): 감정 코드 (대문자, 생략 시 감정 필터링 안 함)
-         *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
-         *
-         *     ### Response
-         *     - items: 검색 결과 리스트 (최대 20개)
-         *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
-         *     - hasNext: 다음 페이지 존재 여부
-         *
-         *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
-         *     1. 첫 페이지: GET /api/v1/answers?keyword=안녕
-         *     2. 다음 페이지: GET /api/v1/answers?keyword=안녕&cursor=2025-12-06
-         *        (response의 nextCursor 값을 cursor 파라미터로 전달)
-         *     3. hasNext=false가 될 때까지 반복
-         *
-         *     예시) emotionCode와 함께 사용:
-         *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY
-         *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY&cursor=2025-12-06
-         *
-         *     ### 참고사항
-         *     - keyword와 emotionCode는 동시에 사용 가능합니다.
-         *     - emotionCode만 사용 시 keyword는 생략 가능합니다.
-         *     - 검색어 저장은 POST /api/v1/search/histories 엔드포인트를 통해 별도로 수행할 수 있습니다.
-         */
-        get: operations["searchAnswers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/answers/{answerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 답변 상세 조회
-         * @description 답변 ID로 해당 답변의 상세 정보와 리포트를 조회합니다.
-         *
-         *     - 질문 내용 (questionText)
-         *     - 질문 카테고리 (interestCode)
-         *     - 답변 작성일 (answerDate)
-         *     - 답변 내용 (answer)
-         *     - 리포트 내용 (content)
-         *     - 감정 상태 (emotion)
-         *
-         *     COMPLETED 상태의 리포트만 조회 가능합니다.
-         */
-        get: operations["getAnswerDetailById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/answers/calendar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 월별 캘린더 조회
-         * @description 특정 월의 답변이 있는 날짜와 감정 코드를 조회합니다.
-         *
-         *     - 답변이 없는 날짜는 결과에 포함되지 않습니다.
-         *     - emotionCode는 리포트가 COMPLETED 상태일 때만 제공됩니다.
-         *     - 리포트가 없거나 PENDING/FAILED 상태면 null입니다.
-         */
-        get: operations["getMonthlyCalendar"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/answers/calendar/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 특정 날짜 답변 상세 조회
-         * @description 특정 날짜의 답변 전체 정보를 조회합니다.
-         *
-         *     응답 데이터:
-         *     - 질문 내용 (questionText)
-         *     - 질문 카테고리 (interestCode)
-         *     - 답변 작성일 (answerDate)
-         *     - 답변 내용 (answer)
-         *     - 리포트 내용 (content)
-         *     - 감정 상태 (emotion)
-         *
-         *     - 해당 날짜에 답변이 없으면 404 에러를 반환합니다.
-         *     - COMPLETED 상태의 리포트만 조회 가능합니다.
-         *     - 날짜 형식: yyyy-MM-dd (예: 2026-01-30)
-         */
-        get: operations["getAnswerDetailByDate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/answers/calendar/recents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 캘린더 최근 기록 미리보기
-         * @description 최근 답변을 최대 6개까지 조회합니다. (날짜 내림차순)
-         *
-         *     - 답변이 6개 미만인 경우 전체 답변을 반환합니다.
-         *     - 답변이 없는 경우 빈 배열을 반환합니다.
-         */
-        get: operations["getCalendarRecents"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/user/me/profile-image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 프로필 이미지 삭제
-         * @description 사용자의 프로필 이미지를 삭제합니다. 기본 프로필 이미지로 변경됩니다.
-         */
-        delete: operations["deleteProfileImage"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/search/histories/{historyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 검색어 개별 삭제
-         * @description 검색어를 삭제한 후 최신 10개를 반환합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
-         */
-        delete: operations["deleteSearchHistory"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications/{notificationId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 알림 삭제
-         * @description 특정 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
-         */
-        delete: operations["deleteNotification"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notifications/tokens/{deviceId}/{platform}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * FCM 토큰 삭제
-         * @description 등록된 FCM 토큰을 삭제합니다. 로그아웃 시 호출합니다.
-         *
-         *     로그아웃 시 아래 순서대로 처리하는 것을 권장합니다.
-         *
-         *     1. FCM 토큰 무효화
-         *        - iOS: Messaging.messaging().deleteToken()
-         *        - Android: FirebaseMessaging.getInstance().deleteToken()
-         *
-         *     2. 서버 API 호출 (본 API)
-         *        - 1단계 완료 후 호출
-         *        - 네트워크 실패 시에도 1단계로 인해 토큰이 무효화되어 개인정보가 보호됩니다.
-         */
-        delete: operations["deleteDevice"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/moderation/blocks/{userBlockId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 사용자 차단 해제
-         * @description 차단 관계를 해제합니다.
-         */
-        delete: operations["unblockUser"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/{friendshipId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 친구 삭제
-         * @description 친구를 삭제합니다.
-         */
-        delete: operations["deleteFriend"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/search/histories/{nickname}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 검색어 개별 삭제
-         * @description 특정 닉네임의 검색 기록을 삭제하고, 삭제 후 남은 최신 검색 기록 5개를 반환합니다.
-         */
-        delete: operations["deleteSearchHistory_1"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/friends/requests/{friendshipId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * 친구 요청 취소
-         * @description 본인이 보낸 친구 요청을 취소합니다.
-         */
-        delete: operations["cancelFriendRequest"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+  "/api/v2/question/reroll": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 새로운 질문 받기
+     * @description 오늘의 질문을 새로 받습니다. 하루에 5번까지 가능합니다.
+     */
+    post: operations["rerollDailyQuestion"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/weekly-report/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 주간 리포트 생성 시작
+     * @description 사용자의 (지난 주에 대한) 주간 리포트 생성을 시작합니다. </br>
+     *     비동기로 처리되기 때문에, id로 주간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+     */
+    post: operations["startWeeklyReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/user/me/profile-image/upload-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 프로필 이미지 업로드 PresignedURL 생성
+     * @description 프로필 이미지를 업로드할 수 있는 PresignedURL을 생성합니다.
+     *
+     *     - HTTP Method: PUT
+     *     - Headers:
+     *         - Content-Type(필수): image/jpeg, image/png만 허용
+     *     - Body: 이미지 파일
+     *     - URL 만료 시간: 5분
+     */
+    post: operations["createProfileImageUploadUrl"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/type-report/start/{interestCode}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 유형 리포트 생성 시작
+     * @description 사용자의 유형 리포트 생성을 시작합니다. </br>
+     *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+     *
+     *     선택 가능한 선택 주제 코드는 다음과 같습니다.
+     *
+     *     - **PREFERENCE** : 취향
+     *     - **EMOTION** : 감정
+     *     - **ROUTINE** : 루틴
+     *     - **RELATIONSHIP** : 인간관계
+     *     - **LOVE** : 사랑
+     *     - **VALUES** : 가치관
+     */
+    post: operations["startTypeReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/test/generate/daily-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * (테스트용) 오늘의 리포트 생성 API
+     * @description 오늘의 리포트 생성 테스트입니다. <br/>
+     *     프롬프트는 현재 서버에 배포된 프롬프트와 동일하게 적용됩니다. <br/>
+     */
+    post: operations["generateDailyReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/test/generate/daily-report-with-prompt": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * (테스트용) 오늘의 리포트 생성 API (프롬프트 포함)
+     * @description 오늘의 리포트 생성 테스트입니다. 이하의 내용을 지켜 프롬프트를 입력해주세요(기존의 프롬프트를 참고해주세요).
+     *     1.
+     *     출력 형식은 반드시 다음과 같도록 프롬프트에 작성해야 합니다:
+     *     ```json
+     *     {
+     *          "message": "(분석 내용)",
+     *          "emotion": "(감정 키워드)"
+     *     }
+     *     ```
+     *     2.
+     *     분석 대상을 명시해야 합니다.
+     *     예시)
+     *     ```json
+     *     [분석 대상]
+     *     질문: {question}
+     *     답변: {answer}
+     *     ```
+     *     이하는 temperature에 대한 설명입니다.<br/>
+     *     temperature는 AI가 응답을 생성할 때 얼마나 자유롭게(창의적으로) 단어와 표현을 선택할지를 조절하는 값입니다.<br/>
+     *     값이 낮을수록 항상 비슷하고 예측 가능한 답변을 생성하며, 값이 높을수록 다양한 표현과 새로운 관점이 섞인 답변을 생성합니다.<br/>
+     *     허용 가능한 값의 범위는 0.0 이상 1.0 이하이며, 일반적으로 0.0에 가까울수록 사실 전달·요약·분석과 같은 정형적인 작업에 적합하고, 0.6 이상부터는 감정 표현이나 공감, 창의적인 문장 생성에 더 적합해집니다.<br/>
+     *     다만 temperature가 높아질수록 응답의 일관성이 낮아지고, 정해진 형식(JSON 등)을 지키지 못할 가능성도 함께 증가합니다.<br/>
+     *     따라서 구조화된 결과나 안정적인 응답이 필요한 경우에는 0.0~0.3, 자연스럽고 감정적인 표현이 중요한 경우에는 0.4~0.8 범위 내에서 사용하는 것을 권장합니다.<br/>
+     */
+    post: operations["generateDailyReport_1"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/test/delete/weekly-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * (테스트용) 주간 리포트 삭제 API
+     * @description 이번 주에 생성된 주간 리포트를 삭제합니다. <br/>
+     *     생성된 리포트만 삭제 가능합니다. <br/>
+     *     크리스탈 또한 환불됩니다.
+     */
+    post: operations["deleteWeeklyReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/test/delete/type-report/{interestCode}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * (테스트용) 유형 리포트 삭제 API
+     * @description 특정 주제에 대한 유형 리포트를 삭제합니다. <br/>
+     *     생성된 리포트만 삭제 가능합니다. <br/>
+     *     크리스탈 또한 환불됩니다.
+     */
+    post: operations["deleteTypeReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/test/delete/monthly-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * (테스트용) 월간 리포트 삭제 API
+     * @description 이번 달에 생성된 월간 리포트를 삭제합니다. <br/>
+     *     생성된 리포트만 삭제 가능합니다. <br/>
+     *     크리스탈 또한 환불됩니다.
+     */
+    post: operations["deleteMonthlyReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/terms/consent": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 약관 동의 상태 확인
+     * @description 현재 사용자가 모든 활성 약관에 동의했는지 확인합니다.
+     *
+     *     - requiresConsent가 true이면 재동의가 필요합니다.
+     *     - missingTerms에 재동의가 필요한 약관 타입이 반환됩니다 (필수/선택 약관 모두 포함).
+     *     - 홈화면 진입 시 호출하여 약관 업데이트 알림을 표시할 수 있습니다.
+     *     - 선택 약관(MARKETING)도 버전 업데이트 시 재동의가 필요하며, 사용자는 동의/거부를 선택할 수 있습니다.
+     *
+     *     **응답 필드 사용 가이드:**
+     *
+     *     1. **재동의 여부 확인 (홈화면)**
+     *     - requiresConsent: true이면 재동의 페이지로 이동
+     *     - missingTerms: 어떤 약관이 필요한지 확인
+     *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태
+     *
+     *     2. **재동의 페이지 구현**
+     *     - service, privacy, ageVerification, marketing: 현재 약관 동의 상태이므로 초기값으로 사용
+     *     - 사용자가 이미 동의한 약관은 그대로 표시하고 missingTerms에 포함된 새로 동의를 받아야할 약관만 다르게 표시하여 사용자에게 안내
+     */
+    get: operations["checkTermsConsent"];
+    put?: never;
+    /**
+     * 약관 동의
+     * @description 약관에 동의합니다.
+     *
+     *     - 소셜 로그인 온보딩(PROFILE_INCOMPLETE 상태): 로그인 후 약관 동의 필수
+     *     - 약관 재동의: 약관 업데이트 시 재동의
+     *     - 일반 회원가입은 POST /auth/signup에서 약관 동의를 함께 처리하므로, 이 API를 사용하지 않습니다.
+     *
+     *     필수 약관(SERVICE, PRIVACY, AGE_VERIFICATION)에 모두 동의해야 합니다.
+     *     마케팅 약관(MARKETING)은 선택 사항입니다.
+     */
+    post: operations["agreeToTerms"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/search/histories": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 최근 검색어 조회
+     * @description 최근 검색어 10개를 조회합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
+     */
+    get: operations["getRecentSearches"];
+    put?: never;
+    /**
+     * 검색어 저장
+     * @description 사용자가 검색어를 확정했을 때 검색어를 저장합니다.
+     *
+     *     - 엔터를 치거나 검색 버튼을 누르거나 답변 검색 결과를 클릭했을 때 호출됩니다.
+     *     - 이미 존재하는 검색어는 최신 순서로 갱신됩니다.
+     *     - 빈 문자열이나 공백만 있는 경우 저장되지 않습니다.
+     *
+     *     ### 에러 처리
+     *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
+     */
+    post: operations["saveSearchHistory"];
+    /**
+     * 전체 검색어 삭제
+     * @description 모든 검색어를 삭제합니다.
+     */
+    delete: operations["deleteAllSearchHistories"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/question/reroll": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 새로운 질문 받기
+     * @description 오늘의 질문을 새로 받습니다. 하루에 한 번만 가능합니다.
+     */
+    post: operations["rerollDailyQuestion_1"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications/tokens": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * FCM 토큰 등록
+     * @description FCM 토큰을 등록합니다. 로그인, 회원가입 또는 FCM 토큰 갱신 시 호출해야 합니다.
+     *
+     *     호출 시점:
+     *     - 로그인/회원가입 완료 후
+     *     - FCM 토큰 갱신 시 (onTokenRefresh 콜백)
+     *     - 앱 재시작 시 (필요한 경우)
+     *
+     *     동작:
+     *     - 동일한 디바이스 ID가 이미 있는 경우 → 토큰만 업데이트
+     *     - 새로운 디바이스인 경우 → 신규 등록
+     *     - 응답의 isNewDevice 필드로 구분 가능
+     *
+     *     참고:
+     *     - 디바이스 ID: 디바이스를 식별할 수 있는 고유 값 (UUID 권장)
+     *     - 플랫폼: IOS 또는 ANDROID
+     */
+    post: operations["registerDevice"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications/test": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 테스트 알림 발송
+     * @description 테스트용 푸시 알림을 발송합니다. 등록된 디바이스로 즉시 전송됩니다.
+     */
+    post: operations["sendTestNotification"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/monthly-report/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 월간 리포트 생성 시작
+     * @description 사용자의 (지난 달에 대한) 월간 리포트 생성을 시작합니다. </br>
+     *     비동기로 처리되기 때문에, id로 월간 리포트 조회 API를 폴링하여 상태를 확인할 수 있습니다.
+     */
+    post: operations["startMonthlyReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/moderation/reports": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 공유글 신고 API
+     * @description 공유된 DailyReport를 신고합니다.
+     *
+     *     요청 필드:
+     *     - dailyReportId (필수): 신고할 공유글의 DailyReport ID(GET /api/v1/feed 호출 시 필드에서 확인 가능)
+     *     - reason (필수): 신고 사유
+     *       - PROFANITY_HATE_SPEECH: 욕설 / 혐오 표현
+     *       - SEXUAL_CONTENT: 성적으로 부적절한 언행
+     *       - SELF_HARM: 자해 / 자살 조장
+     *       - OTHER: 기타 (customReason 필수)
+     *     - customReason: reason이 OTHER일 때만 필수, 200자 이하
+     *
+     *     신고 후 동작:
+     *     - 동일 공유글 중복 신고 불가
+     *     - 신고한 공유글은 신고자의 피드에서 숨겨짐
+     *     - 누적 신고 10건 이상 & 신고자 2명 이상 시 작성자의 소셜 활동 자동 중지(공유하기 시도 시 status로 SUSPENDED 반환)
+     */
+    post: operations["reportContent"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/moderation/blocks": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 차단 사용자 목록 조회
+     * @description 내가 차단한 사용자 목록을 조회합니다.
+     */
+    get: operations["getBlockedUsers"];
+    put?: never;
+    /**
+     * 사용자 차단
+     * @description 특정 사용자를 차단합니다.
+     *
+     *     - 차단 즉시 기존 친구 관계(수락/대기 포함)를 제거합니다.
+     *     - 상호 검색 결과 및 상호 피드 노출이 즉시 중단됩니다.
+     */
+    post: operations["blockUser"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/search/histories": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 최근 검색어 조회
+     * @description 최근 검색한 유저 5명을 조회합니다. 응답 리스트는 최신순입니다.
+     */
+    get: operations["getRecentSearches_1"];
+    put?: never;
+    /**
+     * 친구 검색 기록 저장
+     * @description 사용자가 친구 검색 결과를 클릭했을 때 검색 기록을 저장합니다.
+     *
+     *     - 프로필을 조회했을 때 호출됩니다.
+     *     - 이미 존재하는 검색 기록은 최신 순서로 갱신됩니다.
+     *     - 최대 100개까지 저장되며, 초과 시 오래된 것부터 삭제됩니다.
+     *
+     *     ### 에러 처리
+     *     - DB 장애 등으로 내부 오류가 발생해서 실제 저장이 실패하더라도 204를 반환합니다.
+     */
+    post: operations["saveSearchHistory_1"];
+    /**
+     * 전체 검색어 삭제
+     * @description 모든 검색 기록을 삭제합니다.
+     */
+    delete: operations["deleteAllSearchHistories_1"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/requests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 받은 친구 요청 목록 조회
+     * @description 받은 친구 요청 목록을 조회합니다.
+     *
+     *     - totalCount: 총 요청 수
+     *     - requests: 전체 요청 목록 (최신순)
+     */
+    get: operations["getReceivedRequests"];
+    put?: never;
+    /**
+     * 친구 요청 보내기
+     * @description 닉네임으로 유저를 찾아 친구 요청을 보냅니다.
+     *
+     *     - 본인에게는 요청 불가
+     *     - 이미 친구이거나 요청이 존재하면 불가
+     *     - 발신자/수신자 모두 친구 수 20명 미만이어야 함
+     */
+    post: operations["sendFriendRequest"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/requests/{friendshipId}/reject": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 친구 요청 거절
+     * @description 받은 친구 요청을 거절합니다.
+     */
+    post: operations["rejectFriendRequest"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/requests/{friendshipId}/accept": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 친구 요청 수락
+     * @description 받은 친구 요청을 수락합니다.
+     *
+     *     - 양쪽 모두 친구 수 20명 미만이어야 함
+     */
+    post: operations["acceptFriendRequest"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/feed/unshare": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 공유 중단 API
+     * @description 당일 DailyReport 공유를 중단합니다.
+     */
+    post: operations["stopSharing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/feed/share": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 공유 시작 API
+     * @description 당일 DailyReport를 친구들에게 공유합니다.
+     *
+     *     응답 상태:
+     *     - SHARED: 공유가 정상적으로 시작됨
+     *     - SUSPENDED: 신고 10건 이상 & 서로 다른 신고자 2명 이상으로 인해 피드 공유 활동이 차단됨
+     */
+    post: operations["startSharing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/email/code": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 이메일 인증 코드 발송
+     * @description 회원가입 또는 비밀번호 재설정을 위한 이메일 인증 코드를 발송합니다.<br>
+     *     6자리 숫자 인증 코드가 이메일로 전송되며, 유효기간은 3분입니다.<br>
+     *     동일한 이메일과 인증 타입으로 재요청 시, 기존 인증 코드는 제거되고 새로운 코드가 생성됩니다.<br>
+     *     <br>
+     *     **검증 사항:**<br>
+     *     - SIGNUP: 이메일 중복 확인 (이미 사용 중인 이메일은 발송 불가)<br>
+     *     - PASSWORD_RESET: 사용자 존재 확인 + 탈퇴한 계정 차단 + 소셜 로그인 계정 차단<br>
+     *     <br>
+     *     <b>주의:</b> 이메일 발송은 비동기로 처리되며, SMTP 실패 시에도 200 응답이 반환됩니다.
+     *     이메일을 받지 못한 경우 동일한 API를 재호출하여 새로운 인증 코드를 발급받을 수 있습니다.
+     */
+    post: operations["sendVerificationCode"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/email/code/verification": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 이메일 인증 코드 검증
+     * @description 이메일로 받은 6자리 인증 코드를 검증합니다.<br>
+     *     인증 성공 시, 이후 회원가입 또는 비밀번호 재설정을 진행할 수 있습니다.<br>
+     *     인증 코드는 3분 후 자동 만료되며, 만료된 코드는 재발송이 필요합니다.
+     */
+    post: operations["verifyCode"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/daily-report/image/upload-url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 답변 이미지 업로드 PresignedURL 생성
+     * @description 답변에 포함되는 이미지를 업로드할 수 있는 PresignedURL을 생성합니다.
+     *
+     *     - HTTP Method: PUT
+     *     - Headers:
+     *         - Content-Type(필수): image/jpeg, image/png만 허용
+     *     - Body: 이미지 파일
+     *     - URL 만료 시간: 5분
+     */
+    post: operations["createAnswerImageUploadUrl"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/daily-report/generate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 오늘의 리포트 생성 API
+     * @description 유저의 오늘의 리포트를 생성합니다. <br/>
+     *     생성 실패 시에도 이 API를 다시 호출하면 됩니다. <br/>
+     *     이 때 유저의 답변은 기존의 답변으로 자동으로 사용됩니다. <br/>
+     *     소요 시간이 최대 3~4초밖에 안 되어 동기처리로 구현했습니다. <br/>
+     *
+     *     이미지 미포함의 경우 objectKey와 webpKey는 null로 보내주시면 됩니다. <br/>
+     *
+     *     <이미지가 포함된 경우> <br/>
+     *     **5MB 이하의 이미지 파일만 허용됩니다.** <br/>
+     *     POST /daily-report/image/upload-url 엔드포인트로
+     *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
+     *     해당 엔드포인트에서 반환된 objectKey와 webpKey를 이 요청에 포함시켜야 합니다. <br/>
+     *     또한 GET /daily-report/image/status 엔드포인트를 통해 이미지 업로드 후 webp 변환이 완료되었는지 확인한 후, <br/>
+     *     webp 변환이 완료된 경우에만 요청에 포함합니다.<br/>
+     *     <br/>
+     *
+     *
+     *     | 응답의 emotion | 해당 감정 |
+     *     | :--- | :--- |
+     *     | `ACHIEVEMENT` | 성취 |
+     *     | `INTEREST` | 흥미 |
+     *     | `PEACE` | 평온 |
+     *     | `PLEASURE` | 즐거움 |
+     *     | `WILL` | 의지 |
+     *     | `DEPRESSION` | 우울 |
+     *     | `REGRET` | 후회 |
+     *     | `ETC` | 기타 |
+     */
+    post: operations["generateDailyReport_2"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/{provider}/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * OAuth2 로그인
+     * @description 소셜 로그인 제공자로부터 받은 Authorization Code와 State를 사용하여 로그인을 완료합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+     *     <br>
+     *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["oauth2Login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/withdrawal": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 회원 탈퇴
+     * @description 회원 탈퇴를 진행합니다.<br>
+     *     - 탈퇴 후 14일 동안 복구 가능합니다.<br>
+     *     - 모든 기기에서 자동 로그아웃됩니다.<br>
+     *     - 14일 후 자동으로 완전 삭제됩니다.
+     */
+    post: operations["withdrawUser"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/signup": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 일반 회원가입
+     * @description 이메일 인증 완료 후 회원가입을 진행합니다.<br>
+     *     일반 회원가입 시 약관 동의를 함께 처리합니다. 필수 약관(서비스 이용약관, 개인정보 처리방침, 만 14세 이상 확인)에 모두 동의해야 합니다.<br>
+     *     <br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     회원가입 완료 후 signupStatus가 PROFILE_INCOMPLETE 상태이므로, 이 후 온보딩에서 프로필을 완성해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요
+     */
+    post: operations["signup"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/restore": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 회원 복구 (일반 로그인)
+     * @description 탈퇴한 일반 계정을 복구합니다.<br>
+     *     - 이메일과 비밀번호로 본인 확인을 합니다.<br>
+     *     - 14일 이내에만 복구 가능합니다.<br>
+     *     - 복구 후 자동으로 로그인됩니다.<br>
+     *     <br>
+     *     **소셜 로그인 계정의 경우:**<br>
+     *     - 별도 복구 API가 필요 없습니다.<br>
+     *     - 소셜 로그인(POST /{provider}/login)을 시도하면 자동으로 복구됩니다.
+     */
+    post: operations["restoreBasicAccount"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/refresh": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 토큰 재발급
+     * @description Access Token이 만료되었을 때, HttpOnly 쿠키의 Refresh Token을 사용하여 새로운 Access Token과 signupStatus를 발급받습니다.<br>
+     *     보안을 위해 Refresh Token Rotation 방식을 사용하며, 기존 Refresh Token은 무효화되고 새로운 Refresh Token이 쿠키에 자동 설정됩니다.<br>
+     *     프론트엔드는 Access Token을 localStorage나 메모리에 저장하여 API 요청 시 Authorization 헤더에 포함해야 합니다.
+     */
+    post: operations["refresh"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/password/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 비밀번호 찾기
+     * @description 이메일 인증 완료 후 비밀번호를 재설정합니다.<br>
+     *     - 이메일 인증(PASSWORD_RESET)을 먼저 완료해야 합니다
+     *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다
+     *     - 재설정 후 모든 기기에서 자동 로그아웃됩니다
+     */
+    post: operations["resetPassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/naver/native-login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 네이버 Native SDK 로그인
+     * @description Android/iOS 앱에서 네이버 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+     *     <br>
+     *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["naverNativeLogin"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 로그아웃
+     * @description 현재 로그인한 사용자의 모든 Refresh Token을 삭제하여 로그아웃합니다.<br>
+     *     DB에 저장된 Refresh Token과 브라우저 쿠키가 모두 제거되므로, 해당 사용자의 모든 기기에서 로그아웃 효과가 발생합니다.<br>
+     *     Access Token은 Bearer 형식으로 Authorization 헤더에 포함하여 요청해야 합니다.
+     */
+    post: operations["logout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 일반 로그인
+     * @description 이메일과 비밀번호로 로그인합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (온보딩 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/kakao/native-login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 카카오 Native SDK 로그인
+     * @description Android/iOS 앱에서 카카오 SDK로 받은 Access Token을 사용하여 로그인을 완료합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+     *     <br>
+     *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["kakaoNativeLogin"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google/native-login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 구글 Native SDK 로그인
+     * @description Android/iOS 앱에서 구글 SDK로 받은 ID Token을 사용하여 로그인을 완료합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+     *     <br>
+     *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["googleNativeLogin"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/apple/native-login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 애플 Native SDK 로그인 (iOS 전용)
+     * @description iOS 앱에서 Sign in with Apple SDK로 받은 Authorization Code를 사용하여 로그인을 완료합니다.<br>
+     *     Access Token과 signupStatus는 응답 바디(JSON)로 반환되며, Refresh Token은 HttpOnly 쿠키로 자동 설정됩니다.<br>
+     *     기존 회원은 바로 로그인 처리되며, 신규 사용자는 자동으로 회원가입 후 로그인됩니다.<br>
+     *     <br>
+     *     중요: iOS 클라이언트 설정<br>
+     *     - request.requestedScopes = [.email] 설정 필수<br>
+     *     - email scope를 포함해야 첫 로그인 시 이메일을 받을 수 있습니다<br>
+     *     <br>
+     *     신규 가입자(signupStatus: PROFILE_INCOMPLETE)는 온보딩 과정에서 약관 동의(POST /terms/consent) 후 닉네임을 입력해야 합니다.<br>
+     *     <br>
+     *     **signupStatus:**<br>
+     *     - PROFILE_INCOMPLETE: 프로필 입력 필요 (신규 가입자, 약관 동의 + 닉네임 입력 필요)<br>
+     *     - COMPLETED: 가입 완료 (모든 필수 정보 입력 완료)<br>
+     *     - WITHDRAWN: 회원 탈퇴 (14일 내 복구 가능)
+     */
+    post: operations["appleNativeLogin"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/user/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 나의 프로필 조회
+     * @description 로그인한 사용자의 프로필 정보를 조회합니다.
+     */
+    get: operations["getMyProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 나의 프로필 수정
+     * @description 로그인한 사용자의 프로필 정보를 수정합니다.
+     *     닉네임과 프로필 이미지를 하나씩만, 또는 둘 다 수정할 수 있습니다.
+     *     **적어도 하나의 필드를 포함해야 합니다.**
+     *     **5MB 이하의 이미지 파일만 허용됩니다.**
+     *
+     *     (예) 프로필 이미지만 수정 시 nickname은 null
+     *
+     *     프로필 이미지 수정의 경우,
+     *     POST /user/me/profile-image/upload-url 엔드포인트로
+     *     미리 발급받은 PresignedURL을 통해 이미지를 업로드한 후,
+     *     해당 엔드포인트에서 반환된 objectKey를 이 요청에 포함시켜야 합니다.
+     */
+    patch: operations["updateUserProfile"];
+    trace?: never;
+  };
+  "/api/v1/user/interest": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 유저 선택 주제 업데이트
+     * @description 유저의 선택 주제를 업데이트합니다. 하나만 선택 가능합니다. 온보딩 시에도 사용됩니다.
+     *
+     *     선택 가능한 선택 주제 코드는 다음과 같습니다.
+     *
+     *     - **PREFERENCE** : 취향
+     *     - **EMOTION** : 감정
+     *     - **ROUTINE** : 루틴
+     *     - **RELATIONSHIP** : 인간관계
+     *     - **LOVE** : 사랑
+     *     - **VALUES** : 가치관
+     */
+    patch: operations["updateUserInterests"];
+    trace?: never;
+  };
+  "/api/v1/terms/consent/marketing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 마케팅 동의 상태 조회
+     * @description 현재 사용자의 마케팅 수신 동의 여부를 조회합니다.
+     */
+    get: operations["getMarketingConsent"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 마케팅 동의 변경
+     * @description 마케팅 수신 동의를 변경합니다.
+     */
+    patch: operations["updateMarketingConsent"];
+    trace?: never;
+  };
+  "/api/v1/notifications/{notificationId}/read": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 알림 읽음 처리
+     * @description 특정 알림을 읽음 상태로 변경합니다.
+     */
+    patch: operations["markAsRead"];
+    trace?: never;
+  };
+  "/api/v1/notifications/settings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 알림 설정 조회
+     * @description 사용자의 알림 설정을 조회합니다. 그룹별로 3개의 설정이 반환됩니다.
+     *
+     *     - ACTIVITY_REMINDER: 활동 리마인드 알림 (작성 알림 시간 설정 가능)
+     *     - REPORT: 리포트 알림
+     *     - SOCIAL: 소셜 알림 (친구 요청, 수락 등)
+     *
+     *     설정이 없는 경우 기본값으로 생성되어 반환됩니다.
+     */
+    get: operations["getSettings"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 알림 설정 수정
+     * @description 알림 설정을 수정합니다. 배열로 여러 그룹을 한 번에 수정할 수 있습니다.
+     *
+     *     - 1개 그룹만 수정: [{ "group": "ACTIVITY_REMINDER", "enabled": true }]
+     *     - 2개 그룹 수정: [{ "group": "ACTIVITY_REMINDER", ... }, { "group": "REPORT", ... }]
+     *     - 전체 수정: 3개 객체 전송
+     *
+     *     각 객체:
+     *     - group: 알림 그룹 (필수)
+     *     - enabled: 해당 그룹의 알림을 켜거나 끕니다 (필수)
+     *     - dailyWriteTime: ACTIVITY_REMINDER 그룹인 경우만 설정 가능 (선택, 형식: HH:mm)
+     */
+    patch: operations["updateSettings"];
+    trace?: never;
+  };
+  "/api/v1/notifications/read-all": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 전체 알림 읽음 처리
+     * @description 사용자의 모든 미읽음 알림을 읽음 상태로 변경합니다.
+     */
+    patch: operations["markAllAsRead"];
+    trace?: never;
+  };
+  "/api/v1/auth/password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 비밀번호 변경
+     * @description 로그인 상태(마이페이지)에서 비밀번호를 변경합니다.<br>
+     *     - 현재 비밀번호 확인이 필수입니다<br>
+     *     - 이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다<br>
+     *     - 변경 후 다른 기기에서는 자동 로그아웃됩니다<br>
+     *     - 현재 기기는 새로운 Access Token과 Refresh Token이 자동으로 발급되어 로그인 상태가 유지됩니다
+     */
+    patch: operations["changePassword"];
+    trace?: never;
+  };
+  "/api/v2/question": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 오늘의 질문 조회
+     * @description 오늘의 질문을 조회합니다.
+     */
+    get: operations["getDailyQuestion"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/weekly-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 나의 주간 리포트 조회
+     * @description 사용자의 (지난 주에 대한) 주간 리포트와 이전 주간 리포트를 조회합니다. </br>
+     *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
+     *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
+     *     **<```report```의 state>** </br>
+     *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+     *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+     *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+     *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     주간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
+     *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
+     */
+    get: operations["getMyWeeklyReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/weekly-report/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * id로 주간 리포트 조회
+     * @description 주간 리포트를 id로 조회합니다. </br>
+     *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+     *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+     *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+     *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     주간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
+     *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
+     */
+    get: operations["getWeeklyReportById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/wallet/balance": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 크리스탈 조회
+     * @description 사용자의 현재 크리스탈을 조회합니다.
+     */
+    get: operations["getWalletBalance"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/user/check-nickname": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 닉네임 사용 가능 여부 조회
+     * @description 닉네임이 사용 가능한지 종합적으로 검사합니다.
+     *     - 닉네임은 2자 이상 10자 이하이어야 합니다.
+     *     - 한글과 영어 대소문자만 허용됩니다.
+     *     - 닉네임은 공백으로 시작하거나 끝날 수 없습니다.
+     *     - 이미 사용 중인 닉네임은 사용할 수 없습니다.
+     *     - 예약어(admin, root 등)는 사용할 수 없습니다.
+     *     - 비속어 및 부적절한 단어가 포함된 닉네임은 사용할 수 없습니다.
+     *     - 로그인 상태에서 자신의 현재 닉네임을 보내면 사용 불가로 처리됩니다.
+     */
+    get: operations["checkNickname"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/type-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 나의 유형 리포트 통합 조회
+     * @description 사용자의 유형 리포트를 선택 주제(```InterestCode```)별로 한 번에 조회합니다. </br></br>
+     *
+     *     응답의 ```reports```는 다음 형태의 Map 입니다. </br>
+     *     - Key: ```InterestCode``` 문자열 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES) </br>
+     *     - Value: ```TypeReportDetailResponse``` </br></br>
+     *
+     *     Value(```TypeReportDetailResponse```)는 단일 조회 응답의 ```report```와 동일한 스키마이며, 다음 3개 영역으로 구성됩니다. </br>
+     *     - ```current```: 현재 조회 가능한 유형 리포트 본문(없으면 null) </br>
+     *     - ```generation```: 새 리포트 생성 작업 상태(진행 중/실패 여부 및 작업 reportId) </br>
+     *     - ```eligibility```: 생성 자격(완료 개수/필요 개수/생성 가능/첫 생성 무료 여부) </br></br>
+     *
+     *     **각 필드 의미** </br>
+     *     **1) ```current```** </br>
+     *     - 생성 완료된 리포트가 있으면 상세 내용이 채워집니다. </br>
+     *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br></br>
+     *
+     *     **2) ```generation```** </br>
+     *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
+     *     - ```status``` 값: ```NONE``` / ```IN_PROGRESS``` / ```FAILED``` </br>
+     *     - ```reportId```는 생성 작업이 존재할 때의 reportId이며, 없으면 null입니다. </br></br>
+     *
+     *     **3) ```eligibility```** </br>
+     *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
+     *     - ```requiredCount```: 생성에 필요한 최소 개수 (현재 30) </br>
+     *     - ```canGenerate```: 현재 생성 조건 충족 여부 </br>
+     *     - ```isFirstFree```: 해당 interest의 첫 생성 무료 대상 여부 </br></br>
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     유형 리포트는 강조 표현을 위해 ```typeAnalysisContent```와 ```emotionSummaryContent``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     각 필드는 ```styledText```에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     */
+    get: operations["getMyAllTypeReports"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/type-report/{interestCode}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 나의 유형 리포트 단일 조회
+     * @description 특정 선택 주제(interestCode) 1개에 대한 사용자의 유형 리포트 상태를 조회합니다. </br></br>
+     *
+     *     응답의 ```report```는 다음 3개 영역으로 구성됩니다. </br>
+     *     - ```current```: 현재 조회 가능한(사용자가 볼 수 있는) 유형 리포트 본문 </br>
+     *     - ```generation```: 새 리포트 생성 작업의 상태(진행 중/실패 여부 및 작업 reportId) </br>
+     *     - ```eligibility```: 생성 자격(완료한 일간 리포트 개수, 필요 개수, 생성 가능 여부, 첫 생성 무료 여부) </br></br>
+     *
+     *     **1) ```current```** </br>
+     *     - 이미 생성 완료된 리포트가 있으면 ```current```에 상세 내용이 채워집니다. </br>
+     *     - 아직 생성된 리포트가 없으면 ```current = null``` 입니다. </br>
+     *     - ```current.status```는 “현재 조회 가능한 리포트 자체의 상태”를 의미합니다(예: COMPLETED). </br></br>
+     *
+     *     **2) ```generation```** </br>
+     *     - “새 유형 리포트 생성 작업”의 상태를 의미합니다. </br>
+     *     - ```status``` 값: </br>
+     *       - ```NONE```: 생성 작업이 없음(대기/진행/실패 상태가 아님) </br>
+     *       - ```IN_PROGRESS```: 생성 작업 진행 중 </br>
+     *       - ```FAILED```: 생성 작업 실패(환불/처리 등 후속 로직이 완료된 상태) </br>
+     *     - ```reportId```는 ```IN_PROGRESS``` 또는 ```FAILED```인 생성 작업의 대상 reportId이며, 없으면 null입니다. </br></br>
+     *
+     *     **3) ```eligibility```** </br>
+     *     - ```dailyCompletedCount```: 해당 interest의 완료된 일간 리포트 개수 </br>
+     *     - ```requiredCount```: 유형 리포트 생성을 위해 필요한 최소 완료 개수 (현재 30) </br>
+     *     - ```canGenerate```: 현재 시점에 생성 조건을 충족했는지 여부 </br>
+     *     - ```isFirstFree```: 해당 interest의 “첫 유형 리포트 생성 무료” 대상 여부 </br></br>
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     유형 리포트는 강조 표현을 위해 ```typeAnalysisContent```와 ```emotionSummaryContent``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     각 필드는 ```styledText```에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     *
+     *     선택 가능한 선택 주제 코드는 다음과 같습니다. </br>
+     *     - **PREFERENCE** : 취향 </br>
+     *     - **EMOTION** : 감정 </br>
+     *     - **ROUTINE** : 루틴 </br>
+     *     - **RELATIONSHIP** : 인간관계 </br>
+     *     - **LOVE** : 사랑 </br>
+     *     - **VALUES** : 가치관 </br>
+     */
+    get: operations["getMyTypeReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/question": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 오늘의 질문 조회
+     * @description 오늘의 질문을 조회합니다.
+     */
+    get: operations["getDailyQuestion_1"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 알림 목록 조회
+     * @description 사용자의 알림 목록을 커서 기반 페이지네이션으로 조회합니다. 최신순으로 정렬됩니다.
+     *
+     *     - 첫 조회: cursor 없이 요청 (최근 20개)
+     *     - 다음 페이지: 응답의 nextCursor를 사용하여 요청
+     *     - 한 번에 20개씩 조회됩니다.
+     */
+    get: operations["getNotifications"];
+    put?: never;
+    post?: never;
+    /**
+     * 전체 알림 삭제
+     * @description 사용자의 모든 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
+     */
+    delete: operations["deleteAllNotifications"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications/unread-count": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 미읽음 알림 개수 조회
+     * @description 사용자의 읽지 않은 알림 개수를 조회합니다.
+     */
+    get: operations["getUnreadCount"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/monthly-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 나의 월간 리포트 조회
+     * @description 사용자의 (지난 달에 대한) 월간 리포트와 이전 월간 리포트를 조회합니다. </br>
+     *     이때 ```report```혹은 ```previousReport```가 ```null```인 경우 해당 주간 리포트가 존재하지 않음을 의미합니다. </br>
+     *     ```previousReport```가 ```null```이 아닌 경우 ```status```필드는 항상 ```COMPLETED```입니다. </br>
+     *     **<```report```의 state>** </br>
+     *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+     *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+     *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+     *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     월간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
+     *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
+     */
+    get: operations["getMyMonthlyReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/monthly-report/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * id로 월간 리포트 조회
+     * @description 월간 리포트를 id로 조회합니다. </br>
+     *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
+     *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+     *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
+     *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
+     *
+     *     **<텍스트 스타일(styled) 지원>** </br>
+     *     월간 리포트 본문은 강조 표현을 위해 ```content``` 필드에 구조화된 형태로 함께 제공됩니다. </br>
+     *     ```content```는 ```discovered```/```improve``` 각각에 대해 ```segments``` 배열을 가지며, </br>
+     *     각 segment는 ```text```와 ```marks```를 포함합니다. </br>
+     *     ```marks```에는 ```BOLD```, ```HIGHLIGHT```만 포함될 수 있습니다. </br>
+     *     클라이언트는 ```segments```를 순서대로 이어 붙여 렌더링하고, ```marks```에 따라 볼드/하이라이트를 적용하면 됩니다. </br>
+     *     기존 plain 텍스트(```discovered```, ```improve```)는 ```content```로부터 파생된 캐시 값이며, </br>
+     *     styled 렌더링이 가능하다면 ```content``` 사용을 권장합니다.
+     */
+    get: operations["getMonthlyReportById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/home": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 홈화면 정보 조회 API
+     * @description 홈화면에 표시할 답변 관련 정보를 조회합니다.
+     *
+     *     ### 제공 정보
+     *     1. 주간 답변 상태: 이번 주(월~일) 답변한 날짜 목록
+     *     2. 연속 기록(Streak): 현재 연속 답변 일수
+     *     3. 총 기록 일수: 실제 답변한 날짜의 총 개수
+     *     4. 친구 프로필: 나와 같은 오늘의 질문에 답변한 친구들의 프로필 사진 URL (최대 5개)
+     *     5. 친구 답변 수: 나와 같은 오늘의 질문에 답변한 친구의 총 수
+     *
+     *     ### 친구 프로필 조회 기준
+     *     - 나의 오늘의 질문과 동일한 질문에 답변한 친구만 표시
+     *     - 답변 시간 최신순 정렬 (가장 최근에 답변한 친구부터)
+     *     - 탈퇴 예정 친구는 제외
+     *     - 오늘의 질문이 없거나, 친구가 없거나, 같은 질문에 답변한 친구가 없으면 빈 리스트 및 0 반환
+     *     - 프로필 URL은 최대 5개, 총 수는 전체 인원수
+     *
+     *     ### 계산 기준
+     *     - 주 시작: 월요일, 주 종료: 일요일
+     *     - Streak: 현재까지 매일 연속 답변한 총 일수
+     *       * 오늘 답변 있음 → 오늘까지 포함한 연속 일수
+     *       * 오늘 답변 없음 → 어제까지의 연속 일수
+     *       * 어제도 답변 없음 → 0
+     *     - 총 기록 일수: 실제 답변을 작성한 날짜의 개수
+     *
+     *     ### 예시
+     *     - 첫 답변: 2025-12-27
+     *     - 12월 27일~31일 매일 답변 (5일)
+     *     - 1월 1일~3일 답변 안 함
+     *     - 1월 4일~15일 매일 답변 (12일)
+     *     - 오늘: 2026-01-15
+     *     - 8명의 친구가 같은 질문에 답변
+     *
+     *     응답:
+     *     - answeredDates: ["2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15"]
+     *     - streakCount: 12 (1월 4일부터 15일까지 연속)
+     *     - totalRecordDays: 17 (5+ 12 = 총 17일 답변)
+     *     - answeredFriendProfiles: [최신 5명의 프로필 URL]
+     *     - answeredFriendCount: 8
+     */
+    get: operations["getHomeData"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 친구 목록 조회
+     * @description 친구 목록을 조회합니다.
+     *
+     *     - totalCount: 총 친구 수
+     *     - friends: 친구 목록 (최신순)
+     */
+    get: operations["getFriends"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/search": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 유저 검색
+     * @description 닉네임으로 유저를 검색합니다. (Cursor-based Pagination)
+     *
+     *     ### 검색 모드
+     *     - 닉네임 부분 매칭: 검색어가 닉네임의 앞, 중간, 끝 어디에 있어도 검색됨
+     *       * 예: "모래" 검색 시 → "모래", "모래사장", "나모래다", "예쁜모래" 모두 검색
+     *     - 정렬: 관련도 순
+     *       * 1순위: 완전 일치 (닉네임 = 검색어)
+     *       * 2순위: 시작 매칭 (닉네임이 검색어로 시작)
+     *       * 3순위: 부분 매칭 (그 외)
+     *       * 같은 순위 내에서는 닉네임 가나다순 정렬
+     *     - 페이지 크기: 30개 고정
+     *     - 제외 대상: 탈퇴한 유저는 검색 결과에서 제외됨
+     *
+     *     ### Request Parameters
+     *     - keyword (필수): 검색 키워드 (닉네임, 1~255자)
+     *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
+     *
+     *     ### Response
+     *     - pendingRequests: 나한테 친구 요청 보낸 사람들 중 검색어와 일치하는 사람들
+     *       * 첫 페이지 (cursor=null): 요청 보낸 사람들 포함 (탈퇴한 유저 제외)
+     *       * 이후 페이지 (cursor 있음): 빈 배열 반환
+     *       * 프론트엔드에서는 첫 페이지에서 받은 값을 계속 유지하면 됩니다.
+     *     - searchResults: 검색 결과 리스트 (항상 정확히 30개, 본인 포함 가능)
+     *       * 제외 대상: 받은 친구 요청 유저 (pendingRequests에 표시), 탈퇴한 유저
+     *       * 본인이 검색되면 relationshipStatus는 SELF로 표시됨
+     *       * 중복 없음: 받은 요청 유저는 pendingRequests에만 표시되고 searchResults에는 포함 안 됨
+     *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
+     *     - hasNext: 다음 페이지 존재 여부
+     *
+     *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
+     *     1. 첫 페이지: GET /api/v1/friends/search?keyword=모래
+     *        → pendingRequests: [친구 요청 보낸 사람들], searchResults: [검색 결과 30개]
+     *     2. 다음 페이지: GET /api/v1/friends/search?keyword=모래&cursor=모래가나
+     *        → pendingRequests: [], searchResults: [다음 30개]
+     *        (response의 nextCursor 값을 cursor 파라미터로 전달)
+     *     3. hasNext=false가 될 때까지 반복
+     */
+    get: operations["searchUsers"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/feed": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 피드 조회 API
+     * @description 친구들의 공유된 DailyReport 목록을 조회합니다. ACCEPTED 상태의 친구만 조회됩니다.
+     */
+    get: operations["getFeeds"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/feed/share/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 공유 상태 조회 API
+     * @description 당일 DailyReport의 공유 상태를 조회합니다.
+     *
+     *     이 API는 상세보기 화면에서 오늘 날짜 답변일 때 공유 버튼 상태를 확인하기 위해 사용됩니다.
+     */
+    get: operations["getShareStatus"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/daily-report": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 오늘의 리포트 조회 API
+     * @description 유저의 오늘의 리포트를 조회합니다.
+     */
+    get: operations["getDailyReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/daily-report/{reportId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ID로 오늘의 리포트 조회 API
+     * @description 리포트 ID로 오늘의 리포트를 조회합니다. COMPLETED 상태의 리포트만 조회 가능합니다.
+     */
+    get: operations["getDailyReportById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/daily-report/image/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 답변 이미지(webp) 상태 조회
+     * @description 답변에 포함되는 이미지의 webp 변환 상태를 조회합니다. <br/>
+     *     POST /daily-report/image/upload-url 엔드포인트로 이미지를 업로드한 후, 해당 엔드포인트에서 반환된 webpKey를 이 API의 key 파라미터로 전달하여 이미지 상태를 조회할 수 있습니다. <br/>
+     *
+     *     프론트엔드에서는 이 API를 주기적으로 호출하여 이미지 업로드 후 webp 변환이 완료되었는지 확인해야 합니다. <br/>
+     *     최대 7초 동안 이 API를 호출하여 status가 READY로 변경되었는지 확인하고, <br/>
+     *     7초가 지나면 실패로 간주하고 사용자에게 이미지 업로드 실패 메시지를 보여주면 됩니다. <br/>
+     *
+     *     - status가 READY인 경우: 이미지 업로드 및 webp 변환이 모두 완료되어 이미지 URL을 사용할 수 있음
+     *     - status가 PROCESSING인 경우: 이미지 업로드는 완료되었으나 webp 변환이 아직 완료되지 않음. 잠시 후 다시 확인 필요
+     */
+    get: operations["getImageStatus"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/{provider}/url": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * OAuth2 Authorization URL 조회
+     * @description 소셜 로그인 시작을 위한 Authorization URL을 생성합니다.<br>
+     *     반환된 URL로 사용자를 리다이렉트하면, 소셜 로그인 제공자의 인증 페이지로 이동합니다.<br>
+     *     인증 완료 후 redirect_uri로 code와 state가 전달되며, 이를 POST /{provider}/login에 전달하여 로그인을 완료합니다.
+     */
+    get: operations["getAuthorizationUrl"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/answers": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 답변 검색 및 전체 조회
+     * @description 키워드 또는 감정 코드로 답변을 검색하거나, 전체 답변 목록을 조회합니다. (Cursor-based Pagination)
+     *
+     *     ### 검색 모드
+     *     - 전체 조회: 모든 파라미터 생략 시 전체 답변 목록 반환
+     *     - 키워드 검색: 질문 또는 답변 내용에서 검색
+     *     - 감정 필터링: 특정 감정 코드로 필터링
+     *     - 복합 검색: 키워드 + 감정 동시 검색
+     *     - 정렬: 최신순 (date DESC)
+     *     - 페이지 크기: 20개 고정
+     *
+     *     ### Request Parameters (모두 선택)
+     *     - keyword (선택): 검색어 (1~100자, 생략 시 키워드 검색 안 함)
+     *     - emotionCode (선택): 감정 코드 (대문자, 생략 시 감정 필터링 안 함)
+     *     - cursor (선택): 이전 응답의 nextCursor 값을 그대로 사용 (첫 페이지 요청 시에는 생략)
+     *
+     *     ### Response
+     *     - items: 검색 결과 리스트 (최대 20개)
+     *     - nextCursor: 다음 페이지 요청 시 사용할 커서 (마지막 페이지면 null)
+     *     - hasNext: 다음 페이지 존재 여부
+     *
+     *     ### 무한 스크롤 구현 (쿼리 파라미터 형식)
+     *     1. 첫 페이지: GET /api/v1/answers?keyword=안녕
+     *     2. 다음 페이지: GET /api/v1/answers?keyword=안녕&cursor=2025-12-06
+     *        (response의 nextCursor 값을 cursor 파라미터로 전달)
+     *     3. hasNext=false가 될 때까지 반복
+     *
+     *     예시) emotionCode와 함께 사용:
+     *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY
+     *     - GET /api/v1/answers?keyword=행복&emotionCode=JOY&cursor=2025-12-06
+     *
+     *     ### 참고사항
+     *     - keyword와 emotionCode는 동시에 사용 가능합니다.
+     *     - emotionCode만 사용 시 keyword는 생략 가능합니다.
+     *     - 검색어 저장은 POST /api/v1/search/histories 엔드포인트를 통해 별도로 수행할 수 있습니다.
+     */
+    get: operations["searchAnswers"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/answers/{answerId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 답변 상세 조회
+     * @description 답변 ID로 해당 답변의 상세 정보와 리포트를 조회합니다.
+     *
+     *     - 질문 내용 (questionText)
+     *     - 질문 카테고리 (interestCode)
+     *     - 답변 작성일 (answerDate)
+     *     - 답변 내용 (answer)
+     *     - 리포트 내용 (content)
+     *     - 감정 상태 (emotion)
+     *
+     *     COMPLETED 상태의 리포트만 조회 가능합니다.
+     */
+    get: operations["getAnswerDetailById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/answers/calendar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 월별 캘린더 조회
+     * @description 특정 월의 답변이 있는 날짜와 감정 코드를 조회합니다.
+     *
+     *     - 답변이 없는 날짜는 결과에 포함되지 않습니다.
+     *     - emotionCode는 리포트가 COMPLETED 상태일 때만 제공됩니다.
+     *     - 리포트가 없거나 PENDING/FAILED 상태면 null입니다.
+     */
+    get: operations["getMonthlyCalendar"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/answers/calendar/{date}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 특정 날짜 답변 상세 조회
+     * @description 특정 날짜의 답변 전체 정보를 조회합니다.
+     *
+     *     응답 데이터:
+     *     - 질문 내용 (questionText)
+     *     - 질문 카테고리 (interestCode)
+     *     - 답변 작성일 (answerDate)
+     *     - 답변 내용 (answer)
+     *     - 리포트 내용 (content)
+     *     - 감정 상태 (emotion)
+     *
+     *     - 해당 날짜에 답변이 없으면 404 에러를 반환합니다.
+     *     - COMPLETED 상태의 리포트만 조회 가능합니다.
+     *     - 날짜 형식: yyyy-MM-dd (예: 2026-01-30)
+     */
+    get: operations["getAnswerDetailByDate"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/answers/calendar/recents": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 캘린더 최근 기록 미리보기
+     * @description 최근 답변을 최대 6개까지 조회합니다. (날짜 내림차순)
+     *
+     *     - 답변이 6개 미만인 경우 전체 답변을 반환합니다.
+     *     - 답변이 없는 경우 빈 배열을 반환합니다.
+     */
+    get: operations["getCalendarRecents"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/user/me/profile-image": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 프로필 이미지 삭제
+     * @description 사용자의 프로필 이미지를 삭제합니다. 기본 프로필 이미지로 변경됩니다.
+     */
+    delete: operations["deleteProfileImage"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/search/histories/{historyId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 검색어 개별 삭제
+     * @description 검색어를 삭제한 후 최신 10개를 반환합니다. 응답 리스트는 위에서부터 최신순입니다. (id는 순서와 무관)
+     */
+    delete: operations["deleteSearchHistory"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications/{notificationId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 알림 삭제
+     * @description 특정 알림을 삭제합니다. 삭제된 알림은 목록에 표시되지 않습니다.
+     */
+    delete: operations["deleteNotification"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/notifications/tokens/{deviceId}/{platform}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * FCM 토큰 삭제
+     * @description 등록된 FCM 토큰을 삭제합니다. 로그아웃 시 호출합니다.
+     *
+     *     로그아웃 시 아래 순서대로 처리하는 것을 권장합니다.
+     *
+     *     1. FCM 토큰 무효화
+     *        - iOS: Messaging.messaging().deleteToken()
+     *        - Android: FirebaseMessaging.getInstance().deleteToken()
+     *
+     *     2. 서버 API 호출 (본 API)
+     *        - 1단계 완료 후 호출
+     *        - 네트워크 실패 시에도 1단계로 인해 토큰이 무효화되어 개인정보가 보호됩니다.
+     */
+    delete: operations["deleteDevice"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/moderation/blocks/{userBlockId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 사용자 차단 해제
+     * @description 차단 관계를 해제합니다.
+     */
+    delete: operations["unblockUser"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/{friendshipId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 친구 삭제
+     * @description 친구를 삭제합니다.
+     */
+    delete: operations["deleteFriend"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/search/histories/{nickname}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 검색어 개별 삭제
+     * @description 특정 닉네임의 검색 기록을 삭제하고, 삭제 후 남은 최신 검색 기록 5개를 반환합니다.
+     */
+    delete: operations["deleteSearchHistory_1"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/friends/requests/{friendshipId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * 친구 요청 취소
+     * @description 본인이 보낸 친구 요청을 취소합니다.
+     */
+    delete: operations["cancelFriendRequest"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** @description 오늘의 질문 응답 */
-        DailyQuestionResponseV2: {
-            /**
-             * Format: int64
-             * @description 질문 ID
-             */
-            questionId?: number;
-            /**
-             * @description 관심 주제 코드
-             * @example PREFERENCE
-             */
-            interestCode?: string;
-            /**
-             * @description 질문 텍스트
-             * @example 요즘 자주 찾는 색깔은 무엇인가요?
-             */
-            questionText?: string;
-            /**
-             * @description 공감 가이드 텍스트
-             * @example 색깔 하나로 기분이 달라질 때가 있어요.
-             */
-            empathyGuide?: string;
-            /**
-             * @description 힌트 가이드 텍스트
-             * @example 지금 입은 옷이나 주변 소품을 보세요.
-             */
-            hintGuide?: string;
-            /**
-             * @description 도입 질문 가이드 텍스트
-             * @example 그 색을 보면 어떤 기분이 드나요?
-             */
-            leadingQuestionGuide?: string;
-            /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
-            answered?: boolean;
-            /**
-             * Format: int32
-             * @description 사용자의 오늘의 질문을 새로 받기 남은 횟수
-             */
-            rerollRemainingCount?: number;
-        };
-        /** @description 주간 리포트 생성 시작 응답 */
-        WeeklyReportStartResponse: {
-            /**
-             * Format: int64
-             * @description 생성 예정 주간 리포트 ID
-             * @example 1
-             */
-            reportId?: number;
-            /**
-             * @description 상태
-             * @example PENDING
-             */
-            status?: string;
-            /**
-             * Format: int64
-             * @description 리포트 작성 후 크리스탈 잔액
-             * @example 100
-             */
-            balanceAfter?: number;
-        };
-        /** @description 지난주에 작성된 오늘의 리포트 개수 응답 */
-        CompletedCountResponse: {
-            /** Format: int64 */
-            completedCount?: number;
-        };
-        /** @description 프로필 이미지 업로드 PresignedURL 생성 응답 */
-        CreateProfileImageUploadUrlResponse: {
-            /**
-             * @description 프로필 이미지 업로드 PresignedURL
-             * @example https://nadab-profile-images.s3.amazonaws.com/...
-             */
-            uploadUrl?: string;
-            /**
-             * @description 프로필 이미지 Object Key. 프로필 업데이트에 사용됩니다.
-             * @example dev/profiles/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
-             */
-            objectKey?: string;
-        };
-        /** @description 프로필 이미지 업로드 PresignedURL 생성 요청 */
-        CreateProfileImageUploadUrlRequest: {
-            /**
-             * @description 파일 확장자 (image/png, image/jpeg만 허용)
-             * @example image/png
-             */
-            contentType: string;
-        };
-        /** @description 유형 리포트 생성 시작 응답 */
-        TypeReportStartResponse: {
-            /**
-             * Format: int64
-             * @description 생성 예정 유형 리포트 ID
-             * @example 1
-             */
-            reportId?: number;
-            /**
-             * @description 상태
-             * @example PENDING
-             */
-            status?: string;
-            /**
-             * Format: int64
-             * @description 리포트 작성 후 크리스탈 잔액
-             * @example 100
-             */
-            balanceAfter?: number;
-        };
-        /** @description 오늘의 리포트 생성 응답 */
-        CreateDailyReportResponse: {
-            /**
-             * Format: int64
-             * @description 오늘의 리포트 ID
-             * @example 1
-             */
-            reportId?: number;
-            /** @description 오늘의 리포트 내용 */
-            content?: string;
-            /**
-             * @description 오늘의 리포트 감정 상태
-             * @example GROWTH
-             */
-            emotion?: string;
-            /**
-             * Format: int64
-             * @description 리포트 작성 후 크리스탈 잔액
-             * @example 100
-             */
-            balanceAfter?: number;
-            /** @description 이미지 URL */
-            imageUrl?: string;
-        };
-        /** @description 테스트용 오늘의 리포트 생성 요청 */
-        TestDailyReportRequest: {
-            /** @example 질문 */
-            question: string;
-            /** @example 답변 */
-            answer: string;
-        };
-        /** @description 공통 API 성공 응답 형식 */
-        ApiResponseDto: {
-            /**
-             * Format: int32
-             * @description HTTP 상태 코드
-             * @example 200
-             */
-            status?: number;
-            /**
-             * @description 응답 메시지
-             * @example OK
-             */
-            message?: string;
-            /** @description 응답 데이터 */
-            data?: unknown;
-        };
-        /** @description 오늘의 리포트 조회 응답 */
-        DailyReportResponse: {
-            /** @description 나의 답변 */
-            answer?: string;
-            /** @description 오늘의 리포트 내용 */
-            content?: string;
-            /**
-             * @description 오늘의 리포트 감정 상태
-             * @example GROWTH
-             */
-            emotion?: string;
-            /**
-             * @description 피드 공유 상태
-             * @example false
-             */
-            isShared?: boolean;
-            /** @description 이미지 URL */
-            imageUrl?: string;
-        };
-        /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
-        PromptTestDailyReportRequest: {
-            /**
-             * Format: double
-             * @example 0.3
-             */
-            temperature: number;
-            /** @example 질문 */
-            question: string;
-            /** @example 답변 */
-            answer: string;
-        };
-        /** @description 약관 동의 요청 */
-        TermsConsentRequest: {
-            /**
-             * @description 서비스 이용약관 동의
-             * @example true
-             */
-            service: boolean;
-            /**
-             * @description 개인정보 처리방침 동의
-             * @example true
-             */
-            privacy: boolean;
-            /**
-             * @description 만 14세 이상 확인
-             * @example true
-             */
-            ageVerification: boolean;
-            /**
-             * @description 마케팅 정보 수신 동의 (true 또는 false)
-             * @example false
-             */
-            marketing: boolean;
-        };
-        /** @description 검색어 저장 요청 */
-        SaveSearchHistoryRequest: {
-            /**
-             * @description 검색어
-             * @example 행복했던 순간
-             */
-            keyword: string;
-        };
-        /** @description 오늘의 질문 응답 */
-        DailyQuestionResponse: {
-            /**
-             * Format: int64
-             * @description 질문 ID
-             */
-            questionId?: number;
-            /**
-             * @description 관심 주제 코드
-             * @example PREFERENCE
-             */
-            interestCode?: string;
-            /**
-             * @description 질문 텍스트
-             * @example 요즘 자주 찾는 색깔은 무엇인가요?
-             */
-            questionText?: string;
-            /**
-             * @description 공감 가이드 텍스트
-             * @example 색깔 하나로 기분이 달라질 때가 있어요.
-             */
-            empathyGuide?: string;
-            /**
-             * @description 힌트 가이드 텍스트
-             * @example 지금 입은 옷이나 주변 소품을 보세요.
-             */
-            hintGuide?: string;
-            /**
-             * @description 도입 질문 가이드 텍스트
-             * @example 그 색을 보면 어떤 기분이 드나요?
-             */
-            leadingQuestionGuide?: string;
-            /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
-            answered?: boolean;
-            /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
-            rerollUsed?: boolean;
-        };
-        /** @description FCM 토큰 등록 응답 */
-        RegisterDeviceResponse: {
-            /**
-             * @description 디바이스 고유 ID
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            deviceId?: string;
-            /**
-             * @description 디바이스 플랫폼
-             * @example IOS
-             * @enum {string}
-             */
-            platform?: "IOS" | "ANDROID";
-            /**
-             * @description 새로 등록된 디바이스인지 여부 (true: 새 등록, false: 기존 토큰 업데이트)
-             * @example true
-             */
-            isNewDevice?: boolean;
-        };
-        /** @description FCM 토큰 등록 요청 */
-        RegisterDeviceRequest: {
-            /**
-             * @description Firebase Cloud Messaging 토큰
-             * @example eFg12HiJKlMnOpQrStUvWxYz:APA91bHb6sT...
-             */
-            fcmToken: string;
-            /**
-             * @description 디바이스를 식별할 수 있는 고유 ID
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            deviceId: string;
-            /**
-             * @description 디바이스 플랫폼 (IOS 또는 ANDROID)
-             * @example IOS
-             * @enum {string}
-             */
-            platform: "IOS" | "ANDROID";
-        };
-        /** @description 테스트 알림 발송 요청 */
-        SendTestNotificationRequest: {
-            /**
-             * @description 알림 제목
-             * @example 테스트 알림입니다
-             */
-            title: string;
-            /**
-             * @description 알림 본문
-             * @example 이것은 푸시 알림 테스트 메시지입니다.
-             */
-            body: string;
-        };
-        /** @description 월간 리포트 생성 시작 응답 */
-        MonthlyReportStartResponse: {
-            /**
-             * Format: int64
-             * @description 생성 예정 월간 리포트 ID
-             * @example 1
-             */
-            reportId?: number;
-            /**
-             * @description 상태
-             * @example PENDING
-             */
-            status?: string;
-            /**
-             * Format: int64
-             * @description 리포트 작성 후 크리스탈 잔액
-             * @example 100
-             */
-            balanceAfter?: number;
-        };
-        /** @description 공유글 신고 요청 */
-        ReportContentRequest: {
-            /**
-             * Format: int64
-             * @description 신고할 DailyReport ID
-             * @example 123
-             */
-            dailyReportId: number;
-            /**
-             * @description 신고 사유 (PROFANITY_HATE_SPEECH, SEXUAL_CONTENT, SELF_HARM, OTHER)
-             * @example OTHER
-             * @enum {string}
-             */
-            reason: "PROFANITY_HATE_SPEECH" | "SEXUAL_CONTENT" | "SELF_HARM" | "OTHER";
-            /**
-             * @description 기타 사유 (reason이 OTHER일 때 필수, 200자 이하)
-             * @example 부적절한 내용입니다
-             */
-            customReason?: string;
-        };
-        /** @description 사용자 차단 요청 */
-        BlockUserRequest: {
-            /**
-             * @description 차단할 사용자 닉네임
-             * @example 모래
-             */
-            blockedNickname: string;
-        };
-        /** @description 친구 검색 기록 저장 요청 */
-        SaveFriendSearchRequest: {
-            /**
-             * @description 검색된 유저의 닉네임
-             * @example 춤추는사막여우
-             */
-            nickname: string;
-        };
-        /** @description 친구 관계 응답 */
-        FriendshipResponse: {
-            /**
-             * Format: int64
-             * @description 친구 관계 ID
-             * @example 123
-             */
-            friendshipId?: number;
-        };
-        /** @description 친구 관계 생성 요청 */
-        CreateFriendshipRequest: {
-            /**
-             * @description 친구 요청을 받을 유저의 닉네임
-             * @example 춤추는사막여우
-             */
-            receiverNickname: string;
-        };
-        /** @description 공유 시작 요청 응답 */
-        ShareStartResponse: {
-            /**
-             * @description - SHARED: 공유 성공
-             *     - SUSPENDED: 공유 차단됨 (신고 10건 이상 & 서로 다른 신고자 2명 이상)
-             * @example SUSPENDED
-             * @enum {string}
-             */
-            status?: "SHARED" | "SUSPENDED";
-        };
-        /** @description 이메일 인증 코드 발송 요청 */
-        SendVerificationCodeRequest: {
-            /**
-             * Format: email
-             * @description 이메일 주소
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
-             * @example SIGNUP
-             */
-            verificationType: string;
-        };
-        /** @description 이메일 인증 코드 검증 요청 */
-        VerifyCodeRequest: {
-            /**
-             * Format: email
-             * @description 이메일 주소
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 6자리 인증 코드
-             * @example 123456
-             */
-            code: string;
-            /**
-             * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
-             * @example SIGNUP
-             */
-            verificationType: string;
-        };
-        /** @description 답변 이미지 업로드 PresignedURL 생성 응답 */
-        CreateAnswerImageUploadUrlResponse: {
-            /**
-             * @description 답변 이미지 업로드 PresignedURL
-             * @example https://nadab-profile-images.s3.amazonaws.com/...
-             */
-            uploadUrl?: string;
-            /**
-             * @description 답변 이미지 Object Key. 일간 리포트 생성에 사용됩니다.
-             * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
-             */
-            objectKey?: string;
-            /**
-             * @description 답변 이미지 Webp Key. 일간 리포트 생성에 사용됩니다.
-             * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
-             */
-            webpKey?: string;
-        };
-        /** @description 답변 이미지 업로드 PresignedURL 생성 요청 */
-        CreateAnswerImageUploadUrlRequest: {
-            /**
-             * @description 파일 확장자 (image/png, image/jpeg만 허용)
-             * @example image/png
-             */
-            contentType: string;
-        };
-        /** @description 오늘의 리포트 생성 요청 */
-        DailyReportRequest: {
-            /**
-             * Format: int64
-             * @description 질문 ID
-             * @example 1
-             */
-            questionId: number;
-            /** @description 유저의 답변 내용 */
-            answer: string;
-            /**
-             * @description 이 값은 presignedURL 생성 API의 응답에서 받은 objectKey여야 합니다.
-             * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
-             */
-            objectKey?: string;
-            /**
-             * @description 이 값은 presignedURL 생성 API의 응답에서 받은 webpKey여야 합니다.
-             * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
-             */
-            webpKey?: string;
-        };
-        /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
-        TokenResponse: {
-            /**
-             * @description JWT Access Token (유효기간: 1시간)
-             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-             */
-            accessToken?: string;
-            /**
-             * @description 계정 상태
-             * @example PROFILE_INCOMPLETE
-             */
-            signupStatus?: string;
-        };
-        /** @description OAuth2 소셜 로그인 요청 */
-        SocialLoginRequest: {
-            /**
-             * @description OAuth2 제공자로부터 받은 Authorization Code
-             * @example MsabWEWdhBgKrZk
-             */
-            code: string;
-            /**
-             * @description CSRF 방지를 위한 State 파라미터
-             * @example 0328973a-f474f-413a-be5d
-             */
-            state: string;
-        };
-        /** @description 회원가입 요청 */
-        SignupRequest: {
-            /**
-             * Format: email
-             * @description 이메일 (이메일 인증 완료 필수)
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
-             * @example password123!
-             */
-            password: string;
-            /**
-             * @description 서비스 이용약관 동의
-             * @example true
-             */
-            service: boolean;
-            /**
-             * @description 개인정보 처리방침 동의
-             * @example true
-             */
-            privacy: boolean;
-            /**
-             * @description 만 14세 이상 확인
-             * @example true
-             */
-            ageVerification: boolean;
-            /**
-             * @description 마케팅 정보 수신 동의 (선택)
-             * @example false
-             */
-            marketing: boolean;
-        };
-        RestoreRequest: {
-            /**
-             * Format: email
-             * @description 이메일
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
-             * @example password123!
-             */
-            password: string;
-        };
-        /** @description 비밀번호 재설정 요청 (비밀번호 찾기에서 이메일 인증 완료 후) */
-        ResetPasswordRequest: {
-            /**
-             * Format: email
-             * @description 이메일
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
-             * @example newPassword123!
-             */
-            newPassword: string;
-        };
-        /** @description 네이버 Native SDK 로그인 요청 */
-        NaverNativeLoginRequest: {
-            /**
-             * @description 네이버 SDK로부터 받은 Access Token
-             * @example AAAANv1...
-             */
-            naverAccessToken: string;
-        };
-        /** @description 탈퇴 계정 정보 */
-        WithdrawnInfoResponse: {
-            /**
-             * @description 사용자 닉네임
-             * @example 홍길동
-             */
-            nickname?: string;
-            /**
-             * Format: date
-             * @description 완전 삭제 예정일 (탈퇴 일시 + 14일)
-             * @example 2024-01-29
-             */
-            deletionDate?: string;
-        };
-        /** @description 일반 로그인 요청 */
-        LoginRequest: {
-            /**
-             * Format: email
-             * @description 이메일
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 비밀번호
-             * @example password123!
-             */
-            password: string;
-        };
-        /** @description 카카오 Native SDK 로그인 요청 */
-        KakaoNativeLoginRequest: {
-            /**
-             * @description 카카오 SDK로부터 받은 Access Token
-             * @example AAAANv1...
-             */
-            kakaoAccessToken: string;
-        };
-        /** @description 구글 Native SDK 로그인 요청 */
-        GoogleNativeLoginRequest: {
-            /**
-             * @description 구글 SDK로부터 받은 ID Token (JWT)
-             * @example eyJhbGciOiJSUzI1NiIs...
-             */
-            googleIdToken: string;
-        };
-        /** @description 애플 Native SDK 로그인 요청 */
-        AppleNativeLoginRequest: {
-            /**
-             * @description 애플 SDK로부터 받은 Authorization Code
-             * @example c1234567890abcdef
-             */
-            code: string;
-        };
-        /** @description 유저 프로필 수정 응답 */
-        UpdateUserProfileResponse: {
-            nickname?: string;
-            email?: string;
-            profileImageUrl?: string;
-        };
-        /** @description 유저 프로필 업데이트 요청 */
-        UpdateUserProfileRequest: {
-            /**
-             * @description 유저가 설정하고자 하는 새로운 닉네임입니다.
-             * @example 코딩하는개발자
-             */
-            nickname?: string;
-            /**
-             * @description 이 값은 presignedURL 생성 API의 응답에서 받은 objectKey여야 합니다.
-             * @example dev/profiles/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
-             */
-            objectKey?: string;
-        };
-        /** @description 유저 관심 주제 업데이트 요청 */
-        UpdateUserInterestRequest: {
-            /**
-             * @description 유저가 설정하고자 하는 새로운 관심 주제 코드입니다.
-             * @example RELATIONSHIP
-             */
-            interestCode: string;
-        };
-        /** @description 마케팅 동의 변경 요청 */
-        UpdateMarketingConsentRequest: {
-            /**
-             * @description 마케팅 정보 수신 동의 (true 또는 false)
-             * @example true
-             */
-            agreed: boolean;
-        };
-        /** @description 알림 설정 업데이트 요청 */
-        UpdateNotificationSettingRequest: {
-            /**
-             * @description 알림 그룹 (ACTIVITY_REMINDER, REPORT, SOCIAL)
-             * @example ACTIVITY_REMINDER
-             * @enum {string}
-             */
-            group: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
-            /**
-             * @description 알림 활성화 여부 (필수)
-             * @example true
-             */
-            enabled: boolean;
-            /**
-             * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만 설정 가능)
-             * @example 20:00
-             */
-            dailyWriteTime?: string;
-        };
-        /** @description 비밀번호 변경 요청 (마이페이지) */
-        ChangePasswordRequest: {
-            /**
-             * @description 현재 비밀번호
-             * @example currentPassword123!
-             */
-            currentPassword: string;
-            /**
-             * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
-             * @example newPassword123!
-             */
-            newPassword: string;
-        };
-        /** @description 나의 주간 리포트 조회 응답 */
-        MyWeeklyReportResponse: {
-            /** @description 이번 주간 리포트 */
-            report?: components["schemas"]["WeeklyReportResponse"];
-            /** @description 이전 주간 리포트 */
-            previousReport?: components["schemas"]["WeeklyReportResponse"];
-        };
-        ReportContent: {
-            summary?: string;
-            discovered?: components["schemas"]["StyledText"];
-            improve?: components["schemas"]["StyledText"];
-        };
-        Segment: {
-            text?: string;
-            marks?: ("BOLD" | "HIGHLIGHT")[];
-        };
-        StyledText: {
-            segments?: components["schemas"]["Segment"][];
-        };
-        /** @description 주간 리포트 조회 응답 */
-        WeeklyReportResponse: {
-            /**
-             * Format: int32
-             * @description 리포트가 작성된 달
-             */
-            month?: number;
-            /**
-             * Format: int32
-             * @description 해당 달의 몇주차인지
-             */
-            weekOfMonth?: number;
-            /** @description 리포트 요약 */
-            summary?: string;
-            /** @description 이런 면도 발견되었어요 */
-            discovered?: string;
-            /** @description 다음엔 이렇게 보완해볼까요? */
-            improve?: string;
-            /** @description styled content (discovered/improve segments) */
-            content?: components["schemas"]["ReportContent"];
-            /**
-             * @description 상태
-             * @example PENDING
-             */
-            status?: string;
-        };
-        /** @description 지갑 잔액 응답 */
-        WalletBalanceResponse: {
-            /** Format: int64 */
-            crystalBalance?: number;
-        };
-        /** @description 유저 프로필 정보 응답 */
-        UserProfileResponse: {
-            nickname?: string;
-            email?: string;
-            profileImageUrl?: string;
-            interestCode?: string;
-            /** Format: date */
-            registeredDate?: string;
-        };
-        /** @description 닉네임 사용 가능 여부 확인 응답 */
-        CheckNicknameResponse: {
-            /**
-             * @description 닉네임 사용 가능 여부
-             * @example true
-             */
-            isAvailable?: boolean;
-            /**
-             * @description 닉네임 사용 불가 사유 (사용 가능한 경우 null)
-             * @example 이미 사용 중인 닉네임입니다.
-             */
-            reason?: string;
-        };
-        EmotionStat: {
-            emotionCode?: string;
-            emotionName?: string;
-            /** Format: int32 */
-            count?: number;
-            /** Format: int32 */
-            percent?: number;
-        };
-        /** @description 나의 유형 리포트 통합 조회 응답 */
-        MyAllTypeReportsResponse: {
-            /**
-             * @description interestCode -> 리포트 상세. 모든 관심 주제 코드 키는 항상 포함되며, 각 값은 최소한 current/generation/eligibility 구조를 가집니다. (current는 없을 수 있음)
-             * @example {
-             *       "LOVE": {
-             *         "current": null,
-             *         "generation": {
-             *           "status": "NONE",
-             *           "reportId": null
-             *         },
-             *         "eligibility": {
-             *           "dailyCompletedCount": 0,
-             *           "requiredCount": 30,
-             *           "canGenerate": false,
-             *           "isFirstFree": true
-             *         }
-             *       },
-             *       "PREFERENCE": {
-             *         "current": {
-             *           "status": "COMPLETED",
-             *           "analysisTypeName": "몽글몽글 낭만주의자",
-             *           "hashTag1": "#분위기",
-             *           "hashTag2": "#취향기록",
-             *           "hashTag3": "#나만의색깔",
-             *           "typeAnalysis": "...",
-             *           "personaTitle1": "...",
-             *           "personaContent1": "...",
-             *           "personaTitle2": "...",
-             *           "personaContent2": "...",
-             *           "typeImageUrl": "https://..."
-             *         },
-             *         "generation": {
-             *           "status": "NONE",
-             *           "reportId": null
-             *         },
-             *         "eligibility": {
-             *           "dailyCompletedCount": 30,
-             *           "requiredCount": 30,
-             *           "canGenerate": true,
-             *           "isFirstFree": false
-             *         }
-             *       },
-             *       "EMOTION": {
-             *         "current": null,
-             *         "generation": {
-             *           "status": "IN_PROGRESS",
-             *           "reportId": 13
-             *         },
-             *         "eligibility": {
-             *           "dailyCompletedCount": 5,
-             *           "requiredCount": 30,
-             *           "canGenerate": false,
-             *           "isFirstFree": true
-             *         }
-             *       },
-             *       "ROUTINE": {
-             *         "current": null,
-             *         "generation": {
-             *           "status": "FAILED",
-             *           "reportId": 21
-             *         },
-             *         "eligibility": {
-             *           "dailyCompletedCount": 30,
-             *           "requiredCount": 30,
-             *           "canGenerate": true,
-             *           "isFirstFree": true
-             *         }
-             *       }
-             *     }
-             */
-            reports?: {
-                [key: string]: components["schemas"]["TypeReportDetailResponse"];
-            };
-        };
-        TypeEmotionStatsContent: {
-            /** Format: int32 */
-            totalCount?: number;
-            dominantEmotionCode?: string;
-            /** Format: int32 */
-            positivePercent?: number;
-            emotions?: components["schemas"]["EmotionStat"][];
-        };
-        /** @description 개별 유형 리포트 상세 상태 및 생성 조건 */
-        TypeReportDetailResponse: {
-            /** @description 현재 조회 가능한 유형 리포트 (없거나 생성 전이면 null) */
-            current?: components["schemas"]["TypeReportResponse"];
-            /** @description 리포트 생성 상태 */
-            generation?: components["schemas"]["TypeReportGenerationResponse"];
-            /** @description 리포트 생성 자격 조건 및 현황 */
-            eligibility?: components["schemas"]["TypeReportEligibilityResponse"];
-        };
-        /** @description 유형 리포트 생성 자격 요건 및 현황 */
-        TypeReportEligibilityResponse: {
-            /**
-             * Format: int32
-             * @description 일간 리포트 총 개수
-             * @example 3
-             */
-            dailyCompletedCount?: number;
-            /**
-             * Format: int32
-             * @description 리포트 생성을 위해 필요한 총 질문 개수
-             * @example 30
-             */
-            requiredCount?: number;
-            /**
-             * @description 리포트 생성 가능 여부 (조건 충족 여부)
-             * @example false
-             */
-            canGenerate?: boolean;
-            /**
-             * @description 해당 관심 주제의 유형 리포트 첫 생성 무료 여부
-             * @example true
-             */
-            isFirstFree?: boolean;
-        };
-        /** @description 유형 리포트 생성 상태 */
-        TypeReportGenerationResponse: {
-            /**
-             * @description 생성 상태
-             * @example NONE
-             * @enum {string}
-             */
-            status?: "NONE" | "IN_PROGRESS" | "FAILED";
-            /**
-             * Format: int64
-             * @description 생성 중/실패한 작업의 reportId (없으면 null)
-             */
-            reportId?: number;
-        };
-        TypeReportResponse: {
-            status?: string;
-            analysisTypeName?: string;
-            hashTag1?: string;
-            hashTag2?: string;
-            hashTag3?: string;
-            typeAnalysis?: string;
-            typeAnalysisContent?: components["schemas"]["TypeTextContent"];
-            emotionSummaryContent?: components["schemas"]["TypeTextContent"];
-            emotionStats?: components["schemas"]["TypeEmotionStatsContent"];
-            personaTitle1?: string;
-            personaContent1?: string;
-            personaTitle2?: string;
-            personaContent2?: string;
-            typeImageUrl?: string;
-        };
-        TypeTextContent: {
-            styledText?: components["schemas"]["StyledText"];
-        };
-        /** @description 나의 유형 리포트 단일 조회 응답 */
-        MyTypeReportResponse: {
-            /** @description 유형 리포트 */
-            report?: components["schemas"]["TypeReportDetailResponse"];
-        };
-        /** @description 약관 동의 상태 확인 응답 */
-        TermsCheckResponse: {
-            /**
-             * @description 재동의 필요 여부
-             * @example false
-             */
-            requiresConsent?: boolean;
-            /** @description 재동의가 필요한 약관 타입 목록 */
-            missingTerms?: ("SERVICE" | "PRIVACY" | "AGE_VERIFICATION" | "MARKETING")[];
-            /**
-             * @description 현재 서비스 이용약관 동의 여부
-             * @example true
-             */
-            service?: boolean;
-            /**
-             * @description 현재 개인정보 처리방침 동의 여부
-             * @example true
-             */
-            privacy?: boolean;
-            /**
-             * @description 현재 만 14세 이상 확인 여부
-             * @example true
-             */
-            ageVerification?: boolean;
-            /**
-             * @description 현재 마케팅 수신 동의 여부
-             * @example true
-             */
-            marketing?: boolean;
-        };
-        /** @description 마케팅 동의 상태 응답 */
-        MarketingConsentResponse: {
-            /**
-             * @description 마케팅 동의 여부
-             * @example true
-             */
-            agreed?: boolean;
-        };
-        /** @description 최근 친구 검색 기록 리스트 응답 */
-        SearchHistoryListResponse: {
-            /** @description 검색 기록 리스트 (최신순, 최대 5개) */
-            histories?: components["schemas"]["SearchHistoryResponse"][];
-        };
-        /** @description 최근 검색한 유저 정보 */
-        SearchHistoryResponse: {
-            /**
-             * @description 닉네임
-             * @example 춤추는사막여우
-             */
-            nickname?: string;
-            /**
-             * @description 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            profileImageUrl?: string;
-        };
-        /** @description 알림 목록 응답 (커서 기반 페이지네이션, 20개씩) */
-        NotificationListResponse: {
-            /** @description 알림 목록 (최신순, 최대 20개) */
-            notifications?: components["schemas"]["NotificationResponse"][];
-            /**
-             * Format: int64
-             * @description 다음 페이지 커서 (마지막 알림 ID, null이면 마지막 페이지)
-             * @example 123
-             */
-            nextCursor?: number;
-            /**
-             * @description 다음 페이지 존재 여부
-             * @example true
-             */
-            hasNext?: boolean;
-        };
-        /** @description 알림 응답 */
-        NotificationResponse: {
-            /**
-             * Format: int64
-             * @description 알림 ID
-             * @example 1
-             */
-            id?: number;
-            /**
-             * @description 알림 타입
-             * @example DAILY_WRITE_REMINDER
-             * @enum {string}
-             */
-            type?: "DAILY_WRITE_REMINDER" | "INACTIVE_USER_REMINDER" | "WEEKLY_REPORT_COMPLETED" | "MONTHLY_REPORT_COMPLETED" | "TYPE_REPORT_COMPLETED" | "WEEKLY_REPORT_AVAILABLE" | "MONTHLY_REPORT_AVAILABLE" | "TYPE_REPORT_AVAILABLE" | "FRIEND_REQUEST_RECEIVED" | "FRIEND_REQUEST_ACCEPTED";
-            /**
-             * @description 알림 제목
-             * @example 오늘의 질문에 답변해주세요
-             */
-            title?: string;
-            /**
-             * @description 알림 본문
-             * @example 아직 답변하지 않은 질문이 있어요
-             */
-            body?: string;
-            /**
-             * @description 알림함 메시지
-             * @example 오늘의 질문에 답변해보세요!
-             */
-            inboxMessage?: string;
-            /**
-             * @description 대상 리소스 ID
-             * @example 123
-             */
-            targetId?: string;
-            /**
-             * @description 읽음 여부
-             * @example false
-             */
-            isRead?: boolean;
-            /**
-             * Format: date-time
-             * @description 생성 시각
-             * @example 2025-01-15T09:00:00+09:00
-             */
-            createdAt?: string;
-        };
-        /** @description 미읽음 알림 개수 응답 */
-        UnreadCountResponse: {
-            /**
-             * Format: int64
-             * @description 미읽음 알림 개수
-             * @example 5
-             */
-            unreadCount?: number;
-        };
-        /** @description 알림 설정 응답 */
-        NotificationSettingResponse: {
-            /**
-             * @description 알림 그룹
-             * @example ACTIVITY_REMINDER
-             * @enum {string}
-             */
-            group?: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
-            /**
-             * @description 활성화 여부
-             * @example true
-             */
-            enabled?: boolean;
-            /**
-             * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만)
-             * @example 20:00
-             */
-            dailyWriteTime?: string;
-        };
-        /** @description 월간 리포트 조회 응답 */
-        MonthlyReportResponse: {
-            /**
-             * Format: int32
-             * @description 리포트가 작성된 달
-             */
-            month?: number;
-            /** @description 리포트 요약 */
-            summary?: string;
-            /** @description 이런 면도 발견되었어요 */
-            discovered?: string;
-            /** @description 다음엔 이렇게 보완해볼까요? */
-            improve?: string;
-            /** @description styled content (discovered/improve segments) */
-            content?: components["schemas"]["ReportContent"];
-            /**
-             * @description 상태
-             * @example PENDING
-             */
-            status?: string;
-        };
-        /** @description 나의 월간 리포트 조회 응답 */
-        MyMonthlyReportResponse: {
-            /** @description 이번 월간 리포트 */
-            report?: components["schemas"]["MonthlyReportResponse"];
-            /** @description 이전 월간 리포트 */
-            previousReport?: components["schemas"]["MonthlyReportResponse"];
-        };
-        /** @description 차단 사용자 목록 응답 */
-        BlockedUserListResponse: {
-            /**
-             * Format: int32
-             * @description 총 차단 사용자 수
-             * @example 2
-             */
-            totalCount?: number;
-            /** @description 차단 사용자 목록 */
-            blockedUsers?: components["schemas"]["BlockedUserResponse"][];
-        };
-        /** @description 차단 사용자 정보 */
-        BlockedUserResponse: {
-            /**
-             * Format: int64
-             * @description 차단 관계 ID
-             * @example 12
-             */
-            userBlockId?: number;
-            /**
-             * @description 닉네임
-             * @example 모래
-             */
-            nickname?: string;
-            /**
-             * @description 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            profileImageUrl?: string;
-        };
-        /** @description 홈화면 요약 정보 응답 */
-        HomeResponse: {
-            /**
-             * @description 이번 주(월~일) 답변한 날짜 목록 (오름차순)
-             * @example [
-             *       "2026-01-13",
-             *       "2026-01-14",
-             *       "2026-01-15"
-             *     ]
-             */
-            answeredDates?: string[];
-            /**
-             * Format: int32
-             * @description 현재 연속 답변 일수 (오늘 답변 있으면 오늘까지, 없으면 어제까지)
-             * @example 15
-             */
-            streakCount?: number;
-            /**
-             * Format: int32
-             * @description 실제 답변한 날짜의 총 개수
-             * @example 20
-             */
-            totalRecordDays?: number;
-            /**
-             * @description 나와 같은 오늘의 질문에 답변한 친구들의 프로필 사진 URL (답변 시간 최신순, 최대 5개)
-             * @example [
-             *       "https://cdn.example.com/profiles/user1.png",
-             *       "https://cdn.example.com/default/user2.png"
-             *     ]
-             */
-            answeredFriendProfiles?: string[];
-            /**
-             * Format: int32
-             * @description 나와 같은 오늘의 질문에 답변한 친구의 총 수
-             * @example 8
-             */
-            answeredFriendCount?: number;
-        };
-        /** @description 친구 목록 응답 */
-        FriendListResponse: {
-            /**
-             * Format: int32
-             * @description 총 친구 수
-             * @example 5
-             */
-            totalCount?: number;
-            /** @description 친구 목록 */
-            friends?: components["schemas"]["FriendResponse"][];
-        };
-        /** @description 친구 프로필 정보 */
-        FriendResponse: {
-            /**
-             * Format: int64
-             * @description 친구 관계 ID
-             * @example 123
-             */
-            friendshipId?: number;
-            /**
-             * @description 닉네임
-             * @example 모래
-             */
-            nickname?: string;
-            /**
-             * @description 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            profileImageUrl?: string;
-            /**
-             * @description 탈퇴 예정 여부 (14일 유예기간 중)
-             * @example false
-             */
-            isWithdrawn?: boolean;
-        };
-        /** @description 유저 검색 결과 응답 */
-        SearchUserListResponse: {
-            /** @description 나한테 친구 요청 보낸 사람들 (최신순) */
-            pendingRequests?: components["schemas"]["SearchUserResponse"][];
-            /** @description 검색 결과 (관련도순) */
-            searchResults?: components["schemas"]["SearchUserResponse"][];
-            /**
-             * @description 다음 페이지 커서 (null이면 마지막 페이지)
-             * @example 모래가나
-             */
-            nextCursor?: string;
-            /**
-             * @description 다음 페이지 존재 여부
-             * @example true
-             */
-            hasNext?: boolean;
-        };
-        /** @description 유저 검색 결과 항목 */
-        SearchUserResponse: {
-            /**
-             * Format: int64
-             * @description 친구 관계 ID (친구 요청 취소/수락/거절/삭제 시 사용, NONE 상태일 땐 null)
-             * @example 123
-             */
-            friendshipId?: number;
-            /**
-             * @description 닉네임
-             * @example 춤추는사막여우
-             */
-            nickname?: string;
-            /**
-             * @description 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            profileImageUrl?: string;
-            /**
-             * @description 친구 관계 상태
-             * @example NONE
-             * @enum {string}
-             */
-            relationshipStatus?: "SELF" | "NONE" | "FRIEND" | "REQUEST_SENT" | "REQUEST_RECEIVED";
-        };
-        /** @description 유저 검색 요청 */
-        SearchUserRequest: {
-            /**
-             * @description 검색 키워드 (닉네임)
-             * @example 모래
-             */
-            keyword: string;
-            /**
-             * @description 다음 페이지 커서 (형식: nickname)
-             * @example 모래가나
-             */
-            cursor?: string;
-        };
-        /** @description 받은 친구 요청 목록 응답 */
-        PendingFriendListResponse: {
-            /**
-             * Format: int32
-             * @description 총 요청 수
-             * @example 3
-             */
-            totalCount?: number;
-            /** @description 친구 요청 목록 (최신순) */
-            requests?: components["schemas"]["PendingFriendResponse"][];
-        };
-        /** @description 친구 요청 정보 */
-        PendingFriendResponse: {
-            /**
-             * Format: int64
-             * @description 친구 관계 ID
-             * @example 123
-             */
-            friendshipId?: number;
-            /**
-             * @description 닉네임
-             * @example 춤추는사막여우
-             */
-            nickname?: string;
-            /**
-             * @description 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            profileImageUrl?: string;
-        };
-        /** @description 피드 목록 응답 */
-        FeedListResponse: {
-            /** @description 피드 목록 */
-            feeds?: components["schemas"]["FeedResponse"][];
-        };
-        /** @description 피드 응답 */
-        FeedResponse: {
-            /**
-             * Format: int64
-             * @description DailyReport ID (신고 시 사용)
-             * @example 123
-             */
-            dailyReportId?: number;
-            /**
-             * @description 친구 닉네임
-             * @example 모래
-             */
-            friendNickname?: string;
-            /**
-             * @description 친구 프로필 이미지 URL
-             * @example https://cdn.example.com/profiles/abc123.png
-             */
-            friendProfileImageUrl?: string;
-            /**
-             * @description 관심분야 코드
-             * @example EMOTION
-             */
-            interestCode?: string;
-            /**
-             * @description 질문 내용
-             * @example 오늘 가장 기뻤던 순간은?
-             */
-            questionText?: string;
-            /**
-             * @description 답변 내용
-             * @example 집에 갈 때
-             */
-            answer?: string;
-            /**
-             * @description 감정 코드
-             * @example ACHIEVEMENT
-             */
-            emotionCode?: string;
-            /** @description 이미지 URL */
-            imageUrl?: string;
-        };
-        /** @description 피드 공유 상태 응답 */
-        ShareStatusResponse: {
-            /**
-             * @description 오늘의 기록 공유 상태
-             * @example true
-             */
-            isShared?: boolean;
-        };
-        /** @description 답변 상세 조회 응답 */
-        AnswerDetailResponse: {
-            /**
-             * @description 질문 내용
-             * @example 오늘 가장 기뻤던 순간은?
-             */
-            questionText?: string;
-            /**
-             * @description 질문 카테고리 (관심분야 코드)
-             * @example EMOTION
-             */
-            interestCode?: string;
-            /**
-             * Format: date
-             * @description 답변 작성일
-             * @example 2025-12-25
-             */
-            answerDate?: string;
-            /** @description 나의 답변 */
-            answer?: string;
-            /** @description 리포트 내용 */
-            content?: string;
-            /**
-             * @description 리포트 감정 상태
-             * @example ACHIEVEMENT
-             */
-            emotion?: string;
-            /** @description 이미지 URL */
-            imageUrl?: string;
-        };
-        ImageStatusResponse: {
-            /**
-             * @description 이미지 상태
-             * @example READY, PROCESSING
-             */
-            status?: string;
-        };
-        /** @description OAuth2 Authorization URL 응답 */
-        AuthorizationUrlResponse: {
-            /**
-             * @description OAuth2 제공자의 로그인 페이지 URL (프론트엔드에서 리다이렉트)
-             * @example https://nid.naver.com/oauth2.0/authorize?client_id=...
-             */
-            authorizationUrl?: string;
-        };
-        /** @description 검색 결과 항목 (요약) */
-        AnswerEntrySummaryResponse: {
-            /**
-             * Format: int64
-             * @description 답변 ID
-             * @example 123
-             */
-            answerId?: number;
-            /**
-             * @description 관심분야 코드 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES)
-             * @example EMOTION
-             */
-            interestCode?: string;
-            /**
-             * @description 감정 코드 (리포트 생성 완료 시에만 제공, PENDING/FAILED 상태면 null)
-             * @example ACHIEVEMENT
-             */
-            emotionCode?: string;
-            /**
-             * @description 질문 내용
-             * @example 오늘 가장 기뻤던 순간은?
-             */
-            questionText?: string;
-            /**
-             * @description 답변 미리보기 (키워드 포함 첫 문장 또는 답변 시작 문장, 20~100자, 문장 단위, 끝마침표 없음)
-             * @example 친구와 함께한 시간이 정말 영광이었다
-             */
-            matchedSnippet?: string;
-            /**
-             * Format: date
-             * @description 답변 작성일
-             * @example 2025-12-25
-             */
-            answerDate?: string;
-        };
-        /** @description 검색 결과 리스트 응답 */
-        SearchAnswerEntryResponse: {
-            /** @description 검색 결과 항목 리스트 */
-            items?: components["schemas"]["AnswerEntrySummaryResponse"][];
-            /**
-             * @description 다음 페이지 커서 (null이면 마지막 페이지)
-             * @example 2025-12-25
-             */
-            nextCursor?: string;
-            /**
-             * @description 다음 페이지 존재 여부
-             * @example true
-             */
-            hasNext?: boolean;
-        };
-        /** @description 답변 검색 요청 */
-        SearchAnswerEntryRequest: {
-            /**
-             * @description 검색 키워드 (질문 또는 답변 내용)
-             * @example 영광
-             */
-            keyword?: string;
-            /**
-             * @description 감정 코드 (ACHIEVEMENT, INTEREST, PEACE, PLEASURE, WILL, DEPRESSION, REGRET, ETC)
-             * @example ACHIEVEMENT
-             */
-            emotionCode?: string;
-            /**
-             * @description 다음 페이지 커서 (형식: date)
-             * @example 2025-12-25
-             */
-            cursor?: string;
-        };
-        /** @description 캘린더 날짜별 정보 */
-        CalendarEntryResponse: {
-            /**
-             * Format: date
-             * @description 답변 날짜
-             * @example 2026-01-30
-             */
-            date?: string;
-            /**
-             * @description 감정 코드 (답변이 있고 리포트가 COMPLETED 상태일 때만 제공)
-             * @example ACHIEVEMENT
-             */
-            emotionCode?: string;
-        };
-        /** @description 월별 캘린더 응답 */
-        MonthlyCalendarResponse: {
-            /** @description 답변이 있는 날짜의 정보 목록 (답변 없는 날짜는 포함되지 않음) */
-            calendarEntries?: components["schemas"]["CalendarEntryResponse"][];
-        };
-        /** @description 월별 캘린더 조회 요청 */
-        GetMonthlyCalendarRequest: {
-            /**
-             * Format: int32
-             * @description 연도
-             * @example 2026
-             */
-            year: number;
-            /**
-             * Format: int32
-             * @description 월 (1~12)
-             * @example 1
-             */
-            month: number;
-        };
-        /** @description 캘린더 최근 답변 미리보기 응답 */
-        CalendarRecentsResponse: {
-            /** @description 최근 답변 목록 (최대 6개, 날짜 내림차순) */
-            items?: components["schemas"]["AnswerEntrySummaryResponse"][];
-        };
+  schemas: {
+    /** @description 오늘의 질문 응답 */
+    DailyQuestionResponseV2: {
+      /**
+       * Format: int64
+       * @description 질문 ID
+       */
+      questionId?: number;
+      /**
+       * @description 선택 주제 코드
+       * @example PREFERENCE
+       */
+      interestCode?: string;
+      /**
+       * @description 질문 텍스트
+       * @example 요즘 자주 찾는 색깔은 무엇인가요?
+       */
+      questionText?: string;
+      /**
+       * @description 공감 가이드 텍스트
+       * @example 색깔 하나로 기분이 달라질 때가 있어요.
+       */
+      empathyGuide?: string;
+      /**
+       * @description 힌트 가이드 텍스트
+       * @example 지금 입은 옷이나 주변 소품을 보세요.
+       */
+      hintGuide?: string;
+      /**
+       * @description 도입 질문 가이드 텍스트
+       * @example 그 색을 보면 어떤 기분이 드나요?
+       */
+      leadingQuestionGuide?: string;
+      /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
+      answered?: boolean;
+      /**
+       * Format: int32
+       * @description 사용자의 오늘의 질문을 새로 받기 남은 횟수
+       */
+      rerollRemainingCount?: number;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** @description 주간 리포트 생성 시작 응답 */
+    WeeklyReportStartResponse: {
+      /**
+       * Format: int64
+       * @description 생성 예정 주간 리포트 ID
+       * @example 1
+       */
+      reportId?: number;
+      /**
+       * @description 상태
+       * @example PENDING
+       */
+      status?: string;
+      /**
+       * Format: int64
+       * @description 리포트 작성 후 크리스탈 잔액
+       * @example 100
+       */
+      balanceAfter?: number;
+    };
+    /** @description 지난주에 작성된 오늘의 리포트 개수 응답 */
+    CompletedCountResponse: {
+      /** Format: int64 */
+      completedCount?: number;
+    };
+    /** @description 프로필 이미지 업로드 PresignedURL 생성 응답 */
+    CreateProfileImageUploadUrlResponse: {
+      /**
+       * @description 프로필 이미지 업로드 PresignedURL
+       * @example https://nadab-profile-images.s3.amazonaws.com/...
+       */
+      uploadUrl?: string;
+      /**
+       * @description 프로필 이미지 Object Key. 프로필 업데이트에 사용됩니다.
+       * @example dev/profiles/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+       */
+      objectKey?: string;
+    };
+    /** @description 프로필 이미지 업로드 PresignedURL 생성 요청 */
+    CreateProfileImageUploadUrlRequest: {
+      /**
+       * @description 파일 확장자 (image/png, image/jpeg만 허용)
+       * @example image/png
+       */
+      contentType: string;
+    };
+    /** @description 유형 리포트 생성 시작 응답 */
+    TypeReportStartResponse: {
+      /**
+       * Format: int64
+       * @description 생성 예정 유형 리포트 ID
+       * @example 1
+       */
+      reportId?: number;
+      /**
+       * @description 상태
+       * @example PENDING
+       */
+      status?: string;
+      /**
+       * Format: int64
+       * @description 리포트 작성 후 크리스탈 잔액
+       * @example 100
+       */
+      balanceAfter?: number;
+    };
+    /** @description 오늘의 리포트 생성 응답 */
+    CreateDailyReportResponse: {
+      /**
+       * Format: int64
+       * @description 오늘의 리포트 ID
+       * @example 1
+       */
+      reportId?: number;
+      /** @description 오늘의 리포트 내용 */
+      content?: string;
+      /**
+       * @description 오늘의 리포트 감정 상태
+       * @example GROWTH
+       */
+      emotion?: string;
+      /**
+       * Format: int64
+       * @description 리포트 작성 후 크리스탈 잔액
+       * @example 100
+       */
+      balanceAfter?: number;
+      /** @description 이미지 URL */
+      imageUrl?: string;
+    };
+    /** @description 테스트용 오늘의 리포트 생성 요청 */
+    TestDailyReportRequest: {
+      /** @example 질문 */
+      question: string;
+      /** @example 답변 */
+      answer: string;
+    };
+    /** @description 공통 API 성공 응답 형식 */
+    ApiResponseDto: {
+      /**
+       * Format: int32
+       * @description HTTP 상태 코드
+       * @example 200
+       */
+      status?: number;
+      /**
+       * @description 응답 메시지
+       * @example OK
+       */
+      message?: string;
+      /** @description 응답 데이터 */
+      data?: unknown;
+    };
+    /** @description 오늘의 리포트 조회 응답 */
+    DailyReportResponse: {
+      /** @description 나의 답변 */
+      answer?: string;
+      /** @description 오늘의 리포트 내용 */
+      content?: string;
+      /**
+       * @description 오늘의 리포트 감정 상태
+       * @example GROWTH
+       */
+      emotion?: string;
+      /**
+       * @description 피드 공유 상태
+       * @example false
+       */
+      isShared?: boolean;
+      /** @description 이미지 URL */
+      imageUrl?: string;
+    };
+    /** @description 프롬프트 포함 테스트용 오늘의 리포트 생성 요청 */
+    PromptTestDailyReportRequest: {
+      /**
+       * Format: double
+       * @example 0.3
+       */
+      temperature: number;
+      /** @example 질문 */
+      question: string;
+      /** @example 답변 */
+      answer: string;
+    };
+    /** @description 약관 동의 요청 */
+    TermsConsentRequest: {
+      /**
+       * @description 서비스 이용약관 동의
+       * @example true
+       */
+      service: boolean;
+      /**
+       * @description 개인정보 처리방침 동의
+       * @example true
+       */
+      privacy: boolean;
+      /**
+       * @description 만 14세 이상 확인
+       * @example true
+       */
+      ageVerification: boolean;
+      /**
+       * @description 마케팅 정보 수신 동의 (true 또는 false)
+       * @example false
+       */
+      marketing: boolean;
+    };
+    /** @description 검색어 저장 요청 */
+    SaveSearchHistoryRequest: {
+      /**
+       * @description 검색어
+       * @example 행복했던 순간
+       */
+      keyword: string;
+    };
+    /** @description 오늘의 질문 응답 */
+    DailyQuestionResponse: {
+      /**
+       * Format: int64
+       * @description 질문 ID
+       */
+      questionId?: number;
+      /**
+       * @description 선택 주제 코드
+       * @example PREFERENCE
+       */
+      interestCode?: string;
+      /**
+       * @description 질문 텍스트
+       * @example 요즘 자주 찾는 색깔은 무엇인가요?
+       */
+      questionText?: string;
+      /**
+       * @description 공감 가이드 텍스트
+       * @example 색깔 하나로 기분이 달라질 때가 있어요.
+       */
+      empathyGuide?: string;
+      /**
+       * @description 힌트 가이드 텍스트
+       * @example 지금 입은 옷이나 주변 소품을 보세요.
+       */
+      hintGuide?: string;
+      /**
+       * @description 도입 질문 가이드 텍스트
+       * @example 그 색을 보면 어떤 기분이 드나요?
+       */
+      leadingQuestionGuide?: string;
+      /** @description 사용자가 오늘의 질문에 답변했는지 여부 */
+      answered?: boolean;
+      /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
+      rerollUsed?: boolean;
+    };
+    /** @description FCM 토큰 등록 응답 */
+    RegisterDeviceResponse: {
+      /**
+       * @description 디바이스 고유 ID
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      deviceId?: string;
+      /**
+       * @description 디바이스 플랫폼
+       * @example IOS
+       * @enum {string}
+       */
+      platform?: "IOS" | "ANDROID";
+      /**
+       * @description 새로 등록된 디바이스인지 여부 (true: 새 등록, false: 기존 토큰 업데이트)
+       * @example true
+       */
+      isNewDevice?: boolean;
+    };
+    /** @description FCM 토큰 등록 요청 */
+    RegisterDeviceRequest: {
+      /**
+       * @description Firebase Cloud Messaging 토큰
+       * @example eFg12HiJKlMnOpQrStUvWxYz:APA91bHb6sT...
+       */
+      fcmToken: string;
+      /**
+       * @description 디바이스를 식별할 수 있는 고유 ID
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      deviceId: string;
+      /**
+       * @description 디바이스 플랫폼 (IOS 또는 ANDROID)
+       * @example IOS
+       * @enum {string}
+       */
+      platform: "IOS" | "ANDROID";
+    };
+    /** @description 테스트 알림 발송 요청 */
+    SendTestNotificationRequest: {
+      /**
+       * @description 알림 제목
+       * @example 테스트 알림입니다
+       */
+      title: string;
+      /**
+       * @description 알림 본문
+       * @example 이것은 푸시 알림 테스트 메시지입니다.
+       */
+      body: string;
+    };
+    /** @description 월간 리포트 생성 시작 응답 */
+    MonthlyReportStartResponse: {
+      /**
+       * Format: int64
+       * @description 생성 예정 월간 리포트 ID
+       * @example 1
+       */
+      reportId?: number;
+      /**
+       * @description 상태
+       * @example PENDING
+       */
+      status?: string;
+      /**
+       * Format: int64
+       * @description 리포트 작성 후 크리스탈 잔액
+       * @example 100
+       */
+      balanceAfter?: number;
+    };
+    /** @description 공유글 신고 요청 */
+    ReportContentRequest: {
+      /**
+       * Format: int64
+       * @description 신고할 DailyReport ID
+       * @example 123
+       */
+      dailyReportId: number;
+      /**
+       * @description 신고 사유 (PROFANITY_HATE_SPEECH, SEXUAL_CONTENT, SELF_HARM, OTHER)
+       * @example OTHER
+       * @enum {string}
+       */
+      reason:
+        | "PROFANITY_HATE_SPEECH"
+        | "SEXUAL_CONTENT"
+        | "SELF_HARM"
+        | "OTHER";
+      /**
+       * @description 기타 사유 (reason이 OTHER일 때 필수, 200자 이하)
+       * @example 부적절한 내용입니다
+       */
+      customReason?: string;
+    };
+    /** @description 사용자 차단 요청 */
+    BlockUserRequest: {
+      /**
+       * @description 차단할 사용자 닉네임
+       * @example 모래
+       */
+      blockedNickname: string;
+    };
+    /** @description 친구 검색 기록 저장 요청 */
+    SaveFriendSearchRequest: {
+      /**
+       * @description 검색된 유저의 닉네임
+       * @example 춤추는사막여우
+       */
+      nickname: string;
+    };
+    /** @description 친구 관계 응답 */
+    FriendshipResponse: {
+      /**
+       * Format: int64
+       * @description 친구 관계 ID
+       * @example 123
+       */
+      friendshipId?: number;
+    };
+    /** @description 친구 관계 생성 요청 */
+    CreateFriendshipRequest: {
+      /**
+       * @description 친구 요청을 받을 유저의 닉네임
+       * @example 춤추는사막여우
+       */
+      receiverNickname: string;
+    };
+    /** @description 공유 시작 요청 응답 */
+    ShareStartResponse: {
+      /**
+       * @description - SHARED: 공유 성공
+       *     - SUSPENDED: 공유 차단됨 (신고 10건 이상 & 서로 다른 신고자 2명 이상)
+       * @example SUSPENDED
+       * @enum {string}
+       */
+      status?: "SHARED" | "SUSPENDED";
+    };
+    /** @description 이메일 인증 코드 발송 요청 */
+    SendVerificationCodeRequest: {
+      /**
+       * Format: email
+       * @description 이메일 주소
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
+       * @example SIGNUP
+       */
+      verificationType: string;
+    };
+    /** @description 이메일 인증 코드 검증 요청 */
+    VerifyCodeRequest: {
+      /**
+       * Format: email
+       * @description 이메일 주소
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 6자리 인증 코드
+       * @example 123456
+       */
+      code: string;
+      /**
+       * @description 인증 타입 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)
+       * @example SIGNUP
+       */
+      verificationType: string;
+    };
+    /** @description 답변 이미지 업로드 PresignedURL 생성 응답 */
+    CreateAnswerImageUploadUrlResponse: {
+      /**
+       * @description 답변 이미지 업로드 PresignedURL
+       * @example https://nadab-profile-images.s3.amazonaws.com/...
+       */
+      uploadUrl?: string;
+      /**
+       * @description 답변 이미지 Object Key. 일간 리포트 생성에 사용됩니다.
+       * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+       */
+      objectKey?: string;
+      /**
+       * @description 답변 이미지 Webp Key. 일간 리포트 생성에 사용됩니다.
+       * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
+       */
+      webpKey?: string;
+    };
+    /** @description 답변 이미지 업로드 PresignedURL 생성 요청 */
+    CreateAnswerImageUploadUrlRequest: {
+      /**
+       * @description 파일 확장자 (image/png, image/jpeg만 허용)
+       * @example image/png
+       */
+      contentType: string;
+    };
+    /** @description 오늘의 리포트 생성 요청 */
+    DailyReportRequest: {
+      /**
+       * Format: int64
+       * @description 질문 ID
+       * @example 1
+       */
+      questionId: number;
+      /** @description 유저의 답변 내용 */
+      answer: string;
+      /**
+       * @description 이 값은 presignedURL 생성 API의 응답에서 받은 objectKey여야 합니다.
+       * @example dev/answers/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+       */
+      objectKey?: string;
+      /**
+       * @description 이 값은 presignedURL 생성 API의 응답에서 받은 webpKey여야 합니다.
+       * @example dev/answers/webp/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.webp
+       */
+      webpKey?: string;
+    };
+    /** @description 인증 토큰 응답 (Access Token과 signupStatus는 응답 바디, Refresh Token은 HttpOnly 쿠키) */
+    TokenResponse: {
+      /**
+       * @description JWT Access Token (유효기간: 1시간)
+       * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+       */
+      accessToken?: string;
+      /**
+       * @description 계정 상태
+       * @example PROFILE_INCOMPLETE
+       */
+      signupStatus?: string;
+    };
+    /** @description OAuth2 소셜 로그인 요청 */
+    SocialLoginRequest: {
+      /**
+       * @description OAuth2 제공자로부터 받은 Authorization Code
+       * @example MsabWEWdhBgKrZk
+       */
+      code: string;
+      /**
+       * @description CSRF 방지를 위한 State 파라미터
+       * @example 0328973a-f474f-413a-be5d
+       */
+      state: string;
+    };
+    /** @description 회원가입 요청 */
+    SignupRequest: {
+      /**
+       * Format: email
+       * @description 이메일 (이메일 인증 완료 필수)
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+       * @example password123!
+       */
+      password: string;
+      /**
+       * @description 서비스 이용약관 동의
+       * @example true
+       */
+      service: boolean;
+      /**
+       * @description 개인정보 처리방침 동의
+       * @example true
+       */
+      privacy: boolean;
+      /**
+       * @description 만 14세 이상 확인
+       * @example true
+       */
+      ageVerification: boolean;
+      /**
+       * @description 마케팅 정보 수신 동의 (선택)
+       * @example false
+       */
+      marketing: boolean;
+    };
+    RestoreRequest: {
+      /**
+       * Format: email
+       * @description 이메일
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+       * @example password123!
+       */
+      password: string;
+    };
+    /** @description 비밀번호 재설정 요청 (비밀번호 찾기에서 이메일 인증 완료 후) */
+    ResetPasswordRequest: {
+      /**
+       * Format: email
+       * @description 이메일
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+       * @example newPassword123!
+       */
+      newPassword: string;
+    };
+    /** @description 네이버 Native SDK 로그인 요청 */
+    NaverNativeLoginRequest: {
+      /**
+       * @description 네이버 SDK로부터 받은 Access Token
+       * @example AAAANv1...
+       */
+      naverAccessToken: string;
+    };
+    /** @description 탈퇴 계정 정보 */
+    WithdrawnInfoResponse: {
+      /**
+       * @description 사용자 닉네임
+       * @example 홍길동
+       */
+      nickname?: string;
+      /**
+       * Format: date
+       * @description 완전 삭제 예정일 (탈퇴 일시 + 14일)
+       * @example 2024-01-29
+       */
+      deletionDate?: string;
+    };
+    /** @description 일반 로그인 요청 */
+    LoginRequest: {
+      /**
+       * Format: email
+       * @description 이메일
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 비밀번호
+       * @example password123!
+       */
+      password: string;
+    };
+    /** @description 카카오 Native SDK 로그인 요청 */
+    KakaoNativeLoginRequest: {
+      /**
+       * @description 카카오 SDK로부터 받은 Access Token
+       * @example AAAANv1...
+       */
+      kakaoAccessToken: string;
+    };
+    /** @description 구글 Native SDK 로그인 요청 */
+    GoogleNativeLoginRequest: {
+      /**
+       * @description 구글 SDK로부터 받은 ID Token (JWT)
+       * @example eyJhbGciOiJSUzI1NiIs...
+       */
+      googleIdToken: string;
+    };
+    /** @description 애플 Native SDK 로그인 요청 */
+    AppleNativeLoginRequest: {
+      /**
+       * @description 애플 SDK로부터 받은 Authorization Code
+       * @example c1234567890abcdef
+       */
+      code: string;
+    };
+    /** @description 유저 프로필 수정 응답 */
+    UpdateUserProfileResponse: {
+      nickname?: string;
+      email?: string;
+      profileImageUrl?: string;
+    };
+    /** @description 유저 프로필 업데이트 요청 */
+    UpdateUserProfileRequest: {
+      /**
+       * @description 유저가 설정하고자 하는 새로운 닉네임입니다.
+       * @example 코딩하는개발자
+       */
+      nickname?: string;
+      /**
+       * @description 이 값은 presignedURL 생성 API의 응답에서 받은 objectKey여야 합니다.
+       * @example dev/profiles/original/12345/092f7ab2-c845-4bdf-8458-e2897135d4e7.png
+       */
+      objectKey?: string;
+    };
+    /** @description 유저 선택 주제 업데이트 요청 */
+    UpdateUserInterestRequest: {
+      /**
+       * @description 유저가 설정하고자 하는 새로운 선택 주제 코드입니다.
+       * @example RELATIONSHIP
+       */
+      interestCode: string;
+    };
+    /** @description 마케팅 동의 변경 요청 */
+    UpdateMarketingConsentRequest: {
+      /**
+       * @description 마케팅 정보 수신 동의 (true 또는 false)
+       * @example true
+       */
+      agreed: boolean;
+    };
+    /** @description 알림 설정 업데이트 요청 */
+    UpdateNotificationSettingRequest: {
+      /**
+       * @description 알림 그룹 (ACTIVITY_REMINDER, REPORT, SOCIAL)
+       * @example ACTIVITY_REMINDER
+       * @enum {string}
+       */
+      group: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
+      /**
+       * @description 알림 활성화 여부 (필수)
+       * @example true
+       */
+      enabled: boolean;
+      /**
+       * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만 설정 가능)
+       * @example 20:00
+       */
+      dailyWriteTime?: string;
+    };
+    /** @description 비밀번호 변경 요청 (마이페이지) */
+    ChangePasswordRequest: {
+      /**
+       * @description 현재 비밀번호
+       * @example currentPassword123!
+       */
+      currentPassword: string;
+      /**
+       * @description 새로운 비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)
+       * @example newPassword123!
+       */
+      newPassword: string;
+    };
+    /** @description 나의 주간 리포트 조회 응답 */
+    MyWeeklyReportResponse: {
+      /** @description 이번 주간 리포트 */
+      report?: components["schemas"]["WeeklyReportResponse"];
+      /** @description 이전 주간 리포트 */
+      previousReport?: components["schemas"]["WeeklyReportResponse"];
+    };
+    ReportContent: {
+      summary?: string;
+      discovered?: components["schemas"]["StyledText"];
+      improve?: components["schemas"]["StyledText"];
+    };
+    Segment: {
+      text?: string;
+      marks?: ("BOLD" | "HIGHLIGHT")[];
+    };
+    StyledText: {
+      segments?: components["schemas"]["Segment"][];
+    };
+    /** @description 주간 리포트 조회 응답 */
+    WeeklyReportResponse: {
+      /**
+       * Format: int32
+       * @description 리포트가 작성된 달
+       */
+      month?: number;
+      /**
+       * Format: int32
+       * @description 해당 달의 몇주차인지
+       */
+      weekOfMonth?: number;
+      /** @description 리포트 요약 */
+      summary?: string;
+      /** @description 이런 면도 발견되었어요 */
+      discovered?: string;
+      /** @description 다음엔 이렇게 보완해볼까요? */
+      improve?: string;
+      /** @description styled content (discovered/improve segments) */
+      content?: components["schemas"]["ReportContent"];
+      /**
+       * @description 상태
+       * @example PENDING
+       */
+      status?: string;
+    };
+    /** @description 지갑 잔액 응답 */
+    WalletBalanceResponse: {
+      /** Format: int64 */
+      crystalBalance?: number;
+    };
+    /** @description 유저 프로필 정보 응답 */
+    UserProfileResponse: {
+      nickname?: string;
+      email?: string;
+      profileImageUrl?: string;
+      interestCode?: string;
+      /** Format: date */
+      registeredDate?: string;
+    };
+    /** @description 닉네임 사용 가능 여부 확인 응답 */
+    CheckNicknameResponse: {
+      /**
+       * @description 닉네임 사용 가능 여부
+       * @example true
+       */
+      isAvailable?: boolean;
+      /**
+       * @description 닉네임 사용 불가 사유 (사용 가능한 경우 null)
+       * @example 이미 사용 중인 닉네임입니다.
+       */
+      reason?: string;
+    };
+    EmotionStat: {
+      emotionCode?: string;
+      emotionName?: string;
+      /** Format: int32 */
+      count?: number;
+      /** Format: int32 */
+      percent?: number;
+    };
+    /** @description 나의 유형 리포트 통합 조회 응답 */
+    MyAllTypeReportsResponse: {
+      /**
+       * @description interestCode -> 리포트 상세. 모든 선택 주제 코드 키는 항상 포함되며, 각 값은 최소한 current/generation/eligibility 구조를 가집니다. (current는 없을 수 있음)
+       * @example {
+       *       "LOVE": {
+       *         "current": null,
+       *         "generation": {
+       *           "status": "NONE",
+       *           "reportId": null
+       *         },
+       *         "eligibility": {
+       *           "dailyCompletedCount": 0,
+       *           "requiredCount": 30,
+       *           "canGenerate": false,
+       *           "isFirstFree": true
+       *         }
+       *       },
+       *       "PREFERENCE": {
+       *         "current": {
+       *           "status": "COMPLETED",
+       *           "analysisTypeName": "몽글몽글 낭만주의자",
+       *           "hashTag1": "#분위기",
+       *           "hashTag2": "#취향기록",
+       *           "hashTag3": "#나만의색깔",
+       *           "typeAnalysis": "...",
+       *           "personaTitle1": "...",
+       *           "personaContent1": "...",
+       *           "personaTitle2": "...",
+       *           "personaContent2": "...",
+       *           "typeImageUrl": "https://..."
+       *         },
+       *         "generation": {
+       *           "status": "NONE",
+       *           "reportId": null
+       *         },
+       *         "eligibility": {
+       *           "dailyCompletedCount": 30,
+       *           "requiredCount": 30,
+       *           "canGenerate": true,
+       *           "isFirstFree": false
+       *         }
+       *       },
+       *       "EMOTION": {
+       *         "current": null,
+       *         "generation": {
+       *           "status": "IN_PROGRESS",
+       *           "reportId": 13
+       *         },
+       *         "eligibility": {
+       *           "dailyCompletedCount": 5,
+       *           "requiredCount": 30,
+       *           "canGenerate": false,
+       *           "isFirstFree": true
+       *         }
+       *       },
+       *       "ROUTINE": {
+       *         "current": null,
+       *         "generation": {
+       *           "status": "FAILED",
+       *           "reportId": 21
+       *         },
+       *         "eligibility": {
+       *           "dailyCompletedCount": 30,
+       *           "requiredCount": 30,
+       *           "canGenerate": true,
+       *           "isFirstFree": true
+       *         }
+       *       }
+       *     }
+       */
+      reports?: {
+        [key: string]: components["schemas"]["TypeReportDetailResponse"];
+      };
+    };
+    TypeEmotionStatsContent: {
+      /** Format: int32 */
+      totalCount?: number;
+      dominantEmotionCode?: string;
+      /** Format: int32 */
+      positivePercent?: number;
+      emotions?: components["schemas"]["EmotionStat"][];
+    };
+    /** @description 개별 유형 리포트 상세 상태 및 생성 조건 */
+    TypeReportDetailResponse: {
+      /** @description 현재 조회 가능한 유형 리포트 (없거나 생성 전이면 null) */
+      current?: components["schemas"]["TypeReportResponse"];
+      /** @description 리포트 생성 상태 */
+      generation?: components["schemas"]["TypeReportGenerationResponse"];
+      /** @description 리포트 생성 자격 조건 및 현황 */
+      eligibility?: components["schemas"]["TypeReportEligibilityResponse"];
+    };
+    /** @description 유형 리포트 생성 자격 요건 및 현황 */
+    TypeReportEligibilityResponse: {
+      /**
+       * Format: int32
+       * @description 일간 리포트 총 개수
+       * @example 3
+       */
+      dailyCompletedCount?: number;
+      /**
+       * Format: int32
+       * @description 리포트 생성을 위해 필요한 총 질문 개수
+       * @example 30
+       */
+      requiredCount?: number;
+      /**
+       * @description 리포트 생성 가능 여부 (조건 충족 여부)
+       * @example false
+       */
+      canGenerate?: boolean;
+      /**
+       * @description 해당 선택 주제의 유형 리포트 첫 생성 무료 여부
+       * @example true
+       */
+      isFirstFree?: boolean;
+    };
+    /** @description 유형 리포트 생성 상태 */
+    TypeReportGenerationResponse: {
+      /**
+       * @description 생성 상태
+       * @example NONE
+       * @enum {string}
+       */
+      status?: "NONE" | "IN_PROGRESS" | "FAILED";
+      /**
+       * Format: int64
+       * @description 생성 중/실패한 작업의 reportId (없으면 null)
+       */
+      reportId?: number;
+    };
+    TypeReportResponse: {
+      status?: string;
+      analysisTypeName?: string;
+      hashTag1?: string;
+      hashTag2?: string;
+      hashTag3?: string;
+      typeAnalysis?: string;
+      typeAnalysisContent?: components["schemas"]["TypeTextContent"];
+      emotionSummaryContent?: components["schemas"]["TypeTextContent"];
+      emotionStats?: components["schemas"]["TypeEmotionStatsContent"];
+      personaTitle1?: string;
+      personaContent1?: string;
+      personaTitle2?: string;
+      personaContent2?: string;
+      typeImageUrl?: string;
+    };
+    TypeTextContent: {
+      styledText?: components["schemas"]["StyledText"];
+    };
+    /** @description 나의 유형 리포트 단일 조회 응답 */
+    MyTypeReportResponse: {
+      /** @description 유형 리포트 */
+      report?: components["schemas"]["TypeReportDetailResponse"];
+    };
+    /** @description 약관 동의 상태 확인 응답 */
+    TermsCheckResponse: {
+      /**
+       * @description 재동의 필요 여부
+       * @example false
+       */
+      requiresConsent?: boolean;
+      /** @description 재동의가 필요한 약관 타입 목록 */
+      missingTerms?: (
+        | "SERVICE"
+        | "PRIVACY"
+        | "AGE_VERIFICATION"
+        | "MARKETING"
+      )[];
+      /**
+       * @description 현재 서비스 이용약관 동의 여부
+       * @example true
+       */
+      service?: boolean;
+      /**
+       * @description 현재 개인정보 처리방침 동의 여부
+       * @example true
+       */
+      privacy?: boolean;
+      /**
+       * @description 현재 만 14세 이상 확인 여부
+       * @example true
+       */
+      ageVerification?: boolean;
+      /**
+       * @description 현재 마케팅 수신 동의 여부
+       * @example true
+       */
+      marketing?: boolean;
+    };
+    /** @description 마케팅 동의 상태 응답 */
+    MarketingConsentResponse: {
+      /**
+       * @description 마케팅 동의 여부
+       * @example true
+       */
+      agreed?: boolean;
+    };
+    /** @description 최근 친구 검색 기록 리스트 응답 */
+    SearchHistoryListResponse: {
+      /** @description 검색 기록 리스트 (최신순, 최대 5개) */
+      histories?: components["schemas"]["SearchHistoryResponse"][];
+    };
+    /** @description 최근 검색한 유저 정보 */
+    SearchHistoryResponse: {
+      /**
+       * @description 닉네임
+       * @example 춤추는사막여우
+       */
+      nickname?: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      profileImageUrl?: string;
+    };
+    /** @description 알림 목록 응답 (커서 기반 페이지네이션, 20개씩) */
+    NotificationListResponse: {
+      /** @description 알림 목록 (최신순, 최대 20개) */
+      notifications?: components["schemas"]["NotificationResponse"][];
+      /**
+       * Format: int64
+       * @description 다음 페이지 커서 (마지막 알림 ID, null이면 마지막 페이지)
+       * @example 123
+       */
+      nextCursor?: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext?: boolean;
+    };
+    /** @description 알림 응답 */
+    NotificationResponse: {
+      /**
+       * Format: int64
+       * @description 알림 ID
+       * @example 1
+       */
+      id?: number;
+      /**
+       * @description 알림 타입
+       * @example DAILY_WRITE_REMINDER
+       * @enum {string}
+       */
+      type?:
+        | "DAILY_WRITE_REMINDER"
+        | "INACTIVE_USER_REMINDER"
+        | "WEEKLY_REPORT_COMPLETED"
+        | "MONTHLY_REPORT_COMPLETED"
+        | "TYPE_REPORT_COMPLETED"
+        | "WEEKLY_REPORT_AVAILABLE"
+        | "MONTHLY_REPORT_AVAILABLE"
+        | "TYPE_REPORT_AVAILABLE"
+        | "FRIEND_REQUEST_RECEIVED"
+        | "FRIEND_REQUEST_ACCEPTED";
+      /**
+       * @description 알림 제목
+       * @example 오늘의 질문에 답변해주세요
+       */
+      title?: string;
+      /**
+       * @description 알림 본문
+       * @example 아직 답변하지 않은 질문이 있어요
+       */
+      body?: string;
+      /**
+       * @description 알림함 메시지
+       * @example 오늘의 질문에 답변해보세요!
+       */
+      inboxMessage?: string;
+      /**
+       * @description 대상 리소스 ID
+       * @example 123
+       */
+      targetId?: string;
+      /**
+       * @description 읽음 여부
+       * @example false
+       */
+      isRead?: boolean;
+      /**
+       * Format: date-time
+       * @description 생성 시각
+       * @example 2025-01-15T09:00:00+09:00
+       */
+      createdAt?: string;
+    };
+    /** @description 미읽음 알림 개수 응답 */
+    UnreadCountResponse: {
+      /**
+       * Format: int64
+       * @description 미읽음 알림 개수
+       * @example 5
+       */
+      unreadCount?: number;
+    };
+    /** @description 알림 설정 응답 */
+    NotificationSettingResponse: {
+      /**
+       * @description 알림 그룹
+       * @example ACTIVITY_REMINDER
+       * @enum {string}
+       */
+      group?: "ACTIVITY_REMINDER" | "REPORT" | "SOCIAL";
+      /**
+       * @description 활성화 여부
+       * @example true
+       */
+      enabled?: boolean;
+      /**
+       * @description 일일 작성 알림 시간 (ACTIVITY_REMINDER 그룹인 경우만)
+       * @example 20:00
+       */
+      dailyWriteTime?: string;
+    };
+    /** @description 월간 리포트 조회 응답 */
+    MonthlyReportResponse: {
+      /**
+       * Format: int32
+       * @description 리포트가 작성된 달
+       */
+      month?: number;
+      /** @description 리포트 요약 */
+      summary?: string;
+      /** @description 이런 면도 발견되었어요 */
+      discovered?: string;
+      /** @description 다음엔 이렇게 보완해볼까요? */
+      improve?: string;
+      /** @description styled content (discovered/improve segments) */
+      content?: components["schemas"]["ReportContent"];
+      /**
+       * @description 상태
+       * @example PENDING
+       */
+      status?: string;
+    };
+    /** @description 나의 월간 리포트 조회 응답 */
+    MyMonthlyReportResponse: {
+      /** @description 이번 월간 리포트 */
+      report?: components["schemas"]["MonthlyReportResponse"];
+      /** @description 이전 월간 리포트 */
+      previousReport?: components["schemas"]["MonthlyReportResponse"];
+    };
+    /** @description 차단 사용자 목록 응답 */
+    BlockedUserListResponse: {
+      /**
+       * Format: int32
+       * @description 총 차단 사용자 수
+       * @example 2
+       */
+      totalCount?: number;
+      /** @description 차단 사용자 목록 */
+      blockedUsers?: components["schemas"]["BlockedUserResponse"][];
+    };
+    /** @description 차단 사용자 정보 */
+    BlockedUserResponse: {
+      /**
+       * Format: int64
+       * @description 차단 관계 ID
+       * @example 12
+       */
+      userBlockId?: number;
+      /**
+       * @description 닉네임
+       * @example 모래
+       */
+      nickname?: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      profileImageUrl?: string;
+    };
+    /** @description 홈화면 요약 정보 응답 */
+    HomeResponse: {
+      /**
+       * @description 이번 주(월~일) 답변한 날짜 목록 (오름차순)
+       * @example [
+       *       "2026-01-13",
+       *       "2026-01-14",
+       *       "2026-01-15"
+       *     ]
+       */
+      answeredDates?: string[];
+      /**
+       * Format: int32
+       * @description 현재 연속 답변 일수 (오늘 답변 있으면 오늘까지, 없으면 어제까지)
+       * @example 15
+       */
+      streakCount?: number;
+      /**
+       * Format: int32
+       * @description 실제 답변한 날짜의 총 개수
+       * @example 20
+       */
+      totalRecordDays?: number;
+      /**
+       * @description 나와 같은 오늘의 질문에 답변한 친구들의 프로필 사진 URL (답변 시간 최신순, 최대 5개)
+       * @example [
+       *       "https://cdn.example.com/profiles/user1.png",
+       *       "https://cdn.example.com/default/user2.png"
+       *     ]
+       */
+      answeredFriendProfiles?: string[];
+      /**
+       * Format: int32
+       * @description 나와 같은 오늘의 질문에 답변한 친구의 총 수
+       * @example 8
+       */
+      answeredFriendCount?: number;
+    };
+    /** @description 친구 목록 응답 */
+    FriendListResponse: {
+      /**
+       * Format: int32
+       * @description 총 친구 수
+       * @example 5
+       */
+      totalCount?: number;
+      /** @description 친구 목록 */
+      friends?: components["schemas"]["FriendResponse"][];
+    };
+    /** @description 친구 프로필 정보 */
+    FriendResponse: {
+      /**
+       * Format: int64
+       * @description 친구 관계 ID
+       * @example 123
+       */
+      friendshipId?: number;
+      /**
+       * @description 닉네임
+       * @example 모래
+       */
+      nickname?: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      profileImageUrl?: string;
+      /**
+       * @description 탈퇴 예정 여부 (14일 유예기간 중)
+       * @example false
+       */
+      isWithdrawn?: boolean;
+    };
+    /** @description 유저 검색 결과 응답 */
+    SearchUserListResponse: {
+      /** @description 나한테 친구 요청 보낸 사람들 (최신순) */
+      pendingRequests?: components["schemas"]["SearchUserResponse"][];
+      /** @description 검색 결과 (관련도순) */
+      searchResults?: components["schemas"]["SearchUserResponse"][];
+      /**
+       * @description 다음 페이지 커서 (null이면 마지막 페이지)
+       * @example 모래가나
+       */
+      nextCursor?: string;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext?: boolean;
+    };
+    /** @description 유저 검색 결과 항목 */
+    SearchUserResponse: {
+      /**
+       * Format: int64
+       * @description 친구 관계 ID (친구 요청 취소/수락/거절/삭제 시 사용, NONE 상태일 땐 null)
+       * @example 123
+       */
+      friendshipId?: number;
+      /**
+       * @description 닉네임
+       * @example 춤추는사막여우
+       */
+      nickname?: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      profileImageUrl?: string;
+      /**
+       * @description 친구 관계 상태
+       * @example NONE
+       * @enum {string}
+       */
+      relationshipStatus?:
+        | "SELF"
+        | "NONE"
+        | "FRIEND"
+        | "REQUEST_SENT"
+        | "REQUEST_RECEIVED";
+    };
+    /** @description 유저 검색 요청 */
+    SearchUserRequest: {
+      /**
+       * @description 검색 키워드 (닉네임)
+       * @example 모래
+       */
+      keyword: string;
+      /**
+       * @description 다음 페이지 커서 (형식: nickname)
+       * @example 모래가나
+       */
+      cursor?: string;
+    };
+    /** @description 받은 친구 요청 목록 응답 */
+    PendingFriendListResponse: {
+      /**
+       * Format: int32
+       * @description 총 요청 수
+       * @example 3
+       */
+      totalCount?: number;
+      /** @description 친구 요청 목록 (최신순) */
+      requests?: components["schemas"]["PendingFriendResponse"][];
+    };
+    /** @description 친구 요청 정보 */
+    PendingFriendResponse: {
+      /**
+       * Format: int64
+       * @description 친구 관계 ID
+       * @example 123
+       */
+      friendshipId?: number;
+      /**
+       * @description 닉네임
+       * @example 춤추는사막여우
+       */
+      nickname?: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      profileImageUrl?: string;
+    };
+    /** @description 피드 목록 응답 */
+    FeedListResponse: {
+      /** @description 피드 목록 */
+      feeds?: components["schemas"]["FeedResponse"][];
+    };
+    /** @description 피드 응답 */
+    FeedResponse: {
+      /**
+       * Format: int64
+       * @description DailyReport ID (신고 시 사용)
+       * @example 123
+       */
+      dailyReportId?: number;
+      /**
+       * @description 친구 닉네임
+       * @example 모래
+       */
+      friendNickname?: string;
+      /**
+       * @description 친구 프로필 이미지 URL
+       * @example https://cdn.example.com/profiles/abc123.png
+       */
+      friendProfileImageUrl?: string;
+      /**
+       * @description 관심분야 코드
+       * @example EMOTION
+       */
+      interestCode?: string;
+      /**
+       * @description 질문 내용
+       * @example 오늘 가장 기뻤던 순간은?
+       */
+      questionText?: string;
+      /**
+       * @description 답변 내용
+       * @example 집에 갈 때
+       */
+      answer?: string;
+      /**
+       * @description 감정 코드
+       * @example ACHIEVEMENT
+       */
+      emotionCode?: string;
+      /** @description 이미지 URL */
+      imageUrl?: string;
+    };
+    /** @description 피드 공유 상태 응답 */
+    ShareStatusResponse: {
+      /**
+       * @description 오늘의 기록 공유 상태
+       * @example true
+       */
+      isShared?: boolean;
+    };
+    /** @description 답변 상세 조회 응답 */
+    AnswerDetailResponse: {
+      /**
+       * @description 질문 내용
+       * @example 오늘 가장 기뻤던 순간은?
+       */
+      questionText?: string;
+      /**
+       * @description 질문 카테고리 (관심분야 코드)
+       * @example EMOTION
+       */
+      interestCode?: string;
+      /**
+       * Format: date
+       * @description 답변 작성일
+       * @example 2025-12-25
+       */
+      answerDate?: string;
+      /** @description 나의 답변 */
+      answer?: string;
+      /** @description 리포트 내용 */
+      content?: string;
+      /**
+       * @description 리포트 감정 상태
+       * @example ACHIEVEMENT
+       */
+      emotion?: string;
+      /** @description 이미지 URL */
+      imageUrl?: string;
+    };
+    ImageStatusResponse: {
+      /**
+       * @description 이미지 상태
+       * @example READY, PROCESSING
+       */
+      status?: string;
+    };
+    /** @description OAuth2 Authorization URL 응답 */
+    AuthorizationUrlResponse: {
+      /**
+       * @description OAuth2 제공자의 로그인 페이지 URL (프론트엔드에서 리다이렉트)
+       * @example https://nid.naver.com/oauth2.0/authorize?client_id=...
+       */
+      authorizationUrl?: string;
+    };
+    /** @description 검색 결과 항목 (요약) */
+    AnswerEntrySummaryResponse: {
+      /**
+       * Format: int64
+       * @description 답변 ID
+       * @example 123
+       */
+      answerId?: number;
+      /**
+       * @description 관심분야 코드 (PREFERENCE, EMOTION, ROUTINE, RELATIONSHIP, LOVE, VALUES)
+       * @example EMOTION
+       */
+      interestCode?: string;
+      /**
+       * @description 감정 코드 (리포트 생성 완료 시에만 제공, PENDING/FAILED 상태면 null)
+       * @example ACHIEVEMENT
+       */
+      emotionCode?: string;
+      /**
+       * @description 질문 내용
+       * @example 오늘 가장 기뻤던 순간은?
+       */
+      questionText?: string;
+      /**
+       * @description 답변 미리보기 (키워드 포함 첫 문장 또는 답변 시작 문장, 20~100자, 문장 단위, 끝마침표 없음)
+       * @example 친구와 함께한 시간이 정말 영광이었다
+       */
+      matchedSnippet?: string;
+      /**
+       * Format: date
+       * @description 답변 작성일
+       * @example 2025-12-25
+       */
+      answerDate?: string;
+    };
+    /** @description 검색 결과 리스트 응답 */
+    SearchAnswerEntryResponse: {
+      /** @description 검색 결과 항목 리스트 */
+      items?: components["schemas"]["AnswerEntrySummaryResponse"][];
+      /**
+       * @description 다음 페이지 커서 (null이면 마지막 페이지)
+       * @example 2025-12-25
+       */
+      nextCursor?: string;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext?: boolean;
+    };
+    /** @description 답변 검색 요청 */
+    SearchAnswerEntryRequest: {
+      /**
+       * @description 검색 키워드 (질문 또는 답변 내용)
+       * @example 영광
+       */
+      keyword?: string;
+      /**
+       * @description 감정 코드 (ACHIEVEMENT, INTEREST, PEACE, PLEASURE, WILL, DEPRESSION, REGRET, ETC)
+       * @example ACHIEVEMENT
+       */
+      emotionCode?: string;
+      /**
+       * @description 다음 페이지 커서 (형식: date)
+       * @example 2025-12-25
+       */
+      cursor?: string;
+    };
+    /** @description 캘린더 날짜별 정보 */
+    CalendarEntryResponse: {
+      /**
+       * Format: date
+       * @description 답변 날짜
+       * @example 2026-01-30
+       */
+      date?: string;
+      /**
+       * @description 감정 코드 (답변이 있고 리포트가 COMPLETED 상태일 때만 제공)
+       * @example ACHIEVEMENT
+       */
+      emotionCode?: string;
+    };
+    /** @description 월별 캘린더 응답 */
+    MonthlyCalendarResponse: {
+      /** @description 답변이 있는 날짜의 정보 목록 (답변 없는 날짜는 포함되지 않음) */
+      calendarEntries?: components["schemas"]["CalendarEntryResponse"][];
+    };
+    /** @description 월별 캘린더 조회 요청 */
+    GetMonthlyCalendarRequest: {
+      /**
+       * Format: int32
+       * @description 연도
+       * @example 2026
+       */
+      year: number;
+      /**
+       * Format: int32
+       * @description 월 (1~12)
+       * @example 1
+       */
+      month: number;
+    };
+    /** @description 캘린더 최근 답변 미리보기 응답 */
+    CalendarRecentsResponse: {
+      /** @description 최근 답변 목록 (최대 6개, 날짜 내림차순) */
+      items?: components["schemas"]["AnswerEntrySummaryResponse"][];
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    rerollDailyQuestion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyQuestionResponseV2"];
-                };
-            };
-            /** @description 사용자 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
-             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없습니다.
-             *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 5번까지만 새로 받을 수 있습니다.
-             *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    startWeeklyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 주간 리포트 생성 시작 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WeeklyReportStartResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: WEEKLY_REPORT_NOT_ENOUGH_REPORTS - 주간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
-             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompletedCountResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: WEEKLY_REPORT_ALREADY_COMPLETED - 이미 작성된 주간 리포트가 존재함
-             *     - ErrorCode: WEEKLY_REPORT_IN_PROGRESS - 현재 주간 리포트를 생성 중임
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createProfileImageUploadUrl: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProfileImageUploadUrlRequest"];
-            };
-        };
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateProfileImageUploadUrlResponse"];
-                };
-            };
-            /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    startTypeReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                interestCode: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 유형 리포트 생성 시작 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeReportStartResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: TYPE_REPORT_NOT_ENOUGH_REPORTS - 유형 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 현재까지 작성된 해당 유형 일간 리포트 수가 포함됩니다.)**
-             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompletedCountResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: TYPE_REPORT_IN_PROGRESS - 현재 유형 리포트를 생성 중임 */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateDailyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TestDailyReportRequest"];
-            };
-        };
-        responses: {
-            /** @description 테스트용 오늘의 리포트 생성 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateDailyReportResponse"];
-                };
-            };
-            /** @description 잘못된 요청 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음 */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateDailyReport_1: {
-        parameters: {
-            query: {
-                prompt: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PromptTestDailyReportRequest"];
-            };
-        };
-        responses: {
-            /** @description 테스트용 오늘의 리포트 생성 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyReportResponse"];
-                };
-            };
-            /** @description 잘못된 요청 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-        };
-    };
-    deleteWeeklyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 테스트용 주간 리포트 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteTypeReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                interestCode: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 테스트용 월간 리포트 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteMonthlyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 테스트용 월간 리포트 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    checkTermsConsent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["TermsCheckResponse"];
-                };
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    agreeToTerms: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TermsConsentRequest"];
-            };
-        };
-        responses: {
-            /** @description 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
-             *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
-             *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getRecentSearches: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchHistoryListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    saveSearchHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SaveSearchHistoryRequest"];
-            };
-        };
-        responses: {
-            /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (키워드 누락 또는 길이 초과) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteAllSearchHistories: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    rerollDailyQuestion_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyQuestionResponse"];
-                };
-            };
-            /** @description 사용자 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
-             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없습니다.
-             *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다.
-             *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    registerDevice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RegisterDeviceRequest"];
-            };
-        };
-        responses: {
-            /** @description FCM 토큰 등록 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RegisterDeviceResponse"];
-                };
-            };
-            /** @description - 요청 데이터 검증 실패 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    sendTestNotification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SendTestNotificationRequest"];
-            };
-        };
-        responses: {
-            /** @description 테스트 알림 발송 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - 요청 데이터 검증 실패 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    startMonthlyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 월간 리포트 생성 시작 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MonthlyReportStartResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: MONTHLY_REPORT_NOT_ENOUGH_REPORTS - 월간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
-             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompletedCountResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: MONTHLY_REPORT_ALREADY_COMPLETED - 이미 작성된 월간 리포트가 존재함
-             *     - ErrorCode: MONTHLY_REPORT_IN_PROGRESS - 현재 월간 리포트를 생성 중임
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    reportContent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReportContentRequest"];
-            };
-        };
-        responses: {
-            /** @description 신고 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: CONTENT_REPORT_INVALID - 잘못된 신고 요청 (기타 사유 미입력 또는 200자 초과) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 공유글을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: CONTENT_REPORT_ALREADY_EXISTS - 이미 신고한 공유글 */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getBlockedUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["BlockedUserListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    blockUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BlockUserRequest"];
-            };
-        };
-        responses: {
-            /** @description 차단 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: MODERATION_CANNOT_BLOCK_SELF - 본인 차단 불가
-             *     - ErrorCode: MODERATION_ALREADY_BLOCKED - 이미 차단한 사용자
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getRecentSearches_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchHistoryListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    saveSearchHistory_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SaveFriendSearchRequest"];
-            };
-        };
-        responses: {
-            /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (닉네임 누락 또는 길이 초과) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteAllSearchHistories_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getReceivedRequests: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PendingFriendListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    sendFriendRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFriendshipRequest"];
-            };
-        };
-        responses: {
-            /** @description 요청 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["FriendshipResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: VALIDATION_FAILED - 닉네임 누락 또는 길이 초과
-             *     - ErrorCode: FRIENDSHIP_CANNOT_SEND_TO_SELF - 본인에게 요청 불가
-             *     - ErrorCode: FRIENDSHIP_ALREADY_EXISTS - 이미 친구이거나 요청 존재
-             *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과 (본인)
-             *     - ErrorCode: FRIEND_RECEIVER_LIMIT_EXCEEDED - 친구 수 20명 초과 (상대방)
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND - 수신자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    rejectFriendRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                friendshipId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 거절 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
-             *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    acceptFriendRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                friendshipId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 수락 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
-             *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과
-             *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    stopSharing: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 공유 중단 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    startSharing: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 공유 요청 처리 완료 (SHARED 또는 SUSPENDED 반환) */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ShareStartResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    sendVerificationCode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SendVerificationCodeRequest"];
-            };
-        };
-        responses: {
-            /** @description 인증 코드 발송 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
-             *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정 (PASSWORD_RESET)
-             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정 (PASSWORD_RESET)
-             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_SIGNUP_FORBIDDEN - 탈퇴한 계정 (SIGNUP)
-             *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 (PASSWORD_RESET) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 (SIGNUP) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    verifyCode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyCodeRequest"];
-            };
-        };
-        responses: {
-            /** @description 인증 코드 검증 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: EMAIL_ALREADY_VERIFIED - 이미 인증 완료된 이메일
-             *     - ErrorCode: EMAIL_VERIFICATION_CODE_EXPIRED - 인증 코드 만료 (3분 초과)
-             *     - ErrorCode: EMAIL_VERIFICATION_CODE_MISMATCH - 인증 코드 불일치
-             *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
-             *     - ErrorCode: VALIDATION_FAILED - 이메일/인증코드 형식 오류
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 인증 요청을 찾을 수 없음 (발송 이력 없음) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createAnswerImageUploadUrl: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAnswerImageUploadUrlRequest"];
-            };
-        };
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateAnswerImageUploadUrlResponse"];
-                };
-            };
-            /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    generateDailyReport_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DailyReportRequest"];
-            };
-        };
-        responses: {
-            /** @description 오늘의 리포트 생성 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateDailyReportResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: DAILY_QUESTION_MISMATCH - 요청한 질문이 사용자에게 할당된 오늘의 질문과 일치하지 않음
-             *     - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: QUESTION_NOT_FOUND - 질문이 존재하지 않음
-             *     - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않음
-             *     - ErrorCode: EMOTION_NOT_FOUND - 감정 정보를 찾을 수 없음
-             *     - ErrorCode: WALLET_NOT_FOUND - 사용자의 지갑을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: DAILY_REPORT_ALREADY_COMPLETED - 이미 작성된 일간 리포트가 존재함 */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음
-             *     - ErrorCode: AI_RESPONSE_FORMAT_INVALID - AI 응답 JSON의 필수 필드가 비어있음
-             */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    oauth2Login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description OAuth2 제공자 (naver, google, kakao)
-                 * @example naver
-                 */
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SocialLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우
-             *     - ErrorCode: VALIDATION_FAILED - code 또는 state 값이 누락된 경우
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description OAuth2 인증 실패
-             *     - ErrorCode: AUTH_INVALID_STATE - State 검증 실패 (CSRF 공격 방지, 10분 내 사용해야 함)
-             *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - OAuth2 제공자로부터 Access Token 발급 실패
-             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - OAuth2 제공자로부터 사용자 정보 조회 실패
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 이메일 중복
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    withdrawUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 탈퇴 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description ErrorCode: AUTH_ALREADY_WITHDRAWN - 이미 탈퇴한 계정 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    signup: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SignupRequest"];
-            };
-        };
-        responses: {
-            /** @description 회원가입 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: AUTH_EMAIL_NOT_VERIFIED - 이메일 인증 미완료
-             *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
-             *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
-             *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
-             *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    restoreBasicAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RestoreRequest"];
-            };
-        };
-        responses: {
-            /** @description 복구 성공 및 로그인 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: AUTH_NOT_WITHDRAWN - 탈퇴하지 않은 계정
-             *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_RESTORE_FORBIDDEN - 소셜 로그인 계정
-             *     - ErrorCode: AUTH_RESTORE_PERIOD_EXPIRED - 복구 가능 기간(14일) 초과
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    refresh: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 토큰 재발급 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description 인증 실패
-             *     - ErrorCode: AUTH_REFRESH_TOKEN_NOT_FOUND - 쿠키에 Refresh Token이 없는 경우
-             *     - ErrorCode: AUTH_INVALID_REFRESH_TOKEN - Refresh Token이 만료되었거나 DB에 존재하지 않음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    resetPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetPasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description 비밀번호 재설정 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정
-             *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정
-             *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
-             *     - ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 이메일 인증 미완료
-             *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    naverNativeLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["NaverNativeLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 네이버로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 로그아웃 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: AUTH_ACCOUNT_WITHDRAWN - 탈퇴한 계정
-             *         - data 필드에 탈퇴 계정 정보 포함 (닉네임, 완전 삭제 예정일)
-             *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WithdrawnInfoResponse"];
-                };
-            };
-            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    kakaoNativeLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["KakaoNativeLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 카카오로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    googleNativeLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GoogleNativeLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - ID Token이 누락된 경우 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description ID Token 검증 실패
-             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 구글 ID Token 검증 실패
-             *       (유효하지 않은 토큰, 만료된 토큰, 잘못된 audience, 인증되지 않은 이메일)
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    appleNativeLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AppleNativeLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description 로그인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - Authorization Code가 누락된 경우 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description Authorization Code 검증 실패
-             *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - 애플 토큰 발급 실패(유효하지 않은 코드, 만료된 코드)
-             *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 애플 ID Token 파싱 실패
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
-             *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
-             */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMyProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserProfileResponse"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 관심 주제를 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description 프로필 수정 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateUserProfileResponse"];
-                };
-            };
-            /**
-             * @description - ErrorCode: USER_UPDATE_NO_DATA - 수정할 프로필 정보가 없음
-             *     - ErrorCode: IMAGE_SIZE_EXCEEDED - 이미지 크기 제한 초과 (5MB)
-             *     - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입
-             *     - ErrorCode: IMAGE_METADATA_INVALID - 파일 메타데이터를 읽을 수 없음
-             *     - ErrorCode: NICKNAME_CHANGE_LIMIT_EXCEEDED - 닉네임 변경 제한 횟수 초과
-             *     - ErrorCode: NICKNAME_ALREADY_TAKEN - 이미 사용 중인 닉네임
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateUserInterests: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserInterestRequest"];
-            };
-        };
-        responses: {
-            /** @description 관심 주제 업데이트 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_INTEREST_CODE_INVALID - 지원하지 않는 관심 주제 코드 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMarketingConsent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["MarketingConsentResponse"];
-                };
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateMarketingConsent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateMarketingConsentRequest"];
-            };
-        };
-        responses: {
-            /** @description 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description 인증 실패 (JWT 토큰 관련)
-             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
-             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
-             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
-             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
-             */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    markAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                notificationId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 읽음 처리 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NotificationSettingResponse"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateNotificationSettingRequest"][];
-            };
-        };
-        responses: {
-            /** @description 설정 수정 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - 요청 데이터 검증 실패 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    markAllAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 전체 읽음 처리 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    changePassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChangePasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description 비밀번호 변경 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /**
-             * @description 잘못된 요청
-             *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN - 소셜 로그인 계정
-             *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
-             */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: AUTH_INVALID_PASSWORD - 현재 비밀번호 불일치 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getDailyQuestion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyQuestionResponseV2"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
-             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없습니다.
-             *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMyWeeklyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 나의 주간 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MyWeeklyReportResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getWeeklyReportById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 주간 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WeeklyReportResponse"];
-                };
-            };
-            /** @description - ErrorCode: WEEKLY_REPORT_NOT_FOUND - 주간 리포트를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getWalletBalance: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WalletBalanceResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND: 사용자를 찾을 수 없음
-             *     - ErrorCode: WALLET_NOT_FOUND: 사용자의 지갑을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    checkNickname: {
-        parameters: {
-            query: {
-                nickname: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 - 사용 가능 여부는 응답 내용으로 판단 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckNicknameResponse"];
-                };
-            };
-        };
-    };
-    getMyAllTypeReports: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 나의 유형 리포트 통합 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MyAllTypeReportsResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMyTypeReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                interestCode: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 나의 유형 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MyTypeReportResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getDailyQuestion_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyQuestionResponse"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
-             *     - ErrorCode: USER_INTEREST_NOT_FOUND - 관심 주제를 찾을 수 없습니다.
-             *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getNotifications: {
-        parameters: {
-            query?: {
-                cursor?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NotificationListResponse"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteAllNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 전체 알림 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getUnreadCount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UnreadCountResponse"];
-                };
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMyMonthlyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 나의 월간 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MyMonthlyReportResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMonthlyReportById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 월간 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MonthlyReportResponse"];
-                };
-            };
-            /** @description - ErrorCode: MONTHLY_REPORT_NOT_FOUND - 월간 리포트를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getHomeData: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 홈화면 정보 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HomeResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getFriends: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["FriendListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    searchUsers: {
-        parameters: {
-            query: {
-                request: components["schemas"]["SearchUserRequest"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 검색 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchUserListResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 검색 키워드 누락 또는 길이 초과 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 피드 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getShareStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ShareStatusResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getDailyReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 오늘의 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyReportResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
-             *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 일간 리포트를 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getDailyReportById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                reportId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 오늘의 리포트 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnswerDetailResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getImageStatus: {
-        parameters: {
-            query: {
-                key: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ImageStatusResponse"];
-                };
-            };
-            /** @description - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAuthorizationUrl: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description OAuth2 제공자 (naver, google, kakao)
-                 * @example naver
-                 */
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Authorization URL 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthorizationUrlResponse"];
-                };
-            };
-            /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    searchAnswers: {
-        parameters: {
-            query: {
-                request: components["schemas"]["SearchAnswerEntryRequest"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 검색 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchAnswerEntryResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (cursor 형식 오류 등) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAnswerDetailById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                answerId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 상세 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnswerDetailResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: ANSWER_NOT_FOUND - 답변을 찾을 수 없음 (또는 본인의 답변이 아님) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMonthlyCalendar: {
-        parameters: {
-            query: {
-                request: components["schemas"]["GetMonthlyCalendarRequest"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["MonthlyCalendarResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (연도/월 범위 오류) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAnswerDetailByDate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["AnswerDetailResponse"];
-                };
-            };
-            /** @description ErrorCode: VALIDATION_FAILED - 잘못된 날짜 형식 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: ANSWER_NOT_FOUND - 해당 날짜에 답변이 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getCalendarRecents: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 조회 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["CalendarRecentsResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteProfileImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 프로필 이미지 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteSearchHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                historyId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchHistoryListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: SEARCH_HISTORY_ACCESS_FORBIDDEN - 본인의 검색어가 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: SEARCH_HISTORY_NOT_FOUND - 검색어를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteNotification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                notificationId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 알림 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteDevice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                deviceId: string;
-                platform: "IOS" | "ANDROID";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description FCM 토큰 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - 요청 데이터 검증 실패 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 (JWT 토큰 관련) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /**
-             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
-             *     - ErrorCode: DEVICE_NOT_FOUND - 디바이스를 찾을 수 없음
-             */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    unblockUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userBlockId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 차단 해제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: MODERATION_BLOCK_NOT_FOUND - 차단 관계를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteFriend: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                friendshipId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 관계 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인의 친구가 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 친구 관계를 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteSearchHistory_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                nickname: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 삭제 성공 및 남은 검색 기록 반환 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SearchHistoryListResponse"];
-                };
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    cancelFriendRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                friendshipId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 취소 성공 */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseDto"];
-                };
-            };
-            /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청 */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description 인증 실패 */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인이 보낸 요청이 아님 */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
+  rerollDailyQuestion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyQuestionResponseV2"];
+        };
+      };
+      /** @description 사용자 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
+       *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 선택 주제를 찾을 수 없습니다.
+       *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 5번까지만 새로 받을 수 있습니다.
+       *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  startWeeklyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 주간 리포트 생성 시작 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WeeklyReportStartResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: WEEKLY_REPORT_NOT_ENOUGH_REPORTS - 주간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
+       *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompletedCountResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: WEEKLY_REPORT_ALREADY_COMPLETED - 이미 작성된 주간 리포트가 존재함
+       *     - ErrorCode: WEEKLY_REPORT_IN_PROGRESS - 현재 주간 리포트를 생성 중임
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  createProfileImageUploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateProfileImageUploadUrlRequest"];
+      };
+    };
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreateProfileImageUploadUrlResponse"];
+        };
+      };
+      /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  startTypeReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        interestCode: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 유형 리포트 생성 시작 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TypeReportStartResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: TYPE_REPORT_NOT_ENOUGH_REPORTS - 유형 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 현재까지 작성된 해당 유형 일간 리포트 수가 포함됩니다.)**
+       *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompletedCountResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: TYPE_REPORT_IN_PROGRESS - 현재 유형 리포트를 생성 중임 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  generateDailyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TestDailyReportRequest"];
+      };
+    };
+    responses: {
+      /** @description 테스트용 오늘의 리포트 생성 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreateDailyReportResponse"];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음 */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  generateDailyReport_1: {
+    parameters: {
+      query: {
+        prompt: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PromptTestDailyReportRequest"];
+      };
+    };
+    responses: {
+      /** @description 테스트용 오늘의 리포트 생성 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyReportResponse"];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+    };
+  };
+  deleteWeeklyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 테스트용 주간 리포트 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteTypeReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        interestCode: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 테스트용 월간 리포트 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteMonthlyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 테스트용 월간 리포트 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  checkTermsConsent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["TermsCheckResponse"];
+        };
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agreeToTerms: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TermsConsentRequest"];
+      };
+    };
+    responses: {
+      /** @description 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
+       *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
+       *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getRecentSearches: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchHistoryListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  saveSearchHistory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SaveSearchHistoryRequest"];
+      };
+    };
+    responses: {
+      /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (키워드 누락 또는 길이 초과) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteAllSearchHistories: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  rerollDailyQuestion_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyQuestionResponse"];
+        };
+      };
+      /** @description 사용자 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않았습니다.
+       *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 선택 주제를 찾을 수 없습니다.
+       *     - ErrorCode: QUESTION_NO_ALTERNATIVE - 리롤 가능한 질문이 없습니다.
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: QUESTION_REROLL_LIMIT_EXCEEDED - 오늘의 질문은 하루에 한 번만 새로 받을 수 있습니다.
+       *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  registerDevice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterDeviceRequest"];
+      };
+    };
+    responses: {
+      /** @description FCM 토큰 등록 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RegisterDeviceResponse"];
+        };
+      };
+      /** @description - 요청 데이터 검증 실패 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  sendTestNotification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SendTestNotificationRequest"];
+      };
+    };
+    responses: {
+      /** @description 테스트 알림 발송 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - 요청 데이터 검증 실패 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  startMonthlyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 월간 리포트 생성 시작 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MonthlyReportStartResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: MONTHLY_REPORT_NOT_ENOUGH_REPORTS - 월간 리포트 작성 자격 미달 **(이 경우 data의 completedCount 필드에 지난 주에 작성된 오늘의 리포트 수가 포함됩니다.)**
+       *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompletedCountResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: MONTHLY_REPORT_ALREADY_COMPLETED - 이미 작성된 월간 리포트가 존재함
+       *     - ErrorCode: MONTHLY_REPORT_IN_PROGRESS - 현재 월간 리포트를 생성 중임
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  reportContent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReportContentRequest"];
+      };
+    };
+    responses: {
+      /** @description 신고 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: CONTENT_REPORT_INVALID - 잘못된 신고 요청 (기타 사유 미입력 또는 200자 초과) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 공유글을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: CONTENT_REPORT_ALREADY_EXISTS - 이미 신고한 공유글 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getBlockedUsers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["BlockedUserListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  blockUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BlockUserRequest"];
+      };
+    };
+    responses: {
+      /** @description 차단 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: MODERATION_CANNOT_BLOCK_SELF - 본인 차단 불가
+       *     - ErrorCode: MODERATION_ALREADY_BLOCKED - 이미 차단한 사용자
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getRecentSearches_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchHistoryListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  saveSearchHistory_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SaveFriendSearchRequest"];
+      };
+    };
+    responses: {
+      /** @description 저장 완료 (내부 오류 발생 시에도 204 반환) */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (닉네임 누락 또는 길이 초과) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteAllSearchHistories_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getReceivedRequests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PendingFriendListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  sendFriendRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateFriendshipRequest"];
+      };
+    };
+    responses: {
+      /** @description 요청 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["FriendshipResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: VALIDATION_FAILED - 닉네임 누락 또는 길이 초과
+       *     - ErrorCode: FRIENDSHIP_CANNOT_SEND_TO_SELF - 본인에게 요청 불가
+       *     - ErrorCode: FRIENDSHIP_ALREADY_EXISTS - 이미 친구이거나 요청 존재
+       *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과 (본인)
+       *     - ErrorCode: FRIEND_RECEIVER_LIMIT_EXCEEDED - 친구 수 20명 초과 (상대방)
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND - 수신자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  rejectFriendRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        friendshipId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 거절 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
+       *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  acceptFriendRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        friendshipId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 수락 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description - ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청
+       *     - ErrorCode: FRIEND_LIMIT_EXCEEDED - 친구 수 20명 초과
+       *     - ErrorCode: MODERATION_BLOCK_RELATIONSHIP_EXISTS - 차단 관계 존재
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인에게 온 요청이 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  stopSharing: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 공유 중단 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  startSharing: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 공유 요청 처리 완료 (SHARED 또는 SUSPENDED 반환) */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ShareStartResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: DAILY_REPORT_NOT_FOUND - 당일 리포트를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  sendVerificationCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SendVerificationCodeRequest"];
+      };
+    };
+    responses: {
+      /** @description 인증 코드 발송 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
+       *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정 (PASSWORD_RESET)
+       *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정 (PASSWORD_RESET)
+       *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_SIGNUP_FORBIDDEN - 탈퇴한 계정 (SIGNUP)
+       *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 (PASSWORD_RESET) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 (SIGNUP) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  verifyCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VerifyCodeRequest"];
+      };
+    };
+    responses: {
+      /** @description 인증 코드 검증 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: EMAIL_ALREADY_VERIFIED - 이미 인증 완료된 이메일
+       *     - ErrorCode: EMAIL_VERIFICATION_CODE_EXPIRED - 인증 코드 만료 (3분 초과)
+       *     - ErrorCode: EMAIL_VERIFICATION_CODE_MISMATCH - 인증 코드 불일치
+       *     - ErrorCode: EMAIL_INVALID_VERIFICATION_TYPE - 유효하지 않은 인증 타입
+       *     - ErrorCode: VALIDATION_FAILED - 이메일/인증코드 형식 오류
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 인증 요청을 찾을 수 없음 (발송 이력 없음) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  createAnswerImageUploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateAnswerImageUploadUrlRequest"];
+      };
+    };
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreateAnswerImageUploadUrlResponse"];
+        };
+      };
+      /** @description - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  generateDailyReport_2: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DailyReportRequest"];
+      };
+    };
+    responses: {
+      /** @description 오늘의 리포트 생성 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreateDailyReportResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: DAILY_QUESTION_MISMATCH - 요청한 질문이 사용자에게 할당된 오늘의 질문과 일치하지 않음
+       *     - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: QUESTION_NOT_FOUND - 질문이 존재하지 않음
+       *     - ErrorCode: DAILY_QUESTION_NOT_FOUND - 오늘의 질문이 아직 생성되지 않음
+       *     - ErrorCode: EMOTION_NOT_FOUND - 감정 정보를 찾을 수 없음
+       *     - ErrorCode: WALLET_NOT_FOUND - 사용자의 지갑을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: DAILY_REPORT_ALREADY_COMPLETED - 이미 작성된 일간 리포트가 존재함 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: AI_RESPONSE_PARSE_FAILED - AI 응답 형식을 해석할 수 없음
+       *     - ErrorCode: AI_RESPONSE_FORMAT_INVALID - AI 응답 JSON의 필수 필드가 비어있음
+       */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: AI_NO_RESPONSE - AI 서비스로부터 응답을 받지 못함 */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  oauth2Login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description OAuth2 제공자 (naver, google, kakao)
+         * @example naver
+         */
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SocialLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우
+       *     - ErrorCode: VALIDATION_FAILED - code 또는 state 값이 누락된 경우
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description OAuth2 인증 실패
+       *     - ErrorCode: AUTH_INVALID_STATE - State 검증 실패 (CSRF 공격 방지, 10분 내 사용해야 함)
+       *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - OAuth2 제공자로부터 Access Token 발급 실패
+       *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - OAuth2 제공자로부터 사용자 정보 조회 실패
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 이메일 중복
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  withdrawUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 탈퇴 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description ErrorCode: AUTH_ALREADY_WITHDRAWN - 이미 탈퇴한 계정 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  signup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SignupRequest"];
+      };
+    };
+    responses: {
+      /** @description 회원가입 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: AUTH_EMAIL_NOT_VERIFIED - 이메일 인증 미완료
+       *     - ErrorCode: TERMS_SERVICE_AGREEMENT_REQUIRED - 서비스 이용약관 미동의
+       *     - ErrorCode: TERMS_PRIVACY_POLICY_REQUIRED - 개인정보 처리방침 미동의
+       *     - ErrorCode: TERMS_AGE_VERIFICATION_REQUIRED - 만 14세 이상 확인 미동의
+       *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: EMAIL_ALREADY_EXISTS - 이미 사용 중인 이메일 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  restoreBasicAccount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RestoreRequest"];
+      };
+    };
+    responses: {
+      /** @description 복구 성공 및 로그인 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: AUTH_NOT_WITHDRAWN - 탈퇴하지 않은 계정
+       *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_RESTORE_FORBIDDEN - 소셜 로그인 계정
+       *     - ErrorCode: AUTH_RESTORE_PERIOD_EXPIRED - 복구 가능 기간(14일) 초과
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  refresh: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 토큰 재발급 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description 인증 실패
+       *     - ErrorCode: AUTH_REFRESH_TOKEN_NOT_FOUND - 쿠키에 Refresh Token이 없는 경우
+       *     - ErrorCode: AUTH_INVALID_REFRESH_TOKEN - Refresh Token이 만료되었거나 DB에 존재하지 않음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  resetPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResetPasswordRequest"];
+      };
+    };
+    responses: {
+      /** @description 비밀번호 재설정 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: EMAIL_SOCIAL_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 소셜 로그인 계정
+       *     - ErrorCode: EMAIL_WITHDRAWN_ACCOUNT_PASSWORD_RESET_FORBIDDEN - 탈퇴한 계정
+       *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
+       *     - ErrorCode: EMAIL_VERIFICATION_NOT_FOUND - 이메일 인증 미완료
+       *     - ErrorCode: VALIDATION_FAILED - 이메일/비밀번호 형식 오류
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  naverNativeLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["NaverNativeLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 네이버로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 로그아웃 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: AUTH_ACCOUNT_WITHDRAWN - 탈퇴한 계정
+       *         - data 필드에 탈퇴 계정 정보 포함 (닉네임, 완전 삭제 예정일)
+       *     - ErrorCode: VALIDATION_FAILED - 이메일 형식 오류
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WithdrawnInfoResponse"];
+        };
+      };
+      /** @description ErrorCode: AUTH_INVALID_PASSWORD - 비밀번호 불일치 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: USER_NOT_FOUND - 등록되지 않은 이메일 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  kakaoNativeLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["KakaoNativeLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - Access Token이 누락된 경우 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 카카오로부터 사용자 정보 조회 실패 (유효하지 않은 토큰) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  googleNativeLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GoogleNativeLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - ID Token이 누락된 경우 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description ID Token 검증 실패
+       *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 구글 ID Token 검증 실패
+       *       (유효하지 않은 토큰, 만료된 토큰, 잘못된 audience, 인증되지 않은 이메일)
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_APPLE - 애플 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  appleNativeLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AppleNativeLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - Authorization Code가 누락된 경우 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description Authorization Code 검증 실패
+       *     - ErrorCode: AUTH_OAUTH2_TOKEN_FAILED - 애플 토큰 발급 실패(유효하지 않은 코드, 만료된 코드)
+       *     - ErrorCode: AUTH_OAUTH2_USERINFO_FAILED - 애플 ID Token 파싱 실패
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 이메일 중복 (다른 제공자로 이미 가입된 경우)
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_NAVER - 네이버 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_GOOGLE - 구글 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_KAKAO - 카카오 계정으로 이미 가입됨
+       *     - ErrorCode: AUTH_EMAIL_ALREADY_REGISTERED_WITH_BASIC - 일반 계정으로 이미 가입됨
+       */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserProfileResponse"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: USER_INTEREST_NOT_FOUND - 유저의 선택 주제를 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  updateUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateUserProfileRequest"];
+      };
+    };
+    responses: {
+      /** @description 프로필 수정 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UpdateUserProfileResponse"];
+        };
+      };
+      /**
+       * @description - ErrorCode: USER_UPDATE_NO_DATA - 수정할 프로필 정보가 없음
+       *     - ErrorCode: IMAGE_SIZE_EXCEEDED - 이미지 크기 제한 초과 (5MB)
+       *     - ErrorCode: IMAGE_UNSUPPORTED_TYPE - 지원하지 않는 이미지 타입
+       *     - ErrorCode: IMAGE_METADATA_INVALID - 파일 메타데이터를 읽을 수 없음
+       *     - ErrorCode: NICKNAME_CHANGE_LIMIT_EXCEEDED - 닉네임 변경 제한 횟수 초과
+       *     - ErrorCode: NICKNAME_ALREADY_TAKEN - 이미 사용 중인 닉네임
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  updateUserInterests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateUserInterestRequest"];
+      };
+    };
+    responses: {
+      /** @description 선택 주제 업데이트 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_INTEREST_CODE_INVALID - 지원하지 않는 선택 주제 코드 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: INTEREST_NOT_FOUND - 선택 주제를 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMarketingConsent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["MarketingConsentResponse"];
+        };
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  updateMarketingConsent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateMarketingConsentRequest"];
+      };
+    };
+    responses: {
+      /** @description 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description 인증 실패 (JWT 토큰 관련)
+       *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+       *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+       *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+       *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+       */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  markAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        notificationId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 읽음 처리 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NotificationSettingResponse"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  updateSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateNotificationSettingRequest"][];
+      };
+    };
+    responses: {
+      /** @description 설정 수정 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - 요청 데이터 검증 실패 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  markAllAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 전체 읽음 처리 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  changePassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ChangePasswordRequest"];
+      };
+    };
+    responses: {
+      /** @description 비밀번호 변경 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokenResponse"];
+        };
+      };
+      /**
+       * @description 잘못된 요청
+       *     - ErrorCode: AUTH_SOCIAL_ACCOUNT_PASSWORD_CHANGE_FORBIDDEN - 소셜 로그인 계정
+       *     - ErrorCode: AUTH_PASSWORD_REUSE_NOT_ALLOWED - 이전 비밀번호와 동일
+       */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: AUTH_INVALID_PASSWORD - 현재 비밀번호 불일치 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getDailyQuestion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyQuestionResponseV2"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
+       *     - ErrorCode: USER_INTEREST_NOT_FOUND - 선택 주제를 찾을 수 없습니다.
+       *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMyWeeklyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 나의 주간 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MyWeeklyReportResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getWeeklyReportById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 주간 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WeeklyReportResponse"];
+        };
+      };
+      /** @description - ErrorCode: WEEKLY_REPORT_NOT_FOUND - 주간 리포트를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getWalletBalance: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WalletBalanceResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND: 사용자를 찾을 수 없음
+       *     - ErrorCode: WALLET_NOT_FOUND: 사용자의 지갑을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  checkNickname: {
+    parameters: {
+      query: {
+        nickname: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 - 사용 가능 여부는 응답 내용으로 판단 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CheckNicknameResponse"];
+        };
+      };
+    };
+  };
+  getMyAllTypeReports: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 나의 유형 리포트 통합 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MyAllTypeReportsResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMyTypeReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        interestCode: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 나의 유형 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MyTypeReportResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getDailyQuestion_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyQuestionResponse"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없습니다.
+       *     - ErrorCode: USER_INTEREST_NOT_FOUND - 선택 주제를 찾을 수 없습니다.
+       *     - ErrorCode: QUESTION_NOT_FOUND_FOR_CONDITION - 조건에 맞는 질문을 찾을 수 없습니다.
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getNotifications: {
+    parameters: {
+      query?: {
+        cursor?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NotificationListResponse"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteAllNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 전체 알림 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getUnreadCount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UnreadCountResponse"];
+        };
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMyMonthlyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 나의 월간 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MyMonthlyReportResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMonthlyReportById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 월간 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MonthlyReportResponse"];
+        };
+      };
+      /** @description - ErrorCode: MONTHLY_REPORT_NOT_FOUND - 월간 리포트를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getHomeData: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 홈화면 정보 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HomeResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getFriends: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["FriendListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  searchUsers: {
+    parameters: {
+      query: {
+        request: components["schemas"]["SearchUserRequest"];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchUserListResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 검색 키워드 누락 또는 길이 초과 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 피드 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FeedListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getShareStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ShareStatusResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getDailyReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 오늘의 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyReportResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
+       *     - ErrorCode: DAILY_REPORT_NOT_FOUND - 일간 리포트를 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getDailyReportById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        reportId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 오늘의 리포트 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AnswerDetailResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: ANSWER_NOT_FOUND - 작성된 답변 내역을 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getImageStatus: {
+    parameters: {
+      query: {
+        key: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ImageStatusResponse"];
+        };
+      };
+      /** @description - ErrorCode: IMAGE_INVALID_KEY - 유효하지 않은 이미지 키 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getAuthorizationUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description OAuth2 제공자 (naver, google, kakao)
+         * @example naver
+         */
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorization URL 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthorizationUrlResponse"];
+        };
+      };
+      /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  searchAnswers: {
+    parameters: {
+      query: {
+        request: components["schemas"]["SearchAnswerEntryRequest"];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchAnswerEntryResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (cursor 형식 오류 등) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getAnswerDetailById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        answerId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 상세 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AnswerDetailResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: ANSWER_NOT_FOUND - 답변을 찾을 수 없음 (또는 본인의 답변이 아님) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getMonthlyCalendar: {
+    parameters: {
+      query: {
+        request: components["schemas"]["GetMonthlyCalendarRequest"];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["MonthlyCalendarResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 잘못된 요청 (연도/월 범위 오류) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getAnswerDetailByDate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AnswerDetailResponse"];
+        };
+      };
+      /** @description ErrorCode: VALIDATION_FAILED - 잘못된 날짜 형식 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: ANSWER_NOT_FOUND - 해당 날짜에 답변이 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getCalendarRecents: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["CalendarRecentsResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteProfileImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 프로필 이미지 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteSearchHistory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        historyId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchHistoryListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: SEARCH_HISTORY_ACCESS_FORBIDDEN - 본인의 검색어가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: SEARCH_HISTORY_NOT_FOUND - 검색어를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteNotification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        notificationId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 알림 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: NOTIFICATION_ACCESS_FORBIDDEN - 다른 사용자의 알림에 접근할 수 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - ErrorCode: NOTIFICATION_NOT_FOUND - 알림을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteDevice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        deviceId: string;
+        platform: "IOS" | "ANDROID";
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description FCM 토큰 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - 요청 데이터 검증 실패 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 (JWT 토큰 관련) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /**
+       * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+       *     - ErrorCode: DEVICE_NOT_FOUND - 디바이스를 찾을 수 없음
+       */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  unblockUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userBlockId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 차단 해제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: MODERATION_BLOCK_NOT_FOUND - 차단 관계를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteFriend: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        friendshipId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 관계 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인의 친구가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 친구 관계를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteSearchHistory_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        nickname: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 및 남은 검색 기록 반환 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SearchHistoryListResponse"];
+        };
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  cancelFriendRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        friendshipId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 취소 성공 */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ApiResponseDto"];
+        };
+      };
+      /** @description ErrorCode: FRIENDSHIP_ALREADY_PROCESSED - 이미 처리된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 인증 실패 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_ACCESS_FORBIDDEN - 본인이 보낸 요청이 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description ErrorCode: FRIENDSHIP_NOT_FOUND - 요청을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
 }
