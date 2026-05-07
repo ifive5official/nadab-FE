@@ -1,4 +1,4 @@
-import BlockButton from "@/components/BlockButton";
+// import BlockButton from "@/components/BlockButton";
 import { SubHeader } from "@/components/Headers";
 import { PlusIcon, WarningFilledIcon } from "@/components/Icons";
 import { CrystalBadge } from "@/components/Badges";
@@ -29,6 +29,7 @@ export const Route = createFileRoute("/_authenticated/daily/write")({
 });
 
 function RouteComponent() {
+  // ios 강제 스크롤로 인한 엑세서리 바 버그 해결용...
   const [isFocused, setIsFocused] = useState(false);
 
   const navigate = useNavigate();
@@ -39,12 +40,12 @@ function RouteComponent() {
   const { showToast } = useToastStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageUploader = useImageUploader({
-    apiUrl: "/api/v1/daily-report/image/upload-url",
     onUpload: () => {
       if (textareaRef.current) {
         textareaRef.current.blur();
       }
     },
+    apiUrl: "/api/v1/daily-report/image/upload-url",
     onUploadError: (e) => {
       console.log("답변 이미지 업로드 에러:", e);
       if (e.message?.toLowerCase().includes("canceled")) {
@@ -73,39 +74,46 @@ function RouteComponent() {
   const {
     uploadedImageUrl,
     webpKey,
-    isUploading: isImageUploading,
+    // isUploading: isImageUploading,
     cropTarget,
     setCropTarget,
     handleCropComplete,
   } = imageUploader;
 
   const generateResponseMutation = useGenerateReportMutation({
-    onSuccess: (reportId) =>
-      showModal({
-        title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
-        icon: () => (
-          <div className="flex items-center mb-margin-y-s">
-            <PlusIcon />
-            <CrystalBadge height={32.5} crystals={10} />
-          </div>
-        ),
-        buttons: [
-          {
-            label: "홈으로",
-            onClick: () => {
-              closeModal();
-              navigate({ to: "/" });
+    onSuccess: (reportId) => {
+      if (textareaRef.current) {
+        textareaRef.current.blur();
+      }
+      // 키보드 닫히는 시간 확보
+      setTimeout(() => {
+        showModal({
+          title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
+          icon: () => (
+            <div className="flex items-center mb-margin-y-s">
+              <PlusIcon />
+              <CrystalBadge height={32.5} crystals={10} />
+            </div>
+          ),
+          buttons: [
+            {
+              label: "홈으로",
+              onClick: () => {
+                closeModal();
+                navigate({ to: "/" });
+              },
             },
-          },
-          {
-            label: "리포트 보기",
-            onClick: () => {
-              closeModal();
-              navigate({ to: `/daily/report/${reportId}` });
+            {
+              label: "리포트 보기",
+              onClick: () => {
+                closeModal();
+                navigate({ to: `/daily/report/${reportId}` });
+              },
             },
-          },
-        ],
-      }),
+          ],
+        });
+      }, 300);
+    },
   });
 
   useBlocker({
@@ -211,13 +219,13 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
-        <BlockButton
+        {/* <BlockButton
           variant="primary"
           onClick={handleComplete}
           isLoading={generateResponseMutation.isPending || isImageUploading}
         >
           완료
-        </BlockButton>
+        </BlockButton> */}
         <InputAccessoryView
           imageUploader={imageUploader}
           isLoading={generateResponseMutation.isPending}
