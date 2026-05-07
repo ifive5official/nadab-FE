@@ -86,33 +86,36 @@ function RouteComponent() {
         textareaRef.current.blur();
       }
       // 키보드 닫히는 시간 확보
-      setTimeout(() => {
-        showModal({
-          title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
-          icon: () => (
-            <div className="flex items-center mb-margin-y-s">
-              <PlusIcon />
-              <CrystalBadge height={32.5} crystals={10} />
-            </div>
-          ),
-          buttons: [
-            {
-              label: "홈으로",
-              onClick: () => {
-                closeModal();
-                navigate({ to: "/" });
+      setTimeout(
+        () => {
+          showModal({
+            title: `오늘의 답변으로\n크리스탈을 획득했어요.`,
+            icon: () => (
+              <div className="flex items-center mb-margin-y-s">
+                <PlusIcon />
+                <CrystalBadge height={32.5} crystals={10} />
+              </div>
+            ),
+            buttons: [
+              {
+                label: "홈으로",
+                onClick: () => {
+                  closeModal();
+                  navigate({ to: "/" });
+                },
               },
-            },
-            {
-              label: "리포트 보기",
-              onClick: () => {
-                closeModal();
-                navigate({ to: `/daily/report/${reportId}` });
+              {
+                label: "리포트 보기",
+                onClick: () => {
+                  closeModal();
+                  navigate({ to: `/daily/report/${reportId}` });
+                },
               },
-            },
-          ],
-        });
-      }, 300);
+            ],
+          });
+        },
+        Capacitor.getPlatform() === "android" ? 300 : 500,
+      );
     },
   });
 
