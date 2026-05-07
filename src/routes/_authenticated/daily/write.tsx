@@ -155,6 +155,14 @@ function RouteComponent() {
     }
   }
 
+  function preventNativeScroll() {
+    // 포커스가 발생한 직후에 스크롤을 0으로 강제 고정
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+    }, 0);
+  }
+
   return (
     <>
       <SubHeader>오늘의 질문</SubHeader>
@@ -164,6 +172,7 @@ function RouteComponent() {
           <div>
             <div className="border-b border-interactive-border-default" />
             <textarea
+              onFocus={preventNativeScroll}
               ref={textareaRef}
               rows={6}
               maxLength={200}
