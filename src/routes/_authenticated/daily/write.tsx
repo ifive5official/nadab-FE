@@ -19,6 +19,7 @@ import { useImageUploader } from "@/hooks/useImageUpload";
 import { ImageCropper } from "@/components/ImageCropper";
 import useToastStore from "@/store/toastStore";
 import { Capacitor } from "@capacitor/core";
+import clsx from "clsx";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -28,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/daily/write")({
 });
 
 function RouteComponent() {
+  const [isFocused, setIsFocused] = useState(false);
+
   const navigate = useNavigate();
   const { data: question } = useSuspenseQuery(questionOptions);
   const [answer, setAnswer] = useState("");
@@ -171,14 +174,34 @@ function RouteComponent() {
           <QuestionSection question={question!} />
           <div>
             <div className="border-b border-interactive-border-default" />
+            {!isFocused && (
+              <div
+                onClick={() => {
+                  setIsFocused(true);
+                  textareaRef.current?.focus(); // 상단에 있는 진짜 인풋에 포커스
+                }}
+                className={clsx(
+                  "box-content w-full my-margin-y-m text-caption-l h-36 cursor-text whitespace-pre-line overflow-y-auto",
+                  !answer ? "text-text-disabled" : "text-text-primary",
+                )}
+              >
+                {answer || "내용을 입력하세요."}
+              </div>
+            )}
             <textarea
               onFocus={preventNativeScroll}
               ref={textareaRef}
               rows={6}
               maxLength={200}
-              className="w-full resize-none outline-0 my-margin-y-m text-caption-l placeholder:text-text-disabled"
+              className={clsx(
+                "block box-content h-36 w-full resize-none outline-0 my-margin-y-m text-caption-l placeholder:text-text-disabled",
+                isFocused
+                  ? "relative opacity-100"
+                  : "absolute top-[-100vh] left-0 opacity-0 pointer-events-none",
+              )}
               placeholder="내용을 입력하세요."
               onChange={(e) => setAnswer(e.target.value)}
+              onBlur={() => setIsFocused(false)}
               value={answer}
             />
             <div className="border-b border-interactive-border-default" />
