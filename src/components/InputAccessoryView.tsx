@@ -59,9 +59,9 @@ export default function InputAccessoryView({
   }, []);
 
   const handleComplete = () => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur(); // 키보드 닫기
-    }
+    // if (document.activeElement instanceof HTMLElement) {
+    //   document.activeElement.blur(); // 키보드 닫기
+    // }
     onComplete();
   };
 
