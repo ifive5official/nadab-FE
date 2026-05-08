@@ -3,32 +3,24 @@
 import { useRef } from "react";
 import clsx from "clsx";
 import ProfileImg from "@/components/ProfileImg";
-import useToastStore from "@/store/toastStore";
-
 import { Capacitor } from "@capacitor/core";
 import useBottomModalStore from "@/store/bottomModalStore";
-import useModalStore from "@/store/modalStore";
-import { useImageUploader } from "@/hooks/useImageUpload";
 import { ImageCropper } from "@/components/ImageCropper";
+import type { useProfileImageUpload } from "@/hooks/useProfileImageUpload";
 
 type Props = {
   mode: "create" | "edit";
-  initialProfileImgUrl?: string;
-  onSuccess: (url: string) => void;
+  imageUploader: ReturnType<typeof useProfileImageUpload>;
   className?: string;
 };
 
 export default function ProfileImageUploader({
   mode,
-  initialProfileImgUrl = undefined,
-  onSuccess,
+  imageUploader,
   className,
 }: Props) {
   const isNative = Capacitor.isNativePlatform();
-
-  const { showError } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
-  const { showToast } = useToastStore();
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -38,44 +30,11 @@ export default function ProfileImageUploader({
     cropTarget,
     setCropTarget,
     handleCropComplete,
+    isCropping,
     isUploading,
     handleWebFileChange,
     handleNativeUpload,
-  } = useImageUploader({
-    apiUrl: "/api/v1/user/me/profile-image/upload-url",
-    initialImageUrl: initialProfileImgUrl,
-    onUpload: closeBottomModal,
-    onUploadSuccess: (url: string) => {
-      onSuccess(url);
-      showToast({
-        message: "프로필 사진이 추가되었어요.",
-        bottom:
-          "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
-      });
-    },
-    onUploadError: (e) => {
-      if (e.message?.toLowerCase().includes("canceled")) {
-        return;
-      }
-      console.error(e);
-      if (
-        isNative &&
-        (e.message.includes("denied") || e.message.includes("permission"))
-      ) {
-        closeBottomModal();
-        showToast({
-          message: "설정에서 카메라 권한을 허용해 주세요.",
-          bottom:
-            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
-        });
-      } else {
-        showError(
-          "이미지 업로드 중 문제가 발생했어요.",
-          "다시 한번 시도해 주세요.",
-        );
-      }
-    },
-  });
+  } = imageUploader;
 
   const baseModalItems = [
     {
@@ -120,7 +79,6 @@ export default function ProfileImageUploader({
           label: "기본 프로필로 변경",
           onClick: () => {
             clearImage();
-            onSuccess("");
             closeBottomModal();
           },
         },
@@ -137,15 +95,15 @@ export default function ProfileImageUploader({
 
   return (
     <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
-      {!isUploading && <ProfileImg width={64} src={tempImageUrl} />}
-      {isUploading && (
+      {!isCropping && <ProfileImg width={64} src={tempImageUrl} />}
+      {isCropping && (
         <div className="bg-neutral-300 h-16 w-16 rounded-full animate-pulse" />
       )}
       <button
         type="button"
         className="text-button-tertiary-text-default text-label-m underline"
         onClick={() => showBottomModal(bottomModalConfig)}
-        disabled={isUploading}
+        disabled={isCropping || isUploading}
       >
         {buttonText}
       </button>

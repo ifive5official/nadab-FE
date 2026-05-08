@@ -60,8 +60,6 @@ function RouteComponent() {
       ) {
         showToast({
           message: "설정에서 카메라 권한을 허용해 주세요.",
-          bottom:
-            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
         });
       } else {
         showError(
@@ -71,14 +69,8 @@ function RouteComponent() {
       }
     },
   });
-  const {
-    uploadedImageUrl,
-    webpKey,
-    // isUploading: isImageUploading,
-    cropTarget,
-    setCropTarget,
-    handleCropComplete,
-  } = imageUploader;
+  const { cropTarget, setCropTarget, handleCropComplete, uploadImage } =
+    imageUploader;
 
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) => {
@@ -153,14 +145,19 @@ function RouteComponent() {
     }, 100);
   }
 
-  function handleComplete() {
+  async function handleComplete() {
     if (canSubmit) {
-      generateResponseMutation.mutate({
-        questionId: question?.questionId ?? 0,
-        answer,
-        objectKey: uploadedImageUrl,
-        webpKey,
-      });
+      try {
+        const uploadResult = await uploadImage();
+        generateResponseMutation.mutate({
+          questionId: question?.questionId ?? 0,
+          answer,
+          objectKey: uploadResult?.objectKey,
+          webpKey: uploadResult?.webpKey,
+        });
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       showError(
         "10글자 이상 작성해 주세요.",
@@ -222,13 +219,6 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
-        {/* <BlockButton
-          variant="primary"
-          onClick={handleComplete}
-          isLoading={generateResponseMutation.isPending || isImageUploading}
-        >
-          완료
-        </BlockButton> */}
         <InputAccessoryView
           imageUploader={imageUploader}
           isLoading={generateResponseMutation.isPending}

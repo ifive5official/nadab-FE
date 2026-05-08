@@ -21,8 +21,13 @@ export default function InputAccessoryView({
   const [bottomOffset, setBottomOffset] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
-  const { tempImageUrl, clearImage, isUploading, handleNativeUpload } =
-    imageUploader;
+  const {
+    tempImageUrl,
+    clearImage,
+    isCropping,
+    isUploading,
+    handleNativeUpload,
+  } = imageUploader;
 
   useEffect(() => {
     const handleViewportChange = () => {
@@ -58,12 +63,11 @@ export default function InputAccessoryView({
     };
   }, []);
 
-  const handleComplete = () => {
-    // if (document.activeElement instanceof HTMLElement) {
-    //   document.activeElement.blur(); // 키보드 닫기
-    // }
-    onComplete();
-  };
+  function handleHideKeyboard() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur(); // 키보드 닫기
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -89,11 +93,14 @@ export default function InputAccessoryView({
                 <CloseFilledIcon size={12} />
               </button>
             </div>
-          ) : isUploading ? (
+          ) : isCropping ? (
             <div className="h-[45px] aspect-square rounded-full animate-pulse" />
           ) : (
             <button
-              onClick={() => handleNativeUpload("camera")}
+              onClick={() => {
+                handleHideKeyboard();
+                handleNativeUpload("camera");
+              }}
               className="h-[45px] aspect-square rounded-full bg-surface-base border border-border-base flex items-center justify-center"
             >
               <CameraIcon />
@@ -101,14 +108,17 @@ export default function InputAccessoryView({
           )}
 
           <button
-            onClick={() => handleNativeUpload("gallery")}
+            onClick={() => {
+              handleHideKeyboard();
+              handleNativeUpload("gallery");
+            }}
             className="h-[45px] aspect-square rounded-full bg-surface-base border border-border-base flex items-center justify-center"
           >
             <GalleryIcon />
           </button>
           <InlineButton
-            isLoading={isUploading || isLoading}
-            onClick={handleComplete}
+            isLoading={isCropping || isUploading || isLoading}
+            onClick={onComplete}
             className="ml-auto"
           >
             완료
