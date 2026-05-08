@@ -16,7 +16,8 @@ type ImageUploaderProps = {
   apiUrl: string;
   initialImageUrl?: string;
   onUpload?: () => void; // 이미지 선택 직후 동작(모달 닫는 등)
-  onUploadSuccess?: (objectKey: string) => void;
+  onCropSuccess?: () => void;
+  onUploadSuccess?: () => void;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   onUploadError?: (error: any) => void;
 };
@@ -25,15 +26,14 @@ export function useImageUploader({
   apiUrl,
   initialImageUrl,
   onUpload,
+  onCropSuccess,
   onUploadSuccess,
   onUploadError,
 }: ImageUploaderProps) {
-  const [tempImageUrl, setTempImageUrl] = useState(initialImageUrl);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | undefined>(
-    undefined,
-  );
-  const [webpKey, setWebpKey] = useState<string | undefined>(undefined);
-  const [cropTarget, setCropTarget] = useState<string | null>(null);
+  const [cropTarget, setCropTarget] = useState<string | null>(null); // 크롭 전 선택된 이미지
+  const [croppedFile, setCroppedFile] = useState<File | null>(null); // 크롭된 파일 객체
+  const [tempImageUrl, setTempImageUrl] = useState(initialImageUrl); // 서버 업로드 전 사용자에게 보여줄 임시 이미지
+
   const [isCropping, setIsCropping] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
 
@@ -62,7 +62,7 @@ export function useImageUploader({
     return false; // 7초 초과
   }
 
-  // 크롭 완료 후 호출
+  // 크롭 완료 후 호출 - 크롭된 이미지 임시저장
   async function handleCropComplete(pixels: any) {
     const imageToCrop = cropTarget;
     setCropTarget(null);
@@ -79,8 +79,8 @@ export function useImageUploader({
       const file = new File([croppedBlob], "profile.jpg", {
         type: "image/jpeg",
       });
-
-      await processUpload(file);
+      setCroppedFile(file);
+      onCropSuccess?.();
     } catch (err) {
       onUploadError?.(err);
     } finally {
@@ -117,36 +117,43 @@ export function useImageUploader({
     },
   });
 
-  // 공통 업로드 프로세스
-  async function processUpload(file: File | Blob) {
-    const res = await getPresignedUrlMutation.mutateAsync(file.type);
-    const data = res.data;
+  // 서버에 업로드할 때 호출하는 함수
+  async function uploadImage() {
+    if (!croppedFile) return;
+    try {
+      const res = await getPresignedUrlMutation.mutateAsync(croppedFile.type);
+      const data = res.data;
 
-    let presignedUrl = "";
-    let uploadUrl = "";
-    setWebpKey(data?.webpKey);
+      let presignedUrl = "";
+      let objectKey = "";
 
-    // 예외처리
-    if (apiUrl.includes("/user/me/profile-image/upload-url")) {
-      presignedUrl = data?.objectKey ?? "";
-      uploadUrl = data?.uploadUrl ?? "";
-    } else {
-      presignedUrl = data?.uploadUrl ?? "";
-      uploadUrl = data?.objectKey ?? "";
-    }
-
-    await uploadToS3Mutation.mutateAsync({ presignedUrl, file });
-    if (apiUrl.includes("daily-report/image/upload-url") && webpKey) {
-      setIsPolling(true);
-      const isReady = await pollWebpStatus(webpKey);
-      setIsPolling(false);
-
-      if (!isReady) {
-        throw new Error("WEBP_CONVERSION_TIMEOUT"); // 7초 경과 시 에러 발생
+      // 예외처리
+      if (apiUrl.includes("/user/me/profile-image/upload-url")) {
+        presignedUrl = data?.objectKey ?? "";
+        objectKey = data?.uploadUrl ?? "";
+      } else {
+        presignedUrl = data?.uploadUrl ?? "";
+        objectKey = data?.objectKey ?? "";
       }
+
+      await uploadToS3Mutation.mutateAsync({ presignedUrl, file: croppedFile });
+      if (apiUrl.includes("daily-report/image/upload-url") && data?.webpKey) {
+        setIsPolling(true);
+        const isReady = await pollWebpStatus(data?.webpKey);
+        setIsPolling(false);
+
+        if (!isReady) {
+          throw new Error("WEBP_CONVERSION_TIMEOUT"); // 7초 경과 시 에러 발생
+        }
+      }
+
+      onUploadSuccess?.();
+
+      return { objectKey, webpKey: data?.webpKey };
+    } catch (err) {
+      onUploadError?.(err);
+      throw err;
     }
-    setUploadedImageUrl(uploadUrl);
-    onUploadSuccess?.(uploadUrl);
   }
 
   // 웹용 파일 핸들러
@@ -196,14 +203,13 @@ export function useImageUploader({
   }
 
   const isUploading =
-    isCropping ||
     getPresignedUrlMutation.isPending ||
     uploadToS3Mutation.isPending ||
     isPolling;
 
   function clearImage() {
     setTempImageUrl(undefined);
-    setUploadedImageUrl("");
+    setCroppedFile(null);
   }
 
   // 메모리 누수 방지
@@ -217,12 +223,12 @@ export function useImageUploader({
 
   return {
     tempImageUrl,
-    uploadedImageUrl,
-    webpKey,
+    isCropping,
     isUploading,
     cropTarget,
     setCropTarget,
     handleCropComplete,
+    uploadImage,
     clearImage,
     handleWebFileChange,
     handleNativeUpload,
