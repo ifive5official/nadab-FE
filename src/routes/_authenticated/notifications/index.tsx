@@ -10,6 +10,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import { NOTIFICATION_CONFIG } from "../../../features/notifications/notificationConfigs";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
 
 type Notification = components["schemas"]["NotificationResponse"];
 
@@ -124,8 +126,13 @@ function NotificationItem({ notification }: { notification: Notification }) {
   return (
     <li
       className="flex items-center gap-gap-x-l py-padding-y-xs cursor-pointer"
-      onClick={() => {
+      onClick={async () => {
         readNotificationMutation.mutate({ notificationId: notification.id! });
+        if (Capacitor.isNativePlatform()) {
+          await PushNotifications.removeDeliveredNotifications({
+            notifications: [{ id: String(notification.id), data: {} }],
+          });
+        }
         navigate({ ...config.linkProps });
       }}
     >

@@ -1,4 +1,4 @@
-// 관심 주제 설정 및 업데이트
+// 선택 주제 설정 및 업데이트
 // 온보딩 및 프로필 수정 페이지에서 사용
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";

@@ -8,6 +8,7 @@ import type emotions from "@/constants/emotions";
 import { MoreHorizontalIcon } from "@/components/Icons";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
+import AnswerImage from "@/components/AnswerImage";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -67,12 +68,13 @@ export default function Post({ feed }: Props) {
       <p className="text-title-3 mt-margin-y-s mb-margin-y-l">
         {feed.questionText}
       </p>
-      <div className="flex flex-col px-padding-x-m py-padding-y-m bg-interactive-bg-default rounded-2xl border border-border-base overflow-hidden">
+      <div className="flex flex-col gap-padding-y-s px-padding-x-m py-padding-y-m bg-interactive-bg-default rounded-2xl border border-border-base overflow-hidden">
         <EmotionBadge
           emotion={feed.emotionCode as (typeof emotions)[number]["code"]}
           filled
           className="mr-auto mb-padding-y-xs"
         />
+        {feed.imageUrl && <AnswerImage imageUrl={feed.imageUrl} />}
         <p
           ref={answerRef}
           className={clsx(
@@ -85,7 +87,7 @@ export default function Post({ feed }: Props) {
         {isOverflowing && (
           <button
             onClick={() => setIsAnswerOpen((prev) => !prev)}
-            className="text-body-2 text-text-secondary ml-auto mt-margin-y-xs"
+            className="text-body-2 text-text-secondary ml-auto"
           >
             {isAnswerOpen ? "접기" : "더보기"}
           </button>

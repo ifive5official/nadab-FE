@@ -11,6 +11,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { currentUserOptions } from "@/features/user/quries";
 import { useDeleteProfileMutation } from "@/features/user/hooks/useDeleteProfileImageMutation";
 import Container from "@/components/Container";
+import { useProfileImageUpload } from "@/hooks/useProfileImageUpload";
 
 export const Route = createFileRoute("/_authenticated/account/profile")({
   component: RouteComponent,
@@ -30,13 +31,17 @@ function RouteComponent() {
   } = useInputValidation("nickname", initialNickname);
   const [isNicknameOk, setIsNicknameOk] = useState(false);
 
-  // 프로필 이미지 삭제 시 빈 문자열("") 들어옴
-  const [profileImgUrl, setProfileImgUrl] =
-    useState<string>(initialProfileImgUrl);
+  const imageUploader = useProfileImageUpload(currentUser.profileImageUrl);
+  const {
+    tempImageUrl: profileImgUrl,
+    uploadImage,
+    isCropping: isCroppingImage,
+    isUploading: isUploadingImage,
+  } = imageUploader;
 
   const isNicknameChanged = nickname !== initialNickname;
   const isProfileImgChanged = profileImgUrl !== initialProfileImgUrl;
-  const isProfileImgDeleted = profileImgUrl === "";
+  const isProfileImgDeleted = !profileImgUrl;
   // 닉네임 중복 체크 통과 여부 - 닉네임 변경 여부 고려
   const isNicknameReady = isNicknameChanged ? isNicknameOk : true;
   const checkNicknameMutation = useCheckNicknameMutation({
@@ -59,32 +64,31 @@ function RouteComponent() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            const tasks = [];
-            // 프로필 이미지 삭제했으면 삭제 api 먼저 호출
-            if (isProfileImgDeleted) {
-              tasks.push(deleteProfileImageMutation.mutateAsync());
-            }
-            if (
-              isNicknameChanged ||
-              (isProfileImgChanged && !isProfileImgDeleted)
-            ) {
-              // 변경했으면 변경한 값, 변경하지 않았을 시 비워서 보냄
-              tasks.push(
-                updateProfileMutation.mutateAsync({
-                  nickname: isNicknameChanged ? nickname : undefined,
-                  objectKey:
-                    isProfileImgChanged && !isProfileImgDeleted
-                      ? profileImgUrl
-                      : undefined,
-                })
-              );
-            }
             try {
-              await Promise.all(tasks);
+              let finalObjectKey: string | undefined = undefined;
+
+              // 프로필 이미지 삭제했으면 삭제 api 먼저 호출
+              if (isProfileImgDeleted) {
+                await deleteProfileImageMutation.mutateAsync();
+                // 이미지를 바꿨으면 이미지 서버에 업로드
+              } else if (isProfileImgChanged) {
+                const uploadResult = await uploadImage();
+                finalObjectKey = uploadResult?.objectKey;
+              }
+              // 바뀐 값이 있을 땐 저장
+              if (
+                isNicknameChanged ||
+                (isProfileImgChanged && !isProfileImgDeleted)
+              ) {
+                // 변경했으면 변경한 값, 변경하지 않았을 시 비워서 보냄
+                await updateProfileMutation.mutateAsync({
+                  nickname: isNicknameChanged ? nickname : undefined,
+                  objectKey: finalObjectKey,
+                });
+              }
               navigate({ to: "/account" });
             } catch (err) {
-              // 이미 각 뮤테이션 훅에서 처리했으므로 아무것도 하지 않음
-              console.error(err);
+              console.log(err);
             }
           }}
           className="flex-1 flex flex-col"
@@ -92,10 +96,7 @@ function RouteComponent() {
           <div className="flex-1">
             <ProfileImageUploader
               mode="edit"
-              initialProfileImgUrl={initialProfileImgUrl}
-              onSuccess={(url: string) => {
-                setProfileImgUrl(url);
-              }}
+              imageUploader={imageUploader}
               className="py-padding-y-m"
             />
             <div className="flex flex-col py-padding-y-m gap-gap-y-l">
@@ -138,7 +139,9 @@ function RouteComponent() {
           <BlockButton
             isLoading={
               updateProfileMutation.isPending ||
-              deleteProfileImageMutation.isPending
+              deleteProfileImageMutation.isPending ||
+              isCroppingImage ||
+              isUploadingImage
             }
             disabled={
               !(isNicknameChanged || isProfileImgChanged) ||

@@ -163,11 +163,22 @@ export default function Home() {
           ) : (
             <div className="flex gap-margin-x-m">
               <BlockButton
-                variant={question?.rerollUsed ? "disabled" : "secondary"}
+                variant={
+                  (question?.rerollRemainingCount ?? 0) <= 0
+                    ? "disabled"
+                    : "secondary"
+                }
                 onClick={() => rerollQuestionMutation.mutate()}
                 isLoading={rerollQuestionMutation.isPending}
               >
-                새로운 질문 받기
+                <div className="absolute inset-0 flex flex-col justify-center items-center">
+                  <span className="text-button-1 text-button-secondary-text-default">
+                    새로운 질문 받기
+                  </span>
+                  <span className="text-caption-s text-neutral-1000">
+                    남은 새로고침 {question?.rerollRemainingCount}번
+                  </span>
+                </div>
               </BlockButton>
               <Link to="/daily" className="w-full">
                 <BlockButton>쓰러가기</BlockButton>

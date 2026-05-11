@@ -11,41 +11,15 @@ import {
 import { router } from "@/main";
 import usePushToastStore from "@/store/pushToastStore";
 import { FCM } from "@capacitor-community/fcm";
-import { App } from "@capacitor/app";
-import { Badge } from "@capawesome/capacitor-badge";
 import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
+import { Badge } from "@capawesome/capacitor-badge";
+import type { ApiResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
 
 export function usePushNotifications() {
   const { accessToken: isLoggedIn, deviceId, setDeviceId } = useAuthStore();
   const { showToast } = usePushToastStore();
   const readNotificationMutation = useReadNotificationMutation();
-
-  // ios에서 앱이 활성화될 때마다 배지 초기화
-  useEffect(() => {
-    if (!(Capacitor.getPlatform() === "ios")) return;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    let listener: any;
-
-    const setupListener = async () => {
-      listener = await App.addListener(
-        "appStateChange",
-        async ({ isActive }) => {
-          if (isActive) {
-            await Badge.set({ count: 0 });
-            await PushNotifications.removeAllDeliveredNotifications();
-          }
-        },
-      );
-    };
-
-    setupListener();
-
-    return () => {
-      if (listener) {
-        listener.remove();
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
@@ -87,6 +61,13 @@ export function usePushNotifications() {
       // 리스너 등록
       if (platform === "ANDROID") {
         await setupNotificationChannels();
+      } else if (platform === "IOS") {
+        // 뱃지 수 동기화
+        type NotificationsRes = components["schemas"]["UnreadCountResponse"];
+        const { data: res } = await api.get<ApiResponse<NotificationsRes>>(
+          "/api/v1/notifications/unread-count",
+        );
+        await Badge.set({ count: res!.data!.unreadCount ?? 0 });
       }
       await PushNotifications.removeAllListeners();
 
@@ -113,9 +94,6 @@ export function usePushNotifications() {
         "pushNotificationReceived",
         async (notification) => {
           showToast(notification);
-          // 앱을 보고 있는 중에는 배지가 쌓일 필요가 없으므로 바로 지움
-          await Badge.set({ count: 0 });
-          await PushNotifications.removeAllDeliveredNotifications();
         },
       );
 
@@ -152,6 +130,12 @@ export function usePushNotifications() {
 
     const perm = await PushNotifications.checkPermissions();
     if (perm.receive === "granted") {
+      // 현재 와 있는 모든 알림 제거
+      if (platform === "IOS") {
+        await Badge.set({ count: 0 });
+      }
+      await PushNotifications.removeAllDeliveredNotifications();
+
       await api.delete(`/api/v1/notifications/tokens/${deviceId}/${platform}`);
       await PushNotifications.removeAllListeners();
     }

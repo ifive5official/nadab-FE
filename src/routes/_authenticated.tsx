@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_authenticated")({
       if (isRedirect(err)) throw err;
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 404) {
-          // 관심 주제 없음(온보딩 미완료)
+          // 선택 주제 없음(온보딩 미완료)
           throw redirect({ to: "/onboarding/intro" });
         }
         handleDefaultApiError(err);

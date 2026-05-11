@@ -9,6 +9,7 @@ import useOnboardingStore from "@/store/onboardingStore";
 import ProfileImageUploader from "@/features/user/components/ProfileImageUploader";
 import { useUpdateProfileMutation } from "@/features/user/hooks/useUpdateProfileMutation";
 import { useCheckNicknameMutation } from "@/features/user/hooks/useCheckNicknameMutation";
+import { useProfileImageUpload } from "@/hooks/useProfileImageUpload";
 
 export const Route = createFileRoute("/(auth)/onboarding/profile")({
   component: Profile,
@@ -30,9 +31,12 @@ function Profile() {
     isValidating: isNicknameValidating,
   } = useInputValidation("nickname");
   const [isNicknameOk, setIsNicknameOk] = useState(false);
-  const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>(
-    undefined
-  );
+  const imageUploader = useProfileImageUpload();
+  const {
+    uploadImage,
+    isCropping: isCroppingImage,
+    isUploading: isUploadingImage,
+  } = imageUploader;
 
   const navigate = useNavigate();
 
@@ -55,12 +59,17 @@ function Profile() {
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        updateProfileMutation.mutate({
-          nickname,
-          objectKey: profileImgUrl,
-        });
+        try {
+          const uploadResult = await uploadImage();
+          updateProfileMutation.mutate({
+            nickname,
+            objectKey: uploadResult?.objectKey,
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }}
       className="h-full flex flex-col"
     >
@@ -70,9 +79,7 @@ function Profile() {
         </div>
         <ProfileImageUploader
           mode="create"
-          onSuccess={(url: string) => {
-            setProfileImgUrl(url);
-          }}
+          imageUploader={imageUploader}
           className="py-padding-y-xl"
         />
         <div className="flex flex-col py-padding-y-m gap-gap-y-l">
@@ -104,7 +111,9 @@ function Profile() {
       </div>
 
       <BlockButton
-        isLoading={updateProfileMutation.isPending}
+        isLoading={
+          updateProfileMutation.isPending || isCroppingImage || isUploadingImage
+        }
         disabled={!(nickname && !nicknameError && isNicknameOk)}
       >
         완료

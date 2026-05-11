@@ -1,50 +1,47 @@
-// 프로필 이미지 + 업로드 로직 모아둔 파일
-import { useState, useRef, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import type { components } from "@/generated/api-types";
-import type { ApiResponse } from "@/generated/api";
-import axios from "axios";
+// 프로필 이미지 업로드 컴포넌트
+// 온보딩 및 마이페이지 프로필 수정 페이지에서 사용
+import { useRef } from "react";
 import clsx from "clsx";
 import ProfileImg from "@/components/ProfileImg";
-import useToastStore from "@/store/toastStore";
-
 import { Capacitor } from "@capacitor/core";
-import { Camera, CameraResultType, CameraSource } from "@capacitor/camera"; // 추가
 import useBottomModalStore from "@/store/bottomModalStore";
-import useModalStore from "@/store/modalStore";
-
-type UploadUrlRes =
-  components["schemas"]["CreateProfileImageUploadUrlResponse"];
+import { ImageCropper } from "@/components/ImageCropper";
+import type { useProfileImageUpload } from "@/hooks/useProfileImageUpload";
 
 type Props = {
   mode: "create" | "edit";
-  initialProfileImgUrl?: string | undefined;
-  onSuccess: (url: string) => void;
+  imageUploader: ReturnType<typeof useProfileImageUpload>;
   className?: string;
 };
 
 export default function ProfileImageUploader({
   mode,
-  initialProfileImgUrl = undefined,
-  onSuccess,
+  imageUploader,
   className,
 }: Props) {
-  const [profileImgUrl, setProfileImgUrl] = useState(initialProfileImgUrl);
-  const { showError } = useModalStore();
+  const isNative = Capacitor.isNativePlatform();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
-  const { showToast } = useToastStore();
   const albumInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
-  const isNative = Capacitor.isNativePlatform();
+  const {
+    tempImageUrl,
+    clearImage,
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
+    isCropping,
+    isUploading,
+    handleWebFileChange,
+    handleNativeUpload,
+  } = imageUploader;
 
   const baseModalItems = [
     {
       label: "앨범에서 사진 선택",
       onClick: () => {
         if (isNative) {
-          handleNativeUpload(CameraSource.Photos);
+          handleNativeUpload("gallery");
         } else {
           albumInputRef.current?.click();
         }
@@ -54,7 +51,7 @@ export default function ProfileImageUploader({
       label: "사진 찍기",
       onClick: () => {
         if (isNative) {
-          handleNativeUpload(CameraSource.Camera);
+          handleNativeUpload("camera");
         } else {
           cameraInputRef.current?.click();
         }
@@ -81,8 +78,7 @@ export default function ProfileImageUploader({
         {
           label: "기본 프로필로 변경",
           onClick: () => {
-            setProfileImgUrl(undefined);
-            onSuccess("");
+            clearImage();
             closeBottomModal();
           },
         },
@@ -97,153 +93,17 @@ export default function ProfileImageUploader({
     items: modalItems,
   };
 
-  // presigned url 생성
-  const getPresignedUrlMutation = useMutation({
-    mutationFn: async (contentType: string) => {
-      const res = await api.post<ApiResponse<UploadUrlRes>>(
-        "/api/v1/user/me/profile-image/upload-url",
-        {
-          contentType,
-        },
-      );
-      return res.data;
-    },
-  });
-
-  // S3 PUT 업로드
-  const uploadToS3Mutation = useMutation({
-    mutationFn: async ({
-      presignedUrl,
-      file,
-    }: {
-      presignedUrl: string;
-      file: File;
-    }) => {
-      await axios.put(presignedUrl, file, {
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-
-      return presignedUrl.split("?")[0];
-    },
-  });
-
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!["image/jpeg", "image/png"].includes(file.type)) {
-      alert("jpeg 또는 png만 업로드할 수 있습니다.");
-      return;
-    }
-
-    closeBottomModal();
-
-    const previewUrl = URL.createObjectURL(file);
-    setProfileImgUrl(previewUrl);
-
-    try {
-      const res = await getPresignedUrlMutation.mutateAsync(file.type);
-      await uploadToS3Mutation.mutateAsync({
-        presignedUrl: res.data?.objectKey ?? "",
-        file,
-      });
-      onSuccess(res.data?.uploadUrl ?? "");
-      showToast({
-        message: "프로필 사진이 추가되었어요.",
-        bottom:
-          "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
-      });
-    } catch (e) {
-      console.error(e);
-      showError(
-        "이미지 업로드 중 문제가 발생했어요.",
-        "다시 한번 시도해 주세요.",
-      );
-    } finally {
-      e.target.value = "";
-    }
-  }
-
-  // 네이티브 카메라 / 앨범 호출 로직
-  const handleNativeUpload = async (source: CameraSource) => {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.Uri,
-        source: source,
-      });
-
-      if (image.webPath) {
-        // 1. 프리뷰 설정
-        setProfileImgUrl(image.webPath);
-
-        // 2. S3 업로드를 위해 Blob으로 변환
-        const response = await fetch(image.webPath);
-        const blob = await response.blob();
-        const file = new File([blob], `profile.${image.format}`, {
-          type: `image/${image.format}`,
-        });
-
-        // 3. 기존 업로드 로직
-        closeBottomModal();
-        const res = await getPresignedUrlMutation.mutateAsync(file.type);
-        await uploadToS3Mutation.mutateAsync({
-          presignedUrl: res.data?.objectKey ?? "",
-          file,
-        });
-        onSuccess(res.data?.uploadUrl ?? "");
-        showToast({
-          message: "프로필 사진이 추가되었어요.",
-          bottom:
-            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
-        });
-      }
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (e: any) {
-      console.error("Native Upload Error:", e);
-      if (e.message.includes("denied") || e.message.includes("permission")) {
-        closeBottomModal();
-        showToast({
-          message: "설정에서 카메라 권한을 허용해 주세요.",
-          bottom:
-            "bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]",
-        });
-      } else {
-        showError(
-          "이미지 업로드 중 문제가 발생했어요.",
-          "다시 한번 시도해 주세요.",
-        );
-      }
-    }
-  };
-
-  // 메모리 누수 방지
-  useEffect(() => {
-    const currentUrl = profileImgUrl;
-    return () => {
-      if (currentUrl?.startsWith("blob:")) {
-        URL.revokeObjectURL(currentUrl);
-      }
-    };
-  }, [profileImgUrl]);
-
-  const isUploading =
-    getPresignedUrlMutation.isPending || uploadToS3Mutation.isPending;
-
   return (
     <div className={clsx("flex flex-col items-center gap-gap-y-s", className)}>
-      {!isUploading && <ProfileImg width={64} src={profileImgUrl} />}
-      {isUploading && (
+      {!isCropping && <ProfileImg width={64} src={tempImageUrl} />}
+      {isCropping && (
         <div className="bg-neutral-300 h-16 w-16 rounded-full animate-pulse" />
       )}
       <button
         type="button"
         className="text-button-tertiary-text-default text-label-m underline"
         onClick={() => showBottomModal(bottomModalConfig)}
-        disabled={isUploading}
+        disabled={isCropping || isUploading}
       >
         {buttonText}
       </button>
@@ -252,7 +112,7 @@ export default function ProfileImageUploader({
         type="file"
         className="hidden"
         accept="image/jpeg,image/png"
-        onChange={handleFileChange}
+        onChange={handleWebFileChange}
       />
       <input
         ref={cameraInputRef}
@@ -260,8 +120,15 @@ export default function ProfileImageUploader({
         className="hidden"
         accept="image/jpeg,image/png"
         capture="environment"
-        onChange={handleFileChange}
+        onChange={handleWebFileChange}
       />
+      {cropTarget && (
+        <ImageCropper
+          image={cropTarget}
+          onConfirm={handleCropComplete}
+          onCancel={() => setCropTarget(null)}
+        />
+      )}
     </div>
   );
 }
