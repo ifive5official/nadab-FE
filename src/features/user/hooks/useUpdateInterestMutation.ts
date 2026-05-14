@@ -5,8 +5,8 @@ import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
-import type { CurrentUser } from "@/types/currentUser";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import type { CurrentUser } from "@/types/currentUser";
 
 type Props = {
   onSuccess?: (interestCode: string) => void;
@@ -16,7 +16,6 @@ type Req = components["schemas"]["UpdateUserInterestRequest"];
 
 export function useUpdateInterestMutation({ onSuccess }: Props) {
   const queryClient = useQueryClient();
-  const USER_QUERY_KEY = ["currentUser"];
 
   return useMutation({
     mutationFn: async ({ interestCode }: Req) => {
@@ -24,33 +23,23 @@ export function useUpdateInterestMutation({ onSuccess }: Props) {
         interestCode,
       });
     },
-    onMutate: async (newInterest) => {
-      await queryClient.cancelQueries({ queryKey: USER_QUERY_KEY });
-      const previousUser = queryClient.getQueryData(USER_QUERY_KEY);
-
-      if (previousUser) {
-        queryClient.setQueryData(USER_QUERY_KEY, (old: CurrentUser) => ({
-          ...old,
-          interestCode: newInterest.interestCode,
-        }));
-      }
-
-      return { previousUser };
-    },
     onSuccess: (_, { interestCode }) => {
-      queryClient.resetQueries({ queryKey: ["currentUser", "question"] });
+      // 유저 정보(카테고리 포함) 업데이트
+      queryClient.setQueryData(
+        ["currentUser"],
+        (oldData: CurrentUser | undefined) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            interestCode,
+          };
+        },
+      );
       onSuccess?.(interestCode);
     },
-    onError: (err: AxiosError<ApiErrResponse<null>>, _newInterest, context) => {
-      // 에러 발생 시 원래 데이터로 복구
-      if (context?.previousUser) {
-        queryClient.setQueryData(USER_QUERY_KEY, context.previousUser);
-      }
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);
-    },
-    onSettled: () => {
-      // 성공/실패 여부와 상관없이 서버와 데이터 동기화
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
     },
   });
 }
