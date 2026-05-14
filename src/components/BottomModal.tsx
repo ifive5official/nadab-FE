@@ -52,12 +52,17 @@ export default function BottomModal() {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className="w-full text-button-1 py-padding-y-m"
+                  className={clsx(
+                    "w-full text-button-1 py-padding-y-m",
+                    item.type === "selected" && "bg-surface-layer-1",
+                  )}
                 >
                   <span
                     className={clsx(
                       item.type === "warning" &&
                         "text-feedback-error-fg underline",
+                      item.type === "selected" && "font-bold",
+                      item.type === "unselected" && "text-text-disabled",
                     )}
                   >
                     {item.label}

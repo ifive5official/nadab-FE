@@ -3,7 +3,7 @@ import { create } from "zustand";
 import createSelectors from "./createSelectors";
 
 type Item = {
-  type?: "normal" | "warning";
+  type?: "normal" | "warning" | "selected" | "unselected";
   label: string;
   onClick: () => void;
 };

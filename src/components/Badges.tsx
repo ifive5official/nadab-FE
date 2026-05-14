@@ -49,6 +49,7 @@ type QuestionBadgeProps = {
   onClick?: () => void;
   isActive?: boolean;
   filled?: boolean;
+  rightElement?: React.ReactNode;
   className?: string;
 };
 
@@ -58,6 +59,7 @@ export function QuestionBadge({
   onClick,
   isActive = true,
   filled = false,
+  rightElement,
   className,
 }: QuestionBadgeProps) {
   const item = categories.find((c) => c.code === category)!;
@@ -86,6 +88,7 @@ export function QuestionBadge({
       >
         {item.title}
       </span>
+      {rightElement}
     </div>
   );
 }

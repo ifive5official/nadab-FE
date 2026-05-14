@@ -1167,11 +1167,11 @@ export function BannerCloseIcon() {
   );
 }
 
-export function MoreHorizontalIcon() {
+export function MoreHorizontalIcon({ size = 28 }: { size?: number }) {
   return (
     <svg
-      width="28"
-      height="28"
+      width={size}
+      height={size}
       viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
