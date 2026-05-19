@@ -165,6 +165,9 @@ function RouteComponent() {
         console.error(err);
       }
     } else {
+      if (textareaRef.current) {
+        textareaRef.current.blur();
+      }
       showError(
         "10글자 이상 작성해 주세요.",
         "정교한 분석을 위해 조금만 더 자세히 답변해 주세요.",
