@@ -135,55 +135,61 @@ export default function Home() {
           <div className="flex flex-col items-center gap-gap-y-m">
             <QuestionBadge
               className="cursor-pointer"
-              rightElement={<MoreHorizontalIcon size={16} />}
-              onClick={() => {
-                showBottomModal({
-                  title: "선택 주제 변경",
-                  items: categories.map((category) => {
-                    const isSelected = category.code === interestCode;
-                    return {
-                      label: category.title,
-                      type: isSelected ? "selected" : "unselected",
-                      onClick: async () => {
-                        closeBottomModal();
-                        if (!isSelected) {
-                          if (canRerollQuestion) {
-                            showModal({
-                              icon: () => (
-                                <img
-                                  src="/mainLogo.png"
-                                  alt="모달 아이콘"
-                                  className="aspect-square h-[33px] p-[11px] box-content"
-                                />
-                              ),
-                              title: "선택 주제를 변경할까요?",
-                              children:
-                                "확인 시 새로운 선택 주제와 함께 다른 질문으로 변경돼요.",
-                              buttons: [
-                                {
-                                  label: "취소",
-                                  onClick: closeModal,
-                                },
-                                {
-                                  label: "확인",
-                                  onClick: () => {
-                                    updateInterestMutation.mutate({
-                                      interestCode: category.code,
-                                    });
-                                    closeModal();
-                                  },
-                                },
-                              ],
-                            });
-                          } else {
-                            showError("새로고침 횟수가 부족해요.");
-                          }
-                        }
-                      },
-                    };
-                  }),
-                });
-              }}
+              rightElement={
+                !question?.answered && <MoreHorizontalIcon size={16} />
+              }
+              onClick={
+                question?.answered
+                  ? undefined
+                  : () => {
+                      showBottomModal({
+                        title: "선택 주제 변경",
+                        items: categories.map((category) => {
+                          const isSelected = category.code === interestCode;
+                          return {
+                            label: category.title,
+                            type: isSelected ? "selected" : "unselected",
+                            onClick: async () => {
+                              closeBottomModal();
+                              if (!isSelected) {
+                                if (canRerollQuestion) {
+                                  showModal({
+                                    icon: () => (
+                                      <img
+                                        src="/mainLogo.png"
+                                        alt="모달 아이콘"
+                                        className="aspect-square h-[33px] p-[11px] box-content"
+                                      />
+                                    ),
+                                    title: "선택 주제를 변경할까요?",
+                                    children:
+                                      "확인 시 새로운 선택 주제와 함께 다른 질문으로 변경돼요.",
+                                    buttons: [
+                                      {
+                                        label: "취소",
+                                        onClick: closeModal,
+                                      },
+                                      {
+                                        label: "확인",
+                                        onClick: () => {
+                                          updateInterestMutation.mutate({
+                                            interestCode: category.code,
+                                          });
+                                          closeModal();
+                                        },
+                                      },
+                                    ],
+                                  });
+                                } else {
+                                  showError("새로고침 횟수가 부족해요.");
+                                }
+                              }
+                            },
+                          };
+                        }),
+                      });
+                    }
+              }
               category={interestCode}
             />
             <p className="relative text-title-2 text-center">
