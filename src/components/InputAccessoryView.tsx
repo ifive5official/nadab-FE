@@ -81,7 +81,10 @@ export default function InputAccessoryView({
           }}
           className="fixed bottom-0 inset-x-0 px-padding-x-m pt-padding-y-s bg-surface-layer-1 border border-border-base flex gap-gap-x-m items-center"
           // 엑세서리 바 누를 때 포커스 이탈 방지
-          onPointerDown={(e) => e.preventDefault()}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
         >
           {tempImageUrl ? (
             <div className="relative">
