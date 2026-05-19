@@ -35,7 +35,7 @@ export function useScrollDirection(
         }
 
         // 실시간 방향 전환을 위해 현재 좌표를 시작 좌표로 갱신
-        touchStartY.current = touchCurrentY;
+        // touchStartY.current = touchCurrentY;
       }
     };
 
