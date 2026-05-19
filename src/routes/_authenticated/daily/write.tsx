@@ -20,6 +20,7 @@ import { ImageCropper } from "@/components/ImageCropper";
 import useToastStore from "@/store/toastStore";
 import { Capacitor } from "@capacitor/core";
 import clsx from "clsx";
+import BlockButton from "@/components/BlockButton";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -69,8 +70,13 @@ function RouteComponent() {
       }
     },
   });
-  const { cropTarget, setCropTarget, handleCropComplete, uploadImage } =
-    imageUploader;
+  const {
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
+    uploadImage,
+    isUploading: isImageUploading,
+  } = imageUploader;
 
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) => {
@@ -166,13 +172,9 @@ function RouteComponent() {
     }
   }
 
-  function preventNativeScroll() {
-    // 포커스가 발생한 직후에 스크롤을 0으로 강제 고정
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0;
-    }, 0);
-  }
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const nav = navigator as any;
+  const isMobile = nav.userAgentData?.mobile; // 완료 버튼 공개 여부 판단
 
   return (
     <>
@@ -197,7 +199,6 @@ function RouteComponent() {
               </div>
             )}
             <textarea
-              onFocus={preventNativeScroll}
               ref={textareaRef}
               rows={6}
               maxLength={200}
@@ -219,6 +220,15 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
+        {!isMobile && (
+          <BlockButton
+            variant="primary"
+            onClick={handleComplete}
+            isLoading={generateResponseMutation.isPending || isImageUploading}
+          >
+            완료
+          </BlockButton>
+        )}
         <InputAccessoryView
           imageUploader={imageUploader}
           isLoading={generateResponseMutation.isPending}

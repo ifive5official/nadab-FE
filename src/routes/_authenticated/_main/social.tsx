@@ -12,6 +12,8 @@ import {
 import Loading from "@/components/Loading";
 import { useQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
+import { answerOptions } from "@/features/report/quries";
+import { formatISODate } from "@/lib/formatters";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -27,6 +29,9 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
   loader: async ({ deps: { tab }, context: { queryClient } }) => {
     switch (tab) {
       case "feed":
+        queryClient.ensureQueryData(
+          answerOptions.detail(formatISODate(new Date())),
+        );
         queryClient.ensureQueryData(feedOptions);
         queryClient.ensureQueryData(friendsOptions);
         queryClient.ensureQueryData(feedShareStatusOptions);
