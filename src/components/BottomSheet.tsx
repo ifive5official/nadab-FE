@@ -1,7 +1,9 @@
 // 아래에서 열리는 창
 // 좋아요 및 댓글 목록 보기에서 사용
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 import useBottomSheetStore from "@/store/bottomSheetStore";
 import { useLocation } from "@tanstack/react-router";
+import clsx from "clsx";
 import { motion, AnimatePresence, useDragControls } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -13,7 +15,8 @@ export default function BottomSheet() {
   const dragControls = useDragControls();
   const contentRef = useRef<HTMLDivElement>(null);
   const [isScrollAtTop, setIsScrollAtTop] = useState(true);
-
+  const isScrollingDown = useScrollDirection(contentRef);
+  console.log(isScrollingDown);
   // 콘텐츠 내부 스크롤 감지 함수
   function handleContentScroll() {
     if (contentRef.current) {
@@ -68,7 +71,7 @@ export default function BottomSheet() {
           >
             {/* 빈 공간 - 항상 드래그 가능 */}
             <div
-              className="w-full flex flex-col items-center pt-padding-y-m px-padding-x-m"
+              className="w-full flex flex-col items-center pt-padding-y-m px-padding-x-m touch-none"
               onPointerDown={(e) => dragControls.start(e)}
             >
               <div className="w-10 h-[5px] rounded-[20px] bg-[#D9D9D9]" />
@@ -76,11 +79,14 @@ export default function BottomSheet() {
             </div>
             {/* 컨텐츠 영역 - 스크롤이 없거나 맨 위에 있을 때만 드래그 가능 */}
             <div
-              className="overflow-y-auto flex-1 px-padding-x-m py-padding-y-m"
+              className={clsx(
+                "overflow-y-auto flex-1 px-padding-x-m py-padding-y-m",
+                isScrollAtTop && isScrollingDown && "touch-none",
+              )}
               ref={contentRef}
               onScroll={handleContentScroll}
               onPointerDown={(e) => {
-                if (isScrollAtTop) {
+                if (isScrollAtTop && isScrollingDown) {
                   dragControls.start(e);
                 }
               }}
