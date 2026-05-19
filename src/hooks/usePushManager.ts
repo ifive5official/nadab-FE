@@ -136,6 +136,7 @@ export function usePushNotifications() {
       }
       await PushNotifications.removeAllDeliveredNotifications();
 
+      await FCM.deleteInstance();
       await api.delete(`/api/v1/notifications/tokens/${deviceId}/${platform}`);
       await PushNotifications.removeAllListeners();
     }

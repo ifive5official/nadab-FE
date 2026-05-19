@@ -27,6 +27,7 @@ type SharedBannerConfig = {
 
 type Props = {
   type?: "closable" | "fixed";
+  disabled?: boolean;
   className?: string;
   toastBottom?: string; // 토스트 위치 조정 위해 사용
 };
@@ -34,6 +35,7 @@ type Props = {
 // 오늘의 기록 공유 배너
 export default function ShareBanner({
   type = "fixed",
+  disabled = false,
   className,
   toastBottom,
 }: Props) {
@@ -69,12 +71,11 @@ export default function ShareBanner({
   });
 
   const isShared = data?.isShared;
-  const sharedStatus =
-    isShared === undefined
-      ? "NOT_ANSWERED"
-      : isShared
-        ? "SHARED"
-        : "NOT_SHARED";
+  const sharedStatus = disabled
+    ? "NOT_ANSWERED"
+    : isShared
+      ? "SHARED"
+      : "NOT_SHARED";
 
   const configMap: Record<
     "NOT_ANSWERED" | "SHARED" | "NOT_SHARED",
