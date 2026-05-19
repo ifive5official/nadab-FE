@@ -224,7 +224,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative flex flex-col gap-padding-y-xxl">
+        <div className="relative flex flex-col gap-padding-y-xl">
           <RecordSection data={homeData} />
           {question?.answered ? (
             <Link

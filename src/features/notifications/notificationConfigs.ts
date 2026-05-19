@@ -86,4 +86,28 @@ export const NOTIFICATION_CONFIG: Record<
       to: "/",
     },
   },
+  COMMENT_ON_MY_REPORT: {
+    inboxIconSrc: "/icon/social.png", // 변경
+    inboxTitle: "피드 알림",
+    linkProps: {
+      to: "/social",
+      search: { tab: "feed" },
+    },
+  },
+  REPLY_ON_MY_COMMENT: {
+    inboxIconSrc: "/icon/social.png", // 변경
+    inboxTitle: "피드 알림",
+    linkProps: {
+      to: "/social",
+      search: { tab: "feed" },
+    },
+  },
+  REPLY_ON_PARTICIPATED_COMMENT: {
+    inboxIconSrc: "/icon/social.png", // 변경
+    inboxTitle: "피드 알림",
+    linkProps: {
+      to: "/social",
+      search: { tab: "feed" },
+    },
+  },
 };

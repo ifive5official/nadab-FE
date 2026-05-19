@@ -1,3 +1,4 @@
+// 피드에 보이는 게시글 하나
 import { EmotionBadge, QuestionBadge } from "@/components/Badges";
 import { useState, useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
@@ -5,10 +6,16 @@ import type { components } from "@/generated/api-types";
 import ProfileImg from "@/components/ProfileImg";
 import type categories from "@/constants/categories";
 import type emotions from "@/constants/emotions";
-import { MoreHorizontalIcon } from "@/components/Icons";
+import {
+  FeedHeartIcon,
+  FeedMessageIcon,
+  MoreHorizontalIcon,
+} from "@/components/Icons";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
+import { CommentInput } from "@/components/SearchBar";
+import useBottomSheetStore from "@/store/bottomSheetStore";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -18,6 +25,7 @@ type Props = {
 
 export default function Post({ feed, isMine = false, className }: Props) {
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const { showBottomSheet } = useBottomSheetStore();
   const navigate = useNavigate();
 
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
@@ -101,6 +109,31 @@ export default function Post({ feed, isMine = false, className }: Props) {
             {isAnswerOpen ? "접기" : "더보기"}
           </button>
         )}
+      </div>
+      <div className="w-full h-10 flex gap-gap-x-l items-center mt-margin-y-m">
+        {!isMine && <CommentInput readOnly />}
+        <div className="flex gap-gap-x-m">
+          <button
+            onClick={() =>
+              showBottomSheet({
+                title: "좋아요",
+                content: <div>test</div>,
+              })
+            }
+          >
+            <FeedHeartIcon />
+          </button>
+          <button
+            onClick={() =>
+              showBottomSheet({
+                title: "좋아요",
+                content: <div>test</div>,
+              })
+            }
+          >
+            <FeedMessageIcon />
+          </button>
+        </div>
       </div>
     </section>
   );
