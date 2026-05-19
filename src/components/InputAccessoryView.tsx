@@ -119,6 +119,10 @@ export default function InputAccessoryView({
           <InlineButton
             isLoading={isCropping || isUploading || isLoading}
             onClick={onComplete}
+            onMouseDown={(e) => {
+              e.preventDefault(); // iOS에서 키보드 사라짐 방지
+              e.stopPropagation();
+            }}
             className="ml-auto"
           >
             완료
