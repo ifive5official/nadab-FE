@@ -117,7 +117,19 @@ export default function Post({ feed, isMine = false, className }: Props) {
             onClick={() =>
               showBottomSheet({
                 title: "좋아요",
-                content: <div>test</div>,
+                content: (
+                  <div>
+                    {Array(10)
+                      .fill(0)
+                      .map(
+                        () => `Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                    Quod, in sed adipisci ipsa corporis, possimus a nostrum,
+                    sunt atque itaque molestias exercitationem! Blanditiis harum
+                    temporibus sapiente laborum architecto laboriosam
+                    consequuntur.`,
+                      )}
+                  </div>
+                ),
               })
             }
           >
@@ -126,7 +138,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
           <button
             onClick={() =>
               showBottomSheet({
-                title: "좋아요",
+                title: "댓글",
                 content: <div>test</div>,
               })
             }
