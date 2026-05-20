@@ -1211,6 +1211,23 @@ export function FeedHeartIcon() {
   );
 }
 
+export function FeedHeartFilledIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16.61 2C14.868 2 13.196 2.674 12 3.813C10.804 2.674 9.131 2 7.389 2C3.866 2 1 4.72 1 8.062C1 12.704 4.439 15.84 10.683 21.534L10.907 21.739C11.098 21.913 11.339 22 11.581 22C11.823 22 12.064 21.913 12.255 21.739C13.157 20.916 14.018 20.148 14.831 19.424C19.751 15.037 23.001 12.139 23.001 8.063C23.001 4.72 20.135 2.001 16.611 2.001L16.61 2Z"
+        fill="#EE5162"
+      />
+    </svg>
+  );
+}
+
 export function FeedMessageIcon() {
   return (
     <svg

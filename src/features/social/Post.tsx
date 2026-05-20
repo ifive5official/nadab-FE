@@ -7,6 +7,7 @@ import ProfileImg from "@/components/ProfileImg";
 import type categories from "@/constants/categories";
 import type emotions from "@/constants/emotions";
 import {
+  FeedHeartFilledIcon,
   FeedHeartIcon,
   FeedMessageIcon,
   MoreHorizontalIcon,
@@ -16,6 +17,7 @@ import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
 import { CommentInput } from "@/components/SearchBar";
 import useBottomSheetStore from "@/store/bottomSheetStore";
+import { useLikeMutation, useUnLikeMutation } from "./likeQueries";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -28,6 +30,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
   const { showBottomSheet } = useBottomSheetStore();
   const navigate = useNavigate();
 
+  // 내용이 길 시 더보기 처리
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false); // 텍스트가 넘치는가?
   const answerRef = useRef<HTMLParagraphElement>(null);
@@ -43,6 +46,10 @@ export default function Post({ feed, isMine = false, className }: Props) {
 
     checkOverflow();
   }, []);
+
+  // 좋아요
+  const likeMutation = useLikeMutation();
+  const unLikeMutation = useUnLikeMutation();
 
   return (
     <section
@@ -114,26 +121,22 @@ export default function Post({ feed, isMine = false, className }: Props) {
         {!isMine && <CommentInput readOnly />}
         <div className="flex gap-gap-x-m">
           <button
-            onClick={() =>
-              showBottomSheet({
-                title: "좋아요",
-                content: (
-                  <div>
-                    {Array(10)
-                      .fill(0)
-                      .map(
-                        () => `Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Quod, in sed adipisci ipsa corporis, possimus a nostrum,
-                    sunt atque itaque molestias exercitationem! Blanditiis harum
-                    temporibus sapiente laborum architecto laboriosam
-                    consequuntur.`,
-                      )}
-                  </div>
-                ),
-              })
+            onClick={
+              // 다른 사람의 글에만 좋아요 가능
+              isMine
+                ? undefined
+                : feed.isLiked
+                  ? () =>
+                      unLikeMutation.mutate({
+                        dailyReportId: feed.dailyReportId!,
+                      })
+                  : () =>
+                      likeMutation.mutate({
+                        dailyReportId: feed.dailyReportId!,
+                      })
             }
           >
-            <FeedHeartIcon />
+            {feed.isLiked ? <FeedHeartFilledIcon /> : <FeedHeartIcon />}
           </button>
           <button
             onClick={() =>
