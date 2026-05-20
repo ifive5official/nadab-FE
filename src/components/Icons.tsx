@@ -509,11 +509,11 @@ export function HideFilledIcon() {
   );
 }
 
-export function DoneIcon() {
+export function DoneIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
-      width="16"
-      height="16"
+      width={size}
+      height={size}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -1302,6 +1302,23 @@ export function GalleryIcon() {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M3.75 4.5C3.05964 4.5 2.5 5.05964 2.5 5.75V17.75C2.5 18.4404 3.05964 19 3.75 19H19.75C20.4404 19 21 18.4404 21 17.75V5.75C21 5.05964 20.4404 4.5 19.75 4.5H3.75ZM1 5.75C1 4.23122 2.23122 3 3.75 3H19.75C21.2688 3 22.5 4.23122 22.5 5.75V17.75C22.5 19.2688 21.2688 20.5 19.75 20.5H3.75C2.23122 20.5 1 19.2688 1 17.75V5.75Z"
+        fill="var(--color-icon-default)"
+      />
+    </svg>
+  );
+}
+
+export function ArrowUpCircleFilledIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10.0002 0.833496C4.91683 0.833496 0.833496 4.91683 0.833496 10.0002C0.833496 15.0835 4.91683 19.1668 10.0002 19.1668C15.0835 19.1668 19.1668 15.0835 19.1668 10.0002C19.1668 4.91683 15.0835 0.833496 10.0002 0.833496ZM12.7502 10.5835L10.8335 8.66683V13.3335H9.16683V8.66683L7.25016 10.5835L6.0835 9.41683L10.0002 5.50016L13.9168 9.41683L12.7502 10.5835Z"
         fill="var(--color-icon-default)"
       />
     </svg>

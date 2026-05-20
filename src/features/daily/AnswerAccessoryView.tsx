@@ -1,11 +1,15 @@
 // 키보드 위에 올라오는 악세서리 뷰
-// 현재는 질문 답변 시에만 사용
-import { useEffect, useState } from "react";
-import InlineButton from "./InlineButton";
+// 질문 답변 사용
+import InlineButton from "../../components/InlineButton";
 import { motion, AnimatePresence } from "motion/react";
-import { CameraIcon, CloseFilledIcon, GalleryIcon } from "./Icons";
+import {
+  CameraIcon,
+  CloseFilledIcon,
+  GalleryIcon,
+} from "../../components/Icons";
 import { useImageUploader } from "@/hooks/useImageUpload";
-import ProfileImg from "./ProfileImg";
+import ProfileImg from "../../components/ProfileImg";
+import { useKeyboardOffset } from "@/hooks/useKeyboardOffset";
 
 type Props = {
   imageUploader: ReturnType<typeof useImageUploader>;
@@ -13,13 +17,12 @@ type Props = {
   onComplete: () => void;
 };
 
-export default function InputAccessoryView({
+export default function AnswerAccessoryView({
   imageUploader,
   isLoading,
   onComplete,
 }: Props) {
-  const [bottomOffset, setBottomOffset] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const { isVisible, bottomOffset } = useKeyboardOffset();
 
   const {
     tempImageUrl,
@@ -28,40 +31,6 @@ export default function InputAccessoryView({
     isUploading,
     handleNativeUpload,
   } = imageUploader;
-
-  useEffect(() => {
-    const handleViewportChange = () => {
-      const viewport = window.visualViewport;
-      if (!viewport) return;
-
-      const offset =
-        window.innerHeight - (viewport.height + viewport.offsetTop);
-
-      const keyboardOpen = window.innerHeight - viewport.height > 100;
-
-      setIsVisible(keyboardOpen);
-      setBottomOffset(Math.max(0, offset));
-    };
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", handleViewportChange);
-      window.visualViewport.addEventListener("scroll", handleViewportChange);
-      handleViewportChange();
-    }
-
-    return () => {
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener(
-          "resize",
-          handleViewportChange,
-        );
-        window.visualViewport.removeEventListener(
-          "scroll",
-          handleViewportChange,
-        );
-      }
-    };
-  }, []);
 
   function handleHideKeyboard() {
     if (document.activeElement instanceof HTMLElement) {

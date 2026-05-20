@@ -33,9 +33,7 @@ export function useLikeMutation() {
 
   return useMutation({
     mutationFn: async ({ dailyReportId }: { dailyReportId: number }) => {
-      const res = await api.post(`/api/v1/feed/${dailyReportId}/likes`, {
-        dailyReportId,
-      });
+      const res = await api.post(`/api/v1/feed/${dailyReportId}/likes`);
       return res.data;
     },
     onSuccess: async (_, variables) => {
@@ -68,9 +66,7 @@ export function useUnLikeMutation() {
 
   return useMutation({
     mutationFn: async ({ dailyReportId }: { dailyReportId: number }) => {
-      const res = await api.post(`/api/v1/feed/${dailyReportId}/likes`, {
-        dailyReportId,
-      });
+      const res = await api.delete(`/api/v1/feed/${dailyReportId}/likes`);
       return res.data;
     },
     onSuccess: async (_, variables) => {
