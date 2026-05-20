@@ -26,6 +26,7 @@ export function useShareFeedMutation({ onSuccess }: Props) {
       queryClient.setQueryData(["currentUser", "feedShareStatus"], {
         isShared: true,
       });
+      queryClient.invalidateQueries({ queryKey: ["currentUser", "feeds"] });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "DAILY_REPORT_NOT_FOUND") {
