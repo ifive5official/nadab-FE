@@ -1,24 +1,20 @@
 import Container from "@/components/Container";
 import Post from "./Post";
-import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { feedOptions, friendsOptions } from "./queries";
 import ShareBanner from "@/components/ShareBanner";
 import NoResult from "@/components/NoResult";
 import Seperator from "@/components/Seperator";
-import { answerOptions } from "../report/quries";
-import { formatISODate } from "@/lib/formatters";
 import { currentUserOptions } from "../user/quries";
 import clsx from "clsx";
 
 export default function FeedTab() {
-  const [{ data: feedData }, { data: friends }, { data: currentUser }] =
-    useSuspenseQueries({
-      queries: [feedOptions, friendsOptions, currentUserOptions],
-    });
-  const { data: myReport } = useQuery(
-    answerOptions.detail(formatISODate(new Date())),
-  );
+  const [{ data: feedData }, { data: friends }] = useSuspenseQueries({
+    queries: [feedOptions, friendsOptions, currentUserOptions],
+  });
+
   const feeds = feedData.feeds;
+  const myReport = feedData.myReport;
 
   return (
     <>
@@ -28,25 +24,10 @@ export default function FeedTab() {
       >
         <span className="text-caption-m mt-gap-y-m">나의 기록</span>
         <ShareBanner
-          disabled={!myReport || friends.totalCount === 0}
+          disabled={friends.totalCount === 0}
           className="my-margin-y-m"
         />
-        {myReport && (
-          <Post
-            isMine
-            className="mb-padding-y-l"
-            feed={{
-              dailyReportId: 0,
-              friendNickname: currentUser?.nickname,
-              friendProfileImageUrl: currentUser?.profileImageUrl,
-              interestCode: myReport.interestCode,
-              questionText: myReport.questionText,
-              answer: myReport.answer,
-              emotionCode: myReport.emotion,
-              imageUrl: myReport.imageUrl,
-            }}
-          />
-        )}
+        {myReport && <Post isMine className="mb-padding-y-l" feed={myReport} />}
         <Seperator />
         <span className="text-caption-m mt-gap-y-m mb-padding-y-s">
           친구의 기록
