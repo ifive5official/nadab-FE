@@ -2,30 +2,36 @@ import clsx from "clsx";
 import { DoneIcon } from "./Icons";
 
 type Props = {
+  boxSize?: "m" | "s";
   textSize?: string;
   label: string;
   checked: boolean;
+  className?: string;
   onCheck: () => void;
 };
 
 export default function CheckBox({
+  boxSize = "m",
   label,
   textSize = "text-label-m",
   checked,
+  className,
   onCheck,
 }: Props) {
   return (
-    <div className="flex items-center gap-gap-x-s">
+    <div className={clsx("flex items-center gap-gap-x-s", className)}>
       <div
         className={clsx(
-          "h-5 w-5 border flex justify-center items-center rounded-sm cursor-pointer",
+          "aspect-square border flex justify-center items-center rounded-sm cursor-pointer",
+          boxSize === "m" && "w-5",
+          boxSize === "s" && "w-4",
           checked
             ? "bg-brand-primary border-border-alpha"
             : "bg-interactive-bg-default border-border-layer-1",
         )}
         onClick={() => onCheck()}
       >
-        {checked && <DoneIcon />}
+        {checked && <DoneIcon size={boxSize === "m" ? 16 : 13} />}
       </div>
       <label
         className={clsx(

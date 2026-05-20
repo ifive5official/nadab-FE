@@ -14,7 +14,7 @@ import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
 import useModalStore from "@/store/modalStore";
-import InputAccessoryView from "@/components/InputAccessoryView";
+import AnswerAccessoryView from "@/features/daily/AnswerAccessoryView";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import { ImageCropper } from "@/components/ImageCropper";
 import useToastStore from "@/store/toastStore";
@@ -232,7 +232,7 @@ function RouteComponent() {
             완료
           </BlockButton>
         )}
-        <InputAccessoryView
+        <AnswerAccessoryView
           imageUploader={imageUploader}
           isLoading={generateResponseMutation.isPending}
           onComplete={handleComplete}

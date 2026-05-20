@@ -16,7 +16,7 @@ export default function BottomSheet() {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isScrollAtTop, setIsScrollAtTop] = useState(true);
   const isScrollingDown = useScrollDirection(contentRef);
-  console.log(isScrollingDown);
+
   // 콘텐츠 내부 스크롤 감지 함수
   function handleContentScroll() {
     if (contentRef.current) {

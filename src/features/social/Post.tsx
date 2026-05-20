@@ -15,9 +15,11 @@ import {
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
-import { CommentInput } from "@/components/SearchBar";
+import CommentInput from "./CommentInput";
 import useBottomSheetStore from "@/store/bottomSheetStore";
 import { useLikeMutation, useUnLikeMutation } from "./likeQueries";
+import { useLongPress } from "@/hooks/useLongPress";
+import { CommentList } from "./Comments";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -50,6 +52,30 @@ export default function Post({ feed, isMine = false, className }: Props) {
   // 좋아요
   const likeMutation = useLikeMutation();
   const unLikeMutation = useUnLikeMutation();
+
+  function handleClickLike() {
+    if (isMine) return;
+
+    if (feed.isLiked) {
+      unLikeMutation.mutate({
+        dailyReportId: feed.dailyReportId!,
+      });
+    } else {
+      likeMutation.mutate({
+        dailyReportId: feed.dailyReportId!,
+      });
+    }
+  }
+
+  function handleLongPressLike() {
+    if (!isMine) return;
+    showBottomSheet({
+      title: "좋아요",
+      content: <div>test</div>,
+    });
+  }
+
+  const likeEvent = useLongPress(handleLongPressLike, handleClickLike);
 
   return (
     <section
@@ -118,31 +144,26 @@ export default function Post({ feed, isMine = false, className }: Props) {
         )}
       </div>
       <div className="w-full h-10 flex gap-gap-x-l items-center mt-margin-y-m">
-        {!isMine && <CommentInput readOnly />}
-        <div className="flex gap-gap-x-m">
-          <button
-            onClick={
-              // 다른 사람의 글에만 좋아요 가능
-              isMine
-                ? undefined
-                : feed.isLiked
-                  ? () =>
-                      unLikeMutation.mutate({
-                        dailyReportId: feed.dailyReportId!,
-                      })
-                  : () =>
-                      likeMutation.mutate({
-                        dailyReportId: feed.dailyReportId!,
-                      })
+        {!isMine && (
+          <CommentInput
+            readOnly
+            onClick={() =>
+              showBottomSheet({
+                title: "댓글",
+                content: <CommentList dailyReportId={feed.dailyReportId!} />,
+              })
             }
-          >
+          />
+        )}
+        <div className="flex gap-gap-x-m">
+          <button {...likeEvent}>
             {feed.isLiked ? <FeedHeartFilledIcon /> : <FeedHeartIcon />}
           </button>
           <button
             onClick={() =>
               showBottomSheet({
                 title: "댓글",
-                content: <div>test</div>,
+                content: <CommentList dailyReportId={feed.dailyReportId!} />,
               })
             }
           >
