@@ -1,49 +1,61 @@
 // 일반 클릭 및 롱프레스 클릭 구분
-import { useState, useRef, type MouseEvent, type TouchEvent } from "react";
+import { useRef, type PointerEvent } from "react";
 
-type LongPressEvent =
-  | MouseEvent<HTMLButtonElement>
-  | TouchEvent<HTMLButtonElement>;
+type LongPressEvent = PointerEvent<HTMLButtonElement>;
 
 export function useLongPress(
   onLongPress: (e: LongPressEvent) => void,
   onClick?: (e: LongPressEvent) => void,
+  delay = 500,
 ) {
-  const [isLongPressActive, setIsLongPressActive] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPressedRef = useRef(false);
+  const isLongPressedRef = useRef(false);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   const start = (e: LongPressEvent) => {
-    // 이벤트 버블링이나 기본 동작 방지 (필요 시)
-    // e.preventDefault();
+    isPressedRef.current = true;
+    isLongPressedRef.current = false;
 
-    setIsLongPressActive(false);
+    clearTimer();
 
-    // 0.5초(delay) 후에 롱 프레스 함수 실행
     timerRef.current = setTimeout(() => {
+      if (!isPressedRef.current) return;
+
+      isLongPressedRef.current = true;
       onLongPress(e);
-      setIsLongPressActive(true); // 롱 프레스가 발동되었음을 기록
-    }, 500);
+    }, delay);
   };
 
   const stop = (e: LongPressEvent) => {
-    // 손을 떼거나 마우스가 벗어나면 타이머를 취소
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
+    if (!isPressedRef.current) return;
 
-    // 롱 프레스가 발동되지 않은 상태에서 마우스를 뗀 거라면 일반 클릭으로 간주
-    if (!isLongPressActive && onClick) {
+    clearTimer();
+
+    if (!isLongPressedRef.current && onClick) {
       onClick(e);
     }
 
-    setIsLongPressActive(false);
+    isPressedRef.current = false;
+    isLongPressedRef.current = false;
+  };
+
+  const cancel = () => {
+    clearTimer();
+    isPressedRef.current = false;
+    isLongPressedRef.current = false;
   };
 
   return {
-    onMouseDown: start,
-    onTouchStart: start,
-    onMouseUp: stop,
-    onTouchEnd: stop,
-    onMouseLeave: stop, // 버튼 밖으로 마우스가 나가면 취소
+    onPointerDown: start,
+    onPointerUp: stop,
+    onPointerCancel: cancel,
+    onPointerLeave: cancel,
   };
 }
