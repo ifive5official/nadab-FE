@@ -9,12 +9,20 @@ import type { components } from "@/generated/api-types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { commentsOptions } from "./commentQueries";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import CommentAccessoryView from "./CommentAccessoryView";
 import { formatRelativeDate } from "@/lib/formatters";
 import clsx from "clsx";
 
+type ReplyTarget = {
+  parentCommentId: number;
+  parentCommentAuthorNickname: string;
+  isParentCommentSecret: boolean;
+};
+
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
+
   // 무한스크롤
   const { ref, inView } = useInView();
   const {
@@ -32,13 +40,25 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
-    <div className="pb-[calc(64px+var(--safe-bottom))]">
+    <div className={clsx(replyTarget ? "pb-[104px]" : "pb-16")}>
       <ul className="flex flex-col gap-gap-y-xl">
         {commentsData?.pages.map((page, i) => {
           return (
             <Fragment key={i}>
               {page?.comments?.map((comment) => {
-                return <Comment key={comment.commentId} comment={comment} />;
+                return (
+                  <Comment
+                    key={comment.commentId}
+                    comment={comment}
+                    onReplyClick={() =>
+                      setReplyTarget({
+                        parentCommentId: comment.commentId!,
+                        parentCommentAuthorNickname: comment.authorNickname!,
+                        isParentCommentSecret: comment.isSecret!,
+                      })
+                    }
+                  />
+                );
               })}
               {page.hasNext && <div ref={ref} className="absolute" />}
             </Fragment>
@@ -46,13 +66,23 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
         })}
         {(isLoading || isFetchingNextPage) && <CommentSkeleton />}
       </ul>
-      <CommentAccessoryView dailyReportId={dailyReportId} />
+      <CommentAccessoryView
+        dailyReportId={dailyReportId}
+        parentCommentId={replyTarget?.parentCommentId}
+        parentCommentAuthorNickname={replyTarget?.parentCommentAuthorNickname}
+        isParentCommentSecret={replyTarget?.isParentCommentSecret}
+        onResetReplyTarget={() => setReplyTarget(null)}
+      />
     </div>
   );
 }
 
 type Comment = components["schemas"]["CommentResponse"];
-export function Comment({ comment }: { comment: Comment }) {
+type CommentProps = {
+  comment: Comment;
+  onReplyClick: () => void;
+};
+export function Comment({ comment, onReplyClick }: CommentProps) {
   const isSecret = !comment.canViewContent;
   return (
     <li className="flex gap-gap-x-l items-start">
@@ -78,7 +108,11 @@ export function Comment({ comment }: { comment: Comment }) {
         <p className={clsx("text-caption-l", isSecret && "text-text-tertiary")}>
           {isSecret ? "비밀 댓글이에요." : comment.content}
         </p>
-        <button className="text-caption-l underline">답글 남기기</button>
+        {!isSecret && (
+          <button onClick={onReplyClick} className="text-caption-l underline">
+            답글 남기기
+          </button>
+        )}
       </div>
       <FeedHeartIcon />
     </li>
