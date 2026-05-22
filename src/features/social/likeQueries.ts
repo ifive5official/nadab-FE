@@ -15,7 +15,7 @@ type Feed = components["schemas"]["FeedResponse"];
 type LikeRes = components["schemas"]["LikeListResponse"];
 
 // 게시글 좋아요 리스트
-export function likesOptions(dailyReportId: number) {
+export function likesOptions(dailyReportId: number, isMine: boolean) {
   return queryOptions({
     queryKey: ["currentUser", "likes", dailyReportId],
     queryFn: async () => {
@@ -24,6 +24,7 @@ export function likesOptions(dailyReportId: number) {
       );
       return res.data.data!;
     },
+    enabled: isMine,
   });
 }
 

@@ -1,0 +1,246 @@
+// 게시글 및 댓글 좋아요 목록
+import type { components } from "@/generated/api-types";
+import FriendItem from "./FriendItem";
+import useBottomModalStore from "@/store/bottomModalStore";
+import useModalStore from "@/store/modalStore";
+import {
+  MoreHorizontalIcon,
+  UserCheckFilledIcon,
+  WarningFilledIcon,
+} from "@/components/Icons";
+import { useBlockFriendMutation } from "./hooks/useBlockFriendMutation";
+import { useDeleteFriendMutation } from "./hooks/useDeleteFriendMutation";
+import useToastStore from "@/store/toastStore";
+import { useFriendRequestMutation } from "./hooks/useFriendRequestMutation";
+import InlineButton from "@/components/InlineButton";
+import { useAcceptFriendRequestMutation } from "./hooks/useAcceptFriendMutation";
+import { useRejectFriendRequestMutation } from "./hooks/useRejectFriendRequestMutation";
+import { useDeleteFriendRequestMutation } from "./hooks/useDeleteFriendRequestMutation";
+import {
+  useQuery,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
+
+type Liker = components["schemas"]["LikerResponse"];
+type LikeRes = components["schemas"]["LikeListResponse"];
+
+type ListProps = {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  queryOptions: UseQueryOptions<LikeRes, Error, LikeRes, any>;
+};
+
+export function LikeUserList({ queryOptions }: ListProps) {
+  const queryClient = useQueryClient();
+  const { data: likersData } = useQuery(queryOptions);
+  return (
+    <ul className="flex flex-col gap-margin-y-l">
+      {likersData?.likers?.map((liker) => (
+        <LikeUserListItem
+          key={liker.userId}
+          liker={liker}
+          onActionSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: queryOptions.queryKey,
+            });
+          }}
+        />
+      ))}
+    </ul>
+  );
+}
+
+type ItemProps = {
+  liker: Liker;
+  onActionSuccess?: () => void; // 친구 관련 액션 성공 후
+};
+
+export function LikeUserListItem({ liker, onActionSuccess }: ItemProps) {
+  const { showModal, closeModal } = useModalStore();
+  const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const { showToast } = useToastStore();
+
+  const friendRequestMutation = useFriendRequestMutation({
+    onSuccess: () => {
+      onActionSuccess?.();
+      showToast({ message: "친구 신청 알림이 전송되었어요." });
+    },
+  });
+
+  const acceptFriendRequestMutation = useAcceptFriendRequestMutation({
+    onSuccess: () => onActionSuccess?.(),
+  });
+  const rejectFriendRequestMutation = useRejectFriendRequestMutation({
+    onSuccess: () => onActionSuccess?.(),
+  });
+  const deleteFriendRequestMutation = useDeleteFriendRequestMutation({
+    onSuccess: () => {
+      onActionSuccess?.();
+      showToast({ message: "친구 신청이 취소되었어요." });
+    },
+  });
+
+  const blockFriendMutation = useBlockFriendMutation({
+    onSuccess: () => {
+      onActionSuccess?.();
+      showToast({ message: "친구가 차단되었어요." });
+    },
+  });
+  const deleteFriendMutation = useDeleteFriendMutation({
+    onSuccess: () => {
+      onActionSuccess?.();
+      showToast({ message: "친구가 삭제되었어요." });
+    },
+  });
+
+  const buttonConfig = {
+    SELF: [],
+    NONE: [
+      <InlineButton
+        key={"request button"}
+        variant="secondary"
+        isLoading={friendRequestMutation.isPending}
+        onClick={() => {
+          showModal({
+            title: `${liker.nickname}님을 친구로 추가하겠어요?`,
+            children: "친구 신청을 한 친구에게 즉시 알림이 전송돼요.",
+            icon: UserCheckFilledIcon,
+            buttons: [
+              {
+                label: "취소",
+                onClick: closeModal,
+              },
+              {
+                label: "확인",
+                onClick: () => {
+                  closeModal();
+                  friendRequestMutation.mutate({
+                    receiverNickname: liker.nickname!,
+                  });
+                },
+              },
+            ],
+          });
+        }}
+      >
+        친구 신청
+      </InlineButton>,
+    ],
+    FRIEND: [
+      <button
+        key={"button"}
+        onClick={() =>
+          showBottomModal({
+            title: "친구 편집",
+            items: [
+              {
+                label: "차단",
+                type: "warning",
+                onClick: () => {
+                  showModal({
+                    icon: WarningFilledIcon,
+                    title: `${liker.nickname!}님을\n차단하겠어요?`,
+                    children: "친구 차단 시 상호 간 친구 삭제가 이루어져요.",
+                    buttons: [
+                      {
+                        label: "취소",
+                        onClick: closeModal,
+                      },
+                      {
+                        label: "확인",
+                        onClick: () => {
+                          closeModal();
+                          closeBottomModal();
+                          blockFriendMutation.mutate({
+                            blockedNickname: liker.nickname!,
+                          });
+                        },
+                      },
+                    ],
+                  });
+                },
+              },
+              {
+                label: "삭제",
+                type: "warning",
+                onClick: () => {
+                  showModal({
+                    icon: WarningFilledIcon,
+                    title: `${liker.nickname!}님을\n친구에서 삭제하겠어요?`,
+                    children: "친구 삭제 이후에 복구가 불가능해요.",
+                    buttons: [
+                      {
+                        label: "취소",
+                        onClick: closeModal,
+                      },
+                      {
+                        label: "확인",
+                        onClick: () => {
+                          closeModal();
+                          closeBottomModal();
+                          deleteFriendMutation.mutate({
+                            friendshipId: liker.friendshipId!,
+                          });
+                        },
+                      },
+                    ],
+                  });
+                },
+              },
+            ],
+          })
+        }
+      >
+        <MoreHorizontalIcon />
+      </button>,
+    ],
+    REQUEST_SENT: [
+      <InlineButton
+        variant="disabled"
+        key={"delete request button"}
+        isLoading={deleteFriendRequestMutation.isPending}
+        onClick={() =>
+          deleteFriendRequestMutation.mutate({
+            friendshipId: liker.friendshipId!,
+          })
+        }
+      >
+        친구 신청 중
+      </InlineButton>,
+    ],
+    REQUEST_RECEIVED: [
+      <InlineButton
+        key={1}
+        variant="secondary"
+        isLoading={rejectFriendRequestMutation.isPending}
+        onClick={() => {
+          rejectFriendRequestMutation.mutate({
+            friendshipId: liker.friendshipId!,
+          });
+        }}
+      >
+        거절
+      </InlineButton>,
+      <InlineButton
+        key={2}
+        isLoading={acceptFriendRequestMutation.isPending}
+        onClick={() => {
+          acceptFriendRequestMutation.mutate({
+            friendshipId: liker.friendshipId!,
+          });
+        }}
+      >
+        수락
+      </InlineButton>,
+    ],
+  };
+
+  return (
+    <FriendItem
+      key={liker.userId}
+      name={liker.nickname!}
+      profileImgUrl={liker.profileImageUrl!}
+      buttons={buttonConfig[liker.relationshipStatus!]}
+    />
+  );
+}

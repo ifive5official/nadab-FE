@@ -17,9 +17,14 @@ import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
 import CommentInput from "./CommentInput";
 import useBottomSheetStore from "@/store/bottomSheetStore";
-import { useLikeMutation, useUnLikeMutation } from "./likeQueries";
+import {
+  likesOptions,
+  useLikeMutation,
+  useUnLikeMutation,
+} from "./likeQueries";
 import { useLongPress } from "@/hooks/useLongPress";
 import { CommentList } from "./Comments";
+import { LikeUserList } from "./LikeUserList";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -54,6 +59,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
   const unLikeMutation = useUnLikeMutation();
 
   function handleClickLike() {
+    // 남의 게시글만 짧게 누를 시 좋아요 가능
     if (isMine) return;
 
     if (feed.isLiked) {
@@ -68,10 +74,15 @@ export default function Post({ feed, isMine = false, className }: Props) {
   }
 
   function handleLongPressLike() {
+    // 내 게시물에서만 길게 누를 시 좋아요 목록 확인 가능
     if (!isMine) return;
     showBottomSheet({
       title: "좋아요",
-      content: <div>test</div>,
+      content: (
+        <LikeUserList
+          queryOptions={likesOptions(feed.dailyReportId!, isMine)}
+        />
+      ),
     });
   }
 

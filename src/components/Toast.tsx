@@ -21,7 +21,7 @@ export default function Toast() {
           <div className="z-20 fixed inset-0" onClick={closeToast} />
           <motion.div
             className={clsx(
-              "fixed inset-x-padding-x-m bottom-(--safe-bottom) sm:mx-auto sm:w-[412px]",
+              "fixed z-21 inset-x-padding-x-m bottom-(--safe-bottom) sm:mx-auto sm:w-[412px]",
               config.bottom ??
                 "bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
