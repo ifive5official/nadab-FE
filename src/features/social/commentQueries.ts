@@ -36,9 +36,7 @@ export function usePostCommentMutation() {
 
   return useMutation({
     mutationFn: async (req: CreateCommentReq) => {
-      const res = await api.post(`/api/v1/comments`, {
-        req,
-      });
+      const res = await api.post(`/api/v1/comments`, req);
       return res.data;
     },
     onSuccess: async (_, variables) => {

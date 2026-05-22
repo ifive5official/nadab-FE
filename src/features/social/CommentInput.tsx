@@ -5,7 +5,7 @@ import { useState } from "react";
 type CommentInputProps = {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onDelete?: () => void;
+  // onSubmit?: () => void;
   onClick?: () => void;
   readOnly?: boolean; // 모양만 두고 onClick 동작만 할 때
 };
@@ -13,7 +13,7 @@ type CommentInputProps = {
 export default function CommentInput({
   value,
   onChange,
-  onDelete,
+  // onSubmit,
   onClick,
   readOnly,
 }: CommentInputProps) {
@@ -43,11 +43,11 @@ export default function CommentInput({
         onChange={onChange}
       />
       <button
-        type="button"
+        // type="button"
         onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
-        onClick={() => {
-          onDelete?.();
-        }}
+        // onClick={() => {
+        //   onSubmit?.();
+        // }}
         className={clsx(value ? "" : "hidden")}
       >
         <ArrowUpCircleFilledIcon />

@@ -1167,7 +1167,13 @@ export function BannerCloseIcon() {
   );
 }
 
-export function MoreHorizontalIcon({ size = 28 }: { size?: number }) {
+export function MoreHorizontalIcon({
+  size = 28,
+  fill = "var(--color-icon-default)",
+}: {
+  size?: number;
+  fill?: string;
+}) {
   return (
     <svg
       width={size}
@@ -1178,15 +1184,15 @@ export function MoreHorizontalIcon({ size = 28 }: { size?: number }) {
     >
       <path
         d="M20.4173 16.3333C21.3838 16.3333 22.1673 15.5498 22.1673 14.5833C22.1673 13.6168 21.3838 12.8333 20.4173 12.8333C19.4508 12.8333 18.6673 13.6168 18.6673 14.5833C18.6673 15.5498 19.4508 16.3333 20.4173 16.3333Z"
-        fill="var(--color-icon-default)"
+        fill={fill}
       />
       <path
         d="M14.0007 16.3333C14.9671 16.3333 15.7507 15.5498 15.7507 14.5833C15.7507 13.6168 14.9671 12.8333 14.0007 12.8333C13.0342 12.8333 12.2507 13.6168 12.2507 14.5833C12.2507 15.5498 13.0342 16.3333 14.0007 16.3333Z"
-        fill="var(--color-icon-default)"
+        fill={fill}
       />
       <path
         d="M7.58398 16.3333C8.55048 16.3333 9.33398 15.5498 9.33398 14.5833C9.33398 13.6168 8.55048 12.8333 7.58398 12.8333C6.61749 12.8333 5.83398 13.6168 5.83398 14.5833C5.83398 15.5498 6.61749 16.3333 7.58398 16.3333Z"
-        fill="var(--color-icon-default)"
+        fill={fill}
       />
     </svg>
   );
@@ -1248,6 +1254,23 @@ export function FeedMessageIcon() {
       <path
         d="M12 13.25V14.75H7.00003V13.25H12Z"
         fill="var(--color-icon-muted)"
+      />
+    </svg>
+  );
+}
+
+export function LockFilledIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M17.4167 9.16683H15.5833V6.41683C15.5833 3.85016 13.5667 1.8335 11 1.8335C8.43333 1.8335 6.41667 3.85016 6.41667 6.41683V9.16683H4.58333C3.575 9.16683 2.75 9.99183 2.75 11.0002V18.3335C2.75 19.3418 3.575 20.1668 4.58333 20.1668H17.4167C18.425 20.1668 19.25 19.3418 19.25 18.3335V11.0002C19.25 9.99183 18.425 9.16683 17.4167 9.16683ZM8.25 6.41683C8.25 4.8585 9.44167 3.66683 11 3.66683C12.5583 3.66683 13.75 4.8585 13.75 6.41683V9.16683H8.25V6.41683Z"
+        fill="var(--color-icon-hover)"
       />
     </svg>
   );
