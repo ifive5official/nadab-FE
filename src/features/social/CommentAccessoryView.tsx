@@ -6,17 +6,34 @@ import CommentInput from "./CommentInput";
 import CheckBox from "@/components/Checkbox";
 import { useState } from "react";
 import { usePostCommentMutation } from "./commentQueries";
+import clsx from "clsx";
+import useToastStore from "@/store/toastStore";
 
 type Props = {
   dailyReportId: number;
+  parentCommentId?: number;
+  parentCommentAuthorNickname?: string;
+  isParentCommentSecret?: boolean;
+  onResetReplyTarget: () => void;
 };
 
-export default function CommentAccessoryView({ dailyReportId }: Props) {
+export default function CommentAccessoryView({
+  dailyReportId,
+  parentCommentId,
+  parentCommentAuthorNickname,
+  isParentCommentSecret,
+  onResetReplyTarget,
+}: Props) {
   // const { bottomOffset } = useKeyboardOffset();
+  const isReply = !!parentCommentId;
   const [isSecret, setIsSecret] = useState(false);
   const [content, setContent] = useState("");
   const postCommentMutation = usePostCommentMutation();
 
+  const { showToast } = useToastStore();
+
+  // 부모가 비밀댓글이면 자식은 무조건 비밀댓글
+  const finalIsSecret = isParentCommentSecret ? true : isSecret;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -25,7 +42,10 @@ export default function CommentAccessoryView({ dailyReportId }: Props) {
       // style={{
       //   paddingBottom: `${bottomOffset}px`,
       // }}
-      className="bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 h-16 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base"
+      className={clsx(
+        "bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base",
+        isReply ? "h-[104px]" : "h-16",
+      )}
     >
       <div
         // 엑세서리 바 누를 때 포커스 이탈 방지
@@ -37,8 +57,14 @@ export default function CommentAccessoryView({ dailyReportId }: Props) {
         <CheckBox
           boxSize="s"
           textSize="text-caption-s"
-          checked={isSecret}
-          onCheck={() => setIsSecret((prev) => !prev)}
+          checked={finalIsSecret}
+          onCheck={() => {
+            if (isParentCommentSecret) {
+              showToast({ message: "비공개 댓글의 답글은 비공개로 제한돼요." });
+            } else {
+              setIsSecret((prev) => !prev);
+            }
+          }}
           label="비밀 댓글"
           className="whitespace-pre"
         />
@@ -48,12 +74,18 @@ export default function CommentAccessoryView({ dailyReportId }: Props) {
         onSubmit={(e) => {
           e.preventDefault();
           setContent("");
-          postCommentMutation.mutate({ dailyReportId, content, isSecret });
+          postCommentMutation.mutate({
+            dailyReportId,
+            content,
+            isSecret: finalIsSecret,
+          });
         }}
       >
         <CommentInput
           value={content}
+          parentCommentAuthorNickname={parentCommentAuthorNickname}
           onChange={(e) => setContent(e.target.value)}
+          onResetReplyTarget={onResetReplyTarget}
         />
       </form>
     </motion.div>

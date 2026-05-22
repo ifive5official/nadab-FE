@@ -1,57 +1,68 @@
-import { ArrowUpCircleFilledIcon } from "@/components/Icons";
+import { ArrowUpCircleFilledIcon, CloseIcon } from "@/components/Icons";
 import clsx from "clsx";
 import { useState } from "react";
 
 type CommentInputProps = {
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // onSubmit?: () => void;
-  onClick?: () => void;
+  value?: string; // 댓글 내용
+  parentCommentAuthorNickname?: string; // 있으면 대댓글
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // 댓글 내용 입력
+  onClick?: () => void; // 모양만 두고 onClick 동작만 할 때 - 댓글창 열기 등
   readOnly?: boolean; // 모양만 두고 onClick 동작만 할 때
+  onResetReplyTarget?: () => void;
 };
 
 export default function CommentInput({
   value,
+  parentCommentAuthorNickname,
   onChange,
-  // onSubmit,
   onClick,
   readOnly,
+  onResetReplyTarget,
 }: CommentInputProps) {
   // 사파리에서 focus-with 안 되는 문제 대응
   const [isFocused, setIsFocused] = useState(false);
   return (
     <div
       className={clsx(
-        "relative w-full h-10 px-padding-x-s py-padding-y-s rounded-full bg-field-bg-default border border-border-base flex items-center gap-gap-x-xs",
+        "w-full overflow-hidden border border-border-base flex flex-col",
         isFocused && "shadow-1 border-border-layer-1",
+        parentCommentAuthorNickname ? "rounded-[20px]" : "rounded-full",
         readOnly && "cursor-pointer",
       )}
       onClick={onClick}
     >
-      <input
-        id="comment"
-        name="comment"
-        type="text"
-        value={value}
-        placeholder="댓글 남기기..."
-        className={clsx(
-          "w-full text-caption-m placeholder:text-field-text-mute focus:outline-none",
-          readOnly && "pointer-events-none",
-        )}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onChange={onChange}
-      />
-      <button
-        // type="button"
-        onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
-        // onClick={() => {
-        //   onSubmit?.();
-        // }}
-        className={clsx(value ? "" : "hidden")}
-      >
-        <ArrowUpCircleFilledIcon />
-      </button>
+      {parentCommentAuthorNickname && (
+        <div className="h-10 px-padding-x-s bg-field-bg-muted flex justify-between items-center">
+          <span className="text-caption-m">
+            {parentCommentAuthorNickname}님에게 답글 남기는 중
+          </span>
+          <button type="button" onClick={onResetReplyTarget}>
+            <CloseIcon size={20} />
+          </button>
+        </div>
+      )}
+      <div className="relative w-full h-10 px-padding-x-s py-padding-y-s bg-field-bg-default flex items-center gap-gap-x-xs">
+        <input
+          id="comment"
+          name="comment"
+          type="text"
+          value={value}
+          placeholder="댓글 남기기..."
+          className={clsx(
+            "w-full text-caption-m placeholder:text-field-text-mute focus:outline-none",
+            readOnly && "pointer-events-none",
+          )}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onChange={onChange}
+        />
+        <button
+          onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
+          className={clsx(value ? "" : "hidden")}
+        >
+          <ArrowUpCircleFilledIcon />
+        </button>
+      </div>
     </div>
   );
 }
