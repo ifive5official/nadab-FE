@@ -4,6 +4,7 @@ import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import useModalStore from "@/store/modalStore";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
@@ -41,7 +42,13 @@ export function useAcceptFriendRequestMutation({
       onSettled?.(data, error, variables);
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === `FRIEND_LIMIT_EXCEEDED`) {
+        useModalStore
+          .getState()
+          .showError(`친구는 최대 20명까지\n추가할 수 있어요.`);
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }
