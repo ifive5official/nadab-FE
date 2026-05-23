@@ -10,6 +10,9 @@ type Props = {
   canEdit: boolean;
   canReport: boolean;
   canDelete: boolean;
+  onEditClick?: () => void;
+  onReportClick?: () => void;
+  onDeleteClick?: () => void;
 };
 
 export function CommentMenu({
@@ -18,6 +21,9 @@ export function CommentMenu({
   canEdit,
   canReport,
   canDelete,
+  onEditClick,
+  onReportClick,
+  onDeleteClick,
 }: Props) {
   const buttons: Item[] = [];
 
@@ -25,21 +31,30 @@ export function CommentMenu({
     buttons.push({
       type: "normal",
       label: "수정",
-      onClick: () => {},
+      onClick: () => {
+        onEditClick?.();
+        onClose();
+      },
     });
   }
   if (canReport) {
     buttons.push({
       type: "normal",
       label: "신고",
-      onClick: () => {},
+      onClick: () => {
+        onReportClick?.();
+        onClose();
+      },
     });
   }
   if (canDelete) {
     buttons.push({
       type: "warning",
       label: "삭제",
-      onClick: () => {},
+      onClick: () => {
+        onDeleteClick?.();
+        onClose();
+      },
     });
   }
 

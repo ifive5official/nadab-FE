@@ -5,11 +5,13 @@ import { Fragment, useState } from "react";
 import { Comment, CommentSkeleton } from "./CommentList";
 
 type SubCommentListProps = {
+  dailyReportId: number;
   parentCommentId: number;
   initialCount: number; // 부모 댓글에서 내려준 visibleSubCommentCount
 };
 
 export function SubCommentList({
+  dailyReportId,
   parentCommentId,
   initialCount,
 }: SubCommentListProps) {
@@ -47,8 +49,9 @@ export function SubCommentList({
                 // 기존 Comment UI를 재사용하되, 필요 시 대댓글용 스타일이나 분기를 처리합니다.
                 <Comment
                   key={subComment.commentId}
+                  dailyReportId={dailyReportId}
                   comment={subComment}
-                  isSubComment={true}
+                  parentCommentId={parentCommentId}
                 />
               ))}
             </Fragment>
