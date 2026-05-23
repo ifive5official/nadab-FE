@@ -2,10 +2,10 @@
 // 선으로 버튼 구분
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useLocation } from "@tanstack/react-router";
-import clsx from "clsx";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import ListModal from "./ListModal";
 
 export default function BottomModal() {
   const { isOpen, closeBottomModal, config } = useBottomModalStore();
@@ -37,40 +37,16 @@ export default function BottomModal() {
             className="z-20 absolute inset-0 bg-neutral-dark-50"
             onClick={closeBottomModal}
           />
-          <motion.div
-            className="z-30 absolute bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy inset-x-padding-x-m sm:mx-auto sm:w-[412px] flex flex-col items-center bg-surface-base dark:bg-surface-layer-2 shadow-3 border border-border-base rounded-lg divide-y divide-interactive-border-default dark:divide-field-border-hover text-text-primary"
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-          >
-            <p className="w-full text-center text-caption-m py-padding-y-m">
-              {config.title}
-            </p>
-            {config.items.map((item) => {
-              return (
-                <button
-                  key={item.label}
-                  onClick={item.onClick}
-                  className={clsx(
-                    "w-full text-button-1 py-padding-y-m",
-                    item.type === "selected" && "bg-surface-layer-1",
-                  )}
-                >
-                  <span
-                    className={clsx(
-                      item.type === "warning" &&
-                        "text-feedback-error-fg underline",
-                      item.type === "selected" && "font-bold",
-                      item.type === "unselected" && "text-text-disabled",
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </motion.div>
+          <ListModal
+            className="bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy inset-x-padding-x-m"
+            title={config.title}
+            items={config.items}
+            animationVariants={{
+              initial: { y: 100, opacity: 0 },
+              animate: { y: 0, opacity: 1 },
+              exit: { y: 100, opacity: 0 },
+            }}
+          />
         </>
       )}
     </AnimatePresence>,
