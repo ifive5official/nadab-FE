@@ -5,7 +5,10 @@ import { motion } from "motion/react";
 import CommentInput from "./CommentInput";
 import CheckBox from "@/components/Checkbox";
 import { useState } from "react";
-import { usePostCommentMutation } from "./commentQueries";
+import {
+  usePostCommentMutation,
+  usePostSubCommentMutation,
+} from "./commentQueries";
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
 
@@ -14,7 +17,7 @@ type Props = {
   parentCommentId?: number;
   parentCommentAuthorNickname?: string;
   isParentCommentSecret?: boolean;
-  onResetReplyTarget: () => void;
+  onResetSubCommentTarget: () => void;
 };
 
 export default function CommentAccessoryView({
@@ -22,13 +25,17 @@ export default function CommentAccessoryView({
   parentCommentId,
   parentCommentAuthorNickname,
   isParentCommentSecret,
-  onResetReplyTarget,
+  onResetSubCommentTarget,
 }: Props) {
   // const { bottomOffset } = useKeyboardOffset();
-  const isReply = !!parentCommentId;
+  const isSubComment = !!parentCommentId;
   const [isSecret, setIsSecret] = useState(false);
   const [content, setContent] = useState("");
+
   const postCommentMutation = usePostCommentMutation();
+  const postSubCommentMutation = usePostSubCommentMutation(
+    parentCommentId ?? 0,
+  );
 
   const { showToast } = useToastStore();
 
@@ -44,7 +51,7 @@ export default function CommentAccessoryView({
       // }}
       className={clsx(
         "bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base",
-        isReply ? "h-[104px]" : "h-16",
+        isSubComment ? "h-[104px]" : "h-16",
       )}
     >
       <div
@@ -74,18 +81,25 @@ export default function CommentAccessoryView({
         onSubmit={(e) => {
           e.preventDefault();
           setContent("");
-          postCommentMutation.mutate({
-            dailyReportId,
-            content,
-            isSecret: finalIsSecret,
-          });
+          if (isSubComment) {
+            postSubCommentMutation.mutate({
+              content,
+              isSecret: finalIsSecret,
+            });
+          } else {
+            postCommentMutation.mutate({
+              dailyReportId,
+              content,
+              isSecret: finalIsSecret,
+            });
+          }
         }}
       >
         <CommentInput
           value={content}
           parentCommentAuthorNickname={parentCommentAuthorNickname}
           onChange={(e) => setContent(e.target.value)}
-          onResetReplyTarget={onResetReplyTarget}
+          onResetSubCommentTarget={onResetSubCommentTarget}
         />
       </form>
     </motion.div>
