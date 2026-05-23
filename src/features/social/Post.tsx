@@ -23,7 +23,7 @@ import {
   useUnLikeMutation,
 } from "./likeQueries";
 import { useLongPress } from "@/hooks/useLongPress";
-import { CommentList } from "./Comments";
+import { CommentList } from "./CommentList";
 import { LikeUserList } from "./LikeUserList";
 
 type Props = {

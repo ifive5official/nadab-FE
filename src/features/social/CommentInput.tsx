@@ -8,7 +8,7 @@ type CommentInputProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // 댓글 내용 입력
   onClick?: () => void; // 모양만 두고 onClick 동작만 할 때 - 댓글창 열기 등
   readOnly?: boolean; // 모양만 두고 onClick 동작만 할 때
-  onResetReplyTarget?: () => void;
+  onResetSubCommentTarget?: () => void;
 };
 
 export default function CommentInput({
@@ -17,7 +17,7 @@ export default function CommentInput({
   onChange,
   onClick,
   readOnly,
-  onResetReplyTarget,
+  onResetSubCommentTarget,
 }: CommentInputProps) {
   // 사파리에서 focus-with 안 되는 문제 대응
   const [isFocused, setIsFocused] = useState(false);
@@ -36,7 +36,7 @@ export default function CommentInput({
           <span className="text-caption-m">
             {parentCommentAuthorNickname}님에게 답글 남기는 중
           </span>
-          <button type="button" onClick={onResetReplyTarget}>
+          <button type="button" onClick={onResetSubCommentTarget}>
             <CloseIcon size={20} />
           </button>
         </div>

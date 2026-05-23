@@ -13,15 +13,17 @@ import { Fragment, useEffect, useState } from "react";
 import CommentAccessoryView from "./CommentAccessoryView";
 import { formatRelativeDate } from "@/lib/formatters";
 import clsx from "clsx";
+import { SubCommentList } from "./SubCommentList";
 
-type ReplyTarget = {
+type SubCommentTarget = {
   parentCommentId: number;
   parentCommentAuthorNickname: string;
   isParentCommentSecret: boolean;
 };
 
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
-  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
+  const [subCommentTarget, setSubCommentTarget] =
+    useState<SubCommentTarget | null>(null);
 
   // 무한스크롤
   const { ref, inView } = useInView();
@@ -40,7 +42,7 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
-    <div className={clsx(replyTarget ? "pb-[104px]" : "pb-16")}>
+    <div className={clsx(subCommentTarget ? "pb-[104px]" : "pb-16")}>
       <ul className="flex flex-col gap-gap-y-xl">
         {commentsData?.pages.map((page, i) => {
           return (
@@ -50,8 +52,8 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
                   <Comment
                     key={comment.commentId}
                     comment={comment}
-                    onReplyClick={() =>
-                      setReplyTarget({
+                    onSubCommentClick={() =>
+                      setSubCommentTarget({
                         parentCommentId: comment.commentId!,
                         parentCommentAuthorNickname: comment.authorNickname!,
                         isParentCommentSecret: comment.isSecret!,
@@ -68,10 +70,12 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
       </ul>
       <CommentAccessoryView
         dailyReportId={dailyReportId}
-        parentCommentId={replyTarget?.parentCommentId}
-        parentCommentAuthorNickname={replyTarget?.parentCommentAuthorNickname}
-        isParentCommentSecret={replyTarget?.isParentCommentSecret}
-        onResetReplyTarget={() => setReplyTarget(null)}
+        parentCommentId={subCommentTarget?.parentCommentId}
+        parentCommentAuthorNickname={
+          subCommentTarget?.parentCommentAuthorNickname
+        }
+        isParentCommentSecret={subCommentTarget?.isParentCommentSecret}
+        onResetSubCommentTarget={() => setSubCommentTarget(null)}
       />
     </div>
   );
@@ -80,49 +84,73 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
 type Comment = components["schemas"]["CommentResponse"];
 type CommentProps = {
   comment: Comment;
-  onReplyClick: () => void;
+  isSubComment?: boolean;
+  onSubCommentClick?: () => void;
 };
-export function Comment({ comment, onReplyClick }: CommentProps) {
+export function Comment({
+  comment,
+  isSubComment = false,
+  onSubCommentClick,
+}: CommentProps) {
   const isSecret = !comment.canViewContent;
   return (
-    <li className="flex gap-gap-x-l items-start">
-      {isSecret ? (
-        <div className="aspect-square w-9 rounded-full flex items-center justify-center bg-surface-layer-3">
-          <LockFilledIcon />
-        </div>
-      ) : (
-        <ProfileImg width={36} src={comment.authorProfileImageUrl} />
-      )}
-      <div className="flex-1 flex flex-col items-start gap-1">
-        <div className="flex gap-gap-x-s items-center">
-          <span className="text-button-2">
-            {isSecret ? "이름 없는 친구" : comment.authorNickname}
-          </span>
-          <span className="text-caption-m text-text-tertiary">
-            {formatRelativeDate(comment.createdAt!)}
-          </span>
-          <button>
-            <MoreHorizontalIcon size={20} fill="var(--color-icon-muted)" />
-          </button>
-        </div>
-        <p className={clsx("text-caption-l", isSecret && "text-text-tertiary")}>
-          {isSecret ? "비밀 댓글이에요." : comment.content}
-        </p>
-        {!isSecret && (
-          <button onClick={onReplyClick} className="text-caption-l underline">
-            답글 남기기
-          </button>
+    <li>
+      <div className="flex gap-gap-x-l items-start">
+        {isSecret ? (
+          <div className="aspect-square w-9 rounded-full flex items-center justify-center bg-surface-layer-3">
+            <LockFilledIcon />
+          </div>
+        ) : (
+          <ProfileImg width={36} src={comment.authorProfileImageUrl} />
         )}
+        <div className="flex-1 flex flex-col items-start gap-1">
+          <div className="flex gap-gap-x-s items-center">
+            <span className="text-button-2">
+              {isSecret ? "이름 없는 친구" : comment.authorNickname}
+            </span>
+            <span className="text-caption-m text-text-tertiary">
+              {formatRelativeDate(comment.createdAt!)}
+            </span>
+            <button>
+              <MoreHorizontalIcon size={20} fill="var(--color-icon-muted)" />
+            </button>
+          </div>
+          <p
+            className={clsx("text-caption-l", isSecret && "text-text-tertiary")}
+          >
+            {isSecret ? "비밀 댓글이에요." : comment.content}
+          </p>
+          {!isSecret && !isSubComment && (
+            <button
+              onClick={onSubCommentClick}
+              className="text-caption-l underline"
+            >
+              답글 남기기
+            </button>
+          )}
+        </div>
+        <FeedHeartIcon />
       </div>
-      <FeedHeartIcon />
+      <SubCommentList
+        parentCommentId={comment.commentId!}
+        initialCount={comment.visibleSubCommentCount ?? 0}
+      />
     </li>
   );
 }
 
-export function CommentSkeleton() {
+type CommentSkeletonProps = {
+  isSubComment?: boolean;
+  repeat?: number;
+};
+
+export function CommentSkeleton({
+  repeat = 5,
+  isSubComment = false,
+}: CommentSkeletonProps) {
   return (
     <>
-      {Array(5)
+      {Array(repeat)
         .fill(0)
         .map((_, i) => (
           <li key={i} className="flex gap-gap-x-l items-start">
@@ -130,9 +158,11 @@ export function CommentSkeleton() {
             <div className="flex-1 flex flex-col items-start gap-1">
               <div className="flex gap-gap-x-s items-center w-20 h-5 bg-surface-layer-2 animate-pulse rounded-sm" />
               <p className="w-40 h-6 bg-surface-layer-2 animate-pulse rounded-sm" />
-              <button className="text-caption-l underline text-text-disabled">
-                답글 남기기
-              </button>
+              {!isSubComment && (
+                <button className="text-caption-l underline text-text-disabled">
+                  답글 남기기
+                </button>
+              )}
             </div>
             <FeedHeartIcon />
           </li>
