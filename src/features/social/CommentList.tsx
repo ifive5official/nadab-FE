@@ -8,7 +8,7 @@ import ProfileImg from "@/components/ProfileImg";
 import type { components } from "@/generated/api-types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
-import { commentsOptions } from "./commentQueries";
+import { commentsOptions, useDeleteCommentMutation } from "./commentQueries";
 import { Fragment, useEffect, useState } from "react";
 import CommentAccessoryView from "./CommentAccessoryView";
 import { formatRelativeDate } from "@/lib/formatters";
@@ -52,6 +52,7 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
                 return (
                   <Comment
                     key={comment.commentId}
+                    dailyReportId={dailyReportId}
                     comment={comment}
                     onSubCommentClick={() =>
                       setSubCommentTarget({
@@ -84,17 +85,22 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
 
 type Comment = components["schemas"]["CommentResponse"];
 type CommentProps = {
+  dailyReportId: number;
   comment: Comment;
-  isSubComment?: boolean;
+  parentCommentId?: number; // 대댓글이면 존재함
   onSubCommentClick?: () => void;
 };
 export function Comment({
+  dailyReportId,
   comment,
-  isSubComment = false,
+  parentCommentId,
   onSubCommentClick,
 }: CommentProps) {
   const isSecret = !comment.canViewContent;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 댓글 관리
+  const deleteCommentMutation = useDeleteCommentMutation();
 
   return (
     <li className="relative">
@@ -123,7 +129,7 @@ export function Comment({
           >
             {isSecret ? "비밀 댓글이에요." : comment.content}
           </p>
-          {!isSecret && !isSubComment && (
+          {!isSecret && !parentCommentId && (
             <button
               onClick={onSubCommentClick}
               className="text-caption-l underline"
@@ -135,6 +141,7 @@ export function Comment({
         <FeedHeartIcon />
       </div>
       <SubCommentList
+        dailyReportId={dailyReportId}
         parentCommentId={comment.commentId!}
         initialCount={comment.visibleSubCommentCount ?? 0}
       />
@@ -143,7 +150,14 @@ export function Comment({
         onClose={() => setIsMenuOpen(false)}
         canEdit={true}
         canReport={true}
-        canDelete={true}
+        canDelete={comment.canDelete!}
+        onDeleteClick={() =>
+          deleteCommentMutation.mutate({
+            commentId: comment.commentId!,
+            dailyReportId,
+            parentCommentId,
+          })
+        }
       />
     </li>
   );
