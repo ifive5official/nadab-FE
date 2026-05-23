@@ -54,7 +54,7 @@ export function usePostCommentMutation() {
 
 // 대댓글 목록 조회
 // commentId는 부모 댓글 id임
-export function subCommentOptions(commentId: number, isExpended: boolean) {
+export function subCommentOptions(commentId: number, hasFetched: boolean) {
   return infiniteQueryOptions({
     queryKey: ["currentUser", "subComments", commentId],
     queryFn: async ({ pageParam }) => {
@@ -70,13 +70,16 @@ export function subCommentOptions(commentId: number, isExpended: boolean) {
     initialPageParam: null as number | null,
     getNextPageParam: (lastPage) =>
       lastPage.hasNext ? lastPage.nextCursor : null,
-    enabled: isExpended,
+    enabled: hasFetched,
   });
 }
 
 // 대댓글 작성
 // commentId는 부모 댓글 id임
-export function usePostSubCommentMutation(commentId: number) {
+export function usePostSubCommentMutation(
+  commentId: number,
+  dailyReportId: number,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -91,6 +94,10 @@ export function usePostSubCommentMutation(commentId: number) {
       // 대댓글 작성 후 대댓글 목록 재조회
       const queryKey = ["currentUser", "subComments", commentId];
       queryClient.invalidateQueries({ queryKey });
+      // 대댓글 작성 후 부모의 대댓글 수 재조회
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser", "comments", dailyReportId],
+      });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);

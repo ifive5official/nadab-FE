@@ -35,6 +35,7 @@ export default function CommentAccessoryView({
   const postCommentMutation = usePostCommentMutation();
   const postSubCommentMutation = usePostSubCommentMutation(
     parentCommentId ?? 0,
+    dailyReportId,
   );
 
   const { showToast } = useToastStore();

@@ -14,13 +14,25 @@ export function SubCommentList({
   initialCount,
 }: SubCommentListProps) {
   const [isExpanded, setIsExpanded] = useState(false); // 대댓글이 열렸는가
+
+  const [prevCount, setPrevCount] = useState(initialCount);
+  if (initialCount !== prevCount) {
+    setPrevCount(initialCount);
+    // 새로운 대댓글이 추가되는 등으로 카운트가 바뀌었다면 펼침 처리
+    if (initialCount > 0) {
+      setIsExpanded(true);
+    }
+  }
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery(subCommentOptions(parentCommentId, isExpanded));
 
   const loadedCount =
     data?.pages.reduce((sum, page) => sum + (page.comments?.length || 0), 0) ||
     0;
-  const remainingCount = initialCount - loadedCount;
+  const remainingCount = !isExpanded
+    ? initialCount
+    : initialCount - loadedCount;
 
   // 대댓글이 아예 없으면 아무것도 그리지 않음
   if (initialCount === 0) return null;
@@ -48,27 +60,28 @@ export function SubCommentList({
       )}
 
       {/* 더보기 버튼 */}
-      {(loadedCount === 0 || hasNextPage) &&
-        !(isLoading || isFetchingNextPage) && (
-          <button
-            className="mt-gap-y-s flex gap-gap-x-s items-center"
-            onClick={() => {
-              if (!isExpanded) {
-                setIsExpanded(true);
-              } else {
-                fetchNextPage();
-              }
-            }}
-            disabled={isFetchingNextPage}
-          >
-            <div className="h-px w-7 bg-border-layer-1" />
-            <span className="text-caption-l text-text-tertiary">
-              {loadedCount === 0
-                ? `댓글 ${initialCount}개 더 보기`
-                : `댓글 ${remainingCount}개 더 보기`}
-            </span>
-          </button>
-        )}
+      {!(isLoading || isFetchingNextPage) && (
+        <button
+          className="mt-gap-y-s flex gap-gap-x-s items-center"
+          onClick={() => {
+            if (!isExpanded) {
+              setIsExpanded(true);
+            } else if (hasNextPage) {
+              fetchNextPage();
+            } else {
+              setIsExpanded(false);
+            }
+          }}
+          disabled={isFetchingNextPage}
+        >
+          <div className="h-px w-7 bg-border-layer-1" />
+          <span className="text-caption-l text-text-tertiary">
+            {!hasNextPage && isExpanded
+              ? "댓글 숨기기"
+              : `댓글 ${remainingCount}개 더 보기`}
+          </span>
+        </button>
+      )}
     </div>
   );
 }
