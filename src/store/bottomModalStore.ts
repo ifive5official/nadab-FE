@@ -2,13 +2,13 @@
 import { create } from "zustand";
 import createSelectors from "./createSelectors";
 
-type Item = {
+export type Item = {
   type?: "normal" | "warning" | "selected" | "unselected";
   label: string;
   onClick: () => void;
 };
 
-type BottomModalConfig = {
+export type BottomModalConfig = {
   title: string;
   items: Item[];
 };

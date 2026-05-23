@@ -14,6 +14,7 @@ import CommentAccessoryView from "./CommentAccessoryView";
 import { formatRelativeDate } from "@/lib/formatters";
 import clsx from "clsx";
 import { SubCommentList } from "./SubCommentList";
+import { CommentMenu } from "./CommentMenu";
 
 type SubCommentTarget = {
   parentCommentId: number;
@@ -93,8 +94,10 @@ export function Comment({
   onSubCommentClick,
 }: CommentProps) {
   const isSecret = !comment.canViewContent;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <li>
+    <li className="relative">
       <div className="flex gap-gap-x-l items-start">
         {isSecret ? (
           <div className="aspect-square w-9 rounded-full flex items-center justify-center bg-surface-layer-3">
@@ -111,7 +114,7 @@ export function Comment({
             <span className="text-caption-m text-text-tertiary">
               {formatRelativeDate(comment.createdAt!)}
             </span>
-            <button>
+            <button onClick={() => setIsMenuOpen(true)}>
               <MoreHorizontalIcon size={20} fill="var(--color-icon-muted)" />
             </button>
           </div>
@@ -134,6 +137,13 @@ export function Comment({
       <SubCommentList
         parentCommentId={comment.commentId!}
         initialCount={comment.visibleSubCommentCount ?? 0}
+      />
+      <CommentMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        canEdit={true}
+        canReport={true}
+        canDelete={true}
       />
     </li>
   );
