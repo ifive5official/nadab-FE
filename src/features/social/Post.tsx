@@ -109,7 +109,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
                     type: "warning",
                     onClick: () => {
                       closeBottomModal();
-                      navigate({ to: `/flag/${feed.dailyReportId}` });
+                      navigate({ to: `/flag/report/${feed.dailyReportId}` });
                     },
                   },
                 ],

@@ -15,6 +15,7 @@ import { formatRelativeDate } from "@/lib/formatters";
 import clsx from "clsx";
 import { SubCommentList } from "./SubCommentList";
 import { CommentMenu } from "./CommentMenu";
+import { useNavigate } from "@tanstack/react-router";
 
 type SubCommentTarget = {
   parentCommentId: number;
@@ -96,6 +97,7 @@ export function Comment({
   parentCommentId,
   onSubCommentClick,
 }: CommentProps) {
+  const navigate = useNavigate();
   const isSecret = !comment.canViewContent;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -148,9 +150,20 @@ export function Comment({
       <CommentMenu
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        canEdit={true}
-        canReport={true}
+        canEdit={!!comment.isMine}
+        canReport={!comment.isMine && !!comment.canViewContent}
         canDelete={comment.canDelete!}
+        onEditClick={() => {
+          // Todo
+        }}
+        onReportClick={() => {
+          navigate({
+            to: `/flag/comment/${comment.commentId!}`,
+            search: {
+              parentCommentId: parentCommentId,
+            },
+          });
+        }}
         onDeleteClick={() =>
           deleteCommentMutation.mutate({
             commentId: comment.commentId!,

@@ -25,7 +25,6 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
 import { Route as AuthenticatedSocialBlockedRouteImport } from './routes/_authenticated/social/blocked'
-import { Route as AuthenticatedFlagReportIdRouteImport } from './routes/_authenticated/flag/$reportId'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
@@ -45,6 +44,8 @@ import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboa
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
 import { Route as AuthenticatedReportReportTypePeriodRouteImport } from './routes/_authenticated/report/$reportType.$period'
+import { Route as AuthenticatedFlagReportReportIdRouteImport } from './routes/_authenticated/flag/report.$reportId'
+import { Route as AuthenticatedFlagCommentCommentIdRouteImport } from './routes/_authenticated/flag/comment.$commentId'
 import { Route as AuthenticatedDailyReportReportIdRouteImport } from './routes/_authenticated/daily/report.$reportId'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
 
@@ -130,12 +131,6 @@ const AuthenticatedSocialBlockedRoute =
   AuthenticatedSocialBlockedRouteImport.update({
     id: '/social/blocked',
     path: '/social/blocked',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedFlagReportIdRoute =
-  AuthenticatedFlagReportIdRouteImport.update({
-    id: '/flag/$reportId',
-    path: '/flag/$reportId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDetailDateRoute = AuthenticatedDetailDateRouteImport.update({
@@ -239,6 +234,18 @@ const AuthenticatedReportReportTypePeriodRoute =
     path: '/report/$reportType/$period',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedFlagReportReportIdRoute =
+  AuthenticatedFlagReportReportIdRouteImport.update({
+    id: '/flag/report/$reportId',
+    path: '/flag/report/$reportId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedFlagCommentCommentIdRoute =
+  AuthenticatedFlagCommentCommentIdRouteImport.update({
+    id: '/flag/comment/$commentId',
+    path: '/flag/comment/$commentId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDailyReportReportIdRoute =
   AuthenticatedDailyReportReportIdRouteImport.update({
     id: '/daily/report/$reportId',
@@ -278,7 +285,6 @@ export interface FileRoutesByFullPath {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/flag/$reportId': typeof AuthenticatedFlagReportIdRoute
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -288,6 +294,8 @@ export interface FileRoutesByFullPath {
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
+  '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRoutesByTo {
@@ -316,7 +324,6 @@ export interface FileRoutesByTo {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/flag/$reportId': typeof AuthenticatedFlagReportIdRoute
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -326,6 +333,8 @@ export interface FileRoutesByTo {
   '/search': typeof AuthenticatedSearchIndexRoute
   '/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
+  '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRoutesById {
@@ -357,7 +366,6 @@ export interface FileRoutesById {
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
-  '/_authenticated/flag/$reportId': typeof AuthenticatedFlagReportIdRoute
   '/_authenticated/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
@@ -367,6 +375,8 @@ export interface FileRoutesById {
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
   '/(auth)/auth/$provider/callback': typeof authAuthProviderCallbackRoute
   '/_authenticated/daily/report/$reportId': typeof AuthenticatedDailyReportReportIdRoute
+  '/_authenticated/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
+  '/_authenticated/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/_authenticated/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
 }
 export interface FileRouteTypes {
@@ -397,7 +407,6 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
-    | '/flag/$reportId'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -407,6 +416,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
+    | '/flag/comment/$commentId'
+    | '/flag/report/$reportId'
     | '/report/$reportType/$period'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -435,7 +446,6 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
-    | '/flag/$reportId'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -445,6 +455,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/auth/$provider/callback'
     | '/daily/report/$reportId'
+    | '/flag/comment/$commentId'
+    | '/flag/report/$reportId'
     | '/report/$reportType/$period'
   id:
     | '__root__'
@@ -475,7 +487,6 @@ export interface FileRouteTypes {
     | '/_authenticated/account/withdraw'
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
-    | '/_authenticated/flag/$reportId'
     | '/_authenticated/social/blocked'
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
@@ -485,6 +496,8 @@ export interface FileRouteTypes {
     | '/_authenticated/search/'
     | '/(auth)/auth/$provider/callback'
     | '/_authenticated/daily/report/$reportId'
+    | '/_authenticated/flag/comment/$commentId'
+    | '/_authenticated/flag/report/$reportId'
     | '/_authenticated/report/$reportType/$period'
   fileRoutesById: FileRoutesById
 }
@@ -612,13 +625,6 @@ declare module '@tanstack/react-router' {
       path: '/social/blocked'
       fullPath: '/social/blocked'
       preLoaderRoute: typeof AuthenticatedSocialBlockedRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/flag/$reportId': {
-      id: '/_authenticated/flag/$reportId'
-      path: '/flag/$reportId'
-      fullPath: '/flag/$reportId'
-      preLoaderRoute: typeof AuthenticatedFlagReportIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/detail/$date': {
@@ -754,6 +760,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportReportTypePeriodRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/flag/report/$reportId': {
+      id: '/_authenticated/flag/report/$reportId'
+      path: '/flag/report/$reportId'
+      fullPath: '/flag/report/$reportId'
+      preLoaderRoute: typeof AuthenticatedFlagReportReportIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/flag/comment/$commentId': {
+      id: '/_authenticated/flag/comment/$commentId'
+      path: '/flag/comment/$commentId'
+      fullPath: '/flag/comment/$commentId'
+      preLoaderRoute: typeof AuthenticatedFlagCommentCommentIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/daily/report/$reportId': {
       id: '/_authenticated/daily/report/$reportId'
       path: '/daily/report/$reportId'
@@ -793,7 +813,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
-  AuthenticatedFlagReportIdRoute: typeof AuthenticatedFlagReportIdRoute
   AuthenticatedSocialBlockedRoute: typeof AuthenticatedSocialBlockedRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
@@ -802,6 +821,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedNotificationsIndexRoute: typeof AuthenticatedNotificationsIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
   AuthenticatedDailyReportReportIdRoute: typeof AuthenticatedDailyReportReportIdRoute
+  AuthenticatedFlagCommentCommentIdRoute: typeof AuthenticatedFlagCommentCommentIdRoute
+  AuthenticatedFlagReportReportIdRoute: typeof AuthenticatedFlagReportReportIdRoute
   AuthenticatedReportReportTypePeriodRoute: typeof AuthenticatedReportReportTypePeriodRoute
 }
 
@@ -812,7 +833,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRoute,
-  AuthenticatedFlagReportIdRoute: AuthenticatedFlagReportIdRoute,
   AuthenticatedSocialBlockedRoute: AuthenticatedSocialBlockedRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
@@ -821,6 +841,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedNotificationsIndexRoute: AuthenticatedNotificationsIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
   AuthenticatedDailyReportReportIdRoute: AuthenticatedDailyReportReportIdRoute,
+  AuthenticatedFlagCommentCommentIdRoute:
+    AuthenticatedFlagCommentCommentIdRoute,
+  AuthenticatedFlagReportReportIdRoute: AuthenticatedFlagReportReportIdRoute,
   AuthenticatedReportReportTypePeriodRoute:
     AuthenticatedReportReportTypePeriodRoute,
 }
