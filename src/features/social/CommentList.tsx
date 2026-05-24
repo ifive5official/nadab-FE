@@ -16,16 +16,10 @@ import clsx from "clsx";
 import { SubCommentList } from "./SubCommentList";
 import { CommentMenu } from "./CommentMenu";
 import { useNavigate } from "@tanstack/react-router";
-
-type SubCommentTarget = {
-  parentCommentId: number;
-  parentCommentAuthorNickname: string;
-  isParentCommentSecret: boolean;
-};
+import useCommentInputStore from "@/store/commentInputStore";
 
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
-  const [subCommentTarget, setSubCommentTarget] =
-    useState<SubCommentTarget | null>(null);
+  const { mode, setWriteMode } = useCommentInputStore();
 
   // 무한스크롤
   const { ref, inView } = useInView();
@@ -43,8 +37,13 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
+  // 댓글 초기화
+  useEffect(() => {
+    setWriteMode(dailyReportId);
+  }, [setWriteMode, dailyReportId]);
+
   return (
-    <div className={clsx(subCommentTarget ? "pb-[104px]" : "pb-16")}>
+    <div className={clsx(mode === "SUB" ? "pb-[104px]" : "pb-16")}>
       <ul className="flex flex-col gap-gap-y-xl">
         {commentsData?.pages.map((page, i) => {
           return (
@@ -55,13 +54,6 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
                     key={comment.commentId}
                     dailyReportId={dailyReportId}
                     comment={comment}
-                    onSubCommentClick={() =>
-                      setSubCommentTarget({
-                        parentCommentId: comment.commentId!,
-                        parentCommentAuthorNickname: comment.authorNickname!,
-                        isParentCommentSecret: comment.isSecret!,
-                      })
-                    }
                   />
                 );
               })}
@@ -71,15 +63,7 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
         })}
         {(isLoading || isFetchingNextPage) && <CommentSkeleton />}
       </ul>
-      <CommentAccessoryView
-        dailyReportId={dailyReportId}
-        parentCommentId={subCommentTarget?.parentCommentId}
-        parentCommentAuthorNickname={
-          subCommentTarget?.parentCommentAuthorNickname
-        }
-        isParentCommentSecret={subCommentTarget?.isParentCommentSecret}
-        onResetSubCommentTarget={() => setSubCommentTarget(null)}
-      />
+      <CommentAccessoryView />
     </div>
   );
 }
@@ -88,18 +72,17 @@ type Comment = components["schemas"]["CommentResponse"];
 type CommentProps = {
   dailyReportId: number;
   comment: Comment;
-  parentCommentId?: number; // 대댓글이면 존재함
-  onSubCommentClick?: () => void;
+  parentComment?: Comment; // 대댓글일 경우
 };
 export function Comment({
   dailyReportId,
   comment,
-  parentCommentId,
-  onSubCommentClick,
+  parentComment,
 }: CommentProps) {
   const navigate = useNavigate();
   const isSecret = !comment.canViewContent;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { setSubMode, setEditMode } = useCommentInputStore();
 
   // 댓글 관리
   const deleteCommentMutation = useDeleteCommentMutation();
@@ -122,18 +105,26 @@ export function Comment({
             <span className="text-caption-m text-text-tertiary">
               {formatRelativeDate(comment.createdAt!)}
             </span>
-            <button onClick={() => setIsMenuOpen(true)}>
-              <MoreHorizontalIcon size={20} fill="var(--color-icon-muted)" />
-            </button>
+            {!isSecret && (
+              <button onClick={() => setIsMenuOpen(true)}>
+                <MoreHorizontalIcon size={20} fill="var(--color-icon-muted)" />
+              </button>
+            )}
           </div>
           <p
             className={clsx("text-caption-l", isSecret && "text-text-tertiary")}
           >
             {isSecret ? "비밀 댓글이에요." : comment.content}
           </p>
-          {!isSecret && !parentCommentId && (
+          {!isSecret && !parentComment && (
             <button
-              onClick={onSubCommentClick}
+              onClick={() =>
+                setSubMode(
+                  comment.commentId!,
+                  comment.authorNickname!,
+                  comment.isSecret!,
+                )
+              }
               className="text-caption-l underline"
             >
               답글 남기기
@@ -142,11 +133,7 @@ export function Comment({
         </div>
         <FeedHeartIcon />
       </div>
-      <SubCommentList
-        dailyReportId={dailyReportId}
-        parentCommentId={comment.commentId!}
-        initialCount={comment.visibleSubCommentCount ?? 0}
-      />
+      <SubCommentList dailyReportId={dailyReportId} parentComment={comment} />
       <CommentMenu
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
@@ -154,13 +141,19 @@ export function Comment({
         canReport={!comment.isMine && !!comment.canViewContent}
         canDelete={comment.canDelete!}
         onEditClick={() => {
-          // Todo
+          setEditMode(
+            comment.content!,
+            comment.isSecret!,
+            dailyReportId,
+            parentComment?.commentId,
+            parentComment?.authorNickname,
+          );
         }}
         onReportClick={() => {
           navigate({
             to: `/flag/comment/${comment.commentId!}`,
             search: {
-              parentCommentId: parentCommentId,
+              parentCommentId: parentComment?.commentId,
             },
           });
         }}
@@ -168,7 +161,7 @@ export function Comment({
           deleteCommentMutation.mutate({
             commentId: comment.commentId!,
             dailyReportId,
-            parentCommentId,
+            parentCommentId: parentComment?.commentId,
           })
         }
       />

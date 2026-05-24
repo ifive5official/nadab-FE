@@ -1,7 +1,6 @@
 // 키보드 위에 올라오는 악세서리 뷰
 // 댓글 작성 시 사용
 import { motion } from "motion/react";
-// import { useKeyboardOffset } from "@/hooks/useKeyboardOffset";
 import CommentInput from "./CommentInput";
 import CheckBox from "@/components/Checkbox";
 import { useState } from "react";
@@ -11,48 +10,50 @@ import {
 } from "./commentQueries";
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
+import useCommentInputStore from "@/store/commentInputStore";
 
-type Props = {
-  dailyReportId: number;
-  parentCommentId?: number;
-  parentCommentAuthorNickname?: string;
-  isParentCommentSecret?: boolean;
-  onResetSubCommentTarget: () => void;
-};
+export default function CommentAccessoryView() {
+  const {
+    mode,
+    dailyReportId,
+    parentCommentId,
+    isParentSecret,
+    originalCommentContent,
+    isOriginalCommentSecret,
+    setWriteMode,
+  } = useCommentInputStore();
 
-export default function CommentAccessoryView({
-  dailyReportId,
-  parentCommentId,
-  parentCommentAuthorNickname,
-  isParentCommentSecret,
-  onResetSubCommentTarget,
-}: Props) {
-  // const { bottomOffset } = useKeyboardOffset();
-  const isSubComment = !!parentCommentId;
   const [isSecret, setIsSecret] = useState(false);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(originalCommentContent ?? "");
+
+  const [prevMode, setPrevMode] = useState(mode);
+
+  if (mode !== prevMode) {
+    setPrevMode(mode);
+    if (mode === "EDIT") {
+      setContent(originalCommentContent ?? "");
+      setIsSecret(isOriginalCommentSecret ?? false);
+    } else {
+      setContent("");
+      setIsSecret(false);
+    }
+  }
 
   const postCommentMutation = usePostCommentMutation();
-  const postSubCommentMutation = usePostSubCommentMutation(
-    parentCommentId ?? 0,
-    dailyReportId,
-  );
+  const postSubCommentMutation = usePostSubCommentMutation();
 
   const { showToast } = useToastStore();
 
   // 부모가 비밀댓글이면 자식은 무조건 비밀댓글
-  const finalIsSecret = isParentCommentSecret ? true : isSecret;
+  const finalIsSecret = isParentSecret ? true : isSecret;
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      // style={{
-      //   paddingBottom: `${bottomOffset}px`,
-      // }}
       className={clsx(
         "bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base",
-        isSubComment ? "h-[104px]" : "h-16",
+        mode === "SUB" ? "h-[104px]" : "h-16",
       )}
     >
       <div
@@ -67,7 +68,7 @@ export default function CommentAccessoryView({
           textSize="text-caption-s"
           checked={finalIsSecret}
           onCheck={() => {
-            if (isParentCommentSecret) {
+            if (isParentSecret) {
               showToast({ message: "비공개 댓글의 답글은 비공개로 제한돼요." });
             } else {
               setIsSecret((prev) => !prev);
@@ -81,26 +82,31 @@ export default function CommentAccessoryView({
         className="w-full"
         onSubmit={(e) => {
           e.preventDefault();
+          setIsSecret(false);
           setContent("");
-          if (isSubComment) {
+          setWriteMode(dailyReportId!);
+          if (mode === "SUB") {
             postSubCommentMutation.mutate({
+              dailyReportId: dailyReportId!,
+              commentId: parentCommentId!,
               content,
               isSecret: finalIsSecret,
             });
-          } else {
+          } else if (mode === "WRITE") {
             postCommentMutation.mutate({
-              dailyReportId,
+              dailyReportId: dailyReportId!,
               content,
               isSecret: finalIsSecret,
             });
+          } else if (mode === "EDIT") {
+            // Todo
           }
         }}
       >
         <CommentInput
           value={content}
-          parentCommentAuthorNickname={parentCommentAuthorNickname}
           onChange={(e) => setContent(e.target.value)}
-          onResetSubCommentTarget={onResetSubCommentTarget}
+          onReset={() => setWriteMode(dailyReportId!)}
         />
       </form>
     </motion.div>
