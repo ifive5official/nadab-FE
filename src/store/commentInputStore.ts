@@ -8,6 +8,7 @@ type State = {
   parentCommentId?: number;
   parentCommentAuthorNickname?: string;
   isParentSecret?: boolean;
+  commentId?: number;
   originalCommentContent?: string;
   isOriginalCommentSecret?: boolean;
 };
@@ -20,6 +21,7 @@ type Action = {
     isParentSecret: boolean,
   ) => void;
   setEditMode: (
+    commentId: number,
     originalCommentContent: string,
     isOriginalCommentSecret: boolean,
     dailyReportId?: number, // 대댓글 아닌 경우
@@ -37,6 +39,8 @@ export const useCommentInputBase = create<State & Action>((set) => ({
       parentCommentId: undefined,
       parentCommentAuthorNickname: undefined,
       isParentSecret: false,
+      commentId: undefined,
+      originalCommentContent: undefined,
       isOriginalCommentSecret: false,
     }),
   setSubMode: (parentCommentId, parentCommentAuthorNickname, isParentSecret) =>
@@ -47,6 +51,7 @@ export const useCommentInputBase = create<State & Action>((set) => ({
       isParentSecret,
     }),
   setEditMode: (
+    commentId,
     originalCommentContent,
     isOriginalCommentSecret,
     dailyReportId,
@@ -55,6 +60,7 @@ export const useCommentInputBase = create<State & Action>((set) => ({
   ) =>
     set({
       mode: "EDIT",
+      commentId,
       originalCommentContent,
       isOriginalCommentSecret,
       dailyReportId,

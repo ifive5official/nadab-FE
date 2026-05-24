@@ -142,6 +142,7 @@ export function Comment({
         canDelete={comment.canDelete!}
         onEditClick={() => {
           setEditMode(
+            comment.commentId!,
             comment.content!,
             comment.isSecret!,
             dailyReportId,
