@@ -3,18 +3,21 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { subCommentOptions } from "./commentQueries";
 import { Fragment, useState } from "react";
 import { Comment, CommentSkeleton } from "./CommentList";
+import type { components } from "@/generated/api-types";
+
+type Comment = components["schemas"]["CommentResponse"];
 
 type SubCommentListProps = {
   dailyReportId: number;
-  parentCommentId: number;
-  initialCount: number; // 부모 댓글에서 내려준 visibleSubCommentCount
+  parentComment: Comment;
 };
 
 export function SubCommentList({
   dailyReportId,
-  parentCommentId,
-  initialCount,
+  parentComment,
 }: SubCommentListProps) {
+  const parentCommentId = parentComment.commentId!;
+  const initialCount = parentComment.visibleSubCommentCount ?? 0;
   const [isExpanded, setIsExpanded] = useState(false); // 대댓글이 열렸는가
 
   const [prevCount, setPrevCount] = useState(initialCount);
@@ -51,7 +54,7 @@ export function SubCommentList({
                   key={subComment.commentId}
                   dailyReportId={dailyReportId}
                   comment={subComment}
-                  parentCommentId={parentCommentId}
+                  parentComment={parentComment}
                 />
               ))}
             </Fragment>

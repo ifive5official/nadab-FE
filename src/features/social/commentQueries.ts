@@ -74,23 +74,34 @@ export function subCommentOptions(commentId: number, hasFetched: boolean) {
   });
 }
 
+interface ExtendedCreateSubCommentReq extends CreateSubCommentReq {
+  commentId: number;
+  dailyReportId: number;
+}
+
 // 대댓글 작성
 // commentId는 부모 댓글 id임
-export function usePostSubCommentMutation(
-  commentId: number,
-  dailyReportId: number,
-) {
+export function usePostSubCommentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: CreateSubCommentReq) => {
+    mutationFn: async ({
+      content,
+      isSecret,
+      commentId,
+    }: ExtendedCreateSubCommentReq) => {
+      const req: CreateSubCommentReq = {
+        content: content,
+        isSecret: isSecret,
+      };
       const res = await api.post(
         `/api/v1/comments/${commentId}/sub-comments`,
         req,
       );
       return res.data;
     },
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
+      const { commentId, dailyReportId } = variables;
       // 대댓글 작성 후 대댓글 목록 재조회
       const queryKey = ["currentUser", "subComments", commentId];
       queryClient.invalidateQueries({ queryKey });
@@ -111,6 +122,7 @@ type DeleteCommentParams = {
   dailyReportId: number;
   parentCommentId?: number | null; // 대댓글일 경우만
 };
+
 export function useDeleteCommentMutation() {
   const queryClient = useQueryClient();
 
