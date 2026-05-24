@@ -18,7 +18,7 @@ export default function CommentInput({
   readOnly,
   onReset,
 }: CommentInputProps) {
-  const { mode, parentCommentAuthorNickname } = useCommentInputStore();
+  const { parentCommentAuthorNickname } = useCommentInputStore();
   // 사파리에서 focus-with 안 되는 문제 대응
   const [isFocused, setIsFocused] = useState(false);
 
@@ -27,12 +27,12 @@ export default function CommentInput({
       className={clsx(
         "w-full overflow-hidden border border-border-base flex flex-col",
         isFocused && "shadow-1 border-border-layer-1",
-        mode === "SUB" ? "rounded-[20px]" : "rounded-full",
+        parentCommentAuthorNickname ? "rounded-[20px]" : "rounded-full",
         readOnly && "cursor-pointer",
       )}
       onClick={onClick}
     >
-      {mode === "SUB" && (
+      {parentCommentAuthorNickname && (
         <div className="h-10 px-padding-x-s bg-field-bg-muted flex justify-between items-center">
           <span className="text-caption-m">
             {parentCommentAuthorNickname}님에게 답글 남기는 중

@@ -156,3 +156,47 @@ export function useDeleteCommentMutation() {
     },
   });
 }
+
+type UpdateCommentParams = {
+  content: string;
+  commentId: number;
+  dailyReportId: number;
+  parentCommentId?: number;
+};
+
+// 댓글 수정
+export function useUpdateCommentMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ commentId, content }: UpdateCommentParams) => {
+      const res = await api.patch(`/api/v1/comments/${commentId}`, {
+        content,
+      });
+      return res.data;
+    },
+    onSuccess: async (_, variables) => {
+      const { dailyReportId, parentCommentId } = variables;
+      if (parentCommentId) {
+        // 대댓글의 경우
+        // 해당 대댓글 리스트 새로고침
+        queryClient.invalidateQueries({
+          queryKey: ["currentUser", "subComments", parentCommentId],
+        });
+        //  부모 댓글의 대댓글 개수가 줄어들어야 하므로 전체 댓글 리스트도 새로고침
+        queryClient.invalidateQueries({
+          queryKey: ["currentUser", "comments", dailyReportId],
+        });
+      } else {
+        // 일반 댓글의 경우
+        // 전체 댓글 리스트 새로고침
+        queryClient.invalidateQueries({
+          queryKey: ["currentUser", "comments", dailyReportId],
+        });
+      }
+    },
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      handleDefaultApiError(err);
+    },
+  });
+}

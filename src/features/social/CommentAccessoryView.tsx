@@ -7,6 +7,7 @@ import { useState } from "react";
 import {
   usePostCommentMutation,
   usePostSubCommentMutation,
+  useUpdateCommentMutation,
 } from "./commentQueries";
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
@@ -17,7 +18,9 @@ export default function CommentAccessoryView() {
     mode,
     dailyReportId,
     parentCommentId,
+    parentCommentAuthorNickname,
     isParentSecret,
+    commentId,
     originalCommentContent,
     isOriginalCommentSecret,
     setWriteMode,
@@ -28,6 +31,7 @@ export default function CommentAccessoryView() {
 
   const [prevMode, setPrevMode] = useState(mode);
 
+  // 수정 모드일 때 이전 댓글 정보 반영
   if (mode !== prevMode) {
     setPrevMode(mode);
     if (mode === "EDIT") {
@@ -41,6 +45,7 @@ export default function CommentAccessoryView() {
 
   const postCommentMutation = usePostCommentMutation();
   const postSubCommentMutation = usePostSubCommentMutation();
+  const updateCommentMutation = useUpdateCommentMutation();
 
   const { showToast } = useToastStore();
 
@@ -53,7 +58,7 @@ export default function CommentAccessoryView() {
       exit={{ opacity: 0 }}
       className={clsx(
         "bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base",
-        mode === "SUB" ? "h-[104px]" : "h-16",
+        parentCommentAuthorNickname ? "h-[104px]" : "h-16",
       )}
     >
       <div
@@ -68,7 +73,9 @@ export default function CommentAccessoryView() {
           textSize="text-caption-s"
           checked={finalIsSecret}
           onCheck={() => {
-            if (isParentSecret) {
+            if (mode === "EDIT") {
+              showToast({ message: "비밀 댓글 여부는 변경할 수 없어요." });
+            } else if (isParentSecret) {
               showToast({ message: "비공개 댓글의 답글은 비공개로 제한돼요." });
             } else {
               setIsSecret((prev) => !prev);
@@ -99,7 +106,12 @@ export default function CommentAccessoryView() {
               isSecret: finalIsSecret,
             });
           } else if (mode === "EDIT") {
-            // Todo
+            updateCommentMutation.mutate({
+              dailyReportId: dailyReportId!,
+              content,
+              commentId: commentId!,
+              parentCommentId: parentCommentId!,
+            });
           }
         }}
       >
