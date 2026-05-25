@@ -6,12 +6,7 @@ import type { components } from "@/generated/api-types";
 import ProfileImg from "@/components/ProfileImg";
 import type categories from "@/constants/categories";
 import type emotions from "@/constants/emotions";
-import {
-  FeedHeartFilledIcon,
-  FeedHeartIcon,
-  FeedMessageIcon,
-  MoreHorizontalIcon,
-} from "@/components/Icons";
+import { FeedMessageIcon, MoreHorizontalIcon } from "@/components/Icons";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
@@ -25,6 +20,7 @@ import {
 import { useLongPress } from "@/hooks/useLongPress";
 import { CommentList } from "./CommentList";
 import { LikeUserList } from "./LikeUserList";
+import { LikeButton } from "./LikeButton";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
@@ -167,9 +163,11 @@ export default function Post({ feed, isMine = false, className }: Props) {
           />
         )}
         <div className="flex gap-gap-x-m">
-          <button {...likeEvent}>
-            {feed.isLiked ? <FeedHeartFilledIcon /> : <FeedHeartIcon />}
-          </button>
+          <LikeButton
+            isLiked={feed.isLiked!}
+            isMine={isMine}
+            likeEvent={likeEvent}
+          />
           <button
             onClick={() =>
               showBottomSheet({
