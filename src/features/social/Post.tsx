@@ -164,7 +164,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
         )}
         <div className="flex gap-gap-x-m">
           <LikeButton
-            isLiked={feed.isLiked!}
+            isLiked={!!(feed.isLiked || (isMine && feed.hasLikes))}
             isMine={isMine}
             likeEvent={likeEvent}
           />
