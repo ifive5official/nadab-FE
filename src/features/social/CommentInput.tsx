@@ -21,6 +21,8 @@ export default function CommentInput({
   const { parentCommentAuthorNickname } = useCommentInputStore();
   // 사파리에서 focus-with 안 되는 문제 대응
   const [isFocused, setIsFocused] = useState(false);
+  const isSubmitAllowed =
+    value && value.trim().length > 0 && value.length <= 500;
 
   return (
     <div
@@ -58,10 +60,17 @@ export default function CommentInput({
           onChange={onChange}
         />
         <button
+          disabled={!isSubmitAllowed}
           onMouseDown={(e) => e.preventDefault()} // input에 포커스 유지
           className={clsx(value ? "" : "hidden")}
         >
-          <ArrowUpCircleFilledIcon />
+          <ArrowUpCircleFilledIcon
+            fill={
+              isSubmitAllowed
+                ? "var(--color-icon-default)"
+                : "var(--color-icon-muted)"
+            }
+          />
         </button>
       </div>
     </div>

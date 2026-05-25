@@ -76,7 +76,9 @@ export default function CommentAccessoryView() {
             if (mode === "EDIT") {
               showToast({ message: "비밀 댓글 여부는 변경할 수 없어요." });
             } else if (isParentSecret) {
-              showToast({ message: "비공개 댓글의 답글은 비공개로 제한돼요." });
+              showToast({
+                message: "비공개 댓글의 대댓글은 공개로 변경할 수 없어요.",
+              });
             } else {
               setIsSecret((prev) => !prev);
             }
