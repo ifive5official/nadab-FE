@@ -19,6 +19,12 @@ import { CommentMenu } from "./CommentMenu";
 import { useNavigate } from "@tanstack/react-router";
 import useCommentInputStore from "@/store/commentInputStore";
 import useModalStore from "@/store/modalStore";
+import {
+  useCommentLikeMutation,
+  useCommentUnLikeMutation,
+} from "./likeQueries";
+import { useLongPress } from "@/hooks/useLongPress";
+import { LikeButton } from "./LikeButton";
 
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   const { mode, setWriteMode } = useCommentInputStore();
@@ -87,6 +93,44 @@ export function Comment({
   const { setSubMode, setEditMode } = useCommentInputStore();
   const { showModal, closeModal } = useModalStore();
 
+  // 좋아요
+  const likeMutation = useCommentLikeMutation();
+  const unLikeMutation = useCommentUnLikeMutation();
+
+  function handleClickLike() {
+    // 남의 댓글만 짧게 누를 시 좋아요 가능
+    if (comment.isMine) return;
+
+    if (comment.isLiked) {
+      unLikeMutation.mutate({
+        dailyReportId: dailyReportId,
+        commentId: comment.commentId!,
+        parentCommentId: parentComment?.commentId,
+      });
+    } else {
+      likeMutation.mutate({
+        dailyReportId: dailyReportId,
+        commentId: comment.commentId!,
+        parentCommentId: parentComment?.commentId,
+      });
+    }
+  }
+
+  function handleLongPressLike() {
+    // 내 게시물에서만 길게 누를 시 좋아요 목록 확인 가능
+    // if (!isMine) return;
+    // showBottomSheet({
+    //   title: "좋아요",
+    //   content: (
+    //     <LikeUserList
+    //       queryOptions={likesOptions(feed.dailyReportId!, isMine)}
+    //     />
+    //   ),
+    // });
+  }
+
+  const likeEvent = useLongPress(handleLongPressLike, handleClickLike);
+
   // 댓글 관리
   const deleteCommentMutation = useDeleteCommentMutation();
 
@@ -134,7 +178,15 @@ export function Comment({
             </button>
           )}
         </div>
-        <FeedHeartIcon />
+        {!isSecret && (
+          <LikeButton
+            isLiked={
+              !!(comment.isLiked! || (comment.isMine && comment.hasLikes))
+            }
+            isMine={comment.isMine!}
+            likeEvent={likeEvent}
+          />
+        )}
       </div>
       <SubCommentList dailyReportId={dailyReportId} parentComment={comment} />
       <CommentMenu

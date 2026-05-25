@@ -3,6 +3,7 @@ import {
   queryOptions,
   useMutation,
   useQueryClient,
+  type InfiniteData,
 } from "@tanstack/react-query";
 import type { ApiErrResponse, ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
@@ -87,6 +88,139 @@ export function useUnLikeMutation() {
           ),
         };
       });
+    },
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      handleDefaultApiError(err);
+    },
+  });
+}
+
+type CommentRes = components["schemas"]["CommentListResponse"];
+
+type ExtendedCommentReq = {
+  commentId: number;
+  dailyReportId?: number;
+  parentCommentId?: number;
+};
+
+// 댓글 좋아요
+export function useCommentLikeMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ commentId }: ExtendedCommentReq) => {
+      const res = await api.post(`/api/v1/comments/${commentId}/likes`);
+      return res.data;
+    },
+    onSuccess: async (_, variables) => {
+      const { commentId, dailyReportId, parentCommentId } = variables;
+
+      if (!parentCommentId && dailyReportId) {
+        queryClient.setQueryData<InfiniteData<CommentRes>>(
+          ["currentUser", "comments", dailyReportId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                comments: page.comments?.map((comment) =>
+                  comment.commentId === commentId
+                    ? {
+                        ...comment,
+                        isLiked: !comment.isLiked,
+                      }
+                    : comment,
+                ),
+              })),
+            };
+          },
+        );
+      }
+      if (parentCommentId) {
+        queryClient.setQueryData<InfiniteData<CommentRes>>(
+          ["currentUser", "subComments", parentCommentId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                comments: page.comments?.map((comment) =>
+                  comment.commentId === commentId
+                    ? {
+                        ...comment,
+                        isLiked: !comment.isLiked,
+                      }
+                    : comment,
+                ),
+              })),
+            };
+          },
+        );
+      }
+    },
+    onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      handleDefaultApiError(err);
+    },
+  });
+}
+
+// 댓글 좋아요 취소
+export function useCommentUnLikeMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ commentId }: ExtendedCommentReq) => {
+      const res = await api.delete(`/api/v1/comments/${commentId}/likes`);
+      return res.data;
+    },
+    onSuccess: async (_, variables) => {
+      const { commentId, dailyReportId, parentCommentId } = variables;
+      if (!parentCommentId && dailyReportId) {
+        queryClient.setQueryData<InfiniteData<CommentRes>>(
+          ["currentUser", "comments", dailyReportId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                comments: page.comments?.map((comment) =>
+                  comment.commentId === commentId
+                    ? {
+                        ...comment,
+                        isLiked: !comment.isLiked,
+                      }
+                    : comment,
+                ),
+              })),
+            };
+          },
+        );
+      }
+      if (parentCommentId) {
+        queryClient.setQueryData<InfiniteData<CommentRes>>(
+          ["currentUser", "subComments", parentCommentId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                comments: page.comments?.map((comment) =>
+                  comment.commentId === commentId
+                    ? {
+                        ...comment,
+                        isLiked: !comment.isLiked,
+                      }
+                    : comment,
+                ),
+              })),
+            };
+          },
+        );
+      }
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);
