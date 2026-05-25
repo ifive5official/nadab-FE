@@ -9,6 +9,7 @@ import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import type { AxiosError } from "axios";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
+import useToastStore from "@/store/toastStore";
 
 type CommentRes = components["schemas"]["CommentListResponse"];
 type CreateCommentReq = components["schemas"]["CreateCommentRequest"];
@@ -83,6 +84,7 @@ interface ExtendedCreateSubCommentReq extends CreateSubCommentReq {
 // commentId는 부모 댓글 id임
 export function usePostSubCommentMutation() {
   const queryClient = useQueryClient();
+  const { showToast } = useToastStore();
 
   return useMutation({
     mutationFn: async ({
@@ -111,6 +113,9 @@ export function usePostSubCommentMutation() {
       });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
+      if (err.response?.data?.code === "COMMENT_DELETED") {
+        showToast({ message: "삭제된 댓글이에요." });
+      }
       handleDefaultApiError(err);
     },
   });

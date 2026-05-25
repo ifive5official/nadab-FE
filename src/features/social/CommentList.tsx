@@ -3,6 +3,7 @@ import {
   FeedHeartIcon,
   LockFilledIcon,
   MoreHorizontalIcon,
+  WarningFilledIcon,
 } from "@/components/Icons";
 import ProfileImg from "@/components/ProfileImg";
 import type { components } from "@/generated/api-types";
@@ -17,6 +18,7 @@ import { SubCommentList } from "./SubCommentList";
 import { CommentMenu } from "./CommentMenu";
 import { useNavigate } from "@tanstack/react-router";
 import useCommentInputStore from "@/store/commentInputStore";
+import useModalStore from "@/store/modalStore";
 
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   const { mode, setWriteMode } = useCommentInputStore();
@@ -83,6 +85,7 @@ export function Comment({
   const isSecret = !comment.canViewContent;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { setSubMode, setEditMode } = useCommentInputStore();
+  const { showModal, closeModal } = useModalStore();
 
   // 댓글 관리
   const deleteCommentMutation = useDeleteCommentMutation();
@@ -159,10 +162,27 @@ export function Comment({
           });
         }}
         onDeleteClick={() =>
-          deleteCommentMutation.mutate({
-            commentId: comment.commentId!,
-            dailyReportId,
-            parentCommentId: parentComment?.commentId,
+          showModal({
+            icon: WarningFilledIcon,
+            title: "댓글을 삭제하시겠어요?",
+            children: "삭제된 댓글은 복구할 수 없어요.",
+            buttons: [
+              {
+                label: "취소",
+                onClick: closeModal,
+              },
+              {
+                label: "확인",
+                onClick: () => {
+                  closeModal();
+                  deleteCommentMutation.mutate({
+                    commentId: comment.commentId!,
+                    dailyReportId,
+                    parentCommentId: parentComment?.commentId,
+                  });
+                },
+              },
+            ],
           })
         }
       />

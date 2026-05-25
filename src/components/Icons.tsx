@@ -1331,7 +1331,11 @@ export function GalleryIcon() {
   );
 }
 
-export function ArrowUpCircleFilledIcon() {
+export function ArrowUpCircleFilledIcon({
+  fill = "var(--color-icon-default)",
+}: {
+  fill?: string;
+}) {
   return (
     <svg
       width="20"
@@ -1342,7 +1346,7 @@ export function ArrowUpCircleFilledIcon() {
     >
       <path
         d="M10.0002 0.833496C4.91683 0.833496 0.833496 4.91683 0.833496 10.0002C0.833496 15.0835 4.91683 19.1668 10.0002 19.1668C15.0835 19.1668 19.1668 15.0835 19.1668 10.0002C19.1668 4.91683 15.0835 0.833496 10.0002 0.833496ZM12.7502 10.5835L10.8335 8.66683V13.3335H9.16683V8.66683L7.25016 10.5835L6.0835 9.41683L10.0002 5.50016L13.9168 9.41683L12.7502 10.5835Z"
-        fill="var(--color-icon-default)"
+        fill={fill}
       />
     </svg>
   );
