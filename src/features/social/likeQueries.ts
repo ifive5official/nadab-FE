@@ -95,6 +95,20 @@ export function useUnLikeMutation() {
   });
 }
 
+// 댓글 좋아요 리스트
+export function commentLikesOptions(commentId: number, isMine: boolean) {
+  return queryOptions({
+    queryKey: ["currentUser", "likes", commentId],
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<LikeRes>>(
+        `/api/v1/comments/${commentId}/likes`,
+      );
+      return res.data.data!;
+    },
+    enabled: isMine,
+  });
+}
+
 type CommentRes = components["schemas"]["CommentListResponse"];
 
 type ExtendedCommentReq = {
