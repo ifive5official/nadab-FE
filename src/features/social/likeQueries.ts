@@ -16,7 +16,7 @@ type Feed = components["schemas"]["FeedResponse"];
 type LikeRes = components["schemas"]["LikeListResponse"];
 
 // 게시글 좋아요 리스트
-export function likesOptions(dailyReportId: number, isMine: boolean) {
+export function likesOptions(dailyReportId: number) {
   return queryOptions({
     queryKey: ["currentUser", "likes", dailyReportId],
     queryFn: async () => {
@@ -25,7 +25,6 @@ export function likesOptions(dailyReportId: number, isMine: boolean) {
       );
       return res.data.data!;
     },
-    enabled: isMine,
   });
 }
 
@@ -96,7 +95,7 @@ export function useUnLikeMutation() {
 }
 
 // 댓글 좋아요 리스트
-export function commentLikesOptions(commentId: number, isMine: boolean) {
+export function commentLikesOptions(commentId: number) {
   return queryOptions({
     queryKey: ["currentUser", "likes", commentId],
     queryFn: async () => {
@@ -105,7 +104,6 @@ export function commentLikesOptions(commentId: number, isMine: boolean) {
       );
       return res.data.data!;
     },
-    enabled: isMine,
   });
 }
 

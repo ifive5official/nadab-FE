@@ -1,6 +1,6 @@
 import SegmentedControls, { type Option } from "@/components/SegmentedControls";
 import FriendsTab from "@/features/social/FriendsTab";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import FeedTab from "@/features/social/FeedTab";
 import {
   blockedFriendsOptions,
@@ -12,6 +12,7 @@ import {
 import Loading from "@/components/Loading";
 import { useQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
+import { AnimatePresence } from "motion/react";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -46,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
 
 function RouteComponent() {
   const tab = Route.useSearch().tab ?? "feed";
+  console.log(tab);
   const navigate = useNavigate({ from: Route.fullPath });
 
   const { data: friendRequests } = useQuery(friendRequestsOptions);
@@ -80,6 +82,9 @@ function RouteComponent() {
         {/* {tab === "group" && <GroupTab />} */}
         {tab === "friends" && <FriendsTab />}
       </Suspense>
+      <AnimatePresence>
+        <Outlet />
+      </AnimatePresence>
     </>
   );
 }
