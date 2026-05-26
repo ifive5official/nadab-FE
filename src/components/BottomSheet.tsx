@@ -1,10 +1,8 @@
 // 아래에서 열리는 창
 // 좋아요 및 댓글 목록 보기에서 사용
-import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { useRouter } from "@tanstack/react-router";
-import clsx from "clsx";
 import { motion, useDragControls } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
@@ -17,15 +15,14 @@ export default function BottomSheet({ title, children }: Props) {
   const onClose = router.history.back;
   const dragControls = useDragControls();
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isScrollAtTop, setIsScrollAtTop] = useState(true);
-  const isScrollingDown = useScrollDirection(contentRef);
+  // const [isScrollAtTop, setIsScrollAtTop] = useState(true);
 
-  // 콘텐츠 내부 스크롤 감지 함수
-  function handleContentScroll() {
-    if (contentRef.current) {
-      setIsScrollAtTop(contentRef.current.scrollTop <= 0);
-    }
-  }
+  // // 콘텐츠 내부 스크롤 감지 함수
+  // function handleContentScroll() {
+  //   if (contentRef.current) {
+  //     setIsScrollAtTop(contentRef.current.scrollTop <= 0);
+  //   }
+  // }
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -41,11 +38,11 @@ export default function BottomSheet({ title, children }: Props) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="z-15 absolute inset-0 bg-neutral-dark-50"
+        className="z-20 absolute inset-0 bg-neutral-dark-50"
         onClick={() => onClose()}
       />
       <motion.div
-        className="z-17 absolute bottom-0 inset-x-0 h-[calc((732/796)*100*var(--dvh))] pb-(--safe-bottom) sm:mx-auto sm:w-[412px] bg-surface-base dark:bg-surface-layer-2 rounded-t-3xl flex flex-col"
+        className="z-30 absolute bottom-0 inset-x-0 h-[calc((732/796)*100*var(--dvh))] pb-(--safe-bottom) sm:mx-auto sm:w-[412px] bg-surface-base dark:bg-surface-layer-2 rounded-t-3xl flex flex-col"
         initial={{ y: 300, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 300, opacity: 0 }}
@@ -58,7 +55,7 @@ export default function BottomSheet({ title, children }: Props) {
         onDragEnd={(_, info) => {
           if (info.offset.y > 150 || info.velocity.y > 500) {
             onClose();
-            setIsScrollAtTop(true);
+            // setIsScrollAtTop(true);
           }
         }}
       >
@@ -72,17 +69,14 @@ export default function BottomSheet({ title, children }: Props) {
         </div>
         {/* 컨텐츠 영역 - 스크롤이 없거나 맨 위에 있을 때만 드래그 가능 */}
         <div
-          className={clsx(
-            "overflow-y-auto flex-1 px-padding-x-m py-padding-y-m",
-            isScrollAtTop && isScrollingDown && "touch-none",
-          )}
+          className="overflow-y-auto flex-1 px-padding-x-m py-padding-y-m"
           ref={contentRef}
-          onScroll={handleContentScroll}
-          onPointerDown={(e) => {
-            if (isScrollAtTop && isScrollingDown) {
-              dragControls.start(e);
-            }
-          }}
+          // onScroll={handleContentScroll}
+          // onPointerDown={(e) => {
+          //   if (isScrollAtTop) {
+          //     dragControls.start(e);
+          //   }
+          // }}
         >
           {children}
         </div>
