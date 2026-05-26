@@ -20,14 +20,11 @@ import { useNavigate } from "@tanstack/react-router";
 import useCommentInputStore from "@/store/commentInputStore";
 import useModalStore from "@/store/modalStore";
 import {
-  commentLikesOptions,
   useCommentLikeMutation,
   useCommentUnLikeMutation,
 } from "./likeQueries";
 import { useLongPress } from "@/hooks/useLongPress";
 import { LikeButton } from "./LikeButton";
-import useBottomSheetStore from "@/store/bottomSheetStore";
-import { LikeUserList } from "./LikeUserList";
 
 export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   const { mode, setWriteMode } = useCommentInputStore();
@@ -95,7 +92,6 @@ export function Comment({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { setSubMode, setEditMode } = useCommentInputStore();
   const { showModal, closeModal } = useModalStore();
-  const { showBottomSheet } = useBottomSheetStore();
 
   // 좋아요
   const likeMutation = useCommentLikeMutation();
@@ -121,16 +117,8 @@ export function Comment({
   }
 
   function handleLongPressLike() {
-    // 내 댓글에서만 길게 누를 시 좋아요 목록 확인 가능
-    if (!comment.isMine) return;
-    showBottomSheet({
-      title: "좋아요",
-      content: (
-        <LikeUserList
-          queryOptions={commentLikesOptions(comment.commentId!, comment.isMine)}
-        />
-      ),
-    });
+    // 길게 누를 시 좋아요 목록 확인 가능
+    navigate({ to: `/social/$postId/comments/${comment.commentId}/likes` });
   }
 
   const likeEvent = useLongPress(handleLongPressLike, handleClickLike);

@@ -11,15 +11,9 @@ import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
 import CommentInput from "./CommentInput";
-import useBottomSheetStore from "@/store/bottomSheetStore";
-import {
-  likesOptions,
-  useLikeMutation,
-  useUnLikeMutation,
-} from "./likeQueries";
+import { useLikeMutation, useUnLikeMutation } from "./likeQueries";
 import { useLongPress } from "@/hooks/useLongPress";
-import { CommentList } from "./CommentList";
-import { LikeUserList } from "./LikeUserList";
+// import { CommentList } from "./CommentList";
 import { LikeButton } from "./LikeButton";
 
 type Props = {
@@ -30,7 +24,6 @@ type Props = {
 
 export default function Post({ feed, isMine = false, className }: Props) {
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
-  const { showBottomSheet } = useBottomSheetStore();
   const navigate = useNavigate();
 
   // 내용이 길 시 더보기 처리
@@ -72,14 +65,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
   function handleLongPressLike() {
     // 내 게시물에서만 길게 누를 시 좋아요 목록 확인 가능
     if (!isMine) return;
-    showBottomSheet({
-      title: "좋아요",
-      content: (
-        <LikeUserList
-          queryOptions={likesOptions(feed.dailyReportId!, isMine)}
-        />
-      ),
-    });
+    navigate({ to: `/social/${feed.dailyReportId}/likes` });
   }
 
   const likeEvent = useLongPress(handleLongPressLike, handleClickLike);
@@ -155,10 +141,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
           <CommentInput
             readOnly
             onClick={() =>
-              showBottomSheet({
-                title: "댓글",
-                content: <CommentList dailyReportId={feed.dailyReportId!} />,
-              })
+              navigate({ to: `/social/${feed.dailyReportId}/comments` })
             }
           />
         )}
@@ -170,10 +153,7 @@ export default function Post({ feed, isMine = false, className }: Props) {
           />
           <button
             onClick={() =>
-              showBottomSheet({
-                title: "댓글",
-                content: <CommentList dailyReportId={feed.dailyReportId!} />,
-              })
+              navigate({ to: `/social/${feed.dailyReportId}/comments` })
             }
           >
             <FeedMessageIcon />

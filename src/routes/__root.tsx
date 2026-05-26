@@ -14,7 +14,6 @@ import { Capacitor } from "@capacitor/core";
 import { Network } from "@capacitor/network";
 import PushToast from "@/components/PushToast";
 import BottomModal from "@/components/BottomModal";
-import BottomSheet from "@/components/BottomSheet";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -57,7 +56,6 @@ function RootComponent() {
       <div className="h-full w-full flex flex-col sm:w-[412px] sm:mx-auto overflow-hidden">
         {isOnline ? <Outlet /> : <ErrorPage error={{}} type="network" />}
         <BottomModal />
-        <BottomSheet />
         <Modal />
         <Toast />
         <PushToast />
