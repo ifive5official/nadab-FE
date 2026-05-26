@@ -24,7 +24,7 @@ export function formatRelativeDate(dateString: string): string {
   const diffInWeeks = Math.floor(diffInDays / 7);
 
   // 1. 1시간 미만: n분 전
-  if (diffInMinutes < 60 && diffInMinutes >= 0) {
+  if (diffInMinutes < 60) {
     if (diffInMinutes < 1) return "방금 전"; // 1분 미만일 때
     return `${diffInMinutes}분 전`;
   }

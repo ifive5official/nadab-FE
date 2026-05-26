@@ -83,9 +83,11 @@ export function usePushNotifications() {
             });
           }
           const type: Notification["type"] = data.type;
-          const { linkProps } = NOTIFICATION_CONFIG[type!];
-
-          router.navigate({ ...linkProps });
+          const config = NOTIFICATION_CONFIG[type!];
+          if (config) {
+            const linkProps = config.getLinkProps(data);
+            router.navigate({ ...linkProps });
+          }
         },
       );
 
