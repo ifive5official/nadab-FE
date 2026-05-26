@@ -67,6 +67,7 @@ export default function CommentAccessoryView() {
           e.preventDefault();
           e.stopPropagation();
         }}
+        onPointerMove={(e) => e.stopPropagation()}
       >
         <CheckBox
           boxSize="s"

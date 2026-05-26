@@ -30,6 +30,19 @@ export default function BottomSheet({
   //   }
   // }
 
+  // 스크롤 시 댓글창 닫기
+  function handleScroll() {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const nav = navigator as any;
+    const isMobile = nav.userAgentData?.mobile;
+    if (!isMobile) return;
+
+    const activeEl = document.activeElement as HTMLElement;
+    if (activeEl && activeEl.tagName === "INPUT") {
+      activeEl.blur();
+    }
+  }
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -80,6 +93,7 @@ export default function BottomSheet({
         <div
           className="overflow-y-auto flex-1 px-padding-x-m py-padding-y-m"
           ref={contentRef}
+          onPointerMove={handleScroll}
           // onScroll={handleContentScroll}
           // onPointerDown={(e) => {
           //   if (isScrollAtTop) {

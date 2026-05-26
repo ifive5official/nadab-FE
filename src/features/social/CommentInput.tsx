@@ -1,7 +1,7 @@
 import { ArrowUpCircleFilledIcon, CloseIcon } from "@/components/Icons";
 import useCommentInputStore from "@/store/commentInputStore";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type CommentInputProps = {
   value?: string; // 댓글 내용
@@ -18,9 +18,18 @@ export default function CommentInput({
   readOnly,
   onReset,
 }: CommentInputProps) {
-  const { parentCommentAuthorNickname } = useCommentInputStore();
+  const { mode, parentCommentAuthorNickname } = useCommentInputStore();
   // 사파리에서 focus-with 안 되는 문제 대응
   const [isFocused, setIsFocused] = useState(false);
+
+  // 수정 시 자동 포커스
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (mode === "EDIT" && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [mode]);
+
   const isSubmitAllowed =
     value && value.trim().length > 0 && value.length <= 500;
 
@@ -33,6 +42,7 @@ export default function CommentInput({
         readOnly && "cursor-pointer",
       )}
       onClick={onClick}
+      onPointerMove={(e) => e.stopPropagation()}
     >
       {parentCommentAuthorNickname && (
         <div className="h-10 px-padding-x-s bg-field-bg-muted flex justify-between items-center">
@@ -46,6 +56,7 @@ export default function CommentInput({
       )}
       <div className="relative w-full h-10 px-padding-x-s py-padding-y-s bg-field-bg-default flex items-center gap-gap-x-xs">
         <input
+          ref={inputRef}
           id="comment"
           name="comment"
           type="text"
