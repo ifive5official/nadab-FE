@@ -1,6 +1,7 @@
 // 아래에서 열리는 창
 // 좋아요 및 댓글 목록 보기에서 사용
 import { useRouter } from "@tanstack/react-router";
+import clsx from "clsx";
 import { motion, useDragControls } from "motion/react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -8,9 +9,14 @@ import { createPortal } from "react-dom";
 type Props = {
   title: string;
   children: React.ReactNode;
+  hasBackground?: boolean;
 };
 
-export default function BottomSheet({ title, children }: Props) {
+export default function BottomSheet({
+  title,
+  children,
+  hasBackground = true,
+}: Props) {
   const router = useRouter();
   const onClose = router.history.back;
   const dragControls = useDragControls();
@@ -38,7 +44,10 @@ export default function BottomSheet({ title, children }: Props) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="z-20 absolute inset-0 bg-neutral-dark-50"
+        className={clsx(
+          "z-20 absolute inset-0",
+          hasBackground ? "bg-neutral-dark-50" : "bg-transparent",
+        )}
         onClick={() => onClose()}
       />
       <motion.div
