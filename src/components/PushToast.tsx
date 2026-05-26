@@ -18,6 +18,9 @@ export default function PushToast() {
   const notificationId = notification.data.notificationId;
   const config = NOTIFICATION_CONFIG[type!];
   if (!config) return null; // undefined 참조 에러 땜빵
+  // @ts-ignore
+  const linkProps = config.getLinkProps(notification.data);
+
   return createPortal(
     <AnimatePresence>
       {isOpen && notification && (
@@ -46,7 +49,7 @@ export default function PushToast() {
                     notificationId: Number(notificationId),
                   });
                 }
-                navigate({ ...config.linkProps });
+                navigate({ ...linkProps });
               }}
             >
               바로가기
