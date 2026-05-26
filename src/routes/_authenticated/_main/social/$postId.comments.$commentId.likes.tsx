@@ -12,7 +12,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { commentId } = Route.useParams();
   return (
-    <BottomSheet title="좋아요">
+    <BottomSheet title="좋아요" hasBackground={false}>
       <LikeUserList queryOptions={commentLikesOptions(Number(commentId))} />
     </BottomSheet>
   );

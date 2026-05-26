@@ -21,6 +21,8 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/react-query";
+import { currentUserOptions } from "../user/quries";
+import type { CurrentUser } from "@/types/currentUser";
 
 type Liker = components["schemas"]["LikerResponse"];
 type LikeRes = components["schemas"]["LikeListResponse"];
@@ -33,10 +35,12 @@ type ListProps = {
 export function LikeUserList({ queryOptions }: ListProps) {
   const queryClient = useQueryClient();
   const { data: likersData } = useQuery(queryOptions);
+  const { data: currentUser } = useQuery(currentUserOptions);
   return (
     <ul className="flex flex-col gap-margin-y-l">
       {likersData?.likers?.map((liker) => (
         <LikeUserListItem
+          currentUser={currentUser!}
           key={liker.userId}
           liker={liker}
           onActionSuccess={() => {
@@ -51,11 +55,16 @@ export function LikeUserList({ queryOptions }: ListProps) {
 }
 
 type ItemProps = {
+  currentUser: CurrentUser; // self 를 none으로 보내는 버그 때문에 추가
   liker: Liker;
   onActionSuccess?: () => void; // 친구 관련 액션 성공 후
 };
 
-export function LikeUserListItem({ liker, onActionSuccess }: ItemProps) {
+export function LikeUserListItem({
+  currentUser,
+  liker,
+  onActionSuccess,
+}: ItemProps) {
   const { showModal, closeModal } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const { showToast } = useToastStore();
@@ -240,7 +249,11 @@ export function LikeUserListItem({ liker, onActionSuccess }: ItemProps) {
       key={liker.userId}
       name={liker.nickname!}
       profileImgUrl={liker.profileImageUrl!}
-      buttons={buttonConfig[liker.relationshipStatus!]}
+      buttons={
+        liker.nickname === currentUser.nickname
+          ? []
+          : buttonConfig[liker.relationshipStatus!]
+      }
     />
   );
 }
