@@ -57,9 +57,9 @@ export default function BottomSheet({
 
   // 스크롤 시 댓글창 닫기
   function handleScroll() {
-    const nav = navigator as any;
-    const isMobile = nav.userAgentData?.mobile;
-    if (!isMobile) return;
+    // const nav = navigator as any;
+    // const isMobile = nav.userAgentData?.mobile;
+    // if (!isMobile) return;
 
     const activeEl = document.activeElement as HTMLElement;
     if (activeEl && activeEl.tagName === "INPUT") {
