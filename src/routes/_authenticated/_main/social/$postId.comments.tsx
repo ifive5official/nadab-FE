@@ -12,7 +12,15 @@ function RouteComponent() {
   const { postId } = Route.useParams();
   return (
     <>
-      <BottomSheet title="댓글">
+      <BottomSheet
+        title="댓글"
+        onCloseTo={{
+          to: `/social`,
+          search: {
+            tab: "feed",
+          },
+        }}
+      >
         <CommentList dailyReportId={Number(postId)} />
       </BottomSheet>
       <Outlet />

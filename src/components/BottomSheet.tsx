@@ -1,7 +1,11 @@
 // 아래에서 열리는 창
 // 좋아요 및 댓글 목록 보기에서 사용
 import useCommentInputStore from "@/store/commentInputStore";
-import { useRouter } from "@tanstack/react-router";
+import {
+  useRouter,
+  type LinkProps,
+  type RegisteredRouter,
+} from "@tanstack/react-router";
 import clsx from "clsx";
 import { motion, useDragControls } from "motion/react";
 import { useEffect, useRef } from "react";
@@ -11,15 +15,26 @@ type Props = {
   title: string;
   children: React.ReactNode;
   hasBackground?: boolean;
+  onCloseTo?: LinkProps<RegisteredRouter["routeTree"]>;
 };
 
 export default function BottomSheet({
   title,
   children,
   hasBackground = true,
+  onCloseTo,
 }: Props) {
   const router = useRouter();
-  const onClose = router.history.back;
+  function handleClose() {
+    if (onCloseTo) {
+      router.navigate({
+        ...onCloseTo,
+        replace: true,
+      });
+    } else {
+      router.history.back();
+    }
+  }
   const dragControls = useDragControls();
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollTopSignal } = useCommentInputStore();
@@ -70,7 +85,7 @@ export default function BottomSheet({
           "z-15 absolute inset-0",
           hasBackground ? "bg-neutral-dark-50" : "bg-transparent",
         )}
-        onClick={() => onClose()}
+        onClick={handleClose}
       />
       <motion.div
         className="z-17 absolute bottom-0 inset-x-0 h-[calc((732/796)*100*var(--dvh))] pb-(--safe-bottom) sm:mx-auto sm:w-[412px] bg-surface-base dark:bg-surface-layer-2 rounded-t-3xl flex flex-col"
@@ -85,7 +100,7 @@ export default function BottomSheet({
         dragElastic={{ top: 0, bottom: 0.5 }} // 아래로 당길 때 쫀득한 저항감 부여
         onDragEnd={(_, info) => {
           if (info.offset.y > 150 || info.velocity.y > 500) {
-            onClose();
+            handleClose();
             // setIsScrollAtTop(true);
           }
         }}
