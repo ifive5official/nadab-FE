@@ -28,7 +28,6 @@ type Liker = components["schemas"]["LikerResponse"];
 type LikeRes = components["schemas"]["LikeListResponse"];
 
 type ListProps = {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   queryOptions: UseQueryOptions<LikeRes, Error, LikeRes, any>;
 };
 

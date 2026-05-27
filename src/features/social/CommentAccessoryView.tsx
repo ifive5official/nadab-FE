@@ -24,6 +24,7 @@ export default function CommentAccessoryView() {
     originalCommentContent,
     isOriginalCommentSecret,
     setWriteMode,
+    triggerScrollToTop,
   } = useCommentInputStore();
 
   const [isSecret, setIsSecret] = useState(false);
@@ -43,8 +44,24 @@ export default function CommentAccessoryView() {
     }
   }
 
-  const postCommentMutation = usePostCommentMutation();
-  const postSubCommentMutation = usePostSubCommentMutation();
+  function handlePostCommentSuccessfully() {
+    const nav = navigator as any;
+    const isMobile = nav.userAgentData?.mobile;
+    if (isMobile) {
+      const activeEl = document.activeElement as HTMLElement;
+      if (activeEl && activeEl.tagName === "INPUT") {
+        activeEl.blur();
+      }
+    }
+    triggerScrollToTop();
+  }
+
+  const postCommentMutation = usePostCommentMutation({
+    onSuccess: handlePostCommentSuccessfully,
+  });
+  const postSubCommentMutation = usePostSubCommentMutation({
+    // onSuccess: handlePostCommentSuccessfully,
+  });
   const updateCommentMutation = useUpdateCommentMutation();
 
   const { showToast } = useToastStore();

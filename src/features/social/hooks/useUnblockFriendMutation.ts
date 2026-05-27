@@ -6,7 +6,6 @@ import type { ApiErrResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import type { components } from "@/generated/api-types";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
   onSuccess?: () => void;
   onSettled?: (

@@ -37,7 +37,6 @@ export const Route = createFileRoute("/_authenticated/daily/report/$reportId")({
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
         if (status === 400 || status === 404) {
-          /* eslint-disable @typescript-eslint/no-explicit-any */
           throw notFound() as any;
         }
       }

@@ -18,7 +18,7 @@ type ImageUploaderProps = {
   onUpload?: () => void; // 이미지 선택 직후 동작(모달 닫는 등)
   onCropSuccess?: () => void;
   onUploadSuccess?: () => void;
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+
   onUploadError?: (error: any) => void;
 };
 

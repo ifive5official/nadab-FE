@@ -11,7 +11,7 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import { usePushNotifications } from "@/hooks/usePushManager";
 
 // status bar 색상 변경 용 커스텀 플러그인
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const ThemeManager = registerPlugin<any>("ThemeManager");
 
 async function changeStatusBarAreaColor(hexColor: string) {

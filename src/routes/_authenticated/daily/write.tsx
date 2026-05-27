@@ -175,7 +175,6 @@ function RouteComponent() {
     }
   }
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const nav = navigator as any;
   const isMobile = nav.userAgentData?.mobile; // 완료 버튼 공개 여부 판단
 

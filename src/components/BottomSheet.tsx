@@ -1,5 +1,6 @@
 // 아래에서 열리는 창
 // 좋아요 및 댓글 목록 보기에서 사용
+import useCommentInputStore from "@/store/commentInputStore";
 import { useRouter } from "@tanstack/react-router";
 import clsx from "clsx";
 import { motion, useDragControls } from "motion/react";
@@ -21,6 +22,7 @@ export default function BottomSheet({
   const onClose = router.history.back;
   const dragControls = useDragControls();
   const contentRef = useRef<HTMLDivElement>(null);
+  const { scrollTopSignal } = useCommentInputStore();
   // const [isScrollAtTop, setIsScrollAtTop] = useState(true);
 
   // // 콘텐츠 내부 스크롤 감지 함수
@@ -30,9 +32,16 @@ export default function BottomSheet({
   //   }
   // }
 
+  // 댓글 작성 시 스크롤 위로 올리기 위함
+  useEffect(() => {
+    contentRef.current?.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [scrollTopSignal]);
+
   // 스크롤 시 댓글창 닫기
   function handleScroll() {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
     const nav = navigator as any;
     const isMobile = nav.userAgentData?.mobile;
     if (!isMobile) return;

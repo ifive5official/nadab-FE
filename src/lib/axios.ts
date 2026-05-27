@@ -49,7 +49,6 @@ export const getOrRefreshAccessToken = async (): Promise<string | null> => {
     queue.forEach((cb) => cb(newAccessToken));
     queue = [];
     return newAccessToken;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
   } catch (err: any) {
     queue = [];
     if (err?.response?.status === 401 || err?.response?.status === 403) {
