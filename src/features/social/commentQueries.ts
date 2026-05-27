@@ -10,6 +10,7 @@ import type { components } from "@/generated/api-types";
 import type { AxiosError } from "axios";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import useToastStore from "@/store/toastStore";
+import useModalStore from "@/store/modalStore";
 
 type CommentRes = components["schemas"]["CommentListResponse"];
 type CreateCommentReq = components["schemas"]["CreateCommentRequest"];
@@ -39,6 +40,7 @@ export function usePostCommentMutation({
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
+  const { showError } = useModalStore();
 
   return useMutation({
     mutationFn: async (req: CreateCommentReq) => {
@@ -53,7 +55,13 @@ export function usePostCommentMutation({
       onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
+        showError("소셜 기능 사용이 일시 중단되었어요.");
+      } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
+        showError("친구가 아닌 유저의 게시글에 댓글을 남길 수 없어요.");
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }
@@ -93,6 +101,7 @@ export function usePostSubCommentMutation({
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
+  const { showError } = useModalStore();
   const { showToast } = useToastStore();
 
   return useMutation({
@@ -125,8 +134,13 @@ export function usePostSubCommentMutation({
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "COMMENT_DELETED") {
         showToast({ message: "삭제된 댓글이에요." });
+      } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
+        showError("친구가 아닌 유저의 게시글에 댓글을 남길 수 없어요.");
+      } else if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
+        showError("소셜 기능 사용이 일시 중단되었어요.");
+      } else {
+        handleDefaultApiError(err);
       }
-      handleDefaultApiError(err);
     },
   });
 }
@@ -140,6 +154,7 @@ type DeleteCommentParams = {
 
 export function useDeleteCommentMutation() {
   const queryClient = useQueryClient();
+  const { showError } = useModalStore();
 
   return useMutation({
     mutationFn: async ({ commentId }: DeleteCommentParams) => {
@@ -167,7 +182,13 @@ export function useDeleteCommentMutation() {
       }
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === "COMMENT_DELETED") {
+        showError("이미 삭제된 댓글이에요.");
+      } else if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
+        showError("소셜 기능 사용이 일시 중단되었어요.");
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }
@@ -182,6 +203,7 @@ type UpdateCommentParams = {
 // 댓글 수정
 export function useUpdateCommentMutation() {
   const queryClient = useQueryClient();
+  const { showError } = useModalStore();
 
   return useMutation({
     mutationFn: async ({ commentId, content }: UpdateCommentParams) => {
@@ -211,7 +233,11 @@ export function useUpdateCommentMutation() {
       }
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
-      handleDefaultApiError(err);
+      if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
+        showError("소셜 기능 사용이 일시 중단되었어요.");
+      } else {
+        handleDefaultApiError(err);
+      }
     },
   });
 }

@@ -8,11 +8,17 @@ import {
   feedShareStatusOptions,
   friendRequestsOptions,
   friendsOptions,
+  suspensionStatusOptions,
 } from "@/features/social/queries";
 import Loading from "@/components/Loading";
-import { useQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { Suspense, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
+import useModalStore from "@/store/modalStore";
+import { WarningFilledIcon } from "@/components/Icons";
+import { formatKoreanDate } from "@/lib/formatters";
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -47,10 +53,12 @@ export const Route = createFileRoute("/_authenticated/_main/social")({
 
 function RouteComponent() {
   const tab = Route.useSearch().tab ?? "feed";
-  console.log(tab);
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const { data: friendRequests } = useQuery(friendRequestsOptions);
+  const [{ data: friendRequests }, { data: suspensionStatus }] = useQueries({
+    queries: [friendRequestsOptions, suspensionStatusOptions],
+  });
+  const { showModal, closeModal } = useModalStore();
 
   const tabs: Option[] = [
     { label: "피드", value: "feed" },
@@ -68,6 +76,37 @@ function RouteComponent() {
       replace: true,
     });
   }
+
+  // 소셜 정지 상태일 때 모달 띄움
+  useEffect(() => {
+    if (suspensionStatus?.isSuspended) {
+      showModal({
+        icon: WarningFilledIcon,
+        title: "소셜 기능 사용이 일시 중단되었어요.",
+        children: `30일간 소셜 기능이 제한되었어요.
+        중단 기간 동안 게시글은 자동 비공개 처리돼요.
+        ${formatKoreanDate(new Date(suspensionStatus?.expiresAt ?? ""))}에 해제돼요.`,
+        buttons: [
+          {
+            label: "확인",
+            onClick: closeModal,
+          },
+          {
+            label: "문의하기",
+            onClick: () => {
+              closeModal();
+              const url = "mailto:ifive5.official@gmail.com";
+              if (Capacitor.isNativePlatform()) {
+                Browser.open({ url });
+              } else {
+                window.location.href = url;
+              }
+            },
+          },
+        ],
+      });
+    }
+  }, [suspensionStatus, closeModal, showModal]);
 
   return (
     <>
