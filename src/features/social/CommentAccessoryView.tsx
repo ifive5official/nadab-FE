@@ -12,6 +12,8 @@ import {
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
 import useCommentInputStore from "@/store/commentInputStore";
+import useModalStore from "@/store/modalStore";
+import { CircleCheckFilledIcon } from "@/components/Icons";
 
 export default function CommentAccessoryView() {
   const {
@@ -31,6 +33,8 @@ export default function CommentAccessoryView() {
   const [content, setContent] = useState(originalCommentContent ?? "");
 
   const [prevMode, setPrevMode] = useState(mode);
+
+  const { showModal, closeModal } = useModalStore();
 
   // 수정 모드일 때 이전 댓글 정보 반영
   if (mode !== prevMode) {
@@ -62,7 +66,21 @@ export default function CommentAccessoryView() {
   const postSubCommentMutation = usePostSubCommentMutation({
     // onSuccess: handlePostCommentSuccessfully,
   });
-  const updateCommentMutation = useUpdateCommentMutation();
+  const updateCommentMutation = useUpdateCommentMutation({
+    onSuccess: () =>
+      showModal({
+        icon: CircleCheckFilledIcon,
+        title: "댓글을\n수정 완료했어요.",
+        buttons: [
+          {
+            label: "확인",
+            onClick: () => {
+              closeModal();
+            },
+          },
+        ],
+      }),
+  });
 
   const { showToast } = useToastStore();
 
