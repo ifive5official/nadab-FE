@@ -74,7 +74,7 @@ export default function CommentAccessoryView() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className={clsx(
-        "bg-surface-base w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base",
+        "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed bottom-(--safe-bottom) inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1",
         parentCommentAuthorNickname ? "h-[104px]" : "h-16",
       )}
     >
