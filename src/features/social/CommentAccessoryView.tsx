@@ -49,14 +49,14 @@ export default function CommentAccessoryView() {
   }
 
   function handlePostCommentSuccessfully() {
-    const nav = navigator as any;
-    const isMobile = nav.userAgentData?.mobile;
-    if (isMobile) {
-      const activeEl = document.activeElement as HTMLElement;
-      if (activeEl && activeEl.tagName === "INPUT") {
-        activeEl.blur();
-      }
+    // const nav = navigator as any;
+    // const isMobile = nav.userAgentData?.mobile;
+    // if (isMobile) {
+    const activeEl = document.activeElement as HTMLElement;
+    if (activeEl && activeEl.tagName === "INPUT") {
+      activeEl.blur();
     }
+    // }
     triggerScrollToTop();
   }
 
