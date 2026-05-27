@@ -12,7 +12,15 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { postId } = Route.useParams();
   return (
-    <BottomSheet title="좋아요">
+    <BottomSheet
+      title="좋아요"
+      onCloseTo={{
+        to: `/social`,
+        search: {
+          tab: "feed",
+        },
+      }}
+    >
       <LikeUserList queryOptions={likesOptions(Number(postId))} />
     </BottomSheet>
   );
