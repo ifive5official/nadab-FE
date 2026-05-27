@@ -201,7 +201,11 @@ type UpdateCommentParams = {
 };
 
 // 댓글 수정
-export function useUpdateCommentMutation() {
+export function useUpdateCommentMutation({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
   const queryClient = useQueryClient();
   const { showError } = useModalStore();
 
@@ -231,6 +235,7 @@ export function useUpdateCommentMutation() {
           queryKey: ["currentUser", "comments", dailyReportId],
         });
       }
+      onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
