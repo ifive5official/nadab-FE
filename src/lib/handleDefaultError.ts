@@ -6,7 +6,6 @@ import type { AxiosError } from "axios";
 
 // 네트워크 에러 처리 위해 만듦
 export const handleDefaultApiError = (
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   error: AxiosError<ApiErrResponse<any>>,
 ) => {
   const isNetworkError = error.code === "ERR_NETWORK";

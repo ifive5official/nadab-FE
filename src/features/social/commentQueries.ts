@@ -33,7 +33,11 @@ export function commentsOptions(dailyReportId: number) {
 }
 
 // 댓글 작성
-export function usePostCommentMutation() {
+export function usePostCommentMutation({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -46,6 +50,7 @@ export function usePostCommentMutation() {
       const { dailyReportId } = variables;
       const queryKey = ["currentUser", "comments", dailyReportId];
       queryClient.invalidateQueries({ queryKey });
+      onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);
@@ -82,7 +87,11 @@ interface ExtendedCreateSubCommentReq extends CreateSubCommentReq {
 
 // 대댓글 작성
 // commentId는 부모 댓글 id임
-export function usePostSubCommentMutation() {
+export function usePostSubCommentMutation({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
   const queryClient = useQueryClient();
   const { showToast } = useToastStore();
 
@@ -101,6 +110,7 @@ export function usePostSubCommentMutation() {
         req,
       );
       return res.data;
+      onSuccess?.();
     },
     onSuccess: async (_, variables) => {
       const { commentId, dailyReportId } = variables;

@@ -6,7 +6,6 @@ import type { ApiErrResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import useModalStore from "@/store/modalStore";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
   onSuccess?: () => void;
   onSettled?: (

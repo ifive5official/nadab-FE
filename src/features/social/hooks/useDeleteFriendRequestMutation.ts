@@ -5,7 +5,6 @@ import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
   onSuccess?: () => void;
   onSettled?: (

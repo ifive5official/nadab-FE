@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/detail/$date")({
   //   Todo: 에러 처리 보완
   loader: async ({ params: { date }, context: { queryClient } }) => {
     const isToday = new Date().toLocaleDateString("en-CA") === date;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
+
     const promises: Promise<any>[] = [
       queryClient.ensureQueryData(answerOptions.detail(date)),
     ];
@@ -40,7 +40,6 @@ export const Route = createFileRoute("/_authenticated/detail/$date")({
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
         if (status === 400 || status === 404) {
-          /* eslint-disable @typescript-eslint/no-explicit-any */
           throw notFound() as any;
         }
       }

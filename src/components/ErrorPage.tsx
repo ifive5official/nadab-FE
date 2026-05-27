@@ -1,7 +1,6 @@
 import { RefreshIcon, WarningFilledBigIcon } from "./Icons";
 import InlineButton from "./InlineButton";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function ErrorPage({
   error,
   type,

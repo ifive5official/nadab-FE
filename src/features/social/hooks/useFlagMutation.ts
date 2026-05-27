@@ -25,7 +25,6 @@ export function useFlagMutation({ onSuccess }: Props) {
       reason,
       customReason,
     }: ExtendedReportReq) => {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const req: any = { reason };
       if (reason === "OTHER" && customReason) {
         req.customReason = customReason;

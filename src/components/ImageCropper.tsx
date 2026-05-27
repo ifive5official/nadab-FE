@@ -4,7 +4,7 @@ import Cropper from "react-easy-crop";
 
 type Props = {
   image: string;
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+
   onConfirm: (pixels: any) => void;
   onCancel: () => void;
 };
