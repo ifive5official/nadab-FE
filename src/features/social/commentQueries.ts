@@ -119,7 +119,6 @@ export function usePostSubCommentMutation({
         req,
       );
       return res.data;
-      onSuccess?.();
     },
     onSuccess: async (_, variables) => {
       const { commentId, dailyReportId } = variables;
@@ -130,6 +129,7 @@ export function usePostSubCommentMutation({
       queryClient.invalidateQueries({
         queryKey: ["currentUser", "comments", dailyReportId],
       });
+      onSuccess?.();
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "COMMENT_DELETED") {

@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import CommentInput from "./CommentInput";
 import CheckBox from "@/components/Checkbox";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   usePostCommentMutation,
   usePostSubCommentMutation,
@@ -17,6 +17,8 @@ import { CircleCheckFilledIcon } from "@/components/Icons";
 import { Capacitor } from "@capacitor/core";
 
 export default function CommentAccessoryView() {
+  const { showModal, closeModal } = useModalStore();
+  const { showToast } = useToastStore();
   const {
     mode,
     dailyReportId,
@@ -33,13 +35,17 @@ export default function CommentAccessoryView() {
   const [isSecret, setIsSecret] = useState(false);
   const [content, setContent] = useState(originalCommentContent ?? "");
 
-  const [prevMode, setPrevMode] = useState(mode);
-
-  const { showModal, closeModal } = useModalStore();
+  // CommentInput 제어용
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   // 수정 모드일 때 이전 댓글 정보 반영
-  if (mode !== prevMode) {
+  const [prevMode, setPrevMode] = useState(mode);
+  const [prevCommentId, setPrevCommentId] = useState(commentId);
+
+  if (mode !== prevMode || commentId !== prevCommentId) {
     setPrevMode(mode);
+    setPrevCommentId(commentId);
     if (mode === "EDIT") {
       setContent(originalCommentContent ?? "");
       setIsSecret(isOriginalCommentSecret ?? false);
@@ -49,26 +55,24 @@ export default function CommentAccessoryView() {
     }
   }
 
-  function handlePostCommentSuccessfully() {
-    // const nav = navigator as any;
-    // const isMobile = nav.userAgentData?.mobile;
-    // if (isMobile) {
-    const activeEl = document.activeElement as HTMLElement;
-    if (activeEl && activeEl.tagName === "INPUT") {
-      activeEl.blur();
+  // 수정 및 답글 작성 시 자동 포커스
+  useEffect(() => {
+    if (mode === "EDIT" && inputRef.current) {
+      inputRef.current.focus();
+    } else if (mode === "SUB" && inputRef.current) {
+      inputRef.current.focus();
     }
-    // }
-    triggerScrollToTop();
-  }
+  }, [mode, commentId]);
 
+  // 댓글 작성, 대댓글 작성, 댓글 수정
   const postCommentMutation = usePostCommentMutation({
-    onSuccess: handlePostCommentSuccessfully,
+    onSuccess: triggerScrollToTop,
   });
   const postSubCommentMutation = usePostSubCommentMutation({
     // onSuccess: handlePostCommentSuccessfully,
   });
   const updateCommentMutation = useUpdateCommentMutation({
-    onSuccess: () =>
+    onSuccess: () => {
       showModal({
         icon: CircleCheckFilledIcon,
         title: "댓글을\n수정 완료했어요.",
@@ -80,14 +84,21 @@ export default function CommentAccessoryView() {
             },
           },
         ],
-      }),
+      });
+    },
   });
-
-  const { showToast } = useToastStore();
 
   // 부모가 비밀댓글이면 자식은 무조건 비밀댓글
   const finalIsSecret = isParentSecret ? true : isSecret;
+
+  // ios safe bottom 대비
   const platform = Capacitor.getPlatform();
+  const bottomClass =
+    platform === "ios"
+      ? isFocused
+        ? "bottom-0"
+        : "bottom-(--safe-bottom)"
+      : "bottom-(--safe-bottom)";
 
   return (
     <motion.div
@@ -96,7 +107,7 @@ export default function CommentAccessoryView() {
       exit={{ opacity: 0 }}
       className={clsx(
         "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1",
-        platform === "ios" ? "bottom-0" : "bottom-(--safe-bottom)",
+        bottomClass,
         parentCommentAuthorNickname ? "h-[104px]" : "h-16",
       )}
     >
@@ -131,6 +142,10 @@ export default function CommentAccessoryView() {
         className="w-full"
         onSubmit={(e) => {
           e.preventDefault();
+          if (inputRef.current) {
+            inputRef.current.blur();
+          }
+          setIsFocused(false);
           setIsSecret(false);
           setContent("");
           setWriteMode(dailyReportId!);
@@ -158,9 +173,13 @@ export default function CommentAccessoryView() {
         }}
       >
         <CommentInput
+          inputRef={inputRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onReset={() => setWriteMode(dailyReportId!)}
+          isFocused={isFocused}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
       </form>
     </motion.div>

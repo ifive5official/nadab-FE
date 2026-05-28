@@ -2,7 +2,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { subCommentOptions } from "./commentQueries";
 import { Fragment, useState } from "react";
-import { Comment, CommentSkeleton } from "./CommentList";
+import { CommentListSkeleton } from "./CommentList";
+import { Comment } from "./Comment";
 import type { components } from "@/generated/api-types";
 
 type Comment = components["schemas"]["CommentResponse"];
@@ -60,7 +61,7 @@ export function SubCommentList({
             </Fragment>
           ))}
           {(isLoading || isFetchingNextPage) && (
-            <CommentSkeleton repeat={3} isSubComment={true} />
+            <CommentListSkeleton repeat={3} isSubComment={true} />
           )}
         </ul>
       )}
