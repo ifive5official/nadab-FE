@@ -249,10 +249,10 @@ export function CommentSkeleton({
         .fill(0)
         .map((_, i) => (
           <li key={i} className="flex gap-gap-x-l items-start">
-            <div className="aspect-square w-9 rounded-full flex items-center justify-center bg-surface-layer-3"></div>
+            <div className="aspect-square w-9 rounded-full flex items-center justify-center bg-surface-layer-2 dark:bg-surface-layer-3"></div>
             <div className="flex-1 flex flex-col items-start gap-1">
-              <div className="flex gap-gap-x-s items-center w-20 h-5 bg-surface-layer-2 animate-pulse rounded-sm" />
-              <p className="w-40 h-6 bg-surface-layer-2 animate-pulse rounded-sm" />
+              <div className="flex gap-gap-x-s items-center w-20 h-5 bg-surface-layer-2 dark:bg-surface-layer-3 animate-pulse rounded-sm" />
+              <p className="w-40 h-6 bg-surface-layer-2 dark:bg-surface-layer-3 animate-pulse rounded-sm" />
               {!isSubComment && (
                 <button className="text-caption-l underline text-text-disabled">
                   답글 남기기
