@@ -1,7 +1,7 @@
+// 댓글창의 Input
 import { ArrowUpCircleFilledIcon, CloseIcon } from "@/components/Icons";
 import useCommentInputStore from "@/store/commentInputStore";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
 
 type CommentInputProps = {
   value?: string; // 댓글 내용
@@ -9,6 +9,11 @@ type CommentInputProps = {
   onClick?: () => void; // 모양만 두고 onClick 동작만 할 때 - 댓글창 열기 등
   readOnly?: boolean; // 모양만 두고 onClick 동작만 할 때
   onReset?: () => void;
+
+  isFocused?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
 export default function CommentInput({
@@ -17,18 +22,13 @@ export default function CommentInput({
   onClick,
   readOnly,
   onReset,
-}: CommentInputProps) {
-  const { mode, parentCommentAuthorNickname } = useCommentInputStore();
-  // 사파리에서 focus-with 안 되는 문제 대응
-  const [isFocused, setIsFocused] = useState(false);
 
-  // 수정 시 자동 포커스
-  const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (mode === "EDIT" && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [mode]);
+  isFocused,
+  onFocus,
+  onBlur,
+  inputRef,
+}: CommentInputProps) {
+  const { parentCommentAuthorNickname } = useCommentInputStore();
 
   const isSubmitAllowed =
     value && value.trim().length > 0 && value.length <= 500;
@@ -66,8 +66,8 @@ export default function CommentInput({
             "w-full text-caption-m placeholder:text-field-text-mute focus:outline-none",
             readOnly && "pointer-events-none",
           )}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onChange={onChange}
         />
         <button
