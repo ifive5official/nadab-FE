@@ -48,6 +48,7 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   // 댓글 초기화
   useEffect(() => {
     setWriteMode(dailyReportId);
+    return () => setWriteMode(dailyReportId);
   }, [setWriteMode, dailyReportId]);
 
   return (
