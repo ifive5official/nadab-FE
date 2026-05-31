@@ -48,8 +48,11 @@ import { Route as AuthenticatedFlagReportReportIdRouteImport } from './routes/_a
 import { Route as AuthenticatedFlagCommentCommentIdRouteImport } from './routes/_authenticated/flag/comment.$commentId'
 import { Route as AuthenticatedDailyReportReportIdRouteImport } from './routes/_authenticated/daily/report.$reportId'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
+import { Route as AuthenticatedDetailDatePostIdLikesRouteImport } from './routes/_authenticated/detail/$date.$postId.likes'
+import { Route as AuthenticatedDetailDatePostIdCommentsRouteImport } from './routes/_authenticated/detail/$date.$postId.comments'
 import { Route as AuthenticatedMainSocialPostIdLikesRouteImport } from './routes/_authenticated/_main/social/$postId.likes'
 import { Route as AuthenticatedMainSocialPostIdCommentsRouteImport } from './routes/_authenticated/_main/social/$postId.comments'
+import { Route as AuthenticatedDetailDatePostIdCommentsCommentIdLikesRouteImport } from './routes/_authenticated/detail/$date.$postId.comments.$commentId.likes'
 import { Route as AuthenticatedMainSocialPostIdCommentsCommentIdLikesRouteImport } from './routes/_authenticated/_main/social/$postId.comments.$commentId.likes'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -261,6 +264,18 @@ const authAuthProviderCallbackRoute =
     path: '/auth/$provider/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedDetailDatePostIdLikesRoute =
+  AuthenticatedDetailDatePostIdLikesRouteImport.update({
+    id: '/$postId/likes',
+    path: '/$postId/likes',
+    getParentRoute: () => AuthenticatedDetailDateRoute,
+  } as any)
+const AuthenticatedDetailDatePostIdCommentsRoute =
+  AuthenticatedDetailDatePostIdCommentsRouteImport.update({
+    id: '/$postId/comments',
+    path: '/$postId/comments',
+    getParentRoute: () => AuthenticatedDetailDateRoute,
+  } as any)
 const AuthenticatedMainSocialPostIdLikesRoute =
   AuthenticatedMainSocialPostIdLikesRouteImport.update({
     id: '/$postId/likes',
@@ -272,6 +287,12 @@ const AuthenticatedMainSocialPostIdCommentsRoute =
     id: '/$postId/comments',
     path: '/$postId/comments',
     getParentRoute: () => AuthenticatedMainSocialRoute,
+  } as any)
+const AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute =
+  AuthenticatedDetailDatePostIdCommentsCommentIdLikesRouteImport.update({
+    id: '/$commentId/likes',
+    path: '/$commentId/likes',
+    getParentRoute: () => AuthenticatedDetailDatePostIdCommentsRoute,
   } as any)
 const AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute =
   AuthenticatedMainSocialPostIdCommentsCommentIdLikesRouteImport.update({
@@ -305,7 +326,7 @@ export interface FileRoutesByFullPath {
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
-  '/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -320,7 +341,10 @@ export interface FileRoutesByFullPath {
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
+  '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
+  '/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
   '/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
+  '/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -347,7 +371,7 @@ export interface FileRoutesByTo {
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
-  '/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -362,7 +386,10 @@ export interface FileRoutesByTo {
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
+  '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
+  '/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
   '/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
+  '/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -392,7 +419,7 @@ export interface FileRoutesById {
   '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
-  '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRoute
+  '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/_authenticated/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
@@ -407,7 +434,10 @@ export interface FileRoutesById {
   '/_authenticated/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/_authenticated/_main/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/_authenticated/_main/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
+  '/_authenticated/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
+  '/_authenticated/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
   '/_authenticated/_main/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
+  '/_authenticated/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -451,7 +481,10 @@ export interface FileRouteTypes {
     | '/report/$reportType/$period'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
+    | '/detail/$date/$postId/comments'
+    | '/detail/$date/$postId/likes'
     | '/social/$postId/comments/$commentId/likes'
+    | '/detail/$date/$postId/comments/$commentId/likes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -493,7 +526,10 @@ export interface FileRouteTypes {
     | '/report/$reportType/$period'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
+    | '/detail/$date/$postId/comments'
+    | '/detail/$date/$postId/likes'
     | '/social/$postId/comments/$commentId/likes'
+    | '/detail/$date/$postId/comments/$commentId/likes'
   id:
     | '__root__'
     | '/'
@@ -537,7 +573,10 @@ export interface FileRouteTypes {
     | '/_authenticated/report/$reportType/$period'
     | '/_authenticated/_main/social/$postId/comments'
     | '/_authenticated/_main/social/$postId/likes'
+    | '/_authenticated/detail/$date/$postId/comments'
+    | '/_authenticated/detail/$date/$postId/likes'
     | '/_authenticated/_main/social/$postId/comments/$commentId/likes'
+    | '/_authenticated/detail/$date/$postId/comments/$commentId/likes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -827,6 +866,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthProviderCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/detail/$date/$postId/likes': {
+      id: '/_authenticated/detail/$date/$postId/likes'
+      path: '/$postId/likes'
+      fullPath: '/detail/$date/$postId/likes'
+      preLoaderRoute: typeof AuthenticatedDetailDatePostIdLikesRouteImport
+      parentRoute: typeof AuthenticatedDetailDateRoute
+    }
+    '/_authenticated/detail/$date/$postId/comments': {
+      id: '/_authenticated/detail/$date/$postId/comments'
+      path: '/$postId/comments'
+      fullPath: '/detail/$date/$postId/comments'
+      preLoaderRoute: typeof AuthenticatedDetailDatePostIdCommentsRouteImport
+      parentRoute: typeof AuthenticatedDetailDateRoute
+    }
     '/_authenticated/_main/social/$postId/likes': {
       id: '/_authenticated/_main/social/$postId/likes'
       path: '/$postId/likes'
@@ -840,6 +893,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/social/$postId/comments'
       preLoaderRoute: typeof AuthenticatedMainSocialPostIdCommentsRouteImport
       parentRoute: typeof AuthenticatedMainSocialRoute
+    }
+    '/_authenticated/detail/$date/$postId/comments/$commentId/likes': {
+      id: '/_authenticated/detail/$date/$postId/comments/$commentId/likes'
+      path: '/$commentId/likes'
+      fullPath: '/detail/$date/$postId/comments/$commentId/likes'
+      preLoaderRoute: typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRouteImport
+      parentRoute: typeof AuthenticatedDetailDatePostIdCommentsRoute
     }
     '/_authenticated/_main/social/$postId/comments/$commentId/likes': {
       id: '/_authenticated/_main/social/$postId/comments/$commentId/likes'
@@ -899,13 +959,46 @@ const AuthenticatedMainRouteChildren: AuthenticatedMainRouteChildren = {
 const AuthenticatedMainRouteWithChildren =
   AuthenticatedMainRoute._addFileChildren(AuthenticatedMainRouteChildren)
 
+interface AuthenticatedDetailDatePostIdCommentsRouteChildren {
+  AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute: typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
+}
+
+const AuthenticatedDetailDatePostIdCommentsRouteChildren: AuthenticatedDetailDatePostIdCommentsRouteChildren =
+  {
+    AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute:
+      AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute,
+  }
+
+const AuthenticatedDetailDatePostIdCommentsRouteWithChildren =
+  AuthenticatedDetailDatePostIdCommentsRoute._addFileChildren(
+    AuthenticatedDetailDatePostIdCommentsRouteChildren,
+  )
+
+interface AuthenticatedDetailDateRouteChildren {
+  AuthenticatedDetailDatePostIdCommentsRoute: typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
+  AuthenticatedDetailDatePostIdLikesRoute: typeof AuthenticatedDetailDatePostIdLikesRoute
+}
+
+const AuthenticatedDetailDateRouteChildren: AuthenticatedDetailDateRouteChildren =
+  {
+    AuthenticatedDetailDatePostIdCommentsRoute:
+      AuthenticatedDetailDatePostIdCommentsRouteWithChildren,
+    AuthenticatedDetailDatePostIdLikesRoute:
+      AuthenticatedDetailDatePostIdLikesRoute,
+  }
+
+const AuthenticatedDetailDateRouteWithChildren =
+  AuthenticatedDetailDateRoute._addFileChildren(
+    AuthenticatedDetailDateRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedMainRoute: typeof AuthenticatedMainRouteWithChildren
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
   AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
-  AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRoute
+  AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRouteWithChildren
   AuthenticatedSocialBlockedRoute: typeof AuthenticatedSocialBlockedRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
@@ -925,7 +1018,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
-  AuthenticatedDetailDateRoute: AuthenticatedDetailDateRoute,
+  AuthenticatedDetailDateRoute: AuthenticatedDetailDateRouteWithChildren,
   AuthenticatedSocialBlockedRoute: AuthenticatedSocialBlockedRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,

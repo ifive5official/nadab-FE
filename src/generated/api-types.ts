@@ -1575,6 +1575,7 @@ export interface paths {
          * @description 월간 리포트 V2를 id로 조회합니다. </br>
          *     생성 대기 중인 경우 ```status = "PENDING"``` 으로 반환됩니다. </br>
          *     생성 진행 중인 경우 ```status = "IN_PROGRESS"``` 로 반환됩니다. </br>
+         *     텍스트만 생성 완료한 경우 ```status = "TEXT_COMPLETED"```로 반환됩니다. </br>
          *     생성에 성공한 경우 ```status = "COMPLETED"``` 로 반환됩니다. </br>
          *     생성에 실패한 경우 ```status = "FAILED"``` 로 반환됩니다. 이때 크리스탈이 환불되기 때문에 잔액 조회를 해야합니다.
          *
@@ -2365,6 +2366,7 @@ export interface paths {
          * 답변 상세 조회
          * @description 답변 ID로 해당 답변의 상세 정보와 리포트를 조회합니다.
          *
+         *     - 일간 리포트 ID (dailyReportId, 리포트 없으면 null)
          *     - 질문 내용 (questionText)
          *     - 질문 카테고리 (interestCode)
          *     - 답변 작성일 (answerDate)
@@ -2419,6 +2421,7 @@ export interface paths {
          * @description 특정 날짜의 답변 전체 정보를 조회합니다.
          *
          *     응답 데이터:
+         *     - 일간 리포트 ID (dailyReportId, 리포트 없으면 null)
          *     - 질문 내용 (questionText)
          *     - 질문 카테고리 (interestCode)
          *     - 답변 작성일 (answerDate)
@@ -4167,6 +4170,12 @@ export interface components {
         };
         /** @description 답변 상세 조회 응답 */
         AnswerDetailResponse: {
+            /**
+             * Format: int64
+             * @description 일간 리포트 ID (댓글·좋아요 조회 시 사용)
+             * @example 42
+             */
+            dailyReportId?: number;
             /**
              * @description 질문 내용
              * @example 오늘 가장 기뻤던 순간은?
