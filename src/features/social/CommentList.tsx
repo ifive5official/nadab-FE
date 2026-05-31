@@ -9,7 +9,12 @@ import clsx from "clsx";
 import useCommentInputStore from "@/store/commentInputStore";
 import { Comment } from "./Comment";
 
-export function CommentList({ dailyReportId }: { dailyReportId: number }) {
+type Props = {
+  dailyReportId: number;
+  readOnly?: boolean;
+};
+
+export function CommentList({ dailyReportId, readOnly = false }: Props) {
   const { mode, setWriteMode } = useCommentInputStore();
 
   // 무한스크롤
@@ -35,7 +40,9 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
   }, [setWriteMode, dailyReportId]);
 
   return (
-    <div className={clsx(mode === "SUB" ? "pb-[104px]" : "pb-16")}>
+    <div
+      className={clsx(readOnly ? "" : mode === "SUB" ? "pb-[104px]" : "pb-16")}
+    >
       <ul className="flex flex-col gap-gap-y-xl">
         {commentsData?.pages.map((page, i) => {
           return (
@@ -55,7 +62,7 @@ export function CommentList({ dailyReportId }: { dailyReportId: number }) {
         })}
         {(isLoading || isFetchingNextPage) && <CommentListSkeleton />}
       </ul>
-      <CommentAccessoryView />
+      {!readOnly && <CommentAccessoryView />}
     </div>
   );
 }

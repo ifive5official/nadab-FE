@@ -71,6 +71,9 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
 
   // 푸쉬알림 리스너 등록 및 토큰 갱신
   useEffect(() => {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
     async function registerNotifications() {
       const perm = await PushNotifications.checkPermissions();
       if (perm.receive === "granted") {

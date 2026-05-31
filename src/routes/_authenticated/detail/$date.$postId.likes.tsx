@@ -1,18 +1,16 @@
 import BottomSheet from "@/components/BottomSheet";
-import ErrorPage from "@/components/ErrorPage";
-import { commentLikesOptions } from "@/features/social/likeQueries";
+import { likesOptions } from "@/features/social/likeQueries";
 import { LikeUserList } from "@/features/social/LikeUserList";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import axios from "axios";
 
 export const Route = createFileRoute(
-  "/_authenticated/_main/social/$postId/comments/$commentId/likes",
+  "/_authenticated/detail/$date/$postId/likes",
 )({
   component: RouteComponent,
-  notFoundComponent: () => <ErrorPage error={{ message: "404 Not Found" }} />,
-  loader: async ({ params: { commentId }, context: { queryClient } }) => {
+  loader: async ({ params: { postId }, context: { queryClient } }) => {
     try {
-      await queryClient.ensureQueryData(commentLikesOptions(Number(commentId)));
+      await queryClient.ensureQueryData(likesOptions(Number(postId)));
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
@@ -26,10 +24,10 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const { commentId } = Route.useParams();
+  const { postId } = Route.useParams();
   return (
-    <BottomSheet title="좋아요" hasBackground={false}>
-      <LikeUserList queryOptions={commentLikesOptions(Number(commentId))} />
+    <BottomSheet title="좋아요">
+      <LikeUserList queryOptions={likesOptions(Number(postId))} />
     </BottomSheet>
   );
 }

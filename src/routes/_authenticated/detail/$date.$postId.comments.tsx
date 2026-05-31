@@ -5,7 +5,7 @@ import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
 import axios from "axios";
 
 export const Route = createFileRoute(
-  "/_authenticated/_main/social/$postId/comments",
+  "/_authenticated/detail/$date/$postId/comments",
 )({
   component: RouteComponent,
   loader: async ({ params: { postId }, context: { queryClient } }) => {
@@ -27,16 +27,8 @@ function RouteComponent() {
   const { postId } = Route.useParams();
   return (
     <>
-      <BottomSheet
-        title="댓글"
-        onCloseTo={{
-          to: `/social`,
-          search: {
-            tab: "feed",
-          },
-        }}
-      >
-        <CommentList dailyReportId={Number(postId)} />
+      <BottomSheet title="댓글">
+        <CommentList dailyReportId={Number(postId)} readOnly />
       </BottomSheet>
       <Outlet />
     </>

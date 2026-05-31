@@ -63,7 +63,7 @@ export function Comment({
 
   function handleLongPressLike() {
     // 길게 누를 시 좋아요 목록 확인 가능
-    navigate({ to: `/social/$postId/comments/${comment.commentId}/likes` });
+    navigate({ to: `${comment.commentId}/likes` });
   }
 
   const likeEvent = useLongPress(handleLongPressLike, handleClickLike);
