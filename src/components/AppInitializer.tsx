@@ -1,4 +1,10 @@
-// 테마 불러오기 및 capacitor 초기화
+/**
+ * @description 테마 불러오기, Capacitor 초기화, 푸쉬알림 연동
+ * @props 라우트 밖에서 실행되기 때문에 라우터 콘텍스트를 전달받음
+ * @page 앱 시작 시 전역에서 한 번 실행됨
+ * @note 추후 네트워크 에러 처리 로직 옮기는 것 고려
+ */
+
 import useThemeStore from "@/store/useThemeStore";
 import { useEffect } from "react";
 import type { AnyRouter } from "@tanstack/react-router";
@@ -11,7 +17,6 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import { usePushNotifications } from "@/hooks/usePushManager";
 
 // status bar 색상 변경 용 커스텀 플러그인
-
 const ThemeManager = registerPlugin<any>("ThemeManager");
 
 async function changeStatusBarAreaColor(hexColor: string) {
@@ -22,7 +27,7 @@ async function changeStatusBarAreaColor(hexColor: string) {
   }
 }
 
-// Todo: 네트워크 에러 처리 로직도 여기로 옮기기
+// Todo: 네트워크 에러 처리 로직도 여기로 옮기기?
 export default function AppInitializer({ router }: { router: AnyRouter }) {
   //   const [isOnline, setIsOnline] = useState(true);
   const platform = Capacitor.getPlatform();

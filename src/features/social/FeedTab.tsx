@@ -19,7 +19,7 @@ export default function FeedTab() {
   return (
     <>
       <Container
-        isMain={true}
+        hasScroll={true}
         className="border-t border-t-interactive-border-default"
       >
         <span className="text-caption-m mt-gap-y-m">나의 기록</span>

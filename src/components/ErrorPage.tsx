@@ -1,3 +1,8 @@
+/**
+ * @description 화면 전체를 차지하는 에러 페이지로, 주로 데이터 불러올 시 에러 발생해서 화면 그릴 수 없을 때 사용
+ * @note 404 및 네트워크 에러도 이 컴포넌트 띄움
+ */
+
 import { RefreshIcon, WarningFilledBigIcon } from "./Icons";
 import InlineButton from "./InlineButton";
 

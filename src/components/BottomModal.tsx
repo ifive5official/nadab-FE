@@ -1,5 +1,8 @@
-// 아래쪽에 뜨는 모달
-// 선으로 버튼 구분
+/**
+ * @description 아래에서 위로 올라오는 모달이며, 선으로 버튼을 구분
+ * @page 이미지 업로드 시, 홈 화면에서 감정 선택 시, 친구 관리 시 등
+ * @note 전역에 컴포넌트를 하나 두고 zustand store로 내용 및 열림 상태를 관리
+ */
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useLocation } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
@@ -21,6 +24,7 @@ export default function BottomModal() {
     };
   }, [isOpen]);
 
+  // 페이지 이동 시 모달 닫기
   useEffect(() => {
     closeBottomModal();
   }, [location.pathname, closeBottomModal]);

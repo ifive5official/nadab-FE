@@ -1,3 +1,6 @@
+/**
+ * @description 1픽셀 높이의 회색 구분선
+ */
 import clsx from "clsx";
 
 export default function Seperator({ className }: { className?: string }) {

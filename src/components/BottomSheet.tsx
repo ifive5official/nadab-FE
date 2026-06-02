@@ -1,5 +1,11 @@
-// 아래에서 열리는 창
-// 좋아요 및 댓글 목록 보기에서 사용
+/**
+ * @description 아래에서 열리고 드래그해서 내릴 수 있는 바텀시트
+ * @props 콘텐츠는 props로 전달받음
+ * @page 피드/상세보기 페이지에서 좋아요 및 댓글 목록 보기 시 사용
+ * @note 현재 드래그 해서 내리는 동작이 불완전함.
+ * 내부 콘텐츠 스크롤이 가능하면서도,
+ * 내부 스크롤이 제일 위에 있을 때 아래로 드래그 하면 닫히는 기능 추가 필요.
+ */
 import useCommentInputStore from "@/store/commentInputStore";
 import {
   useRouter,
@@ -38,14 +44,6 @@ export default function BottomSheet({
   const dragControls = useDragControls();
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollTopSignal } = useCommentInputStore();
-  // const [isScrollAtTop, setIsScrollAtTop] = useState(true);
-
-  // // 콘텐츠 내부 스크롤 감지 함수
-  // function handleContentScroll() {
-  //   if (contentRef.current) {
-  //     setIsScrollAtTop(contentRef.current.scrollTop <= 0);
-  //   }
-  // }
 
   // 댓글 작성 시 스크롤 위로 올리기 위함
   useEffect(() => {
@@ -57,16 +55,13 @@ export default function BottomSheet({
 
   // 스크롤 시 댓글창 닫기
   function handleScroll() {
-    // const nav = navigator as any;
-    // const isMobile = nav.userAgentData?.mobile;
-    // if (!isMobile) return;
-
     const activeEl = document.activeElement as HTMLElement;
     if (activeEl && activeEl.tagName === "INPUT") {
       activeEl.blur();
     }
   }
 
+  // 하단에서 올라오는 애니메이션으로 인한 스크롤 방지
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -97,15 +92,14 @@ export default function BottomSheet({
         dragControls={dragControls}
         dragListener={false}
         dragConstraints={{ top: 0, bottom: 0 }} // 위로는 안올라가고 아래로만 내려가게 제한
-        dragElastic={{ top: 0, bottom: 0.5 }} // 아래로 당길 때 쫀득한 저항감 부여
+        dragElastic={{ top: 0, bottom: 0.5 }}
         onDragEnd={(_, info) => {
           if (info.offset.y > 150 || info.velocity.y > 500) {
             handleClose();
-            // setIsScrollAtTop(true);
           }
         }}
       >
-        {/* 빈 공간 - 항상 드래그 가능 */}
+        {/* 빈 공간 */}
         <div
           className="w-full flex flex-col items-center pt-padding-y-m px-padding-x-m touch-none"
           onPointerDown={(e) => dragControls.start(e)}
@@ -113,17 +107,11 @@ export default function BottomSheet({
           <div className="w-10 h-[5px] rounded-[20px] bg-[#D9D9D9]" />
           <p className="py-padding-y-s text-label-l">{title}</p>
         </div>
-        {/* 컨텐츠 영역 - 스크롤이 없거나 맨 위에 있을 때만 드래그 가능 */}
+        {/* 컨텐츠 영역 */}
         <div
           className="overflow-y-auto flex-1 px-padding-x-m py-padding-y-m"
           ref={contentRef}
           onPointerMove={handleScroll}
-          // onScroll={handleContentScroll}
-          // onPointerDown={(e) => {
-          //   if (isScrollAtTop) {
-          //     dragControls.start(e);
-          //   }
-          // }}
         >
           {children}
         </div>

@@ -1,10 +1,12 @@
-// components/ImageCropModal.tsx
+/**
+ * @description 화면 전체를 차지하는 이미지 크롭 컴포넌트
+ * @page 프로필 및 답변 이미지 업로드 시 사용
+ */
 import { useState } from "react";
 import Cropper from "react-easy-crop";
 
 type Props = {
   image: string;
-
   onConfirm: (pixels: any) => void;
   onCancel: () => void;
 };

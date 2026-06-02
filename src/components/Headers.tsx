@@ -1,3 +1,8 @@
+/**
+ * @description 각종 헤더 모음
+ * @note Todo: 리펙토링 및 파일 분리
+ */
+
 import { motion } from "motion/react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
@@ -21,14 +26,14 @@ import { api } from "@/lib/axios";
 import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 
-// Todo: 헤더 리펙토링하거나 파일 분리좀 하자...
-
 type MainHeaderProps = {
   profileImgUrl: string | undefined;
 };
 
 type NotificationsRes = components["schemas"]["UnreadCountResponse"];
 
+// "NADAB" 로고가 있는 메인 헤더
+// 메인 4게 페이지(홈, 리포트, 소셜, 캘린더) 에서 사용
 export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   const openSidebar = useSidebarStore.use.openSidebar();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
@@ -58,6 +63,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
       )}
     >
       <img src="/textLogo.png" className="w-[83.9px]" />
+      {/* 알림 개수 및 알림함 링크 */}
       <Link to="/notifications" className="ml-auto">
         <button className="relative">
           <BellIcon />
@@ -73,10 +79,11 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
           )}
         </button>
       </Link>
-
+      {/* 사이드바 버튼 */}
       <button onClick={openSidebar}>
         <MenuIcon />
       </button>
+      {/* 프로필 이미지 - 클릭 시 작은 메뉴 띄움 */}
       <button onClick={() => setIsAccountMenuOpen(true)}>
         <ProfileImg width={32} src={profileImgUrl} />
       </button>
@@ -89,7 +96,7 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
   );
 }
 
-// 프로필 클릭 시 뜨는 작은 메뉴
+// 프로필 이미지 클릭 시 뜨는 작은 메뉴
 type AccountMenuProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -102,7 +109,7 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
       {isOpen && (
         <>
           <div className="z-20 fixed inset-0" onClick={onClose} />
-          {/* 헤더 영역만큼 비워두기...*/}
+          {/* 헤더 영역만큼 비워두기*/}
           <div className="z-30 fixed top-[calc(var(--spacing-header-height)+var(--safe-top))] right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
             <div className="flex flex-col w-fit px-padding-x-s py-padding-y-xs bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
               <div className="p-padding-y-xxs flex items-center gap-gap-x-s border-b border-b-border-base dark:border-b-border-layer-3">
@@ -135,6 +142,8 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
 }
 
 // 뒤로가기 버튼과 타이틀이 있는 헤더
+// 메인 4개 페이지가 아닌 대부분의 페이지에서 사용
+// search variant는 친구 및 기록 검색 페이지에서 사용하며 children으로 검색창 받음
 type SubHeaderProps = {
   variant?: "sub" | "search";
   showBackButton?: boolean;
@@ -162,6 +171,7 @@ export function SubHeader({
         variant === "sub" ? "border-b border-b-border-base" : "",
       )}
     >
+      {/* 뒤로가기 */}
       <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
         {showBackButton && (
           <button onClick={() => router.history.back()}>
@@ -169,8 +179,9 @@ export function SubHeader({
           </button>
         )}
       </div>
-
+      {/* 페이지 제목 */}
       <span className="flex-1 text-center">{children}</span>
+      {/* 닫기 혹은 사이드바 버튼 */}
       {variant !== "search" && (
         <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
           {showMenuButton && (
@@ -189,6 +200,8 @@ export function SubHeader({
   );
 }
 
+// 하단에 진행 바가 있는 헤더
+// 현재는 회원가입 과정에서만 사용
 export function ProgressHeader({ progress }: { progress: number }) {
   const router = useRouter();
   return (

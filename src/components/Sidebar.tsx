@@ -1,3 +1,7 @@
+/**
+ * @description 사이드바
+ * @note 외부 링크는 앱에서 인앱 브라우저로 열리도록 설정되어 있음
+ */
 import clsx from "clsx";
 import { ChevronRightIcon } from "./Icons";
 import { Link, useLocation } from "@tanstack/react-router";
@@ -26,6 +30,7 @@ export default function Sidebar() {
   const closeSidebar = useSidebarStore.use.closeSidebar();
   const location = useLocation();
 
+  // 사이드바 열렸을 때 스크롤 방지
   useEffect(() => {
     if (isSidebarOpen) {
       document.body.style.overflow = "hidden";
@@ -34,6 +39,7 @@ export default function Sidebar() {
     }
   }, [isSidebarOpen]);
 
+  // 경로 이동 시 닫기
   useEffect(() => {
     return () => {
       closeSidebar();
@@ -62,7 +68,7 @@ export default function Sidebar() {
               exit={{ x: 100, opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              {/* 헤더 영역만큼 비워두기*/}
+              {/* 네비게이션 링크 - 헤더 영역만큼 비워두기*/}
               <nav className="flex-1 mt-header-height py-padding-y-xl flex flex-col gap-gap-y-xs">
                 {MENU_ITEMS.map((item) => (
                   <MenuItem key={item.to} {...item}>
@@ -70,6 +76,7 @@ export default function Sidebar() {
                   </MenuItem>
                 ))}
               </nav>
+              {/* 하단 링크 */}
               <div className="py-padding-y-m border-y border-y-interactive-border-default">
                 {[
                   {

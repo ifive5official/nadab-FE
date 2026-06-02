@@ -1,3 +1,8 @@
+/**
+ * @description 탭 전환에 사용하는 segmented controls
+ * @page 메인의 리포트 및 소셜 페이지에서 탭 전환에 사용
+ */
+
 import clsx from "clsx";
 import { motion } from "motion/react";
 

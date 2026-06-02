@@ -1,4 +1,7 @@
-// 네이밍 규칙: 아이콘 이름(카멜케이스) + Icon
+/**
+ * @description 아이콘 모음
+ * @note 네이밍 규칙: 아이콘 이름(카멜케이스) + Icon
+ */
 
 import clsx from "clsx";
 

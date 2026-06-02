@@ -1,3 +1,4 @@
+// 관심 주제 목록
 import {
   Deco4FilledIcon,
   CoffeeFilledIcon,
@@ -5,7 +6,6 @@ import {
   UsersFilledIcon,
   HeartFilledIcon,
   BookOpenedFilledIcon,
-  // MoonFilledIcon,
 } from "@/components/Icons";
 
 const categories = [

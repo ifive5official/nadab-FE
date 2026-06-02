@@ -1,3 +1,7 @@
+/**
+ * @description 화면 중앙에 뜨고 아이콘 및 버튼이 있는 모달 컴포넌트
+ * @note 전역에 컴포넌트를 하나 두고 zustand store로 내용 및 열림 상태를 관리
+ */
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -10,6 +14,7 @@ export default function Modal() {
   const location = useLocation();
   const lastPathname = useRef(location.pathname);
 
+  // 모달 떠 있을 동안 스크롤 방지
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -21,6 +26,8 @@ export default function Modal() {
     };
   }, [isOpen]);
 
+  // 기본적으로 페이지 이동 시 모달 닫되
+  // 홈에서 소셜 로그인 에러 시 모달 띄우기 위해 에러 처리함
   useEffect(() => {
     if (lastPathname.current !== location.pathname) {
       if (!config?.openOnNavigate) {
@@ -51,6 +58,7 @@ export default function Modal() {
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
+            {/* 아이콘, 제목, 본문 */}
             <div className="flex flex-col items-center gap-margin-y-s">
               {Icon && <Icon />}
               <p className="text-label-l whitespace-pre-line text-center">
@@ -58,6 +66,7 @@ export default function Modal() {
               </p>
               <p className="text-caption-m">{config.children}</p>
             </div>
+            {/* 버튼(1~2개, 개수에 따라 자동 스타일링) */}
             <div className="w-full flex gap-gap-x-s mt-gap-y-xl">
               {config.buttons.length === 1 && (
                 <BlockButton onClick={config.buttons[0].onClick}>

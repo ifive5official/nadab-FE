@@ -1,3 +1,8 @@
+/**
+ * @description 화면 상단에 떴다가 일정시간 이후 사라지는 포그라운드 알림용 토스트. 누르면 해당 페이지로 이동.
+ * @note 전역에 컴포넌트를 하나 두고 zustand store로 내용 및 열림 상태를 관리
+ */
+
 import { NOTIFICATION_CONFIG } from "@/features/notifications/notificationConfigs";
 import InlineButton from "./InlineButton";
 import { useNavigate } from "@tanstack/react-router";
@@ -7,7 +12,6 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useReadNotificationMutation } from "@/features/notifications/useReadNotification";
 
-// 포그라운드 알림용 토스트
 export default function PushToast() {
   const { isOpen, notification, closeToast } = usePushToastStore();
   const readNotificationMutation = useReadNotificationMutation();
@@ -17,7 +21,7 @@ export default function PushToast() {
   const type = notification.data.type;
   const notificationId = notification.data.notificationId;
   const config = NOTIFICATION_CONFIG[type!];
-  if (!config) return null; // undefined 참조 에러 땜빵
+  if (!config) return null; // undefined 참조 에러 나서 넣음(삭제X)
   // @ts-ignore
   const linkProps = config.getLinkProps(notification.data);
 
