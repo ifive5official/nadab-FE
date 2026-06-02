@@ -1,3 +1,7 @@
+/**
+ * @description 피그마의 InlineButton 컴포넌트와 동일합니다(Components 섹션 참조)
+ */
+
 import type { ButtonHTMLAttributes } from "react";
 import clsx from "clsx";
 import { LoadingIcon } from "./Icons";

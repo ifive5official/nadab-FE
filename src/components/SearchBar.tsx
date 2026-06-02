@@ -1,3 +1,9 @@
+/**
+ * @description 테마 불러오기, Capacitor 초기화, 푸쉬알림 연동
+ * @page 친구 검색 및 기록 검색 시 사용
+ * @note 추후 네트워크 에러 처리 로직 옮기는 것 고려
+ */
+
 import clsx from "clsx";
 import DeleteFilledIcon, { SearchIcon } from "./Icons";
 import { useState, type InputHTMLAttributes } from "react";
@@ -5,8 +11,9 @@ import emotions from "@/constants/emotions";
 import { EmotionBadge } from "./Badges";
 
 type Props = {
-  emotion?: (typeof emotions)[number]["code"];
-  onDeleteEmotion?: () => void;
+  emotion?: (typeof emotions)[number]["code"]; // 기록 검색 시 감정으로 검색 가능
+  onDeleteEmotion?: () => void; // 기록 검색 시
+
   value: string;
   onDeleteKeyword: () => void;
   className?: string;

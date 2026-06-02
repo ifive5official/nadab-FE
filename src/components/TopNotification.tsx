@@ -1,14 +1,17 @@
-// 현재는 리포트 조건 충족 표시 용으로 사용
+/**
+ * @description 현재는 유형 리포트 탭에서 리포트 생성 조건 충족 표시 용으로만 사용됨
+ * @note 다른 용도로 사용 시 구조 변경 필요
+ */
 
 import clsx from "clsx";
 import InlineButton from "./InlineButton";
 
 type Props = {
   className?: string;
-  typeName: string;
-  canGenerate: boolean;
-  dailyCompletedCount: number;
-  requiredCount: number;
+  typeName: string; // 유형 이름
+  canGenerate: boolean; // 알림 뱃지 여부
+  dailyCompletedCount: number; // 완료 숫자
+  requiredCount: number; // 요구 숫자
 };
 
 export default function TopNotification({

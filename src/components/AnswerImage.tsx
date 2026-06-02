@@ -1,5 +1,8 @@
-// 답변에 쓰이는 이미지
-
+/**
+ * @description 답변 이미지 컴포넌트
+ * @props 이미지 url을 전달받음
+ * @page 피드 및 상세보기 페이지에서 사용
+ */
 import { useState } from "react";
 
 type Props = {

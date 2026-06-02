@@ -1,3 +1,4 @@
+// 감정 목록
 const emotions = [
   { title: "성취", color: "#FFEF91", code: "ACHIEVEMENT" },
   { title: "흥미", color: "#FFD29B", code: "INTEREST" },

@@ -128,7 +128,7 @@ function RouteComponent() {
   const paginationRef = useRef(null);
 
   return (
-    <Container isMain={true}>
+    <Container hasScroll={true}>
       <Link to="/search">
         <div className="pointer-events-none mt-margin-y-m mb-margin-y-s">
           {/* @ts-ignore */}

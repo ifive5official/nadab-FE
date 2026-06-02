@@ -93,7 +93,7 @@ export default function FriendsTab() {
         )}
 
         {/* 친구 섹션 */}
-        <Container isMain={true}>
+        <Container hasScroll={true}>
           <span className="text-caption-m mt-margin-y-m">
             친구 {friendsCount}명
           </span>

@@ -1,4 +1,8 @@
-// 선으로 버튼 구분하는 구조의 모달
+/**
+ * @description 선으로 버튼 구분하는 구조의 모달
+ * @note 다른 모달 컴포넌트 내부에서 쓰임
+ */
+
 import type { Item } from "@/store/bottomModalStore";
 import clsx from "clsx";
 import { motion, type Variants } from "motion/react";

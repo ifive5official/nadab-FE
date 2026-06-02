@@ -1,6 +1,7 @@
-// 좌측 위에 제목이 있고 우측 하단에 버튼이 있고 가운데 큰 컨텐츠가 있는 모달
-// 아직 알림 시간 변경에만 사용함
-// Todo: 모달과 합칠 수 없나
+/**
+ * @description 좌측 위에 제목이 있고 우측 하단에 버튼이 있고 가운데 큰 컨텐츠가 있는 모달
+ * @page 아직 알림 시간 변경에만 사용함(앱에서만 보임)
+ */
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
