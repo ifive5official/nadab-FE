@@ -23,7 +23,6 @@ export default function CommentAccessoryView() {
     mode,
     dailyReportId,
     parentCommentId,
-    parentCommentAuthorNickname,
     isParentSecret,
     commentId,
     originalCommentContent,
@@ -62,7 +61,7 @@ export default function CommentAccessoryView() {
     } else if (mode === "SUB" && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [mode, commentId]);
+  }, [mode, commentId, parentCommentId]);
 
   // 댓글 작성, 대댓글 작성, 댓글 수정
   const postCommentMutation = usePostCommentMutation({
@@ -108,7 +107,7 @@ export default function CommentAccessoryView() {
       className={clsx(
         "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1",
         bottomClass,
-        parentCommentAuthorNickname ? "h-[104px]" : "h-16",
+        mode === "SUB" || mode === "EDIT" ? "h-[104px]" : "h-16",
       )}
     >
       <div

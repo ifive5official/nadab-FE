@@ -1,6 +1,11 @@
 // 댓글창의 Input
-import { ArrowUpCircleFilledIcon, CloseIcon } from "@/components/Icons";
+import {
+  ArrowUpCircleFilledIcon,
+  CloseIcon,
+  WarningFilledIcon,
+} from "@/components/Icons";
 import useCommentInputStore from "@/store/commentInputStore";
+import useModalStore from "@/store/modalStore";
 import clsx from "clsx";
 
 type CommentInputProps = {
@@ -28,7 +33,9 @@ export default function CommentInput({
   onBlur,
   inputRef,
 }: CommentInputProps) {
-  const { parentCommentAuthorNickname } = useCommentInputStore();
+  const { parentCommentAuthorNickname, mode, originalCommentContent } =
+    useCommentInputStore();
+  const { showModal, closeModal } = useModalStore();
 
   const isSubmitAllowed =
     value && value.trim().length > 0 && value.length <= 500;
@@ -38,18 +45,50 @@ export default function CommentInput({
       className={clsx(
         "w-full overflow-hidden border border-border-base flex flex-col",
         isFocused && "shadow-1 border-border-layer-1",
-        parentCommentAuthorNickname ? "rounded-[20px]" : "rounded-full",
+        mode === "SUB" || mode === "EDIT" ? "rounded-[20px]" : "rounded-full",
         readOnly && "cursor-pointer",
       )}
       onClick={onClick}
       onPointerMove={(e) => e.stopPropagation()}
     >
-      {parentCommentAuthorNickname && (
+      {(mode === "SUB" || mode === "EDIT") && (
         <div className="h-10 px-padding-x-s bg-field-bg-muted flex justify-between items-center">
           <span className="text-caption-m">
-            {parentCommentAuthorNickname}님에게 답글 남기는 중
+            {mode === "SUB" &&
+              `${parentCommentAuthorNickname}님에게 답글 남기는 중`}
+            {mode === "EDIT" && "댓글 수정 중"}
           </span>
-          <button type="button" onClick={onReset}>
+          <button
+            type="button"
+            onClick={() => {
+              if (mode === "SUB") {
+                onReset?.();
+              } else if (mode === "EDIT") {
+                if (originalCommentContent === value) {
+                  onReset?.();
+                } else {
+                  showModal({
+                    icon: WarningFilledIcon,
+                    title: "수정을 취소할까요?",
+                    children: "작성 중인 내용은 저장되지 않아요.",
+                    buttons: [
+                      {
+                        label: "계속 수정",
+                        onClick: closeModal,
+                      },
+                      {
+                        label: "취소하기",
+                        onClick: () => {
+                          closeModal();
+                          onReset?.();
+                        },
+                      },
+                    ],
+                  });
+                }
+              }
+            }}
+          >
             <CloseIcon size={20} />
           </button>
         </div>
