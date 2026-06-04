@@ -490,6 +490,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/home/version-dismissals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 홈 업데이트 다시 보지 않기 저장
+         * @description 사용자가 홈화면에 표시되는 앱 버전 업데이트 알림을 다시 보지 않도록 설정합니다.
+         *
+         *     ### 요청 정보
+         *     - appVersionId: 숨김 처리할 앱 버전 ID (홈화면 정보 조회 api에서 제공되는 앱 버전 ID 사용)
+         */
+        post: operations["dismissHomeVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/friends/search/histories": {
         parameters: {
             query?: never;
@@ -2052,6 +2075,14 @@ export interface paths {
          *     3. 총 기록 일수: 실제 답변한 날짜의 총 개수
          *     4. 친구 프로필: 나와 같은 오늘의 질문에 답변한 친구들의 프로필 사진 URL (최대 5개)
          *     5. 친구 답변 수: 나와 같은 오늘의 질문에 답변한 친구의 총 수
+         *     6. 플랫폼별 최신 버전 정보 (android, ios)
+         *         - 앱 버전 ID
+         *         - 최신 버전 문자열
+         *         - 업데이트 요약 문장
+         *         - 업데이트 항목 목록
+         *             - 업데이트 항목명
+         *             - 업데이트 상세 설명
+         *         - 다시 보지 않기 여부
          *
          *     ### 친구 프로필 조회 기준
          *     - 나의 오늘의 질문과 동일한 질문에 답변한 친구만 표시
@@ -2996,6 +3027,15 @@ export interface components {
              */
             blockedNickname: string;
         };
+        /** @description 홈 버전 업데이트 다시 보지 않기 요청 */
+        HomeVersionDismissRequest: {
+            /**
+             * Format: int64
+             * @description 숨김 처리할 앱 버전 ID
+             * @example 1
+             */
+            appVersionId: number;
+        };
         /** @description 친구 검색 기록 저장 요청 */
         SaveFriendSearchRequest: {
             /**
@@ -3918,6 +3958,37 @@ export interface components {
              */
             profileImageUrl?: string;
         };
+        /** @description 플랫폼별 최신 앱 버전 */
+        HomeLatestVersionResponse: {
+            ios?: components["schemas"]["HomePlatformVersionResponse"];
+            android?: components["schemas"]["HomePlatformVersionResponse"];
+        };
+        /** @description 플랫폼별 최신 버전 정보 */
+        HomePlatformVersionResponse: {
+            /**
+             * Format: int64
+             * @description 앱 버전 ID
+             * @example 1
+             */
+            appVersionId?: number;
+            /**
+             * @description 최신 앱 버전
+             * @example 1.2.0
+             */
+            version?: string;
+            /**
+             * @description 업데이트 요약 문장
+             * @example 좋아요와 댓글로 마음을 전해요.
+             */
+            summary?: string;
+            /** @description 업데이트 항목 목록 */
+            items?: components["schemas"]["HomeVersionItemResponse"][];
+            /**
+             * @description 다시 보지 않기 여부
+             * @example false
+             */
+            dismissed?: boolean;
+        };
         /** @description 홈화면 요약 정보 응답 */
         HomeResponse: {
             /**
@@ -3955,6 +4026,21 @@ export interface components {
              * @example 8
              */
             answeredFriendCount?: number;
+            /** @description 플랫폼별 최신 앱 버전 */
+            latestVersion?: components["schemas"]["HomeLatestVersionResponse"];
+        };
+        /** @description 업데이트 항목 */
+        HomeVersionItemResponse: {
+            /**
+             * @description 업데이트 항목명
+             * @example 월간 리포트
+             */
+            title?: string;
+            /**
+             * @description 업데이트 상세 설명
+             * @example 한 달의 기록을 한눈에 돌아볼 수 있어요.
+             */
+            description?: string;
         };
         /** @description 친구 목록 응답 */
         FriendListResponse: {
@@ -5212,6 +5298,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description - ErrorCode: AUTH_ACCESS_DENIED - 신고 권한 없음 (친구가 아니거나, 오늘 공유된 게시글이 아님, 비밀 댓글 열람 권한 없음) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /**
              * @description - ErrorCode: DAILY_REPORT_NOT_FOUND - 공유글을 찾을 수 없음
              *     - ErrorCode: COMMENT_NOT_FOUND - 댓글을 찾을 수 없음
@@ -5299,6 +5392,45 @@ export interface operations {
                 content?: never;
             };
             /** @description ErrorCode: USER_NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dismissHomeVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomeVersionDismissRequest"];
+            };
+        };
+        responses: {
+            /** @description 저장 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: APP_VERSION_NOT_FOUND - 앱 버전을 찾을 수 없음
+             */
             404: {
                 headers: {
                     [name: string]: unknown;
