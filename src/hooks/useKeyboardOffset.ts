@@ -1,4 +1,9 @@
-// 키보드 위에 붙는 ui 위해 사용
+/**
+ * @description 키보드 위에 붙는 ui(엑세서리 바)의 높이를 맞추기 위해 사용
+ * @page 현재는 답변 시에만 사용
+ * @note 동작이 매끄럽지 않아서 개선 필요
+ */
+
 import { useEffect, useState } from "react";
 
 export function useKeyboardOffset() {

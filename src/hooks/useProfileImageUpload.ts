@@ -1,3 +1,9 @@
+/**
+ * @description 프로필 이미지 업로드 용 커스텀 훅
+ * @page 회원가입 및 프로필 수정 페이지에서 프로필 이미지 업로드 시 사용
+ * @note 성공 및 실패 시 동작을 일관되게 맞추기 위해 이미지 업로드 훅과 분리함.
+ */
+
 import { useImageUploader } from "@/hooks/useImageUpload";
 import useBottomModalStore from "@/store/bottomModalStore";
 import useModalStore from "@/store/modalStore";

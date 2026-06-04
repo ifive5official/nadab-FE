@@ -1,3 +1,4 @@
+// 날짜 및 시간 관련 포매터 함수 모음
 export function formatKoreanDate(date: Date) {
   const year = date.getFullYear() % 100;
   const month = date.getMonth() + 1;

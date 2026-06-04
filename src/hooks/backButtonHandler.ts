@@ -1,5 +1,4 @@
-// 앱 상에서 뒤로가기 버튼과 히스토리 api 연동
-// 및 두 번 누르면 종료
+// 앱 상에서 뒤로가기 버튼과 히스토리 api 연동 및 두 번 누르면 종료
 import { App } from "@capacitor/app";
 import { Toast } from "@capacitor/toast";
 import { type AnyRouter } from "@tanstack/react-router";

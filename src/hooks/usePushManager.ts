@@ -1,3 +1,7 @@
+/**
+ * @description 앱에서 푸쉬알림 구현 위해 사용
+ * @page 토큰 등록은 앱 초기화 시, 삭제는 로그아웃 및 탈퇴 시 호출
+ */
 import { useCallback, useEffect } from "react";
 import { PushNotifications } from "@capacitor/push-notifications";
 import useAuthStore from "@/store/authStore";
@@ -35,6 +39,7 @@ export function usePushNotifications() {
     initDevice();
   }, [deviceId, setDeviceId]);
 
+  // 안드로이드용 기본 채널 설정
   const setupNotificationChannels = useCallback(async () => {
     try {
       await PushNotifications.createChannel({
@@ -113,7 +118,6 @@ export function usePushNotifications() {
         });
       });
 
-      // 3. FCM 등록 시작
       await PushNotifications.register();
     } catch (error) {
       console.error("Push registration error:", error);
