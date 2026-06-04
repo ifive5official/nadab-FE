@@ -1,3 +1,4 @@
+// 라이트모드/다크모드 관리 store
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import createSelectors from "./createSelectors";

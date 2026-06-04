@@ -1,4 +1,8 @@
-// 일반 클릭 및 롱프레스 클릭 구분
+/**
+ * @description 일반 클릭과 롱프레스 클릭을 구분하는 커스텀 훅
+ * @page 피드에서 좋아요 및 댓글 버튼에서 사용
+ * @note
+ */
 import { useRef, type PointerEvent } from "react";
 
 type LongPressEvent = PointerEvent<HTMLButtonElement>;

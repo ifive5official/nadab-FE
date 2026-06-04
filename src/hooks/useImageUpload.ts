@@ -1,5 +1,8 @@
-// 이미지 업로드 용 커스텀 훅
-// 사진 촬영 및 갤러리 접근 지원
+/**
+ * @description 이미지 업로드 용 커스텀 훅
+ * @page 프로필 이미지 업로드 및 답변 이미지 업로드 시 사용
+ * @note 사진 촬영 및 갤러리 접근 지원, 항상 크롭 수행
+ */
 import type { ApiResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";
 import { api } from "@/lib/axios";
@@ -17,7 +20,7 @@ type ImageUploaderProps = {
   initialImageUrl?: string;
   onUpload?: () => void; // 이미지 선택 직후 동작(모달 닫는 등)
   onCropSuccess?: () => void;
-  onUploadSuccess?: () => void;
+  onUploadSuccess?: () => void; // 서버에 이미지 업로드 성공 후
 
   onUploadError?: (error: any) => void;
 };

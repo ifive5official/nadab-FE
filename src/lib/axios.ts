@@ -17,7 +17,7 @@ function isTokenExpired(token: string) {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const now = Math.floor(Date.now() / 1000);
-    return payload.exp < now + 10; // 만료 10초 전이면 만료로 간주 (여유 대역)
+    return payload.exp < now + 10; // 만료 10초 전이면 만료로 간주
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return true;
@@ -27,17 +27,17 @@ function isTokenExpired(token: string) {
 export const getOrRefreshAccessToken = async (): Promise<string | null> => {
   const { accessToken, setAccessToken, clearAuth } = useAuthStore.getState();
 
-  // 1. 이미 유효한 토큰이 있다면 바로 반환
+  // 이미 유효한 토큰이 있다면 바로 반환
   if (accessToken && !isTokenExpired(accessToken)) return accessToken;
 
-  // 2. 이미 다른 곳에서 리프레시 중이라면 큐에서 대기
+  // 이미 다른 곳에서 리프레시 중이라면 큐에서 대기
   if (isRefreshing) {
     return new Promise((resolve) => {
       queue.push((token: string) => resolve(token));
     });
   }
 
-  // 3. 리프레시 시작
+  // 리프레시 시작
   isRefreshing = true;
 
   try {
