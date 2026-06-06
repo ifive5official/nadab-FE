@@ -56,7 +56,7 @@ export function CommentList({ dailyReportId, readOnly = false }: Props) {
                   />
                 );
               })}
-              {page.hasNext && <div ref={ref} className="absolute" />}
+              {page.hasNext && <div ref={ref} className="-mt-gap-y-xl" />}
             </Fragment>
           );
         })}
