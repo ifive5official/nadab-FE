@@ -20,6 +20,8 @@ export function useRerollQuestionMutation() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["currentUser", "question"], data.data);
+      // 질문 새로고침 후 질문에 답한 친구 목록도 새로고침
+      queryClient.invalidateQueries({ queryKey: ["currentUser", "home"] });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       switch (err.response?.data?.code) {
