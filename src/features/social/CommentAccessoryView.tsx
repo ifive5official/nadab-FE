@@ -162,19 +162,27 @@ export default function CommentAccessoryView() {
               isSecret: finalIsSecret,
             });
           } else if (mode === "EDIT") {
-            updateCommentMutation.mutate({
-              dailyReportId: dailyReportId!,
-              content,
-              commentId: commentId!,
-              parentCommentId: parentCommentId!,
-            });
+            if (originalCommentContent !== content) {
+              updateCommentMutation.mutate({
+                dailyReportId: dailyReportId!,
+                content,
+                commentId: commentId!,
+                parentCommentId: parentCommentId!,
+              });
+            }
           }
         }}
       >
         <CommentInput
           inputRef={inputRef}
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            // 한글 maxLength 버그 수정
+            const value = e.target.value;
+            const truncatedValue =
+              value.length > 500 ? value.slice(0, 500) : value;
+            setContent(truncatedValue);
+          }}
           onReset={() => setWriteMode(dailyReportId!)}
           isFocused={isFocused}
           onFocus={() => setIsFocused(true)}
