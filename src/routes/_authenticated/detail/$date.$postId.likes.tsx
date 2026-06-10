@@ -1,25 +1,14 @@
 import BottomSheet from "@/components/BottomSheet";
 import { likesOptions } from "@/features/social/likeQueries";
 import { LikeUserList } from "@/features/social/LikeUserList";
-import { createFileRoute, notFound } from "@tanstack/react-router";
-import axios from "axios";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
   "/_authenticated/detail/$date/$postId/likes",
 )({
   component: RouteComponent,
   loader: async ({ params: { postId }, context: { queryClient } }) => {
-    try {
-      await queryClient.ensureQueryData(likesOptions(Number(postId)));
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-        if (status === 400 || status === 404) {
-          throw notFound() as any;
-        }
-      }
-      throw err;
-    }
+    queryClient.ensureQueryData(likesOptions(Number(postId)));
   },
 });
 
