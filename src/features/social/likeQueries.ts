@@ -26,6 +26,17 @@ export function likesOptions(dailyReportId: number) {
       );
       return res.data.data!;
     },
+    retry: (failureCount, error) => {
+      // 열람 권한 없거나 데이터 없을 시 재시도 X
+      const err = error as AxiosError<ApiErrResponse<null>>;
+      const status = err.response?.status;
+
+      if (status === 403 || status === 404) {
+        return false;
+      }
+
+      return failureCount < 3;
+    },
   });
 }
 
@@ -116,6 +127,17 @@ export function commentLikesOptions(commentId: number) {
         `/api/v1/comments/${commentId}/likes`,
       );
       return res.data.data!;
+    },
+    retry: (failureCount, error) => {
+      // 열람 권한 없거나 데이터 없을 시 재시도 X
+      const err = error as AxiosError<ApiErrResponse<null>>;
+      const status = err.response?.status;
+
+      if (status === 403 || status === 404) {
+        return false;
+      }
+
+      return failureCount < 3;
     },
   });
 }
