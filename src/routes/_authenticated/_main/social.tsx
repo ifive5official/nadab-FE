@@ -17,8 +17,6 @@ import { AnimatePresence } from "motion/react";
 import useModalStore from "@/store/modalStore";
 import { WarningFilledIcon } from "@/components/Icons";
 import { formatKoreanDate } from "@/lib/formatters";
-import { Capacitor } from "@capacitor/core";
-import { Browser } from "@capacitor/browser";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -99,11 +97,7 @@ function RouteComponent() {
             onClick: () => {
               closeModal();
               const url = "mailto:ifive5.official@gmail.com";
-              if (Capacitor.isNativePlatform()) {
-                Browser.open({ url });
-              } else {
-                window.location.href = url;
-              }
+              window.location.href = url;
             },
           },
         ],
