@@ -72,7 +72,9 @@ export function useLikeMutation() {
       if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
         showError("소셜 기능 사용이 일시 중단되었어요.");
       } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
-        showError("친구가 아닌 유저의 게시글에 좋아요를 남길 수 없어요.");
+        showError(
+          "친구가 아닌 유저의 게시글이나 공유 중이 아닌 게시글에 댓글을 남길 수 없어요.",
+        );
       } else {
         handleDefaultApiError(err);
       }
@@ -212,7 +214,9 @@ export function useCommentLikeMutation() {
       if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
         showError("소셜 기능 사용이 일시 중단되었어요.");
       } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
-        showError("친구가 아닌 유저의 댓글에 좋아요를 남길 수 없어요.");
+        showError(
+          "친구가 아닌 유저의 게시글이나 공유 중이 아닌 게시글에 댓글을 남길 수 없어요.",
+        );
       } else if (
         err.response?.data?.code === "COMMENT_NOT_FOUND" ||
         err.response?.data?.code === "COMMENT_DELETED"

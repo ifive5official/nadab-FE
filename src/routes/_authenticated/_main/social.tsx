@@ -89,7 +89,10 @@ function RouteComponent() {
         buttons: [
           {
             label: "확인",
-            onClick: closeModal,
+            onClick: () => {
+              navigate({ to: "/" });
+              closeModal();
+            },
           },
           {
             label: "문의하기",
@@ -106,7 +109,7 @@ function RouteComponent() {
         ],
       });
     }
-  }, [suspensionStatus, closeModal, showModal]);
+  }, [suspensionStatus, closeModal, showModal, navigate]);
 
   return (
     <>
