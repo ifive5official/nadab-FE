@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 import path from "path";
 import type { CapacitorConfig } from "@capacitor/cli";
+import { KeyboardResize, KeyboardStyle } from "@capacitor/keyboard";
 
 dotenv.config({ path: path.resolve(__dirname, ".env.production") });
 
@@ -31,6 +32,11 @@ const config: CapacitorConfig = {
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound"],
+    },
+    Keyboard: {
+      resize: KeyboardResize.None,
+      style: KeyboardStyle.Dark,
+      resizeOnFullScreen: true,
     },
   },
 };

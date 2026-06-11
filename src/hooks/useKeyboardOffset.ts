@@ -13,15 +13,32 @@ export function useKeyboardOffset() {
   const [isVisible, setIsVisible] = useState(!isNative);
 
   useEffect(() => {
-    if (!isNative) return;
+    if (!isNative) {
+      // 웹 환경: visualViewport를 사용하여 키보드(혹은 가상 키보드) 대응
+      const handleViewportChange = () => {
+        if (!window.visualViewport) return;
+        const viewport = window.visualViewport;
+        const offset = window.innerHeight - (viewport.height + viewport.offsetTop);
+        const isKeyboardOpen = window.innerHeight - viewport.height > 50;
+        
+        setIsVisible(isKeyboardOpen);
+        setBottomOffset(Math.max(0, offset));
+      };
 
-    // 키보드가 나타날 때: 실제 키보드 높이를 받아서 설정
+      window.visualViewport?.addEventListener("resize", handleViewportChange);
+      return () => window.visualViewport?.removeEventListener("resize", handleViewportChange);
+    }
+
+    // 네이티브 환경: 실제 키보드 높이를 가져와서 오프셋으로 사용
     const showListener = Keyboard.addListener("keyboardWillShow", (info) => {
       setIsVisible(true);
-      setBottomOffset(info.keyboardHeight);
+      setBottomOffset(info.keyboardHeight); 
+      
+      if (Capacitor.getPlatform() === "ios") {
+        Keyboard.setAccessoryBarVisible({ isVisible: false }).catch(() => {});
+      }
     });
 
-    // 키보드가 사라질 때: 높이 초기화
     const hideListener = Keyboard.addListener("keyboardWillHide", () => {
       setIsVisible(false);
       setBottomOffset(0);
