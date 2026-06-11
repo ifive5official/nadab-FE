@@ -175,8 +175,8 @@ function RouteComponent() {
     }
   }
 
-  const nav = navigator as any;
-  const isMobile = nav.userAgentData?.mobile; // 완료 버튼 공개 여부 판단
+  const platform = Capacitor.getPlatform();
+  const isMobile = platform !== "web"; // 완료 버튼 공개 여부 판단
 
   return (
     <>

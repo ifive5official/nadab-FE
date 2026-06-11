@@ -14,7 +14,7 @@ import useToastStore from "@/store/toastStore";
 import useCommentInputStore from "@/store/commentInputStore";
 import useModalStore from "@/store/modalStore";
 import { CircleCheckFilledIcon } from "@/components/Icons";
-import { Capacitor } from "@capacitor/core";
+import { useKeyboardOffset } from "@/hooks/useKeyboardOffset";
 
 export default function CommentAccessoryView() {
   const { showModal, closeModal } = useModalStore();
@@ -33,6 +33,8 @@ export default function CommentAccessoryView() {
 
   const [isSecret, setIsSecret] = useState(false);
   const [content, setContent] = useState(originalCommentContent ?? "");
+
+  const { isVisible, bottomOffset } = useKeyboardOffset();
 
   // CommentInput 제어용
   const inputRef = useRef<HTMLInputElement>(null);
@@ -90,23 +92,16 @@ export default function CommentAccessoryView() {
   // 부모가 비밀댓글이면 자식은 무조건 비밀댓글
   const finalIsSecret = isParentSecret ? true : isSecret;
 
-  // ios safe bottom 대비
-  const platform = Capacitor.getPlatform();
-  const bottomClass =
-    platform === "ios"
-      ? isFocused
-        ? "bottom-0"
-        : "bottom-(--safe-bottom)"
-      : "bottom-(--safe-bottom)";
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      style={{
+        bottom: isVisible ? `${bottomOffset}px` : "var(--safe-bottom, 0px)",
+      }}
       className={clsx(
-        "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1",
-        bottomClass,
+        "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1 z-[9999]",
         mode === "SUB" || mode === "EDIT" ? "h-[104px]" : "h-16",
       )}
     >
