@@ -12,9 +12,15 @@ import { usePushNotifications } from "@/hooks/usePushManager";
 
 // status bar 색상 변경 용 커스텀 플러그인
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const ThemeManager = registerPlugin<any>("ThemeManager");
+let ThemeManager: any;
+try {
+  ThemeManager = registerPlugin<any>("ThemeManager");
+} catch (e) {
+  console.warn("ThemeManager plugin not found");
+}
 
 async function changeStatusBarAreaColor(hexColor: string) {
+  if (!ThemeManager) return;
   try {
     await ThemeManager.setRootBackgroundColor({ color: hexColor });
   } catch (e) {
@@ -52,12 +58,17 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
 
     if (Capacitor.isNativePlatform()) {
       async function syncSystemBars() {
-        await SplashScreen.hide();
+        try {
+          await SplashScreen.hide();
 
-        await SystemBars.setStyle({
-          style: isDarkMode ? SystemBarsStyle.Dark : SystemBarsStyle.Light,
-        });
-        await changeStatusBarAreaColor(isDarkMode ? "#000000" : "#FFFFFF");
+          await SystemBars.setStyle({
+            style: isDarkMode ? SystemBarsStyle.Dark : SystemBarsStyle.Light,
+          });
+          await changeStatusBarAreaColor(isDarkMode ? "#000000" : "#FFFFFF");
+        } catch (e) {
+          console.error("Initialization sync error:", e);
+          await SplashScreen.hide();
+        }
       }
       syncSystemBars();
 
@@ -72,46 +83,45 @@ export default function AppInitializer({ router }: { router: AnyRouter }) {
   // 푸쉬알림 리스너 등록 및 토큰 갱신
   useEffect(() => {
     async function registerNotifications() {
-      const perm = await PushNotifications.checkPermissions();
-      if (perm.receive === "granted") {
-        registerPush();
+      try {
+        const perm = await PushNotifications.checkPermissions();
+        if (perm.receive === "granted") {
+          registerPush();
+        }
+      } catch (e) {
+        console.error("Push notification check error:", e);
       }
     }
-    registerNotifications();
+    if (Capacitor.isNativePlatform()) {
+      registerNotifications();
+    }
   }, [registerPush]);
-
-  // 네트워크 상태 확인
-  //   useEffect(() => {
-  //     if (!Capacitor.isNativePlatform()) {
-  //       return;
-  //     }
-
-  //     Network.getStatus().then((status) => setIsOnline(status.connected));
-
-  //     Network.addListener("networkStatusChange", (status) => {
-  //       setIsOnline(status.connected);
-  //     });
-
-  //     if (isOnline) {
-  //       // 네트워크가 다시 연결되면, 라우터에게 현재 페이지의 beforeLoad/loader를 다시 실행하라고 명령
-  //       router.invalidate();
-  //     }
-
-  //     return () => {
-  //       Network.removeAllListeners();
-  //     };
-  //   }, [isOnline, router]);
 
   // 스플래시 스크린 닫기
   useEffect(() => {
     async function hideSplash() {
-      setTimeout(async () => {
-        await SplashScreen.hide();
-      }, 300);
+      try {
+        setTimeout(async () => {
+          await SplashScreen.hide();
+        }, 300);
+      } catch (e) {
+        console.error("Splash hide error:", e);
+      }
     }
+
+    // Failsafe: force hide after 3 seconds regardless of initialization state
+    const failsafeTimer = setTimeout(async () => {
+      if (Capacitor.isNativePlatform()) {
+        await SplashScreen.hide();
+        console.warn("Splash screen hidden by failsafe timer");
+      }
+    }, 3000);
+
     if (Capacitor.isNativePlatform()) {
       hideSplash();
     }
+
+    return () => clearTimeout(failsafeTimer);
   }, []);
   return null;
 }

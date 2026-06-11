@@ -112,7 +112,11 @@ export function usePushNotifications() {
       });
 
       // 3. FCM 등록 시작
+      // NOTE: Android requires 'google-services.json' in 'android/app/' to initialize Firebase.
+      // If this file is missing, register() will throw a fatal error on Android.
+      console.log("Starting PushNotifications registration...");
       await PushNotifications.register();
+      console.log("PushNotifications registration request sent.");
     } catch (error) {
       console.error("Push registration error:", error);
     }

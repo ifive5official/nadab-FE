@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { CameraIcon, CloseFilledIcon, GalleryIcon } from "./Icons";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import ProfileImg from "./ProfileImg";
+import { Capacitor } from "@capacitor/core";
 
 type Props = {
   imageUploader: ReturnType<typeof useImageUploader>;
@@ -18,8 +19,9 @@ export default function InputAccessoryView({
   isLoading,
   onComplete,
 }: Props) {
+  const isNative = Capacitor.isNativePlatform();
   const [bottomOffset, setBottomOffset] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(!isNative);
 
   const {
     tempImageUrl,
@@ -32,6 +34,7 @@ export default function InputAccessoryView({
   useEffect(() => {
     const handleViewportChange = () => {
       const viewport = window.visualViewport;
+
       if (!viewport) return;
 
       const offset =
@@ -39,7 +42,7 @@ export default function InputAccessoryView({
 
       const keyboardOpen = window.innerHeight - viewport.height > 100;
 
-      setIsVisible(keyboardOpen);
+      setIsVisible(keyboardOpen || !isNative);
       setBottomOffset(Math.max(0, offset));
     };
 

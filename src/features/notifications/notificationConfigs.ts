@@ -86,4 +86,25 @@ export const NOTIFICATION_CONFIG: Record<
       to: "/",
     },
   },
+  COMMENT_ON_MY_REPORT: {
+    inboxIconSrc: "/icon/social.png",
+    inboxTitle: "내 리포트에 댓글",
+    linkProps: {
+      to: "/social",
+    },
+  },
+  REPLY_ON_MY_COMMENT: {
+    inboxIconSrc: "/icon/social.png",
+    inboxTitle: "내 댓글에 답글",
+    linkProps: {
+      to: "/social",
+    },
+  },
+  REPLY_ON_PARTICIPATED_COMMENT: {
+    inboxIconSrc: "/icon/social.png",
+    inboxTitle: "참여한 댓글에 답글",
+    linkProps: {
+      to: "/social",
+    },
+  },
 };
