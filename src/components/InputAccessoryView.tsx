@@ -1,15 +1,12 @@
 // 키보드 위에 올라오는 악세서리 뷰
-// 질문 답변 사용
-import InlineButton from "../../components/InlineButton";
+// 현재는 질문 답변 시에만 사용
+import { useEffect, useState } from "react";
+import InlineButton from "./InlineButton";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  CameraIcon,
-  CloseFilledIcon,
-  GalleryIcon,
-} from "../../components/Icons";
+import { CameraIcon, CloseFilledIcon, GalleryIcon } from "./Icons";
 import { useImageUploader } from "@/hooks/useImageUpload";
-import ProfileImg from "../../components/ProfileImg";
-import { useKeyboardOffset } from "@/hooks/useKeyboardOffset";
+import ProfileImg from "./ProfileImg";
+import { Capacitor } from "@capacitor/core";
 
 type Props = {
   imageUploader: ReturnType<typeof useImageUploader>;
@@ -17,12 +14,14 @@ type Props = {
   onComplete: () => void;
 };
 
-export default function AnswerAccessoryView({
+export default function InputAccessoryView({
   imageUploader,
   isLoading,
   onComplete,
 }: Props) {
-  const { isVisible, bottomOffset } = useKeyboardOffset();
+  const isNative = Capacitor.isNativePlatform();
+  const [bottomOffset, setBottomOffset] = useState(0);
+  const [isVisible, setIsVisible] = useState(!isNative);
 
   const {
     tempImageUrl,
@@ -31,6 +30,41 @@ export default function AnswerAccessoryView({
     isUploading,
     handleNativeUpload,
   } = imageUploader;
+
+  useEffect(() => {
+    const handleViewportChange = () => {
+      const viewport = window.visualViewport;
+
+      if (!viewport) return;
+
+      const offset =
+        window.innerHeight - (viewport.height + viewport.offsetTop);
+
+      const keyboardOpen = window.innerHeight - viewport.height > 100;
+
+      setIsVisible(keyboardOpen || !isNative);
+      setBottomOffset(Math.max(0, offset));
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleViewportChange);
+      window.visualViewport.addEventListener("scroll", handleViewportChange);
+      handleViewportChange();
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener(
+          "resize",
+          handleViewportChange,
+        );
+        window.visualViewport.removeEventListener(
+          "scroll",
+          handleViewportChange,
+        );
+      }
+    };
+  }, []);
 
   function handleHideKeyboard() {
     if (document.activeElement instanceof HTMLElement) {
@@ -48,12 +82,9 @@ export default function AnswerAccessoryView({
           style={{
             paddingBottom: `calc(${bottomOffset}px + var(--spacing-padding-y-s))`,
           }}
-          className="fixed bottom-0 inset-x-0 px-padding-x-m pt-padding-y-s bg-surface-layer-1 border border-border-base flex gap-gap-x-m items-center z-[9999]"
+          className="fixed bottom-0 inset-x-0 px-padding-x-m pt-padding-y-s bg-surface-layer-1 border border-border-base flex gap-gap-x-m items-center"
           // 엑세서리 바 누를 때 포커스 이탈 방지
-          onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
+          onPointerDown={(e) => e.preventDefault()}
         >
           {tempImageUrl ? (
             <div className="relative">
@@ -91,10 +122,6 @@ export default function AnswerAccessoryView({
           <InlineButton
             isLoading={isCropping || isUploading || isLoading}
             onClick={onComplete}
-            onMouseDown={(e) => {
-              e.preventDefault(); // iOS에서 키보드 사라짐 방지
-              e.stopPropagation();
-            }}
             className="ml-auto"
           >
             완료
