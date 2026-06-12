@@ -71,6 +71,10 @@ export function Comment({
   // 댓글 관리
   const deleteCommentMutation = useDeleteCommentMutation();
 
+  const isCreatedToday = comment.createdAt
+    ? new Date(comment.createdAt).toDateString() === new Date().toDateString()
+    : false;
+
   return (
     <li className="relative">
       <div className="flex gap-gap-x-l items-start">
@@ -129,7 +133,7 @@ export function Comment({
       <CommentMenu
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        canEdit={!!comment.isMine}
+        canEdit={!!comment.isMine && isCreatedToday}
         canReport={!comment.isMine && !!comment.canViewContent}
         canDelete={comment.canDelete!}
         onEditClick={() => {
