@@ -22,12 +22,29 @@ import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
+import useCoachMarkTourStore from "@/store/coachMarkTourStore";
+import {
+  HOME_COACH_MARK_STEPS,
+  HOME_COACH_MARK_STEP_IDS,
+  HOME_COACH_MARK_TOUR_ID,
+} from "./homeCoachMarkSteps";
 
 export default function Home() {
   const navigate = useNavigate();
   const { registerPush } = usePushNotifications();
-  const { showModal, closeModal, showError } = useModalStore();
+  const {
+    showModal,
+    closeModal,
+    showError,
+    isOpen: isGlobalModalOpen,
+  } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const {
+    startTourOnce,
+    goToStep: goToCoachMarkStep,
+    next: nextCoachMarkStep,
+    currentStepId: coachMarkStepId,
+  } = useCoachMarkTourStore();
   const { showToast } = useToastStore();
 
   const hasShownPrompt = useRef(false);
@@ -118,6 +135,11 @@ export default function Home() {
   const interestCode =
     question?.interestCode as (typeof categories)[number]["code"];
 
+  useEffect(() => {
+    if (!question || question.answered || isGlobalModalOpen) return;
+    startTourOnce(HOME_COACH_MARK_TOUR_ID, HOME_COACH_MARK_STEPS);
+  }, [isGlobalModalOpen, question, startTourOnce]);
+
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
       // 홈에서 관심 주제 변경 시 질문 새로고침
@@ -134,6 +156,7 @@ export default function Home() {
           {/* 질문 */}
           <div className="flex flex-col items-center gap-gap-y-m">
             <QuestionBadge
+              data-coachmark="home-question-badge"
               className="cursor-pointer"
               rightElement={
                 !question?.answered && <MoreHorizontalIcon size={16} />
@@ -152,6 +175,15 @@ export default function Home() {
                             onClick: async () => {
                               closeBottomModal();
                               if (!isSelected) {
+                                if (
+                                  useCoachMarkTourStore.getState()
+                                    .currentStepId ===
+                                  HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic
+                                ) {
+                                  window.setTimeout(() => {
+                                    nextCoachMarkStep();
+                                  }, 0);
+                                }
                                 if (canRerollQuestion) {
                                   showModal({
                                     icon: () => (
@@ -188,11 +220,24 @@ export default function Home() {
                           };
                         }),
                       });
+                      if (
+                        coachMarkStepId ===
+                        HOME_COACH_MARK_STEP_IDS.step3QuestionTopicBadge
+                      ) {
+                        window.setTimeout(() => {
+                          goToCoachMarkStep(
+                            HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic,
+                          );
+                        }, 0);
+                      }
                     }
               }
               category={interestCode}
             />
-            <p className="relative text-title-2 text-center">
+            <p
+              className="relative text-title-2 text-center"
+              data-coachmark="home-question-text"
+            >
               {question && (
                 <>
                   {currentUser.nickname}님,
@@ -242,6 +287,7 @@ export default function Home() {
           ) : (
             <div className="flex gap-margin-x-m">
               <BlockButton
+                data-coachmark="home-reroll-question-button"
                 variant={canRerollQuestion ? "secondary" : "disabled"}
                 onClick={() => rerollQuestionMutation.mutate()}
                 isLoading={rerollQuestionMutation.isPending}
