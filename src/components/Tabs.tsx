@@ -9,9 +9,21 @@ import clsx from "clsx";
 
 const TAB_ITEMS = [
   { to: "/", label: "홈" },
-  { to: "/report", label: "리포트" },
-  { to: "/social", label: "소셜" },
-  { to: "/calendar", label: "캘린더" },
+  {
+    to: "/report",
+    label: "리포트",
+    coachmark: "home-report-tab",
+  },
+  {
+    to: "/social",
+    label: "소셜",
+    coachmark: "home-social-tab",
+  },
+  {
+    to: "/calendar",
+    label: "캘린더",
+    coachmark: "home-calendar-tab",
+  },
 ] as const;
 
 export default function Tabs() {
@@ -19,8 +31,15 @@ export default function Tabs() {
     // 헤더 높이만큼 띄움
     <nav className="flex gap-margin-x-xl px-padding-x-m border-b border-b-border-base">
       {TAB_ITEMS.map((item) => {
+        const coachmark = "coachmark" in item ? item.coachmark : undefined;
+
         return (
-          <Link key={item.to} to={item.to} className="flex-1 text-center">
+          <Link
+            key={item.to}
+            to={item.to}
+            data-coachmark={coachmark}
+            className="flex-1 rounded-lg text-center"
+          >
             {({ isActive }) => {
               return (
                 <li

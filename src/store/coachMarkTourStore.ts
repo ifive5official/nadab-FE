@@ -2,6 +2,16 @@ import type { ReactNode } from "react";
 import { create } from "zustand";
 import createSelectors from "./createSelectors";
 
+export const COACH_MARK_MODAL_PLACEMENTS = {
+  center: "center",
+  upperCenter: "upper-center",
+  aboveBottomModal: "above-bottom-modal",
+  aboveCenterModal: "above-center-modal",
+} as const;
+
+export type CoachMarkModalPlacement =
+  (typeof COACH_MARK_MODAL_PLACEMENTS)[keyof typeof COACH_MARK_MODAL_PLACEMENTS];
+
 export type CoachMarkButton = {
   label: string;
   action: "next" | "finish" | "goToStep";
@@ -10,20 +20,26 @@ export type CoachMarkButton = {
   className?: string;
 };
 
+export type CoachMarkLeaveAction = {
+  type: "click";
+  target: string;
+};
+
 export type CoachMarkStep = {
   id: string;
   target?: string;
   title: string;
   description?: ReactNode;
+  onLeaveAction?: CoachMarkLeaveAction;
   buttons?: CoachMarkButton[];
   buttonLabel?: string;
   nextStepId?: string;
   onButton?: "next" | "finish";
+  targetAction?: "next" | "finish";
   targetNextStepId?: string;
   allowTargetInteraction?: boolean;
-  modalPlacement?: "center" | "above-bottom-modal" | "above-center-modal";
+  modalPlacement?: CoachMarkModalPlacement;
   highlightPadding?: number;
-  highlightRadius?: number;
   highlightPulse?: boolean;
   allowBottomModalInteraction?: boolean;
   allowCenterModalInteraction?: boolean;

@@ -302,7 +302,9 @@ export default function Home() {
                 </div>
               </BlockButton>
               <Link to="/daily" className="w-full">
-                <BlockButton>쓰러가기</BlockButton>
+                <BlockButton data-coachmark="home-write-button">
+                  쓰러가기
+                </BlockButton>
               </Link>
             </div>
           )}
