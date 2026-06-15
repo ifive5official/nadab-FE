@@ -22,6 +22,7 @@ import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
+import clsx from "clsx";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -247,12 +248,21 @@ export default function Home() {
                 isLoading={rerollQuestionMutation.isPending}
               >
                 <div className="absolute inset-0 flex flex-col justify-center items-center">
-                  <span className="text-button-1 text-button-secondary-text-default">
+                  <span
+                    className={clsx(
+                      "text-button-1",
+                      canRerollQuestion
+                        ? "text-button-secondary-text-default"
+                        : "text-button-disabled-text",
+                    )}
+                  >
                     새로운 질문 받기
                   </span>
-                  <span className="text-caption-s text-neutral-1000">
-                    남은 새로고침 {question?.rerollRemainingCount}번
-                  </span>
+                  {canRerollQuestion && (
+                    <span className="text-caption-s text-neutral-1000">
+                      남은 새로고침 {question?.rerollRemainingCount}번
+                    </span>
+                  )}
                 </div>
               </BlockButton>
               <Link to="/daily" className="w-full">

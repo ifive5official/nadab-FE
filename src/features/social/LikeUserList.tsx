@@ -23,6 +23,10 @@ import {
 } from "@tanstack/react-query";
 import { currentUserOptions } from "../user/quries";
 import type { CurrentUser } from "@/types/currentUser";
+import { useEffect } from "react";
+import type { AxiosError } from "axios";
+import type { ApiErrResponse } from "@/generated/api";
+import { useRouter } from "@tanstack/react-router";
 
 type Liker = components["schemas"]["LikerResponse"];
 type LikeRes = components["schemas"]["LikeListResponse"];
@@ -33,8 +37,37 @@ type ListProps = {
 
 export function LikeUserList({ queryOptions }: ListProps) {
   const queryClient = useQueryClient();
-  const { data: likersData } = useQuery(queryOptions);
+  const { data: likersData, error: likersError } = useQuery(queryOptions);
   const { data: currentUser } = useQuery(currentUserOptions);
+
+  const router = useRouter();
+  const { showModal, closeModal } = useModalStore();
+
+  useEffect(() => {
+    if (likersError) {
+      const err = likersError as AxiosError<ApiErrResponse<null>>;
+      const status = err.response?.status;
+      const message =
+        status === 404
+          ? "존재하지 않는 게시글이에요."
+          : "좋아요 열람 권한이 없어요.";
+
+      showModal({
+        icon: WarningFilledIcon,
+        title: message,
+        buttons: [
+          {
+            label: "확인",
+            onClick: () => {
+              closeModal();
+              router.history.back();
+            },
+          },
+        ],
+      });
+    }
+  }, [likersError, showModal, closeModal, router.history]);
+
   return (
     <ul className="flex flex-col gap-margin-y-l">
       {likersData?.likers?.map((liker) => (
