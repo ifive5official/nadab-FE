@@ -44,6 +44,8 @@ export default function Home() {
     goToStep: goToCoachMarkStep,
     next: nextCoachMarkStep,
     currentStepId: coachMarkStepId,
+    isOpen: isCoachMarkOpen,
+    isCompleted: isCoachMarkCompleted,
   } = useCoachMarkTourStore();
   const { showToast } = useToastStore();
 
@@ -55,9 +57,63 @@ export default function Home() {
     return () => document.documentElement.classList.remove("no-safe-padding");
   }, []);
 
+  const [{ data: currentUser }, { data: question }, { data: homeData }] =
+    useSuspenseQueries({
+      queries: [currentUserOptions, questionOptions, homeOptions],
+    });
+  const rerollQuestionMutation = useRerollQuestionMutation();
+  const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
+  const shouldPrioritizeHomeCoachMark =
+    Boolean(question && !question.answered) &&
+    (!isCoachMarkCompleted(HOME_COACH_MARK_TOUR_ID) || isCoachMarkOpen);
+
+  // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
+  useEffect(() => {
+    if (!question) {
+      showModal({
+        icon: () => (
+          <img
+            src="/mainLogo.png"
+            alt="모달 아이콘"
+            className="aspect-square h-[33px] p-[11px] box-content"
+          />
+        ),
+        title: "잠깐, 다른 주제를 골라볼까요?",
+        children: "선택한 주제의 질문에 모두 답했어요.",
+        buttons: [
+          {
+            label: "주제 고르기",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/account" });
+            },
+          },
+        ],
+      });
+    }
+  }, [question, showModal, closeModal, navigate]);
+
+  const interestCode =
+    question?.interestCode as (typeof categories)[number]["code"];
+
+  // 코치마크 시작 effect: 질문이 있고, 답변하지 않았을 때 + 홈 코치마크 우선순위 높음
+  useEffect(() => {
+    if (!question || question.answered || isGlobalModalOpen) return;
+    startTourOnce(HOME_COACH_MARK_TOUR_ID, HOME_COACH_MARK_STEPS);
+  }, [isGlobalModalOpen, question, startTourOnce]);
+
   // 최초 진입 시 알림 권한 설정 모달 띄움
   useEffect(() => {
-    if (!Capacitor.isNativePlatform() || hasShownPrompt.current) return;
+    if (
+      !Capacitor.isNativePlatform() ||
+      hasShownPrompt.current ||
+      !question ||
+      isGlobalModalOpen ||
+      shouldPrioritizeHomeCoachMark
+    ) {
+      return;
+    }
+
     async function checkNotificationPerm() {
       let perm = await PushNotifications.checkPermissions();
       const state = perm.receive;
@@ -97,48 +153,15 @@ export default function Home() {
       }
     }
     checkNotificationPerm();
-  }, [showModal, closeModal, showToast, registerPush]);
-
-  const [{ data: currentUser }, { data: question }, { data: homeData }] =
-    useSuspenseQueries({
-      queries: [currentUserOptions, questionOptions, homeOptions],
-    });
-  const rerollQuestionMutation = useRerollQuestionMutation();
-  const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
-
-  // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
-  useEffect(() => {
-    if (!question) {
-      showModal({
-        icon: () => (
-          <img
-            src="/mainLogo.png"
-            alt="모달 아이콘"
-            className="aspect-square h-[33px] p-[11px] box-content"
-          />
-        ),
-        title: "잠깐, 다른 주제를 골라볼까요?",
-        children: "선택한 주제의 질문에 모두 답했어요.",
-        buttons: [
-          {
-            label: "주제 고르기",
-            onClick: () => {
-              closeModal();
-              navigate({ to: "/account" });
-            },
-          },
-        ],
-      });
-    }
-  }, [question, showModal, closeModal, navigate]);
-
-  const interestCode =
-    question?.interestCode as (typeof categories)[number]["code"];
-
-  useEffect(() => {
-    if (!question || question.answered || isGlobalModalOpen) return;
-    startTourOnce(HOME_COACH_MARK_TOUR_ID, HOME_COACH_MARK_STEPS);
-  }, [isGlobalModalOpen, question, startTourOnce]);
+  }, [
+    closeModal,
+    isGlobalModalOpen,
+    question,
+    registerPush,
+    shouldPrioritizeHomeCoachMark,
+    showModal,
+    showToast,
+  ]);
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
