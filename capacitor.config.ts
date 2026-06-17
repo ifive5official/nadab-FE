@@ -3,7 +3,14 @@ import path from "path";
 import type { CapacitorConfig } from "@capacitor/cli";
 import { KeyboardResize, KeyboardStyle } from "@capacitor/keyboard";
 
+const capacitorEnv =
+  process.env.CAPACITOR_ENV === "development" ? "development" : "production";
+
 dotenv.config({ path: path.resolve(__dirname, ".env.production") });
+dotenv.config({
+  path: path.resolve(__dirname, `.env.${capacitorEnv}`),
+  override: true,
+});
 
 const config: CapacitorConfig = {
   appId: "com.nadab.app",
