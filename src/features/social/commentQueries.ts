@@ -30,6 +30,17 @@ export function commentsOptions(dailyReportId: number) {
     initialPageParam: null as number | null,
     getNextPageParam: (lastPage) =>
       lastPage.hasNext ? lastPage.nextCursor : null,
+    retry: (failureCount, error) => {
+      // 열람 권한 없거나 데이터 없을 시 재시도 X
+      const err = error as AxiosError<ApiErrResponse<null>>;
+      const status = err.response?.status;
+
+      if (status === 403 || status === 404) {
+        return false;
+      }
+
+      return failureCount < 3;
+    },
   });
 }
 
@@ -58,7 +69,9 @@ export function usePostCommentMutation({
       if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
         showError("소셜 기능 사용이 일시 중단되었어요.");
       } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
-        showError("친구가 아닌 유저의 게시글에 댓글을 남길 수 없어요.");
+        showError(
+          "친구가 아닌 유저의 게시글이나 공유 중이 아닌 게시글에 댓글을 남길 수 없어요.",
+        );
       } else {
         handleDefaultApiError(err);
       }
@@ -135,7 +148,9 @@ export function usePostSubCommentMutation({
       if (err.response?.data?.code === "COMMENT_DELETED") {
         showToast({ message: "삭제된 댓글이에요." });
       } else if (err.response?.data?.code === "AUTH_ACCESS_DENIED") {
-        showError("친구가 아닌 유저의 게시글에 댓글을 남길 수 없어요.");
+        showError(
+          "친구가 아닌 유저의 게시글이나 공유 중이 아닌 게시글에 댓글을 남길 수 없어요.",
+        );
       } else if (err.response?.data?.code === "SOCIAL_SUSPENDED") {
         showError("소셜 기능 사용이 일시 중단되었어요.");
       } else {

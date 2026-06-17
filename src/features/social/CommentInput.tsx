@@ -37,8 +37,7 @@ export default function CommentInput({
     useCommentInputStore();
   const { showModal, closeModal } = useModalStore();
 
-  const isSubmitAllowed =
-    value && value.trim().length > 0 && value.length <= 500;
+  const isSubmitAllowed = value && value.trim().length > 0;
 
   return (
     <div
@@ -95,6 +94,7 @@ export default function CommentInput({
       )}
       <div className="relative w-full h-10 px-padding-x-s py-padding-y-s bg-field-bg-default flex items-center gap-gap-x-xs">
         <input
+          maxLength={500}
           ref={inputRef}
           id="comment"
           name="comment"

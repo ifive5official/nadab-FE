@@ -17,8 +17,6 @@ import { AnimatePresence } from "motion/react";
 import useModalStore from "@/store/modalStore";
 import { WarningFilledIcon } from "@/components/Icons";
 import { formatKoreanDate } from "@/lib/formatters";
-import { Capacitor } from "@capacitor/core";
-import { Browser } from "@capacitor/browser";
 // import GroupTab from "@/features/social/GroupTab";
 
 type Tab = "feed" | "group" | "friends";
@@ -89,24 +87,23 @@ function RouteComponent() {
         buttons: [
           {
             label: "확인",
-            onClick: closeModal,
+            onClick: () => {
+              navigate({ to: "/" });
+              closeModal();
+            },
           },
           {
             label: "문의하기",
             onClick: () => {
               closeModal();
               const url = "mailto:ifive5.official@gmail.com";
-              if (Capacitor.isNativePlatform()) {
-                Browser.open({ url });
-              } else {
-                window.location.href = url;
-              }
+              window.location.href = url;
             },
           },
         ],
       });
     }
-  }, [suspensionStatus, closeModal, showModal]);
+  }, [suspensionStatus, closeModal, showModal, navigate]);
 
   return (
     <>

@@ -15,6 +15,7 @@ import useToastStore from "@/store/toastStore";
 import { notificationSettingsOptions } from "@/features/notifications/queries";
 import { useChangeNotificationSettingsMutation } from "@/features/notifications/useChangeNotificationSettingsMutation";
 import { Capacitor } from "@capacitor/core";
+import { useRerollQuestionMutation } from "@/features/question/useRerollQuestionMutation";
 
 export const Route = createFileRoute("/_authenticated/account/")({
   component: RouteComponent,
@@ -31,11 +32,14 @@ function RouteComponent() {
   );
   const { isDarkMode, toggleTheme } = useThemeStore();
 
+  const rerollQuestionMutation = useRerollQuestionMutation();
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
+      rerollQuestionMutation.mutate();
       showToast({ message: "선택 주제 변경이 완료되었어요." });
     },
   });
+
   const changeNotificationSettingsMutation =
     useChangeNotificationSettingsMutation({
       onSuccess: (message: string) => {

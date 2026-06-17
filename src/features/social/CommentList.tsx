@@ -1,5 +1,5 @@
 // 댓글 목록
-import { FeedHeartIcon } from "@/components/Icons";
+import { FeedHeartIcon, WarningFilledIcon } from "@/components/Icons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { commentsOptions } from "./commentQueries";
@@ -8,6 +8,10 @@ import CommentAccessoryView from "./CommentAccessoryView";
 import clsx from "clsx";
 import useCommentInputStore from "@/store/commentInputStore";
 import { Comment } from "./Comment";
+import { useRouter } from "@tanstack/react-router";
+import useModalStore from "@/store/modalStore";
+import type { AxiosError } from "axios";
+import type { ApiErrResponse } from "@/generated/api";
 
 type Props = {
   dailyReportId: number;
@@ -17,10 +21,14 @@ type Props = {
 export function CommentList({ dailyReportId, readOnly = false }: Props) {
   const { mode, setWriteMode } = useCommentInputStore();
 
+  const router = useRouter();
+  const { showModal, closeModal } = useModalStore();
+
   // 무한스크롤
   const { ref, inView } = useInView();
   const {
     data: commentsData,
+    error,
     isLoading,
     fetchNextPage,
     hasNextPage,
@@ -32,6 +40,32 @@ export function CommentList({ dailyReportId, readOnly = false }: Props) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
+
+  // 에러 띄우기
+  useEffect(() => {
+    if (error) {
+      const err = error as AxiosError<ApiErrResponse<null>>;
+      const code = err.response?.data?.code;
+      const message =
+        code === "AUTH_ACCESS_DENIED"
+          ? "댓글 열람 권한이 없어요."
+          : "존재하지 않는 게시글이에요.";
+
+      showModal({
+        icon: WarningFilledIcon,
+        title: message,
+        buttons: [
+          {
+            label: "확인",
+            onClick: () => {
+              closeModal();
+              router.history.back();
+            },
+          },
+        ],
+      });
+    }
+  }, [error, showModal, closeModal, router.history]);
 
   // 댓글 초기화
   useEffect(() => {
@@ -56,7 +90,7 @@ export function CommentList({ dailyReportId, readOnly = false }: Props) {
                   />
                 );
               })}
-              {page.hasNext && <div ref={ref} className="absolute" />}
+              {page.hasNext && <div ref={ref} className="-mt-gap-y-xl" />}
             </Fragment>
           );
         })}

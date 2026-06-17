@@ -1,4 +1,5 @@
 import type { components } from "@/generated/api-types";
+import { formatISODate } from "@/lib/formatters";
 import { type LinkProps, type RegisteredRouter } from "@tanstack/react-router";
 
 export type Notification = components["schemas"]["NotificationResponse"];
@@ -89,33 +90,69 @@ export const NOTIFICATION_CONFIG: Record<
     }),
   },
   COMMENT_ON_MY_REPORT: {
-    inboxIconSrc: "/icon/social.png", // 변경
+    inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => ({
-      to: "/social/$postId/comments",
-      params: {
-        postId: String(notification.targetId),
-      },
-    }),
+    getLinkProps: (notification) => {
+      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
+      const isToday = notification.createdAt
+        ? new Date(notification.createdAt).toDateString() ===
+          new Date().toDateString()
+        : false;
+      return {
+        to: isToday
+          ? "/social/$postId/comments"
+          : "/detail/$date/$postId/comments",
+        params: {
+          postId: String(notification.targetId),
+          date:
+            notification.createdAt &&
+            formatISODate(new Date(notification.createdAt)),
+        },
+      };
+    },
   },
   REPLY_ON_MY_COMMENT: {
-    inboxIconSrc: "/icon/social.png", // 변경
+    inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => ({
-      to: "/social/$postId/comments",
-      params: {
-        postId: String(notification.targetId),
-      },
-    }),
+    getLinkProps: (notification) => {
+      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
+      const isToday = notification.createdAt
+        ? new Date(notification.createdAt).toDateString() ===
+          new Date().toDateString()
+        : false;
+      return {
+        to: isToday
+          ? "/social/$postId/comments"
+          : "/detail/$date/$postId/comments",
+        params: {
+          postId: String(notification.targetId),
+          date:
+            notification.createdAt &&
+            formatISODate(new Date(notification.createdAt)),
+        },
+      };
+    },
   },
   REPLY_ON_PARTICIPATED_COMMENT: {
-    inboxIconSrc: "/icon/social.png", // 변경
+    inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => ({
-      to: "/social/$postId/comments",
-      params: {
-        postId: String(notification.targetId),
-      },
-    }),
+    getLinkProps: (notification) => {
+      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
+      const isToday = notification.createdAt
+        ? new Date(notification.createdAt).toDateString() ===
+          new Date().toDateString()
+        : false;
+      return {
+        to: isToday
+          ? "/social/$postId/comments"
+          : "/detail/$date/$postId/comments",
+        params: {
+          postId: String(notification.targetId),
+          date:
+            notification.createdAt &&
+            formatISODate(new Date(notification.createdAt)),
+        },
+      };
+    },
   },
 };
