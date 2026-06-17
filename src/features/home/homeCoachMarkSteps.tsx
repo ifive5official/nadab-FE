@@ -165,7 +165,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     title: "프로필을 한 번 눌러봐요!",
     buttons: [],
     targetAction: "next",
-    modalPlacement: COACH_MARK_MODAL_PLACEMENTS.upperCenter,
+    modalPlacement: COACH_MARK_MODAL_PLACEMENTS.center,
     allowTargetInteraction: true,
     highlightPadding: 0,
     highlightPulse: true,
