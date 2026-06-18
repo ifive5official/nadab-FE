@@ -22,13 +22,32 @@ import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
+import useCoachMarkTourStore from "@/store/coachMarkTourStore";
+import {
+  HOME_COACH_MARK_STEPS,
+  HOME_COACH_MARK_STEP_IDS,
+  HOME_COACH_MARK_TOUR_ID,
+} from "./homeCoachMarkSteps";
 import clsx from "clsx";
 
 export default function Home() {
   const navigate = useNavigate();
   const { registerPush } = usePushNotifications();
-  const { showModal, closeModal, showError } = useModalStore();
+  const {
+    showModal,
+    closeModal,
+    showError,
+    isOpen: isGlobalModalOpen,
+  } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const {
+    startTourOnce,
+    goToStep: goToCoachMarkStep,
+    next: nextCoachMarkStep,
+    currentStepId: coachMarkStepId,
+    isOpen: isCoachMarkOpen,
+    isCompleted: isCoachMarkCompleted,
+  } = useCoachMarkTourStore();
   const { showToast } = useToastStore();
 
   const hasShownPrompt = useRef(false);
@@ -39,9 +58,63 @@ export default function Home() {
     return () => document.documentElement.classList.remove("no-safe-padding");
   }, []);
 
+  const [{ data: currentUser }, { data: question }, { data: homeData }] =
+    useSuspenseQueries({
+      queries: [currentUserOptions, questionOptions, homeOptions],
+    });
+  const rerollQuestionMutation = useRerollQuestionMutation();
+  const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
+  const shouldPrioritizeHomeCoachMark =
+    Boolean(question && !question.answered) &&
+    (!isCoachMarkCompleted(HOME_COACH_MARK_TOUR_ID) || isCoachMarkOpen);
+
+  // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
+  useEffect(() => {
+    if (!question) {
+      showModal({
+        icon: () => (
+          <img
+            src="/mainLogo.png"
+            alt="모달 아이콘"
+            className="aspect-square h-[33px] p-[11px] box-content"
+          />
+        ),
+        title: "잠깐, 다른 주제를 골라볼까요?",
+        children: "선택한 주제의 질문에 모두 답했어요.",
+        buttons: [
+          {
+            label: "주제 고르기",
+            onClick: () => {
+              closeModal();
+              navigate({ to: "/account" });
+            },
+          },
+        ],
+      });
+    }
+  }, [question, showModal, closeModal, navigate]);
+
+  const interestCode =
+    question?.interestCode as (typeof categories)[number]["code"];
+
+  // 코치마크 시작 effect: 질문이 있고, 답변하지 않았을 때 + 홈 코치마크 우선순위 높음
+  useEffect(() => {
+    if (!question || question.answered || isGlobalModalOpen) return;
+    startTourOnce(HOME_COACH_MARK_TOUR_ID, HOME_COACH_MARK_STEPS);
+  }, [isGlobalModalOpen, question, startTourOnce]);
+
   // 최초 진입 시 알림 권한 설정 모달 띄움
   useEffect(() => {
-    if (!Capacitor.isNativePlatform() || hasShownPrompt.current) return;
+    if (
+      !Capacitor.isNativePlatform() ||
+      hasShownPrompt.current ||
+      !question ||
+      isGlobalModalOpen ||
+      shouldPrioritizeHomeCoachMark
+    ) {
+      return;
+    }
+
     async function checkNotificationPerm() {
       let perm = await PushNotifications.checkPermissions();
       const state = perm.receive;
@@ -81,43 +154,15 @@ export default function Home() {
       }
     }
     checkNotificationPerm();
-  }, [showModal, closeModal, showToast, registerPush]);
-
-  const [{ data: currentUser }, { data: question }, { data: homeData }] =
-    useSuspenseQueries({
-      queries: [currentUserOptions, questionOptions, homeOptions],
-    });
-  const rerollQuestionMutation = useRerollQuestionMutation();
-  const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
-
-  // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
-  useEffect(() => {
-    if (!question) {
-      showModal({
-        icon: () => (
-          <img
-            src="/mainLogo.png"
-            alt="모달 아이콘"
-            className="aspect-square h-[33px] p-[11px] box-content"
-          />
-        ),
-        title: "잠깐, 다른 주제를 골라볼까요?",
-        children: "선택한 주제의 질문에 모두 답했어요.",
-        buttons: [
-          {
-            label: "주제 고르기",
-            onClick: () => {
-              closeModal();
-              navigate({ to: "/account" });
-            },
-          },
-        ],
-      });
-    }
-  }, [question, showModal, closeModal, navigate]);
-
-  const interestCode =
-    question?.interestCode as (typeof categories)[number]["code"];
+  }, [
+    closeModal,
+    isGlobalModalOpen,
+    question,
+    registerPush,
+    shouldPrioritizeHomeCoachMark,
+    showModal,
+    showToast,
+  ]);
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
@@ -135,6 +180,7 @@ export default function Home() {
           {/* 질문 */}
           <div className="flex flex-col items-center gap-gap-y-m">
             <QuestionBadge
+              data-coachmark="home-question-badge"
               className="cursor-pointer"
               rightElement={
                 !question?.answered && <MoreHorizontalIcon size={16} />
@@ -153,6 +199,15 @@ export default function Home() {
                             onClick: async () => {
                               closeBottomModal();
                               if (!isSelected) {
+                                if (
+                                  useCoachMarkTourStore.getState()
+                                    .currentStepId ===
+                                  HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic
+                                ) {
+                                  window.setTimeout(() => {
+                                    nextCoachMarkStep();
+                                  }, 0);
+                                }
                                 if (canRerollQuestion) {
                                   showModal({
                                     icon: () => (
@@ -189,11 +244,24 @@ export default function Home() {
                           };
                         }),
                       });
+                      if (
+                        coachMarkStepId ===
+                        HOME_COACH_MARK_STEP_IDS.step3QuestionTopicBadge
+                      ) {
+                        window.setTimeout(() => {
+                          goToCoachMarkStep(
+                            HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic,
+                          );
+                        }, 0);
+                      }
                     }
               }
               category={interestCode}
             />
-            <p className="relative text-title-2 text-center">
+            <p
+              className="relative text-title-2 text-center"
+              data-coachmark="home-question-text"
+            >
               {question && (
                 <>
                   {currentUser.nickname}님,
@@ -243,6 +311,7 @@ export default function Home() {
           ) : (
             <div className="flex gap-margin-x-m">
               <BlockButton
+                data-coachmark="home-reroll-question-button"
                 variant={canRerollQuestion ? "secondary" : "disabled"}
                 onClick={() => rerollQuestionMutation.mutate()}
                 isLoading={rerollQuestionMutation.isPending}
@@ -266,7 +335,9 @@ export default function Home() {
                 </div>
               </BlockButton>
               <Link to="/daily" className="w-full">
-                <BlockButton>쓰러가기</BlockButton>
+                <BlockButton data-coachmark="home-write-button">
+                  쓰러가기
+                </BlockButton>
               </Link>
             </div>
           )}

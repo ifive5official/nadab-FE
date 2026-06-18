@@ -12,6 +12,7 @@ type Props = {
   title?: string;
   items: Item[];
   animationVariants: Variants;
+  "data-coachmark"?: string;
 };
 
 export default function ListModal({
@@ -19,6 +20,7 @@ export default function ListModal({
   title,
   items,
   animationVariants,
+  ...props
 }: Props) {
   return (
     <motion.div
@@ -31,6 +33,7 @@ export default function ListModal({
       animate="animate"
       exit="exit"
       transition={{ duration: 0.25, ease: "easeInOut" }}
+      {...props}
     >
       {title && (
         <p className="w-full text-center text-caption-m py-padding-y-m">

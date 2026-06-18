@@ -84,7 +84,11 @@ export function MainHeader({ profileImgUrl }: MainHeaderProps) {
         <MenuIcon />
       </button>
       {/* 프로필 이미지 - 클릭 시 작은 메뉴 띄움 */}
-      <button onClick={() => setIsAccountMenuOpen(true)}>
+      <button
+        data-coachmark="home-profile-button"
+        className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full p-0"
+        onClick={() => setIsAccountMenuOpen(true)}
+      >
         <ProfileImg width={32} src={profileImgUrl} />
       </button>
       <AccountMenu
@@ -108,18 +112,29 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
     <>
       {isOpen && (
         <>
-          <div className="z-20 fixed inset-0" onClick={onClose} />
+          <div
+            data-coachmark="profile-menu-backdrop"
+            className="z-20 fixed inset-0"
+            onClick={onClose}
+          />
           {/* 헤더 영역만큼 비워두기*/}
           <div className="z-30 fixed top-[calc(var(--spacing-header-height)+var(--safe-top))] right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
             <div className="flex flex-col w-fit px-padding-x-s py-padding-y-xs bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
-              <div className="p-padding-y-xxs flex items-center gap-gap-x-s border-b border-b-border-base dark:border-b-border-layer-3">
+              <div
+                data-coachmark="profile-crystal-row"
+                className="-mx-padding-x-s px-padding-x-s py-padding-y-xxs flex items-center gap-gap-x-s border-b border-b-border-base dark:border-b-border-layer-3"
+              >
                 <span className="text-caption-s text-text-tertiary">
                   크리스탈 개수
                 </span>
                 <CrystalBadge crystals={crystals} />
               </div>
               <nav className="contents">
-                <Link to="/account">
+                <Link
+                  to="/account"
+                  data-coachmark="profile-mypage-row"
+                  className="-mx-padding-x-s block px-padding-x-s"
+                >
                   <li className="flex items-center py-padding-y-xs gap-gap-x-xs">
                     <MyPageMenuIcon />
                     <span className="text-caption-m">마이페이지</span>

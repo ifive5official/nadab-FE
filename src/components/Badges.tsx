@@ -7,6 +7,7 @@ import categories from "@/constants/categories";
 import clsx from "clsx";
 import { CloseFilledIcon, GemFilledIcon } from "./Icons";
 import emotions from "@/constants/emotions";
+import type { HTMLAttributes } from "react";
 
 // 텍스트와 테마색 테두리가 있는 작은 버튼 컴포넌트
 type BadgeProps = {
@@ -55,7 +56,7 @@ type QuestionBadgeProps = {
   filled?: boolean;
   rightElement?: React.ReactNode; // 우측에 추가되는 아이콘 등
   className?: string;
-};
+} & Omit<HTMLAttributes<HTMLDivElement>, "onClick">;
 
 export function QuestionBadge({
   height = 28,
@@ -65,6 +66,7 @@ export function QuestionBadge({
   filled = false,
   rightElement,
   className,
+  ...props
 }: QuestionBadgeProps) {
   const item = categories.find((c) => c.code === category)!;
   const Icon = item.icon;
@@ -77,6 +79,7 @@ export function QuestionBadge({
         className,
       )}
       onClick={onClick}
+      {...props}
     >
       <Icon
         fill={
