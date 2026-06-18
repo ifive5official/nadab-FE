@@ -11,49 +11,27 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import useModalStore from "@/store/modalStore";
-import { PushNotifications } from "@capacitor/push-notifications";
-import { Capacitor } from "@capacitor/core";
-import useToastStore from "@/store/toastStore";
-import { usePushNotifications } from "@/hooks/usePushManager";
 import { QuestionBadge } from "@/components/Badges";
 import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
 import useCoachMarkTourStore from "@/store/coachMarkTourStore";
-import {
-  HOME_COACH_MARK_STEPS,
-  HOME_COACH_MARK_STEP_IDS,
-  HOME_COACH_MARK_TOUR_ID,
-} from "./homeCoachMarkSteps";
+import { HOME_COACH_MARK_STEP_IDS } from "./homeCoachMarkSteps";
 import clsx from "clsx";
+import { useHomeEntryPrompts } from "./useHomeEntryPrompts";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { registerPush } = usePushNotifications();
-  const {
-    showModal,
-    closeModal,
-    showError,
-    isOpen: isGlobalModalOpen,
-  } = useModalStore();
+  const { showModal, closeModal, showError } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const {
-    startTourOnce,
     goToStep: goToCoachMarkStep,
     next: nextCoachMarkStep,
     currentStepId: coachMarkStepId,
-    isOpen: isCoachMarkOpen,
-    isCompleted: isCoachMarkCompleted,
   } = useCoachMarkTourStore();
-  const { showToast } = useToastStore();
-
-  const hasShownPrompt = useRef(false);
-  const hasShownUpdatePrompt = useRef(false);
-  const [isPushPromptGateResolved, setIsPushPromptGateResolved] =
-    useState(false);
 
   // 앱 상에서 배경색이 하단바에 비치게 함
   useEffect(() => {
@@ -67,9 +45,7 @@ export default function Home() {
     });
   const rerollQuestionMutation = useRerollQuestionMutation();
   const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
-  const shouldPrioritizeHomeCoachMark =
-    Boolean(question && !question.answered) &&
-    (!isCoachMarkCompleted(HOME_COACH_MARK_TOUR_ID) || isCoachMarkOpen);
+  useHomeEntryPrompts(question);
 
   // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
   useEffect(() => {
@@ -99,123 +75,6 @@ export default function Home() {
 
   const interestCode =
     question?.interestCode as (typeof categories)[number]["code"];
-
-  // 코치마크 시작 effect: 질문이 있고, 답변하지 않았을 때 + 홈 코치마크 우선순위 높음
-  useEffect(() => {
-    if (!question || question.answered || isGlobalModalOpen) return;
-    startTourOnce(HOME_COACH_MARK_TOUR_ID, HOME_COACH_MARK_STEPS);
-  }, [isGlobalModalOpen, question, startTourOnce]);
-
-  // 최초 진입 시 알림 권한 설정 모달 띄움
-  useEffect(() => {
-    if (!question) return;
-
-    if (!Capacitor.isNativePlatform()) {
-      setIsPushPromptGateResolved(true);
-      return;
-    }
-
-    if (
-      isPushPromptGateResolved ||
-      hasShownPrompt.current ||
-      isGlobalModalOpen ||
-      shouldPrioritizeHomeCoachMark
-    ) {
-      return;
-    }
-
-    async function checkNotificationPerm() {
-      let perm = await PushNotifications.checkPermissions();
-      const state = perm.receive;
-      if (state === "prompt") {
-        hasShownPrompt.current = true;
-        showModal({
-          icon: () => (
-            <img
-              src="/mainLogo.png"
-              alt="모달 아이콘"
-              className="aspect-square h-[33px] p-[11px] box-content"
-            />
-          ),
-          title: "나답으로부터 알림을 받아볼래요?",
-          children: <>마이페이지에서 언제든지 설정을 변경할 수 있어요.</>,
-          buttons: [
-            {
-              label: "다음",
-              onClick: async () => {
-                closeModal();
-                try {
-                  // 권환 확인 및 요청
-                  perm = await PushNotifications.requestPermissions();
-                  if (perm.receive === "granted") {
-                    await registerPush();
-                    showToast({ message: "알림 권한이 허용되었어요." });
-                  } else {
-                    showToast({ message: "알림 권한이 거부되었어요." });
-                  }
-                } catch (error) {
-                  console.error(error);
-                } finally {
-                  setIsPushPromptGateResolved(true);
-                }
-              },
-            },
-          ],
-        });
-      } else {
-        setIsPushPromptGateResolved(true);
-      }
-    }
-    checkNotificationPerm();
-  }, [
-    closeModal,
-    isGlobalModalOpen,
-    isPushPromptGateResolved,
-    question,
-    registerPush,
-    shouldPrioritizeHomeCoachMark,
-    showModal,
-    showToast,
-  ]);
-
-  // 홈 진입 안내 우선순위: 코치마크 -> 푸시 알림 -> 업데이트 알림
-  useEffect(() => {
-    if (
-      !question ||
-      isGlobalModalOpen ||
-      shouldPrioritizeHomeCoachMark ||
-      !isPushPromptGateResolved ||
-      hasShownUpdatePrompt.current
-    ) {
-      return;
-    }
-
-    hasShownUpdatePrompt.current = true;
-    showModal({
-      icon: () => (
-        <img
-          src="/mainLogo.png"
-          alt="모달 아이콘"
-          className="aspect-square h-[33px] p-[11px] box-content"
-        />
-      ),
-      title: "나답이 새로워졌어요",
-      children: "더 편하게 기록할 수 있도록 업데이트 안내를 준비했어요.",
-      buttons: [
-        {
-          label: "확인",
-          onClick: closeModal,
-        },
-      ],
-    });
-  }, [
-    closeModal,
-    isGlobalModalOpen,
-    isPushPromptGateResolved,
-    question,
-    shouldPrioritizeHomeCoachMark,
-    showModal,
-  ]);
 
   const updateInterestMutation = useUpdateInterestMutation({
     onSuccess: () => {
