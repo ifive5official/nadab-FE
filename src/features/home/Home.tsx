@@ -11,7 +11,7 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useModalStore from "@/store/modalStore";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { Capacitor } from "@capacitor/core";
@@ -51,6 +51,9 @@ export default function Home() {
   const { showToast } = useToastStore();
 
   const hasShownPrompt = useRef(false);
+  const hasShownUpdatePrompt = useRef(false);
+  const [isPushPromptGateResolved, setIsPushPromptGateResolved] =
+    useState(false);
 
   // 앱 상에서 배경색이 하단바에 비치게 함
   useEffect(() => {
@@ -105,10 +108,16 @@ export default function Home() {
 
   // 최초 진입 시 알림 권한 설정 모달 띄움
   useEffect(() => {
+    if (!question) return;
+
+    if (!Capacitor.isNativePlatform()) {
+      setIsPushPromptGateResolved(true);
+      return;
+    }
+
     if (
-      !Capacitor.isNativePlatform() ||
+      isPushPromptGateResolved ||
       hasShownPrompt.current ||
-      !question ||
       isGlobalModalOpen ||
       shouldPrioritizeHomeCoachMark
     ) {
@@ -146,22 +155,66 @@ export default function Home() {
                   }
                 } catch (error) {
                   console.error(error);
+                } finally {
+                  setIsPushPromptGateResolved(true);
                 }
               },
             },
           ],
         });
+      } else {
+        setIsPushPromptGateResolved(true);
       }
     }
     checkNotificationPerm();
   }, [
     closeModal,
     isGlobalModalOpen,
+    isPushPromptGateResolved,
     question,
     registerPush,
     shouldPrioritizeHomeCoachMark,
     showModal,
     showToast,
+  ]);
+
+  // 홈 진입 안내 우선순위: 코치마크 -> 푸시 알림 -> 업데이트 알림
+  useEffect(() => {
+    if (
+      !question ||
+      isGlobalModalOpen ||
+      shouldPrioritizeHomeCoachMark ||
+      !isPushPromptGateResolved ||
+      hasShownUpdatePrompt.current
+    ) {
+      return;
+    }
+
+    hasShownUpdatePrompt.current = true;
+    showModal({
+      icon: () => (
+        <img
+          src="/mainLogo.png"
+          alt="모달 아이콘"
+          className="aspect-square h-[33px] p-[11px] box-content"
+        />
+      ),
+      title: "나답이 새로워졌어요",
+      children: "더 편하게 기록할 수 있도록 업데이트 안내를 준비했어요.",
+      buttons: [
+        {
+          label: "확인",
+          onClick: closeModal,
+        },
+      ],
+    });
+  }, [
+    closeModal,
+    isGlobalModalOpen,
+    isPushPromptGateResolved,
+    question,
+    shouldPrioritizeHomeCoachMark,
+    showModal,
   ]);
 
   const updateInterestMutation = useUpdateInterestMutation({
