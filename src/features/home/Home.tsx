@@ -22,6 +22,7 @@ import useCoachMarkTourStore from "@/store/coachMarkTourStore";
 import { HOME_COACH_MARK_STEP_IDS } from "./homeCoachMarkSteps";
 import clsx from "clsx";
 import { useHomeEntryPrompts } from "./useHomeEntryPrompts";
+import UpdateNoticeModal from "./UpdateNoticeModal";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -45,7 +46,10 @@ export default function Home() {
     });
   const rerollQuestionMutation = useRerollQuestionMutation();
   const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
-  useHomeEntryPrompts(question);
+  const { updateNoticeModal } = useHomeEntryPrompts({
+    question,
+    latestVersion: homeData.latestVersion,
+  });
 
   // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
   useEffect(() => {
@@ -86,6 +90,7 @@ export default function Home() {
   return (
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
+      <UpdateNoticeModal {...updateNoticeModal} />
       <Tabs />
       <Container className="relative bg-[#E8ECFC] dark:bg-field-bg-hover pb-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))]!">
         <div className="flex-1 flex flex-col justify-evenly">
