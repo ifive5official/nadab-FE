@@ -1,5 +1,4 @@
 import type { components } from "@/generated/api-types";
-import { formatISODate } from "@/lib/formatters";
 import { type LinkProps, type RegisteredRouter } from "@tanstack/react-router";
 
 export type Notification = components["schemas"]["NotificationResponse"];
@@ -92,67 +91,33 @@ export const NOTIFICATION_CONFIG: Record<
   COMMENT_ON_MY_REPORT: {
     inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => {
-      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
-      const isToday = notification.createdAt
-        ? new Date(notification.createdAt).toDateString() ===
-          new Date().toDateString()
-        : false;
-      return {
-        to: isToday
-          ? "/social/$postId/comments"
-          : "/detail/$date/$postId/comments",
-        params: {
-          postId: String(notification.targetId),
-          date:
-            notification.createdAt &&
-            formatISODate(new Date(notification.createdAt)),
-        },
-      };
-    },
+    // 서버에서 오늘 피드의 댓글만 알림으로 보내므로 피드 탭으로 이동한다.
+    // 이전 날짜 피드 알림을 지원하게 되면 /detail/$date/$postId/comments 경로를 사용해야 한다.
+    getLinkProps: (notification) => ({
+      to: "/social/$postId/comments",
+      params: {
+        postId: String(notification.targetId),
+      },
+    }),
   },
   REPLY_ON_MY_COMMENT: {
     inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => {
-      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
-      const isToday = notification.createdAt
-        ? new Date(notification.createdAt).toDateString() ===
-          new Date().toDateString()
-        : false;
-      return {
-        to: isToday
-          ? "/social/$postId/comments"
-          : "/detail/$date/$postId/comments",
-        params: {
-          postId: String(notification.targetId),
-          date:
-            notification.createdAt &&
-            formatISODate(new Date(notification.createdAt)),
-        },
-      };
-    },
+    getLinkProps: (notification) => ({
+      to: "/social/$postId/comments",
+      params: {
+        postId: String(notification.targetId),
+      },
+    }),
   },
   REPLY_ON_PARTICIPATED_COMMENT: {
     inboxIconSrc: "/icon/social.png",
     inboxTitle: "피드 알림",
-    getLinkProps: (notification) => {
-      // 오늘 작성한 글에 알림이 올 경우에만 피드 탭으로 보냄
-      const isToday = notification.createdAt
-        ? new Date(notification.createdAt).toDateString() ===
-          new Date().toDateString()
-        : false;
-      return {
-        to: isToday
-          ? "/social/$postId/comments"
-          : "/detail/$date/$postId/comments",
-        params: {
-          postId: String(notification.targetId),
-          date:
-            notification.createdAt &&
-            formatISODate(new Date(notification.createdAt)),
-        },
-      };
-    },
+    getLinkProps: (notification) => ({
+      to: "/social/$postId/comments",
+      params: {
+        postId: String(notification.targetId),
+      },
+    }),
   },
 };
