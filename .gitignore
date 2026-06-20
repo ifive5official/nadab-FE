@@ -13,3 +13,4 @@ count.txt
 **/GoogleService-Info.plist
 GEMINI.md
 .idea/
+android/capacitor.settings.gradle
