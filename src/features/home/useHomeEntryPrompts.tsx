@@ -72,18 +72,10 @@ function getCurrentPlatformVersion(
   if (platform === "ios") return latestVersion?.ios;
   if (platform === "android") return latestVersion?.android;
 
-  // TODO: 웹에서 업데이트 모달을 빠르게 확인하기 위한 임시 테스트 분기입니다.
-  // 테스트가 끝나면 아래 fallback을 제거하고 web에서는 undefined를 반환하게 되돌려주세요.
-  if (platform === "web") return latestVersion?.ios ?? latestVersion?.android;
-
   return undefined;
 }
 
 async function getCurrentAppVersion() {
-  // TODO: 웹에서 outdated 업데이트 모달을 빠르게 확인하기 위한 임시 테스트 분기입니다.
-  // 테스트가 끝나면 아래 web 버전 fallback을 제거하고 native App.getInfo()만 사용하게 되돌려주세요.
-  if (Capacitor.getPlatform() === "web") return "0.0.0";
-
   if (!Capacitor.isNativePlatform()) return undefined;
 
   try {
@@ -134,15 +126,6 @@ function getStoreUrl() {
     return (
       import.meta.env.VITE_ANDROID_PLAY_STORE_URL ??
       "https://play.google.com/store/apps/details?id=com.nadab.app"
-    );
-  }
-  // TODO: 웹에서 outdated 업데이트 모달 이동 버튼을 확인하기 위한 임시 테스트 분기입니다.
-  // 테스트가 끝나면 아래 web fallback을 제거하고 web에서는 undefined를 반환하게 되돌려주세요.
-  if (platform === "web") {
-    return (
-      import.meta.env.VITE_IOS_APP_STORE_URL ??
-      import.meta.env.VITE_ANDROID_PLAY_STORE_URL ??
-      "https://apps.apple.com/app/id6761776437"
     );
   }
   return undefined;
