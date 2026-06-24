@@ -35,7 +35,7 @@ type UpdateNoticeModalState = {
   storeUrl?: string;
 };
 
-const UPDATE_NOTICE_SHOWN_SESSION_KEY = "home:update-notice:shown";
+export const UPDATE_NOTICE_SHOWN_SESSION_KEY = "home:update-notice:shown";
 
 function getUpdateNoticeKey(updateNotice: PlatformVersion) {
   return String(updateNotice.appVersionId ?? updateNotice.version);
