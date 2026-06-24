@@ -164,6 +164,7 @@ type SubHeaderProps = {
   showBackButton?: boolean;
   showMenuButton?: boolean;
   showCloseButton?: boolean;
+  onBackClick?: () => void;
   children: React.ReactNode;
 };
 
@@ -172,6 +173,7 @@ export function SubHeader({
   showBackButton = true,
   showMenuButton = true,
   showCloseButton = false,
+  onBackClick,
   children,
 }: SubHeaderProps) {
   const router = useRouter();
@@ -189,7 +191,7 @@ export function SubHeader({
       {/* 뒤로가기 */}
       <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
         {showBackButton && (
-          <button onClick={() => router.history.back()}>
+          <button onClick={onBackClick ?? (() => router.history.back())}>
             <ArrowLeftIcon />
           </button>
         )}
