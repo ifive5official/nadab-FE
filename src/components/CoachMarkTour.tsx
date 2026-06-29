@@ -388,6 +388,12 @@ export default function CoachMarkTour() {
           return;
         }
 
+        if (action === "goToStep") {
+          const stepId = currentStep.centerModalButtonActions?.cancelStepId;
+          if (stepId) goToStep(stepId);
+          return;
+        }
+
         finish();
       }, 0);
     };
@@ -396,7 +402,7 @@ export default function CoachMarkTour() {
     return () => {
       document.removeEventListener("click", handleClick, true);
     };
-  }, [currentStep, finish, isOpen, next]);
+  }, [currentStep, finish, goToStep, isOpen, next]);
 
   const bottomModalOffset =
     bottomModalPosition && bottomModalPosition.stepId === currentStep?.id

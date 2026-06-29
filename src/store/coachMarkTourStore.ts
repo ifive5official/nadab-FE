@@ -44,7 +44,8 @@ export type CoachMarkStep = {
   allowBottomModalInteraction?: boolean;
   allowCenterModalInteraction?: boolean;
   centerModalButtonActions?: {
-    cancel?: "next" | "finish";
+    cancel?: "next" | "finish" | "goToStep";
+    cancelStepId?: string;
     confirm?: "next" | "finish";
   };
 };

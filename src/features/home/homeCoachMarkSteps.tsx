@@ -40,11 +40,9 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     title: "나답에 온 걸 환영해요",
     description: "나답을 100% 활용하기 위한 사용법을 먼저 알아볼까요?",
     buttons: [
-      { label: "넘어가기", action: "finish" },
       {
         label: "좋아요.",
-        action: "goToStep",
-        stepId: HOME_COACH_MARK_STEP_IDS.step2QuestionText,
+        action: "next",
       },
     ],
   },
@@ -54,11 +52,9 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     title: "오늘의 질문이에요.",
     description: "매일 새로운 질문이 도착해요. 오늘은 이 질문이에요.",
     buttons: [
-      { label: "넘어가기", action: "finish" },
       {
-        label: "확인했어요.",
-        action: "goToStep",
-        stepId: HOME_COACH_MARK_STEP_IDS.step3QuestionTopicBadge,
+        label: "오늘 질문 확인했어요.",
+        action: "next",
       },
     ],
     allowTargetInteraction: false,
@@ -115,7 +111,8 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     modalPlacement: COACH_MARK_MODAL_PLACEMENTS.aboveCenterModal,
     allowCenterModalInteraction: true,
     centerModalButtonActions: {
-      cancel: "finish",
+      cancel: "goToStep",
+      cancelStepId: HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
       confirm: "next",
     },
   },
