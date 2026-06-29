@@ -6,10 +6,16 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "vite build && tsc",
+    "build:dev": "vite build --mode development && tsc",
+    "build:prod": "vite build --mode production && tsc",
     "serve": "vite preview",
     "test": "vitest run",
     "gen:api": "openapi-typescript https://nadab-dev.n-e.kr/v3/api-docs --output src/generated/api-types.ts",
-    "app:sync": "pnpm run build && npx cap sync android"
+    "app:sync": "pnpm run app:sync:android",
+    "app:sync:android": "pnpm run build:prod && CAPACITOR_ENV=production npx cap sync android",
+    "app:sync:android:dev": "pnpm run build:dev && CAPACITOR_ENV=development npx cap sync android",
+    "app:sync:ios": "pnpm run build:prod && CAPACITOR_ENV=production npx cap sync ios",
+    "app:sync:ios:dev": "pnpm run build:dev && CAPACITOR_ENV=development npx cap sync ios"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
@@ -21,6 +27,7 @@
     "@capacitor/core": "^8.0.2",
     "@capacitor/device": "^8.0.1",
     "@capacitor/ios": "^8.3.0",
+    "@capacitor/keyboard": "^8.0.3",
     "@capacitor/network": "^8.0.1",
     "@capacitor/push-notifications": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",

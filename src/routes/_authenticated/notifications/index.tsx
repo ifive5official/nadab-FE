@@ -123,6 +123,9 @@ function NotificationItem({ notification }: { notification: Notification }) {
   const readNotificationMutation = useReadNotificationMutation();
   const config = NOTIFICATION_CONFIG[notification.type!];
   if (!config) return null; // undefined 참조 에러 나서 땜빵...
+
+  const linkProps = config.getLinkProps(notification);
+
   return (
     <li
       className="flex items-center gap-gap-x-l py-padding-y-xs cursor-pointer"
@@ -133,7 +136,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
             notifications: [{ id: String(notification.id), data: {} }],
           });
         }
-        navigate({ ...config.linkProps });
+        navigate({ ...linkProps });
       }}
     >
       <div className="aspect-square h-13 bg-neutral-100 rounded-full flex justify-center items-center">

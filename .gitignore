@@ -11,3 +11,6 @@ count.txt
 .tanstack
 .wrangler
 **/GoogleService-Info.plist
+ios/App/App/KakaoSecrets.xcconfig
+GEMINI.md
+.idea/

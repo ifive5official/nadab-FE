@@ -14,12 +14,13 @@ import { questionOptions } from "@/features/question/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGenerateReportMutation } from "@/features/report/hooks/useGenerateReportMutation";
 import useModalStore from "@/store/modalStore";
-import InputAccessoryView from "@/components/InputAccessoryView";
+import AnswerAccessoryView from "@/features/daily/AnswerAccessoryView";
 import { useImageUploader } from "@/hooks/useImageUpload";
 import { ImageCropper } from "@/components/ImageCropper";
 import useToastStore from "@/store/toastStore";
 import { Capacitor } from "@capacitor/core";
 import clsx from "clsx";
+import BlockButton from "@/components/BlockButton";
 
 export const Route = createFileRoute("/_authenticated/daily/write")({
   component: RouteComponent,
@@ -69,8 +70,13 @@ function RouteComponent() {
       }
     },
   });
-  const { cropTarget, setCropTarget, handleCropComplete, uploadImage } =
-    imageUploader;
+  const {
+    cropTarget,
+    setCropTarget,
+    handleCropComplete,
+    uploadImage,
+    isUploading: isImageUploading,
+  } = imageUploader;
 
   const generateResponseMutation = useGenerateReportMutation({
     onSuccess: (reportId) => {
@@ -159,6 +165,9 @@ function RouteComponent() {
         console.error(err);
       }
     } else {
+      if (textareaRef.current) {
+        textareaRef.current.blur();
+      }
       showError(
         "10글자 이상 작성해 주세요.",
         "정교한 분석을 위해 조금만 더 자세히 답변해 주세요.",
@@ -166,13 +175,8 @@ function RouteComponent() {
     }
   }
 
-  function preventNativeScroll() {
-    // 포커스가 발생한 직후에 스크롤을 0으로 강제 고정
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0;
-    }, 0);
-  }
+  const platform = Capacitor.getPlatform();
+  const isMobile = platform !== "web"; // 완료 버튼 공개 여부 판단
 
   return (
     <>
@@ -197,7 +201,6 @@ function RouteComponent() {
               </div>
             )}
             <textarea
-              onFocus={preventNativeScroll}
               ref={textareaRef}
               rows={6}
               maxLength={200}
@@ -219,7 +222,16 @@ function RouteComponent() {
             <span className="text-text-tertiary">/200자</span>
           </div>
         </div>
-        <InputAccessoryView
+        {!isMobile && (
+          <BlockButton
+            variant="primary"
+            onClick={handleComplete}
+            isLoading={generateResponseMutation.isPending || isImageUploading}
+          >
+            완료
+          </BlockButton>
+        )}
+        <AnswerAccessoryView
           imageUploader={imageUploader}
           isLoading={generateResponseMutation.isPending}
           onComplete={handleComplete}

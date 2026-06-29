@@ -22,10 +22,12 @@ export function useShareFeedMutation({ onSuccess }: Props) {
       return res.data;
     },
     onSuccess: (data) => {
-      onSuccess?.(data?.data?.status ?? "SHARED");
+      const status = data?.data?.status ?? "SHARED";
+      onSuccess?.(status);
       queryClient.setQueryData(["currentUser", "feedShareStatus"], {
-        isShared: true,
+        isShared: status === "SHARED" ? true : false,
       });
+      queryClient.invalidateQueries({ queryKey: ["currentUser", "feeds"] });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       if (err.response?.data?.code === "DAILY_REPORT_NOT_FOUND") {

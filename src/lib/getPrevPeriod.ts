@@ -1,4 +1,8 @@
 /**
+ * @description 주간 및 월간 레포트에서 지난 주/월을 계산하기 위해 사용
+ */
+
+/**
  * 해당 날짜가 포함된 주의 월요일을 구합니다.
  */
 function getMondayOfDate(date: Date): Date {
@@ -44,9 +48,8 @@ function getWeekOfMonth(date: Date): number {
  */
 export function getPreviousPeriodText(
   reportType: "weekly" | "monthly",
-  time: "prev" | "current",
+  time: "prev" | "current", // prev - 2주일/2달 전, current - 1주일/1달 전
 ) {
-  // 주의: 백엔드는 KST 기준이므로, 한국 시간대 고려가 필요할 수 있음
   const now = new Date();
 
   if (reportType === "weekly") {

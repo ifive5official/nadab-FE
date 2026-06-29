@@ -1,3 +1,7 @@
+/**
+ * @description 앱에서 푸쉬알림 구현 위해 사용
+ * @page 토큰 등록은 앱 초기화 시, 삭제는 로그아웃 및 탈퇴 시 호출
+ */
 import { useCallback, useEffect } from "react";
 import { PushNotifications } from "@capacitor/push-notifications";
 import useAuthStore from "@/store/authStore";
@@ -35,6 +39,7 @@ export function usePushNotifications() {
     initDevice();
   }, [deviceId, setDeviceId]);
 
+  // 안드로이드용 기본 채널 설정
   const setupNotificationChannels = useCallback(async () => {
     try {
       await PushNotifications.createChannel({
@@ -83,9 +88,11 @@ export function usePushNotifications() {
             });
           }
           const type: Notification["type"] = data.type;
-          const { linkProps } = NOTIFICATION_CONFIG[type!];
-
-          router.navigate({ ...linkProps });
+          const config = NOTIFICATION_CONFIG[type!];
+          if (config) {
+            const linkProps = config.getLinkProps(data);
+            router.navigate({ ...linkProps });
+          }
         },
       );
 
@@ -112,7 +119,11 @@ export function usePushNotifications() {
       });
 
       // 3. FCM 등록 시작
+      // NOTE: Android requires 'google-services.json' in 'android/app/' to initialize Firebase.
+      // If this file is missing, register() will throw a fatal error on Android.
+      console.log("Starting PushNotifications registration...");
       await PushNotifications.register();
+      console.log("PushNotifications registration request sent.");
     } catch (error) {
       console.error("Push registration error:", error);
     }
@@ -136,6 +147,7 @@ export function usePushNotifications() {
       }
       await PushNotifications.removeAllDeliveredNotifications();
 
+      await FCM.deleteInstance();
       await api.delete(`/api/v1/notifications/tokens/${deviceId}/${platform}`);
       await PushNotifications.removeAllListeners();
     }

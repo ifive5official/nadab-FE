@@ -1,4 +1,8 @@
-// 이미지 크롭시 쓰이는 함수
+/**
+ * @description 이미지 크롭시 쓰이는 함수
+ * @page 이미지 업로드 훅에서 사용
+ */
+
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },

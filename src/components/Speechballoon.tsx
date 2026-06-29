@@ -1,3 +1,8 @@
+/**
+ * @description 말풍선
+ * @page 온보딩(삭제예정) 및 주간/월간 리포트에서 사용 중
+ */
+
 import {
   ChatVerificationReceptionIcon,
   CharVerificationSendingIcon,
@@ -5,7 +10,7 @@ import {
 import clsx from "clsx";
 
 type Props = {
-  direction?: "receive" | "send";
+  direction?: "receive" | "send"; // 왼쪽, 오른쪽
   children: React.ReactNode;
   textColor: string;
   bgColor: string;

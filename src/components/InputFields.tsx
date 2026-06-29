@@ -1,4 +1,9 @@
-// input type, name 넘겨줘야 함
+/**
+ * @description 테마 불러오기, Capacitor 초기화, 푸쉬알림 연동
+ * @page 로그인, 회원가입, 비밀번호 찾기, 비밀번호 재설정 페이지에서만 사용
+ * @note input type, name 넘겨줘야 함
+ */
+
 import {
   useState,
   useRef,
@@ -17,7 +22,7 @@ type Props = {
   className?: string;
   rightElement?: React.ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>;
-
+// 폼 검증으로 에러 문구를 띄울 수 있는 Input 컴포넌트
 export default function InputField({
   variant = "basic",
   id,
@@ -43,7 +48,7 @@ export default function InputField({
             {
               "border-border-base": variant === "basic" && !error,
             },
-            error && "text-feedback-error-fg! border-feedback-error-fg!"
+            error && "text-feedback-error-fg! border-feedback-error-fg!",
           )}
         />
         {rightElement && (
@@ -59,7 +64,7 @@ export default function InputField({
     </div>
   );
 }
-
+// 폼 검증으로 에러를 띄울 수 있는 비밀번호 Input 컴포넌트
 export function PasswordInputField({ ...props }: Props) {
   const [isVisible, setIsVisible] = useState(false);
   return (
@@ -75,6 +80,7 @@ export function PasswordInputField({ ...props }: Props) {
   );
 }
 
+// 닉네임 중복 검사 등 button과 동반된 Input 컴포넌트
 export function InputFieldWithButton({
   id,
   label,
@@ -105,7 +111,7 @@ export function InputFieldWithButton({
           {
             "border-border-base": !error,
             "border-feedback-error-fg!": error,
-          }
+          },
         )}
       >
         <input
@@ -114,7 +120,7 @@ export function InputFieldWithButton({
           className={clsx(
             "w-full text-caption-m text-field-text-default bg-field-bg-default placeholder:text-text-disabled px-padding-x-xs py-padding-y-s focus:outline-none",
 
-            error && "text-feedback-error-fg"
+            error && "text-feedback-error-fg",
           )}
         />
         {isOk && (
@@ -129,7 +135,7 @@ export function InputFieldWithButton({
                 "bg-button-primary-bg-default text-field-text-inverse":
                   !buttonDisabled,
                 "bg-button-disabled-bg text-text-disabled": buttonDisabled,
-              }
+              },
             )}
             disabled={buttonDisabled || isLoading}
             onClick={(e) => {
@@ -153,7 +159,7 @@ export function InputFieldWithButton({
   );
 }
 
-// 회원가입 시 이메일 인증번호 입력하는 필드
+// 이메일 인증번호 입력하는 필드
 // 구현의 용이성을 위해 InputField와 분리하되 유지보수성 고려해 같은 파일에서 관리
 type OtpInputProps = {
   length: number;
@@ -211,7 +217,7 @@ export function OtpInput({ length, error, onChange, ...props }: OtpInputProps) {
             onKeyDown={(e) => handleKeyDown(e, i)}
             className={clsx(
               "w-10 text-center rounded-lg text-caption-m text-field-text-default bg-field-bg-default border border-border-base placeholder:text-text-disabled aspect-square focus:outline-none focus:shadow-1 focus:border-border-layer-1",
-              error && "text-feedback-error-fg! border-feedback-error-fg!"
+              error && "text-feedback-error-fg! border-feedback-error-fg!",
             )}
           />
         ))}

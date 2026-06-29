@@ -1,3 +1,4 @@
+// 피드에 보이는 게시글 하나
 import { EmotionBadge, QuestionBadge } from "@/components/Badges";
 import { useState, useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
@@ -5,19 +6,27 @@ import type { components } from "@/generated/api-types";
 import ProfileImg from "@/components/ProfileImg";
 import type categories from "@/constants/categories";
 import type emotions from "@/constants/emotions";
-import { MoreHorizontalIcon } from "@/components/Icons";
+import { FeedMessageIcon, MoreHorizontalIcon } from "@/components/Icons";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useNavigate } from "@tanstack/react-router";
 import AnswerImage from "@/components/AnswerImage";
+import CommentInput from "./CommentInput";
+import { useLikeMutation, useUnLikeMutation } from "./likeQueries";
+import { useLongPress } from "@/hooks/useLongPress";
+// import { CommentList } from "./CommentList";
+import { LikeButton } from "./LikeButton";
 
 type Props = {
   feed: components["schemas"]["FeedResponse"];
+  isMine?: boolean; // 내 게시물인지 친구 게시물인지
+  className?: string;
 };
 
-export default function Post({ feed }: Props) {
+export default function Post({ feed, isMine = false, className }: Props) {
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
   const navigate = useNavigate();
 
+  // 내용이 길 시 더보기 처리
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false); // 텍스트가 넘치는가?
   const answerRef = useRef<HTMLParagraphElement>(null);
@@ -34,30 +43,64 @@ export default function Post({ feed }: Props) {
     checkOverflow();
   }, []);
 
+  // 좋아요
+  const likeMutation = useLikeMutation();
+  const unLikeMutation = useUnLikeMutation();
+
+  function handleClickLike() {
+    // 남의 게시글만 짧게 누를 시 좋아요 가능
+    if (isMine) return;
+
+    if (feed.isLiked) {
+      unLikeMutation.mutate({
+        dailyReportId: feed.dailyReportId!,
+      });
+    } else {
+      likeMutation.mutate({
+        dailyReportId: feed.dailyReportId!,
+      });
+    }
+  }
+
+  function handleLongPressLike() {
+    // 내 게시물에서만 길게 누를 시 좋아요 목록 확인 가능
+    if (!isMine) return;
+    navigate({ to: `/social/${feed.dailyReportId}/likes` });
+  }
+
+  const likeEvent = useLongPress(handleLongPressLike, handleClickLike);
+
   return (
-    <section className="px-padding-x-m py-padding-y-m rounded-2xl bg-surface-layer-1 border border-border-base shadow-1">
+    <section
+      className={clsx(
+        "px-padding-x-m py-padding-y-m rounded-2xl bg-surface-layer-1 border border-border-base shadow-1",
+        className,
+      )}
+    >
       <div className="flex items-center gap-margin-x-s">
         <ProfileImg width={35} src={feed.friendProfileImageUrl} />
         <span className="text-button-1 mr-auto">{feed.friendNickname}</span>
-        <button
-          onClick={() =>
-            showBottomModal({
-              title: "게시글 신고",
-              items: [
-                {
-                  label: "신고",
-                  type: "warning",
-                  onClick: () => {
-                    closeBottomModal();
-                    navigate({ to: `/flag/${feed.dailyReportId}` });
+        {!isMine && (
+          <button
+            onClick={() =>
+              showBottomModal({
+                title: "게시글 신고",
+                items: [
+                  {
+                    label: "신고",
+                    type: "warning",
+                    onClick: () => {
+                      closeBottomModal();
+                      navigate({ to: `/flag/report/${feed.dailyReportId}` });
+                    },
                   },
-                },
-              ],
-            })
-          }
-        >
-          <MoreHorizontalIcon />
-        </button>
+                ],
+              })
+            }
+          >
+            <MoreHorizontalIcon />
+          </button>
+        )}
       </div>
       <div className="border-b border-b-surface-layer-2 my-margin-y-m" />
       <div className="flex justify-start">
@@ -92,6 +135,30 @@ export default function Post({ feed }: Props) {
             {isAnswerOpen ? "접기" : "더보기"}
           </button>
         )}
+      </div>
+      <div className="w-full h-10 flex gap-gap-x-l items-center mt-margin-y-m">
+        {!isMine && (
+          <CommentInput
+            readOnly
+            onClick={() =>
+              navigate({ to: `/social/${feed.dailyReportId}/comments` })
+            }
+          />
+        )}
+        <div className="flex gap-gap-x-m">
+          <LikeButton
+            isLiked={!!(feed.isLiked || (isMine && feed.hasLikes))}
+            isMine={isMine}
+            likeEvent={likeEvent}
+          />
+          <button
+            onClick={() =>
+              navigate({ to: `/social/${feed.dailyReportId}/comments` })
+            }
+          >
+            <FeedMessageIcon />
+          </button>
+        </div>
       </div>
     </section>
   );

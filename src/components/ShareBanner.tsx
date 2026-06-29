@@ -1,3 +1,8 @@
+/**
+ * @description 기록 공유 배너
+ * @page 피드, 일간 리포트 페이지, 리포트 상세보기(오늘의 리포트일 경우)에서 사용
+ */
+
 import clsx from "clsx";
 import InlineButton from "./InlineButton";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -26,14 +31,18 @@ type SharedBannerConfig = {
 };
 
 type Props = {
+  // fixed - 피드에서 사용하는 형태(닫기 불가)
+  // closable - 닫기 버튼 있음, 일간 리포트 페이지에서 사용
   type?: "closable" | "fixed";
+  disabled?: boolean;
   className?: string;
-  toastBottom?: string; // 토스트 위치 조정 위해 사용
+  toastBottom?: string; // 하단에 버튼이 있을 경우 토스트 위치 조정 위해 사용
 };
 
 // 오늘의 기록 공유 배너
 export default function ShareBanner({
   type = "fixed",
+  disabled = false,
   className,
   toastBottom,
 }: Props) {
@@ -69,12 +78,11 @@ export default function ShareBanner({
   });
 
   const isShared = data?.isShared;
-  const sharedStatus =
-    isShared === undefined
-      ? "NOT_ANSWERED"
-      : isShared
-        ? "SHARED"
-        : "NOT_SHARED";
+  const sharedStatus = disabled
+    ? "NOT_ANSWERED"
+    : isShared
+      ? "SHARED"
+      : "NOT_SHARED";
 
   const configMap: Record<
     "NOT_ANSWERED" | "SHARED" | "NOT_SHARED",
@@ -145,6 +153,7 @@ export default function ShareBanner({
 
   // 에러 방지용 기본값
   const shareBannerConfig = configMap[sharedStatus];
+
   return (
     <>
       {isOpen && (

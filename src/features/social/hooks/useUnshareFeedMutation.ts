@@ -21,6 +21,7 @@ export function useUnshareFeedMutation({ onSuccess }: Props) {
       queryClient.setQueryData(["currentUser", "feedShareStatus"], {
         isShared: false,
       });
+      queryClient.invalidateQueries({ queryKey: ["currentUser", "feeds"] });
     },
     onError: (err: AxiosError<ApiErrResponse<null>>) => {
       handleDefaultApiError(err);

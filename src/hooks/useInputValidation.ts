@@ -1,4 +1,8 @@
-// 회원가입/로그인/프로필 수정에서 유저 정보 관련 필드 검증하는 로직
+/**
+ * @description 유저 정보 관련 필드 검증 로직
+ * @page 회원가입, 로그인, 프로필 수정 시 사용
+ */
+
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";

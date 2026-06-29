@@ -27,6 +27,19 @@ export const feedShareStatusOptions = queryOptions({
   },
 });
 
+// 소셜 정지 상태 조회
+type SuspensionStatusRes = components["schemas"]["SuspensionStatusResponse"];
+
+export const suspensionStatusOptions = queryOptions({
+  queryKey: ["currentUser", "suspensionStatus"],
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<SuspensionStatusRes>>(
+      "/api/v1/moderation/suspension/status",
+    );
+    return res.data.data!;
+  },
+});
+
 // 친구 기능 ===============================================
 type FriendsRes = components["schemas"]["FriendListResponse"];
 

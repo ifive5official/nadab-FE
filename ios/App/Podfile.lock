@@ -35,6 +35,8 @@ PODS:
   - CapacitorCordova (8.3.0)
   - CapacitorDevice (8.0.1):
     - Capacitor
+  - CapacitorKeyboard (8.0.3):
+    - Capacitor
   - CapacitorNetwork (8.0.1):
     - Capacitor
   - CapacitorPushNotifications (8.0.1):
@@ -156,6 +158,7 @@ DEPENDENCIES:
   - "CapacitorCommunityFcm (from `../../node_modules/.pnpm/@capacitor-community+fcm@8.1.0_@capacitor+core@8.0.2/node_modules/@capacitor-community/fcm`)"
   - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.3.0_@capacitor+core@8.0.2/node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../node_modules/.pnpm/@capacitor+device@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/device`)"
+  - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@8.0.3_@capacitor+core@8.0.2/node_modules/@capacitor/keyboard`)"
   - "CapacitorNetwork (from `../../node_modules/.pnpm/@capacitor+network@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/network`)"
   - "CapacitorPushNotifications (from `../../node_modules/.pnpm/@capacitor+push-notifications@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/push-notifications`)"
   - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/splash-screen`)"
@@ -214,6 +217,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/.pnpm/@capacitor+ios@8.3.0_@capacitor+core@8.0.2/node_modules/@capacitor/ios"
   CapacitorDevice:
     :path: "../../node_modules/.pnpm/@capacitor+device@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/device"
+  CapacitorKeyboard:
+    :path: "../../node_modules/.pnpm/@capacitor+keyboard@8.0.3_@capacitor+core@8.0.2/node_modules/@capacitor/keyboard"
   CapacitorNetwork:
     :path: "../../node_modules/.pnpm/@capacitor+network@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/network"
   CapacitorPushNotifications:
@@ -242,6 +247,7 @@ SPEC CHECKSUMS:
   CapacitorCommunityFcm: 8e659cf3177bb510011b328cf5809ae3e93721a5
   CapacitorCordova: 2e1e2bb93b2f365309dc4ff18b72b9a69a7814a9
   CapacitorDevice: ff033fa0c4ec19f5e059a073769a9b2347e69f57
+  CapacitorKeyboard: 31c8285d92c9d1410071d52449f16d2c6673b6f4
   CapacitorNetwork: 8812ce60d11fb63d8f2e4ba51a49b2e59892ebe2
   CapacitorPushNotifications: 99644101c6a82036e459929b6d897ee1cb27d97f
   CapacitorSplashScreen: 4b46c72298db552b3c57ce021ef028b6dc7f1fa7
@@ -273,6 +279,6 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   TeamLepisodeCapacitorNaverLogin: f226aa83f0c68600726d54c39e994cbe7b68c911
 
-PODFILE CHECKSUM: be6a369061ddab6261f8ec3d76ace57d5bd9e10c
+PODFILE CHECKSUM: 184de67e08a7a6d57e433e3fcd66e595a175944a
 
 COCOAPODS: 1.16.2

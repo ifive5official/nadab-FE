@@ -1,4 +1,8 @@
-// 재사용하는 작은 뱃지처럼 생긴 컴포넌트들
+/**
+ * @description 재사용하는 작은 뱃지처럼 생긴 컴포넌트들
+ * @note 사이즈의 경우 개발상의 편의로 임의로 설정했는데 추후 개선 고려
+ */
+
 import categories from "@/constants/categories";
 import clsx from "clsx";
 import { CloseFilledIcon, GemFilledIcon } from "./Icons";
@@ -42,13 +46,14 @@ export function Badge({
   );
 }
 
-// 질문 카테고리 나타내는 작은 버튼처럼 생긴 컴포넌트
+// 질문 주제를 나타내는 작은 버튼처럼 생긴 컴포넌트
 type QuestionBadgeProps = {
   height?: number;
-  category: (typeof categories)[number]["code"];
+  category: (typeof categories)[number]["code"]; // 질문 코드
   onClick?: () => void;
   isActive?: boolean;
   filled?: boolean;
+  rightElement?: React.ReactNode; // 우측에 추가되는 아이콘 등
   className?: string;
 };
 
@@ -58,6 +63,7 @@ export function QuestionBadge({
   onClick,
   isActive = true,
   filled = false,
+  rightElement,
   className,
 }: QuestionBadgeProps) {
   const item = categories.find((c) => c.code === category)!;
@@ -86,16 +92,17 @@ export function QuestionBadge({
       >
         {item.title}
       </span>
+      {rightElement}
     </div>
   );
 }
 
-// 감정 종류 나타내는 작은 버튼처럼 생긴 컴포넌트
+// 감정 종류를 나타내는 작은 버튼처럼 생긴 컴포넌트
 type EmotionBadgeProps = {
   variant?: "normal" | "big" | "search";
   filled?: boolean; // 밝은 배경인지 어두운 배경인지
   height?: number;
-  emotion: (typeof emotions)[number]["code"];
+  emotion: (typeof emotions)[number]["code"]; // 감정 코드
   onClick?: () => void;
   className?: string;
 };

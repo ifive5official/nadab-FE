@@ -1,5 +1,9 @@
-// 리포트 완성 조건 보여주는 팝오버
-// 추후 재사용할 시 내용을 props로 받게 할 예정
+/**
+ * @description 리포트 완성 조건 보여주는 팝오버
+ * @page 메인 화면 리포트 탭의 주간/월간 및 유형 리포트에서 사용
+ * @note 이전에 불필요해서 없앤다는 논의가 나왔어서 추후 디자인 변경에 따라 삭제될 수 있음
+ */
+
 import clsx from "clsx";
 import { CloseIcon } from "./Icons";
 import { REPORT_CONFIGS } from "@/features/report/reportConfigs";
