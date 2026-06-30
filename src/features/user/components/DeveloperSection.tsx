@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { AppIcon } from "@/components/AppIcon";
 import { ChevronRightIcon } from "@/components/Icons";
+import Switch from "@/components/Switch";
 import { UPDATE_NOTICE_SHOWN_SESSION_KEY } from "@/features/home/useHomeEntryPrompts";
 import { HOME_COACH_MARK_TOUR_ID } from "@/features/home/homeCoachMarkSteps";
 import {
@@ -8,6 +9,7 @@ import {
   useDeleteWeeklyReportMutation,
 } from "@/features/report/hooks/useDeleteWeeklyReportMutation";
 import useBottomModalStore from "@/store/bottomModalStore";
+import useDeveloperOptionsStore from "@/store/developerOptionsStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
 import { Section, SectionItem } from "./AccountSectionComponents";
@@ -24,6 +26,10 @@ export default function DeveloperSection() {
   const { showToast } = useToastStore();
   const { showModal, closeModal } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
+  const {
+    isUpdateNoticeOutdatedQaEnabled,
+    toggleUpdateNoticeOutdatedQa,
+  } = useDeveloperOptionsStore();
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation();
   const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation();
 
@@ -99,6 +105,15 @@ export default function DeveloperSection() {
         title="업데이트 알림 다시 보기"
         onClick={resetUpdateNoticeSession}
         rightElement={<ChevronRightIcon />}
+      />
+      <SectionItem
+        title="업데이트 구버전 QA 모드"
+        rightElement={
+          <Switch
+            isOn={isUpdateNoticeOutdatedQaEnabled}
+            onClick={toggleUpdateNoticeOutdatedQa}
+          />
+        }
       />
       <SectionItem
         title={

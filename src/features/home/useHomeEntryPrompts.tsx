@@ -5,6 +5,7 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import type { components } from "@/generated/api-types";
 import { usePushNotifications } from "@/hooks/usePushManager";
 import useCoachMarkTourStore from "@/store/coachMarkTourStore";
+import useDeveloperOptionsStore from "@/store/developerOptionsStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
 import {
@@ -36,6 +37,18 @@ type UpdateNoticeModalState = {
 };
 
 export const UPDATE_NOTICE_SHOWN_SESSION_KEY = "home:update-notice:shown";
+const WEB_QA_APP_VERSION = "0.0.0";
+
+function isDevelopmentWeb() {
+  return (
+    !import.meta.env.VITE_IS_PRODUCTION &&
+    Capacitor.getPlatform() === "web"
+  );
+}
+
+function shouldForceOutdatedVersion(isEnabled: boolean) {
+  return isEnabled && isDevelopmentWeb();
+}
 
 function getUpdateNoticeKey(updateNotice: PlatformVersion) {
   return String(updateNotice.appVersionId ?? updateNotice.version);
@@ -71,11 +84,15 @@ function getCurrentPlatformVersion(
   const platform = Capacitor.getPlatform();
   if (platform === "ios") return latestVersion?.ios;
   if (platform === "android") return latestVersion?.android;
+  if (isDevelopmentWeb()) return latestVersion?.ios ?? latestVersion?.android;
 
   return undefined;
 }
 
-async function getCurrentAppVersion() {
+async function getCurrentAppVersion(shouldForceOutdated = false) {
+  if (shouldForceOutdatedVersion(shouldForceOutdated)) {
+    return WEB_QA_APP_VERSION;
+  }
   if (!Capacitor.isNativePlatform()) return undefined;
 
   try {
@@ -114,7 +131,7 @@ function isVersionBehind(currentVersion?: string, latestVersion?: string) {
   return false;
 }
 
-function getStoreUrl() {
+function getStoreUrl(isWebQaEnabled = false) {
   const platform = Capacitor.getPlatform();
   if (platform === "ios") {
     return (
@@ -126,6 +143,12 @@ function getStoreUrl() {
     return (
       import.meta.env.VITE_ANDROID_PLAY_STORE_URL ??
       "https://play.google.com/store/apps/details?id=com.nadab.app"
+    );
+  }
+  if (isDevelopmentWeb() && isWebQaEnabled) {
+    return (
+      import.meta.env.VITE_IOS_APP_STORE_URL ??
+      "https://apps.apple.com/app/id6761776437"
     );
   }
   return undefined;
@@ -142,6 +165,8 @@ export function useHomeEntryPrompts({
     isOpen: isCoachMarkOpen,
     isCompleted: isCoachMarkCompleted,
   } = useCoachMarkTourStore();
+  const isUpdateNoticeOutdatedQaEnabled =
+    useDeveloperOptionsStore.use.isUpdateNoticeOutdatedQaEnabled();
   const { showToast } = useToastStore();
 
   const hasShownPushPermissionPrompt = useRef(false);
@@ -272,19 +297,21 @@ export function useHomeEntryPrompts({
       if (!updateNoticeData) return;
 
       markUpdateNoticeAsShown(updateNoticeData);
-      void getCurrentAppVersion().then((currentAppVersion) => {
-        const isOutdated = isVersionBehind(
-          currentAppVersion,
-          updateNoticeData.version,
-        );
+      void getCurrentAppVersion(isUpdateNoticeOutdatedQaEnabled).then(
+        (currentAppVersion) => {
+          const isOutdated = isVersionBehind(
+            currentAppVersion,
+            updateNoticeData.version,
+          );
 
-        setUpdateNoticeModal({
-          isOpen: true,
-          data: updateNoticeData,
-          isOutdated,
-          storeUrl: getStoreUrl(),
-        });
-      });
+          setUpdateNoticeModal({
+            isOpen: true,
+            data: updateNoticeData,
+            isOutdated,
+            storeUrl: getStoreUrl(isUpdateNoticeOutdatedQaEnabled),
+          });
+        },
+      );
     };
 
     const modalQueue: HomeEntryPrompt[] = [
@@ -317,6 +344,7 @@ export function useHomeEntryPrompts({
     isCoachMarkCompleted,
     isCoachMarkOpen,
     isGlobalModalOpen,
+    isUpdateNoticeOutdatedQaEnabled,
     isPushPermissionResolved,
     latestVersion,
     question,
