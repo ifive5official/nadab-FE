@@ -119,16 +119,17 @@ function AccountMenu({ isOpen, onClose, crystals }: AccountMenuProps) {
           />
           {/* 헤더 영역만큼 비워두기*/}
           <div className="z-30 fixed top-[calc(var(--spacing-header-height)+var(--safe-top))] right-padding-x-m sm:right-[calc((100vw-420px)/2+var(--spacing-padding-x-m))]">
-            <div className="flex flex-col w-fit px-padding-x-s py-padding-y-xs bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
+            <div className="flex flex-col w-fit px-padding-x-s bg-surface-base dark:bg-neutral-700 rounded-lg shadow-4">
               <div
                 data-coachmark="profile-crystal-row"
-                className="-mx-padding-x-s px-padding-x-s py-padding-y-xxs flex items-center gap-gap-x-s border-b border-b-border-base dark:border-b-border-layer-3"
+                className="-mx-padding-x-s px-padding-x-s py-padding-y-xs flex items-center gap-gap-x-s"
               >
                 <span className="text-caption-s text-text-tertiary">
                   크리스탈 개수
                 </span>
                 <CrystalBadge crystals={crystals} />
               </div>
+              <div className="border-b border-b-border-base dark:border-b-border-layer-3" />
               <nav className="contents">
                 <Link
                   to="/account"
