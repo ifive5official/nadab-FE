@@ -16,10 +16,10 @@ export const HOME_COACH_MARK_STEP_IDS = {
   step8ProfileButton: "step8-profile-button",
   step9CrystalBalanceRow: "step9-crystal-balance-row",
   step10MyPageRow: "step10-mypage-row",
-  step11WriteButton: "step11-write-button",
-  step12ReportTab: "step12-report-tab",
-  step13SocialTab: "step13-social-tab",
-  step14CalendarTab: "step14-calendar-tab",
+  step11ReportTab: "step11-report-tab",
+  step12SocialTab: "step12-social-tab",
+  step13CalendarTab: "step13-calendar-tab",
+  step14WriteButton: "step14-write-button",
 } as const;
 
 export type HomeCoachMarkStepId =
@@ -133,8 +133,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     buttons: [
       {
         label: "이해했어요.",
-        action: "goToStep",
-        stepId: HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
+        action: "next",
       },
     ],
     allowTargetInteraction: false,
@@ -204,27 +203,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     highlightPadding: 0,
   },
   {
-    id: HOME_COACH_MARK_STEP_IDS.step11WriteButton,
-    target: '[data-coachmark="home-write-button"]',
-    title: "첫 기록을 남겨봐요.",
-    description: (
-      <>
-        길게 남기지 않아도 괜찮아요.
-        <br />
-        <span className="font-bold">
-          질문에 대해 떠오르는 걸 가볍게 쓰는 걸로도 충분
-        </span>
-        해요.
-        <br />
-        답하기 어려운 질문이라면 다른 질문을 받아 답해봐요.
-      </>
-    ),
-    buttons: [{ label: "확인했어요.", action: "next" }],
-    allowTargetInteraction: false,
-    highlightPadding: 0,
-  },
-  {
-    id: HOME_COACH_MARK_STEP_IDS.step12ReportTab,
+    id: HOME_COACH_MARK_STEP_IDS.step11ReportTab,
     target: '[data-coachmark="home-report-tab"]',
     title: "기록을 쌓아 리포트를 받아보세요.",
     description: (
@@ -247,7 +226,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     highlightPadding: 0,
   },
   {
-    id: HOME_COACH_MARK_STEP_IDS.step13SocialTab,
+    id: HOME_COACH_MARK_STEP_IDS.step12SocialTab,
     target: '[data-coachmark="home-social-tab"]',
     title: "친구들과 기록을 공유해요.",
     description: (
@@ -263,7 +242,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     highlightPadding: 0,
   },
   {
-    id: HOME_COACH_MARK_STEP_IDS.step14CalendarTab,
+    id: HOME_COACH_MARK_STEP_IDS.step13CalendarTab,
     target: '[data-coachmark="home-calendar-tab"]',
     title: "언제든지 편하게 이전 기록을 되돌아봐요.",
     description: (
@@ -278,5 +257,27 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     buttons: [{ label: "써볼게요.", action: "next" }],
     allowTargetInteraction: false,
     highlightPadding: 0,
+  },
+  {
+    id: HOME_COACH_MARK_STEP_IDS.step14WriteButton,
+    target: '[data-coachmark="home-write-button"]',
+    title: "첫 기록을 남겨봐요.",
+    description: (
+      <>
+        길게 남기지 않아도 괜찮아요.
+        <br />
+        <span className="font-bold">
+          질문에 대해 떠오르는 걸 가볍게 쓰는 걸로도 충분
+        </span>
+        해요.
+        <br />
+        답하기 어려운 질문이라면 다른 질문을 받아 답해봐요.
+      </>
+    ),
+    buttons: [{ label: "확인했어요.", action: "next" }],
+    allowTargetInteraction: true,
+    highlightPulse: true,
+    highlightPadding: 0,
+    targetAction: "next",
   },
 ];
