@@ -1,67 +1,31 @@
+import { COACH_MARK_MODAL_PLACEMENTS } from "@/store/coachMarkTourStore";
+import { HOME_COACH_MARK_STEP_IDS, HOME_COACH_MARK_TARGETS } from "./constants";
 import {
-  COACH_MARK_MODAL_PLACEMENTS,
-  type CoachMarkStep,
-} from "@/store/coachMarkTourStore";
-
-export const HOME_COACH_MARK_TOUR_ID = "home-question-topic-tour";
-
-export const HOME_COACH_MARK_STEP_IDS = {
-  step1Welcome: "step1-welcome",
-  step2QuestionText: "step2-question-text",
-  step3QuestionTopicBadge: "step3-question-topic-badge",
-  step4SelectQuestionTopic: "step4-select-question-topic",
-  step5ConfirmQuestionTopicChange: "step5-confirm-question-topic-change",
-  step6ReviewChangedQuestion: "step6-review-changed-question",
-  step7RerollQuestionButton: "step7-reroll-question-button",
-  step8ProfileButton: "step8-profile-button",
-  step9CrystalBalanceRow: "step9-crystal-balance-row",
-  step10MyPageRow: "step10-mypage-row",
-  step11ReportTab: "step11-report-tab",
-  step12SocialTab: "step12-social-tab",
-  step13CalendarTab: "step13-calendar-tab",
-  step14WriteButton: "step14-write-button",
-} as const;
-
-export type HomeCoachMarkStepId =
-  (typeof HOME_COACH_MARK_STEP_IDS)[keyof typeof HOME_COACH_MARK_STEP_IDS];
-
-type HomeCoachMarkStep = CoachMarkStep & {
-  id: HomeCoachMarkStepId;
-  nextStepId?: HomeCoachMarkStepId;
-  targetNextStepId?: HomeCoachMarkStepId;
-  buttons?: NonNullable<CoachMarkStep["buttons"]> extends (infer Button)[]
-    ? (Button & { stepId?: HomeCoachMarkStepId })[]
-    : never;
-};
+  confirmTargetStep,
+  emptyButtonModalStep,
+  goToStepButton,
+  nextButton,
+  targetClickStep,
+} from "./stepHelpers";
+import type { HomeCoachMarkStep } from "./types";
 
 export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
   {
     id: HOME_COACH_MARK_STEP_IDS.step1Welcome,
     title: "나답에 온 걸 환영해요",
     description: "나답을 100% 활용하기 위한 사용법을 먼저 알아볼까요?",
-    buttons: [
-      {
-        label: "좋아요.",
-        action: "next",
-      },
-    ],
+    buttons: [nextButton("좋아요.")],
   },
-  {
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step2QuestionText,
-    target: '[data-coachmark="home-question-text"]',
+    target: HOME_COACH_MARK_TARGETS.questionText,
     title: "오늘의 질문이에요.",
     description: "매일 새로운 질문이 도착해요. 오늘은 이 질문이에요.",
-    buttons: [
-      {
-        label: "오늘 질문 확인했어요.",
-        action: "next",
-      },
-    ],
-    allowTargetInteraction: false,
-  },
+    buttonLabel: "오늘 질문 확인했어요.",
+  }),
   {
     id: HOME_COACH_MARK_STEP_IDS.step3QuestionTopicBadge,
-    target: '[data-coachmark="home-question-badge"]',
+    target: HOME_COACH_MARK_TARGETS.questionBadge,
     title: "질문 주제를 언제든 바꿀 수 있어요.",
     description: (
       <>
@@ -75,19 +39,17 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
       </>
     ),
     buttons: [
-      {
-        label: "넘어가기",
-        action: "goToStep",
-        stepId: HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
-        variant: "secondary",
-      },
+      goToStepButton(
+        "넘어가기",
+        HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
+      ),
     ],
     targetNextStepId: HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic,
     allowTargetInteraction: true,
     highlightPadding: 0,
     highlightPulse: true,
   },
-  {
+  emptyButtonModalStep({
     id: HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic,
     title: "더 궁금한 주제로 바꿔봐요.",
     description: (
@@ -100,14 +62,12 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         오늘 쓰고 싶은 주제를 골라봐요.
       </>
     ),
-    buttons: [],
     modalPlacement: COACH_MARK_MODAL_PLACEMENTS.aboveBottomModal,
     allowBottomModalInteraction: true,
-  },
-  {
+  }),
+  emptyButtonModalStep({
     id: HOME_COACH_MARK_STEP_IDS.step5ConfirmQuestionTopicChange,
     title: "확인 버튼을 누르면 주제 변경이 마무리돼요!",
-    buttons: [],
     modalPlacement: COACH_MARK_MODAL_PLACEMENTS.aboveCenterModal,
     allowCenterModalInteraction: true,
     centerModalButtonActions: {
@@ -115,10 +75,10 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
       cancelStepId: HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
       confirm: "next",
     },
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step6ReviewChangedQuestion,
-    target: '[data-coachmark="home-question-text"]',
+    target: HOME_COACH_MARK_TARGETS.questionText,
     title: "선택 주제 변경에 성공했어요.",
     description: (
       <>
@@ -130,17 +90,11 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         <br />또 다른 주제로 답하고 싶어질 땐 다시 바꾸면 된답니다.
       </>
     ),
-    buttons: [
-      {
-        label: "이해했어요.",
-        action: "next",
-      },
-    ],
-    allowTargetInteraction: false,
-  },
-  {
+    buttonLabel: "이해했어요.",
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step7RerollQuestionButton,
-    target: '[data-coachmark="home-reroll-question-button"]',
+    target: HOME_COACH_MARK_TARGETS.rerollQuestionButton,
     title: "질문이 마음에 안 들면 바꿔요.",
     description: (
       <>
@@ -151,24 +105,19 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         선택한 주제 내에서 하루 5번까지 바꿀 수 있어요.
       </>
     ),
-    buttons: [{ label: "확인했어요.", action: "next" }],
-    allowTargetInteraction: false,
+    buttonLabel: "확인했어요.",
     highlightPadding: 0,
-  },
-  {
+  }),
+  targetClickStep({
     id: HOME_COACH_MARK_STEP_IDS.step8ProfileButton,
-    target: '[data-coachmark="home-profile-button"]',
+    target: HOME_COACH_MARK_TARGETS.profileButton,
     title: "프로필을 한 번 눌러봐요!",
-    buttons: [],
     targetAction: "next",
     modalPlacement: COACH_MARK_MODAL_PLACEMENTS.center,
-    allowTargetInteraction: true,
-    highlightPadding: 0,
-    highlightPulse: true,
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step9CrystalBalanceRow,
-    target: '[data-coachmark="profile-crystal-row"]',
+    target: HOME_COACH_MARK_TARGETS.profileCrystalRow,
     title: "기록을 작성해 크리스탈을 모으고\n리포트를 만들 때 크리스탈을 써요",
     description: (
       <>
@@ -179,13 +128,12 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         <span className="font-bold">리포트를 만들 때&nbsp;</span>쓸 수 있어요.
       </>
     ),
-    buttons: [{ label: "빨리 모아볼래요.", action: "next" }],
-    allowTargetInteraction: false,
+    buttonLabel: "빨리 모아볼래요.",
     highlightPadding: 0,
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step10MyPageRow,
-    target: '[data-coachmark="profile-mypage-row"]',
+    target: HOME_COACH_MARK_TARGETS.profileMyPageRow,
     title: "마이페이지에서 내게 꼭 맞는\n맞춤 환경 세팅을 할 수 있어요.",
     description: (
       <>
@@ -194,17 +142,16 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         나에게 꼭 맞게 설정할 수 있어요.
       </>
     ),
-    buttons: [{ label: "알겠어요.", action: "next" }],
+    buttonLabel: "알겠어요.",
     onLeaveAction: {
       type: "click",
-      target: '[data-coachmark="profile-menu-backdrop"]',
+      target: HOME_COACH_MARK_TARGETS.profileMenuBackdrop,
     },
-    allowTargetInteraction: false,
     highlightPadding: 0,
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step11ReportTab,
-    target: '[data-coachmark="home-report-tab"]',
+    target: HOME_COACH_MARK_TARGETS.reportTab,
     title: "기록을 쌓아 리포트를 받아보세요.",
     description: (
       <>
@@ -221,13 +168,12 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         <br />꼭 놓치지 말고 눌러서 다양한 나의 모습에 대해 알아보세요.
       </>
     ),
-    buttons: [{ label: "기대돼요!", action: "next" }],
-    allowTargetInteraction: false,
+    buttonLabel: "기대돼요!",
     highlightPadding: 0,
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step12SocialTab,
-    target: '[data-coachmark="home-social-tab"]',
+    target: HOME_COACH_MARK_TARGETS.socialTab,
     title: "친구들과 기록을 공유해요.",
     description: (
       <>
@@ -237,13 +183,12 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         반응해봐요.
       </>
     ),
-    buttons: [{ label: "해볼게요.", action: "next" }],
-    allowTargetInteraction: false,
+    buttonLabel: "해볼게요.",
     highlightPadding: 0,
-  },
-  {
+  }),
+  confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step13CalendarTab,
-    target: '[data-coachmark="home-calendar-tab"]',
+    target: HOME_COACH_MARK_TARGETS.calendarTab,
     title: "언제든지 편하게 이전 기록을 되돌아봐요.",
     description: (
       <>
@@ -254,13 +199,12 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         <span className="font-bold">기록을 검색</span>할 수도 있어요.
       </>
     ),
-    buttons: [{ label: "써볼게요.", action: "next" }],
-    allowTargetInteraction: false,
+    buttonLabel: "써볼게요.",
     highlightPadding: 0,
-  },
-  {
+  }),
+  targetClickStep({
     id: HOME_COACH_MARK_STEP_IDS.step14WriteButton,
-    target: '[data-coachmark="home-write-button"]',
+    target: HOME_COACH_MARK_TARGETS.writeButton,
     title: "첫 기록을 남겨봐요.",
     description: (
       <>
@@ -274,10 +218,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
         답하기 어려운 질문이라면 다른 질문을 받아 답해봐요.
       </>
     ),
-    buttons: [{ label: "확인했어요.", action: "next" }],
-    allowTargetInteraction: true,
-    highlightPulse: true,
-    highlightPadding: 0,
     targetAction: "next",
-  },
+    button: nextButton("넘어가기", { variant: "secondary" }),
+  }),
 ];

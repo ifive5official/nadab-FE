@@ -2,13 +2,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { AppIcon } from "@/components/AppIcon";
 import { ChevronRightIcon } from "@/components/Icons";
 import Switch from "@/components/Switch";
+import { HOME_COACH_MARK_TOUR_ID } from "@/features/home/coach-mark/constants";
 import { UPDATE_NOTICE_SHOWN_SESSION_KEY } from "@/features/home/useHomeEntryPrompts";
-import { HOME_COACH_MARK_TOUR_ID } from "@/features/home/homeCoachMarkSteps";
 import {
   useDeleteMonthlyReportMutation,
   useDeleteWeeklyReportMutation,
 } from "@/features/report/hooks/useDeleteWeeklyReportMutation";
 import useBottomModalStore from "@/store/bottomModalStore";
+import { getCoachMarkCompletedKey } from "@/store/coachMarkTourStore";
 import useDeveloperOptionsStore from "@/store/developerOptionsStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
@@ -17,9 +18,6 @@ import { Section, SectionItem } from "./AccountSectionComponents";
 function DeveloperModalIcon() {
   return <AppIcon name="tools-filled" color="primary" size={24} />;
 }
-
-const getCoachMarkCompletedKey = (tourId: string) =>
-  `coachmark:${tourId}:completed`;
 
 export default function DeveloperSection() {
   const navigate = useNavigate();

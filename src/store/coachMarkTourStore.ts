@@ -67,13 +67,14 @@ type Action = {
   isCompleted: (tourId: string) => boolean;
 };
 
-const getCompletedKey = (tourId: string) => `coachmark:${tourId}:completed`;
+export const getCoachMarkCompletedKey = (tourId: string) =>
+  `coachmark:${tourId}:completed`;
 
 const canUseLocalStorage = () => typeof window !== "undefined";
 
 const markCompleted = (tourId: string | null) => {
   if (!tourId || !canUseLocalStorage()) return;
-  window.localStorage.setItem(getCompletedKey(tourId), "true");
+  window.localStorage.setItem(getCoachMarkCompletedKey(tourId), "true");
 };
 
 const useCoachMarkTourStoreBase = create<State & Action>((set, get) => ({
@@ -117,7 +118,9 @@ const useCoachMarkTourStoreBase = create<State & Action>((set, get) => ({
     set({ isOpen: false, tourId: null, steps: [], currentStepId: null }),
   isCompleted: (tourId) => {
     if (!canUseLocalStorage()) return false;
-    return window.localStorage.getItem(getCompletedKey(tourId)) === "true";
+    return (
+      window.localStorage.getItem(getCoachMarkCompletedKey(tourId)) === "true"
+    );
   },
 }));
 

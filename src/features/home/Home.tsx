@@ -19,7 +19,7 @@ import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
 import useCoachMarkTourStore from "@/store/coachMarkTourStore";
-import { HOME_COACH_MARK_STEP_IDS } from "./homeCoachMarkSteps";
+import { HOME_COACH_MARK_STEP_IDS } from "./coach-mark/constants";
 import clsx from "clsx";
 import { useHomeEntryPrompts } from "./useHomeEntryPrompts";
 import UpdateNoticeModal from "./UpdateNoticeModal";

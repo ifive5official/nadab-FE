@@ -8,10 +8,8 @@ import useCoachMarkTourStore from "@/store/coachMarkTourStore";
 import useDeveloperOptionsStore from "@/store/developerOptionsStore";
 import useModalStore from "@/store/modalStore";
 import useToastStore from "@/store/toastStore";
-import {
-  HOME_COACH_MARK_STEPS,
-  HOME_COACH_MARK_TOUR_ID,
-} from "./homeCoachMarkSteps";
+import { HOME_COACH_MARK_TOUR_ID } from "./coach-mark/constants";
+import { HOME_COACH_MARK_STEPS } from "./coach-mark/steps";
 
 type Question = components["schemas"]["DailyQuestionResponseV2"] | null;
 type LatestVersion = components["schemas"]["HomeLatestVersionResponse"];
