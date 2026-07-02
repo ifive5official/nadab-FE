@@ -114,8 +114,8 @@ export default function Home() {
                             label: category.title,
                             type: isSelected ? "selected" : "unselected",
                             onClick: async () => {
-                              closeBottomModal();
                               if (!isSelected) {
+                                closeBottomModal();
                                 if (
                                   useCoachMarkTourStore.getState()
                                     .currentStepId ===
