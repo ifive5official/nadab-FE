@@ -50,16 +50,14 @@ export function TargetHighlightLayer({
             height: highlightRect.height,
             borderRadius: highlightRect.radius,
           }}
-          initial={{ opacity: 0, scale: 1 }}
+          initial={{ scale: 1 }}
           animate={{
-            opacity: [0.9, 0],
-            scale: [1, 1.12],
+            scale: [1, 1.05],
           }}
           transition={{
-            duration: 1.2,
+            duration: 0.8,
             ease: "easeOut",
             repeat: Infinity,
-            repeatDelay: 0.2,
           }}
         />
       )}
