@@ -20,6 +20,7 @@ export function TargetHighlightLayer({
     <>
       <CutoutOverlay
         blockCutout={!step.allowTargetInteraction}
+        lightenCutout={step.lightenCutout}
         maskId={maskId}
         rect={highlightRect}
       />

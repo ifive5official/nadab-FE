@@ -170,6 +170,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     ),
     buttonLabel: "기대돼요!",
     highlightPadding: 0,
+    lightenCutout: true,
   }),
   confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step12SocialTab,
@@ -185,6 +186,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     ),
     buttonLabel: "해볼게요.",
     highlightPadding: 0,
+    lightenCutout: true,
   }),
   confirmTargetStep({
     id: HOME_COACH_MARK_STEP_IDS.step13CalendarTab,
@@ -201,6 +203,7 @@ export const HOME_COACH_MARK_STEPS: HomeCoachMarkStep[] = [
     ),
     buttonLabel: "써볼게요.",
     highlightPadding: 0,
+    lightenCutout: true,
   }),
   targetClickStep({
     id: HOME_COACH_MARK_STEP_IDS.step14WriteButton,

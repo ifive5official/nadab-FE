@@ -59,4 +59,21 @@ describe("HOME_COACH_MARK_STEPS", () => {
       buttons: [{ label: "넘어가기", action: "next", variant: "secondary" }],
     });
   });
+
+  it("brightens the transparent tab cutouts in dark mode", () => {
+    const tabStepIds = [
+      HOME_COACH_MARK_STEP_IDS.step11ReportTab,
+      HOME_COACH_MARK_STEP_IDS.step12SocialTab,
+      HOME_COACH_MARK_STEP_IDS.step13CalendarTab,
+    ];
+
+    for (const stepId of tabStepIds) {
+      const step = HOME_COACH_MARK_STEPS.find((step) => step.id === stepId);
+
+      expect(step).toMatchObject({
+        highlightPadding: 0,
+        lightenCutout: true,
+      });
+    }
+  });
 });

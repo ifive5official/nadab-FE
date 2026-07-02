@@ -41,6 +41,7 @@ export type CoachMarkStep = {
   modalPlacement?: CoachMarkModalPlacement;
   highlightPadding?: number;
   highlightPulse?: boolean;
+  lightenCutout?: boolean;
   allowBottomModalInteraction?: boolean;
   allowCenterModalInteraction?: boolean;
   centerModalButtonActions?: {

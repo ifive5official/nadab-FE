@@ -2,12 +2,14 @@ import type { Rect } from "./types";
 
 type CutoutOverlayProps = {
   blockCutout?: boolean;
+  lightenCutout?: boolean;
   maskId: string;
   rect: Rect;
 };
 
 export function CutoutOverlay({
   blockCutout = false,
+  lightenCutout = false,
   maskId,
   rect,
 }: CutoutOverlayProps) {
@@ -35,6 +37,18 @@ export function CutoutOverlay({
           mask={`url(#${maskId})`}
         />
       </svg>
+      {lightenCutout && (
+        <div
+          className="pointer-events-none fixed z-[57] hidden bg-neutral-light-20 mix-blend-screen dark:block"
+          style={{
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+            borderRadius: rect.radius,
+          }}
+        />
+      )}
       <div
         className="fixed z-[56]"
         style={{
