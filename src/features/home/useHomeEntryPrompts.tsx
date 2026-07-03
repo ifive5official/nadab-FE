@@ -39,8 +39,7 @@ const WEB_QA_APP_VERSION = "0.0.0";
 
 function isDevelopmentWeb() {
   return (
-    !import.meta.env.VITE_IS_PRODUCTION &&
-    Capacitor.getPlatform() === "web"
+    !import.meta.env.VITE_IS_PRODUCTION && Capacitor.getPlatform() === "web"
   );
 }
 
@@ -169,6 +168,7 @@ export function useHomeEntryPrompts({
 
   const hasShownPushPermissionPrompt = useRef(false);
   const isCheckingPushPermission = useRef(false);
+  const isOpeningUpdateNoticeModal = useRef(false);
   const [isPushPermissionResolved, setIsPushPermissionResolved] =
     useState(false);
   const [updateNoticeModal, setUpdateNoticeModal] =
@@ -178,11 +178,19 @@ export function useHomeEntryPrompts({
     });
 
   const closeUpdateNoticeModal = useCallback(() => {
+    isOpeningUpdateNoticeModal.current = false;
     setUpdateNoticeModal((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
   useEffect(() => {
-    if (!question || isGlobalModalOpen) return;
+    if (
+      !question ||
+      isGlobalModalOpen ||
+      updateNoticeModal.isOpen ||
+      isOpeningUpdateNoticeModal.current
+    ) {
+      return;
+    }
 
     const updateNotice = getCurrentPlatformVersion(latestVersion);
     const isHomeCoachMarkCompleted = isCoachMarkCompleted(
@@ -293,7 +301,11 @@ export function useHomeEntryPrompts({
     const showUpdateNoticeModal = () => {
       const updateNoticeData = promptState.updateNotice.data;
       if (!updateNoticeData) return;
+      if (isOpeningUpdateNoticeModal.current || updateNoticeModal.isOpen) {
+        return;
+      }
 
+      isOpeningUpdateNoticeModal.current = true;
       markUpdateNoticeAsShown(updateNoticeData);
       void getCurrentAppVersion(isUpdateNoticeOutdatedQaEnabled).then(
         (currentAppVersion) => {
@@ -308,28 +320,29 @@ export function useHomeEntryPrompts({
             isOutdated,
             storeUrl: getStoreUrl(isUpdateNoticeOutdatedQaEnabled),
           });
+          isOpeningUpdateNoticeModal.current = false;
         },
       );
     };
 
     const modalQueue: HomeEntryPrompt[] = [
       {
-        id: "homeCoachMark",
+        id: "updateNotice",
         priority: 1,
+        shouldShow: promptState.updateNotice.shouldShow,
+        show: showUpdateNoticeModal,
+      },
+      {
+        id: "homeCoachMark",
+        priority: 2,
         shouldShow: promptState.homeCoachMark.shouldShow,
         show: startCoachMark,
       },
       {
         id: "pushPermission",
-        priority: 2,
+        priority: 3,
         shouldShow: promptState.pushPermission.shouldShow,
         show: showPushPermissionModal,
-      },
-      {
-        id: "updateNotice",
-        priority: 3,
-        shouldShow: promptState.updateNotice.shouldShow,
-        show: showUpdateNoticeModal,
       },
     ];
 
@@ -350,6 +363,7 @@ export function useHomeEntryPrompts({
     showModal,
     showToast,
     startTourOnce,
+    updateNoticeModal.isOpen,
   ]);
 
   return {
