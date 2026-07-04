@@ -85,7 +85,7 @@ function PeriodicReportDetail({
       variant: prevReport?.status === "COMPLETED" ? "secondary" : "disabled",
       onclick: () => {
         if (prevReport) {
-          navigate({ to: `/report/${reportType}/previous` });
+          navigate({ to: `/report/${reportType}/previous`, replace: true });
         } else {
           showError("이전 리포트가\n존재하지 않아요.");
         }
@@ -97,7 +97,7 @@ function PeriodicReportDetail({
       variant: currentReport?.status === "COMPLETED" ? "primary" : "disabled",
       onclick: () => {
         if (currentReport?.status === "COMPLETED") {
-          navigate({ to: `/report/${reportType}/current` });
+          navigate({ to: `/report/${reportType}/current`, replace: true });
         } else {
           showError(`다음 리포트가\n완성되지 못했어요.`);
         }
@@ -259,12 +259,12 @@ function MonthlyReportV1Content({
     const version = getReportVersion(nextLocator);
 
     if (version === "1") {
-      navigate({ to: `/report/monthly/${nextPeriod}` });
+      navigate({ to: `/report/monthly/${nextPeriod}`, replace: true });
       return;
     }
 
     if (version === "2") {
-      navigate({ to: `/report/monthly-v2/${nextPeriod}` });
+      navigate({ to: `/report/monthly-v2/${nextPeriod}`, replace: true });
       return;
     }
 

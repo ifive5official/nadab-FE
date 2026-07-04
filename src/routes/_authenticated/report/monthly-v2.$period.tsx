@@ -112,12 +112,12 @@ function MonthlyReportV2Detail({
     const version = getReportVersion(nextLocator);
 
     if (version === "1") {
-      navigate({ to: `/report/monthly/${nextPeriod}` });
+      navigate({ to: `/report/monthly/${nextPeriod}`, replace: true });
       return;
     }
 
     if (version === "2") {
-      navigate({ to: `/report/monthly-v2/${nextPeriod}` });
+      navigate({ to: `/report/monthly-v2/${nextPeriod}`, replace: true });
       return;
     }
 
