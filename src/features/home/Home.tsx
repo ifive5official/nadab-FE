@@ -11,27 +11,28 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import useModalStore from "@/store/modalStore";
-import { PushNotifications } from "@capacitor/push-notifications";
-import { Capacitor } from "@capacitor/core";
-import useToastStore from "@/store/toastStore";
-import { usePushNotifications } from "@/hooks/usePushManager";
 import { QuestionBadge } from "@/components/Badges";
 import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
+import useCoachMarkTourStore from "@/store/coachMarkTourStore";
+import { HOME_COACH_MARK_STEP_IDS } from "./coach-mark/constants";
 import clsx from "clsx";
+import { useHomeEntryPrompts } from "./useHomeEntryPrompts";
+import UpdateNoticeModal from "./UpdateNoticeModal";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { registerPush } = usePushNotifications();
   const { showModal, closeModal, showError } = useModalStore();
   const { showBottomModal, closeBottomModal } = useBottomModalStore();
-  const { showToast } = useToastStore();
-
-  const hasShownPrompt = useRef(false);
+  const {
+    goToStep: goToCoachMarkStep,
+    next: nextCoachMarkStep,
+    currentStepId: coachMarkStepId,
+  } = useCoachMarkTourStore();
 
   // 앱 상에서 배경색이 하단바에 비치게 함
   useEffect(() => {
@@ -39,56 +40,16 @@ export default function Home() {
     return () => document.documentElement.classList.remove("no-safe-padding");
   }, []);
 
-  // 최초 진입 시 알림 권한 설정 모달 띄움
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform() || hasShownPrompt.current) return;
-    async function checkNotificationPerm() {
-      let perm = await PushNotifications.checkPermissions();
-      const state = perm.receive;
-      if (state === "prompt") {
-        hasShownPrompt.current = true;
-        showModal({
-          icon: () => (
-            <img
-              src="/mainLogo.png"
-              alt="모달 아이콘"
-              className="aspect-square h-[33px] p-[11px] box-content"
-            />
-          ),
-          title: "나답으로부터 알림을 받아볼래요?",
-          children: <>마이페이지에서 언제든지 설정을 변경할 수 있어요.</>,
-          buttons: [
-            {
-              label: "다음",
-              onClick: async () => {
-                closeModal();
-                try {
-                  // 권환 확인 및 요청
-                  perm = await PushNotifications.requestPermissions();
-                  if (perm.receive === "granted") {
-                    await registerPush();
-                    showToast({ message: "알림 권한이 허용되었어요." });
-                  } else {
-                    showToast({ message: "알림 권한이 거부되었어요." });
-                  }
-                } catch (error) {
-                  console.error(error);
-                }
-              },
-            },
-          ],
-        });
-      }
-    }
-    checkNotificationPerm();
-  }, [showModal, closeModal, showToast, registerPush]);
-
   const [{ data: currentUser }, { data: question }, { data: homeData }] =
     useSuspenseQueries({
       queries: [currentUserOptions, questionOptions, homeOptions],
     });
   const rerollQuestionMutation = useRerollQuestionMutation();
   const canRerollQuestion = (question?.rerollRemainingCount ?? 0) > 0;
+  const { updateNoticeModal } = useHomeEntryPrompts({
+    question,
+    latestVersion: homeData.latestVersion,
+  });
 
   // 이미 해당 카테고리의 모든 질문에 답한 경우 처리
   useEffect(() => {
@@ -129,12 +90,14 @@ export default function Home() {
   return (
     <>
       <MainHeader profileImgUrl={currentUser.profileImageUrl} />
+      <UpdateNoticeModal {...updateNoticeModal} />
       <Tabs />
       <Container className="relative bg-[#E8ECFC] dark:bg-field-bg-hover pb-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))]!">
         <div className="flex-1 flex flex-col justify-evenly">
           {/* 질문 */}
           <div className="flex flex-col items-center gap-gap-y-m">
             <QuestionBadge
+              data-coachmark="home-question-badge"
               className="cursor-pointer"
               rightElement={
                 !question?.answered && <MoreHorizontalIcon size={16} />
@@ -151,8 +114,17 @@ export default function Home() {
                             label: category.title,
                             type: isSelected ? "selected" : "unselected",
                             onClick: async () => {
-                              closeBottomModal();
                               if (!isSelected) {
+                                closeBottomModal();
+                                if (
+                                  useCoachMarkTourStore.getState()
+                                    .currentStepId ===
+                                  HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic
+                                ) {
+                                  window.setTimeout(() => {
+                                    nextCoachMarkStep();
+                                  }, 0);
+                                }
                                 if (canRerollQuestion) {
                                   showModal({
                                     icon: () => (
@@ -189,11 +161,24 @@ export default function Home() {
                           };
                         }),
                       });
+                      if (
+                        coachMarkStepId ===
+                        HOME_COACH_MARK_STEP_IDS.step3QuestionTopicBadge
+                      ) {
+                        window.setTimeout(() => {
+                          goToCoachMarkStep(
+                            HOME_COACH_MARK_STEP_IDS.step4SelectQuestionTopic,
+                          );
+                        }, 0);
+                      }
                     }
               }
               category={interestCode}
             />
-            <p className="relative text-title-2 text-center">
+            <p
+              className="relative text-title-2 text-center"
+              data-coachmark="home-question-text"
+            >
               {question && (
                 <>
                   {currentUser.nickname}님,
@@ -243,6 +228,7 @@ export default function Home() {
           ) : (
             <div className="flex gap-margin-x-m">
               <BlockButton
+                data-coachmark="home-reroll-question-button"
                 variant={canRerollQuestion ? "secondary" : "disabled"}
                 onClick={() => rerollQuestionMutation.mutate()}
                 isLoading={rerollQuestionMutation.isPending}
@@ -266,7 +252,9 @@ export default function Home() {
                 </div>
               </BlockButton>
               <Link to="/daily" className="w-full">
-                <BlockButton>쓰러가기</BlockButton>
+                <BlockButton data-coachmark="home-write-button">
+                  쓰러가기
+                </BlockButton>
               </Link>
             </div>
           )}

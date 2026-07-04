@@ -10,6 +10,7 @@ import useThemeStore from "@/store/useThemeStore";
 import ProfileSection from "@/features/user/components/ProfileSection";
 import { currentUserOptions } from "@/features/user/quries";
 import AccountSection from "@/features/user/components/AccountSection";
+import DeveloperSection from "@/features/user/components/DeveloperSection";
 import Container from "@/components/Container";
 import useToastStore from "@/store/toastStore";
 import { notificationSettingsOptions } from "@/features/notifications/queries";
@@ -48,6 +49,9 @@ function RouteComponent() {
         }
       },
     });
+  const shouldShowDeveloperSection =
+    !import.meta.env.VITE_IS_PRODUCTION ||
+    currentUser.email === "tester1@example.com";
 
   return (
     <>
@@ -81,6 +85,12 @@ function RouteComponent() {
             <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
             <SectionDivider />
             <AccountSection />
+            {shouldShowDeveloperSection && (
+              <>
+                <SectionDivider />
+                <DeveloperSection />
+              </>
+            )}
           </ul>
         </div>
       </Container>
