@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
+import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { MonthlyReportV2Slides } from "@/features/report/monthly-v2/MonthlyReportV2Slides";
@@ -10,6 +11,7 @@ import {
   monthlyReportV2Options,
 } from "@/features/report/quries";
 import type { components } from "@/generated/api-types";
+import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import useModalStore from "@/store/modalStore";
 
 type MonthlyReportLocator =
@@ -84,28 +86,42 @@ function MonthlyReportV2Detail({
   const nextLocator =
     period === "current" ? reports.previousReport : reports.report;
   const nextLabel =
-    period === "current" ? "이전 월간 리포트 보기" : "지난달 월간 리포트 보기";
+    period === "current"
+      ? `${getPreviousPeriodText("monthly", "prev")} 리포트 보기`
+      : `${getPreviousPeriodText("monthly", "current")} 리포트 보기`;
+  const nextVariant =
+    nextLocator?.status === "COMPLETED"
+      ? period === "current"
+        ? "secondary"
+        : "primary"
+      : "disabled";
 
   const goToLocator = () => {
     if (!nextLocator) {
-      useModalStore.getState().showError("이전 리포트가\n존재하지 않아요.");
+      useModalStore
+        .getState()
+        .showError(
+          period === "current"
+            ? "이전 리포트가\n존재하지 않아요."
+            : "다음 리포트가\n완성되지 못했어요.",
+        );
       return;
     }
 
+    const nextPeriod = period === "current" ? "previous" : "current";
     const version = getReportVersion(nextLocator);
 
     if (version === "1") {
-      navigate({
-        to: `/report/monthly/${period === "current" ? "previous" : "current"}`,
-      });
+      navigate({ to: `/report/monthly/${nextPeriod}` });
       return;
     }
 
     if (version === "2") {
-      navigate({
-        to: `/report/monthly-v2/${period === "current" ? "previous" : "current"}`,
-      });
+      navigate({ to: `/report/monthly-v2/${nextPeriod}` });
+      return;
     }
+
+    useModalStore.getState().showError("리포트 버전을 확인할 수 없어요.");
   };
 
   useEffect(() => {
@@ -122,12 +138,11 @@ function MonthlyReportV2Detail({
       <Container hasScroll={true} className="min-h-0">
         <div className="flex-1 min-h-0 flex flex-col">
           <MonthlyReportV2Slides report={report} />
-          <button
-            className="shrink-0 text-button-2 text-brand-primary py-padding-y-m"
-            onClick={goToLocator}
-          >
-            {nextLabel}
-          </button>
+          <div className="mt-auto shrink-0">
+            <BlockButton variant={nextVariant} onClick={goToLocator}>
+              {nextLabel}
+            </BlockButton>
+          </div>
         </div>
       </Container>
     </>

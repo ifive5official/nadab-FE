@@ -25,7 +25,6 @@ export const Route = createFileRoute("/_authenticated/_main/report")({
     switch (tab) {
       case "periodic":
         queryClient.ensureQueryData(periodicReportOptions("weekly"));
-        queryClient.ensureQueryData(periodicReportOptions("monthly"));
         queryClient.ensureQueryData(monthlyReportV2Options);
         break;
       case "type":

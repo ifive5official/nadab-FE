@@ -12,16 +12,12 @@ import { DiscoverySection, HeroSection } from "./HeroDiscoverySections";
 import { SocialSection } from "./SocialSection";
 import type { MonthlyReportV2 } from "./types";
 
-export function MonthlyReportV2Slides({
-  report,
-}: {
-  report: MonthlyReportV2;
-}) {
+export function MonthlyReportV2Slides({ report }: { report: MonthlyReportV2 }) {
   const paginationRef = useRef(null);
 
   return (
     <>
-      <div className="-mx-padding-x-m mb-margin-y-l min-h-0 w-[calc(100%_+_var(--spacing-padding-x-m)_+_var(--spacing-padding-x-m))] flex-1">
+      <div className="-mx-padding-x-m min-h-0 w-[calc(100%_+_var(--spacing-padding-x-m)_+_var(--spacing-padding-x-m))] flex-1">
         <Swiper
           resistance={true}
           resistanceRatio={0}
@@ -67,7 +63,7 @@ export function MonthlyReportV2Slides({
           )}
         </Swiper>
       </div>
-      <div ref={paginationRef} className="shrink-0" />
+      <div ref={paginationRef} className="shrink-0 my-margin-y-l" />
     </>
   );
 }

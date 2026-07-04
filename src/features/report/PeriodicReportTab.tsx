@@ -26,18 +26,6 @@ export default function PeriodicReportTab() {
       }),
   });
   const {
-    report: monthlyReport,
-    prevReport: prevMonthlyReport,
-    isGenerating: isMonthlyReportGenerating,
-  } = useReport({ type: "monthly" });
-  const generateMonthlyReportMutation = useGeneratePeriodicReportMutation({
-    reportType: "monthly",
-    onSuccess: () =>
-      showToast({
-        message: `${REPORT_CONFIGS["monthly"].cost} 크리스탈이 소진되었어요.`,
-      }),
-  });
-  const {
     report: monthlyReportV2,
     prevReport: prevMonthlyReportV2,
     isGenerating: isMonthlyReportV2Generating,
@@ -66,14 +54,6 @@ export default function PeriodicReportTab() {
           prevReport={prevWeeklyReport}
           onGenerate={generateWeeklyReportMutation.mutate}
           isGenerating={isWeeklyReportGenerating}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
-        <PeriodicReportCard
-          reportType="monthly"
-          report={monthlyReport}
-          prevReport={prevMonthlyReport}
-          onGenerate={generateMonthlyReportMutation.mutate}
-          isGenerating={isMonthlyReportGenerating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
       </div>
