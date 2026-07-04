@@ -1,5 +1,7 @@
 import MonthlyEmotionRadarChart from "@/features/report/MonthlyEmotionRadarChart";
 import { StyledSegments } from "@/features/report/ReportComponents";
+import { AppIcon } from "@/components/AppIcon";
+import clsx from "clsx";
 import { ReportSectionHeader, SurfaceCard } from "./LayoutPrimitives";
 import type { MonthlyReportV2 } from "./types";
 import { formatPercent, normalizeSegments } from "./utils";
@@ -15,6 +17,10 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
     report.comparisonType === "COMPARISON"
       ? "지난 기간과 비교해"
       : `${report.month ?? "-"}월의 감정을 살펴보면`;
+  const positivePercentPointChange =
+    showComparison && typeof comparison?.positivePercentPointChange === "number"
+      ? comparison.positivePercentPointChange
+      : undefined;
 
   return (
     <section className="flex flex-col gap-gap-y-l">
@@ -33,6 +39,8 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
         <SummaryMetricCard
           label="긍정적인 감정 비율"
           value={formatPercent(report.emotionStats?.positivePercent)}
+          badgeValue={positivePercentPointChange}
+          badgeTone={getPercentPointChangeTone(positivePercentPointChange)}
         />
         <SurfaceCard className="row-span-2 allow-copy">
           <p className="mb-gap-y-s text-label-m text-text-secondary break-keep">
@@ -56,15 +64,64 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
   );
 }
 
-function SummaryMetricCard({ label, value }: { label: string; value: string }) {
+function SummaryMetricCard({
+  label,
+  value,
+  badgeValue,
+  badgeTone = "neutral",
+}: {
+  label: string;
+  value: string;
+  badgeValue?: number;
+  badgeTone?: "positive" | "negative" | "neutral";
+}) {
   return (
     <SurfaceCard className="flex min-h-24 flex-col justify-between">
       <span className="text-caption-m text-text-secondary break-keep">
         {label}
       </span>
-      <div>
+      <div className="flex items-center gap-gap-x-xs">
         <p className="text-headline-s text-text-primary">{value}</p>
+        {typeof badgeValue === "number" && (
+          <PercentPointBadge value={badgeValue} tone={badgeTone} />
+        )}
       </div>
     </SurfaceCard>
   );
+}
+
+function PercentPointBadge({
+  value,
+  tone,
+}: {
+  value: number;
+  tone: "positive" | "negative" | "neutral";
+}) {
+  const iconName =
+    tone === "positive"
+      ? "arrow-up-filled"
+      : tone === "negative"
+        ? "arrow-down-filled"
+        : undefined;
+
+  return (
+    <span
+      className={clsx(
+        "inline-flex items-center gap-gap-x-xs rounded-full border px-padding-x-xs py-padding-y-xxs text-button-3",
+        {
+          "border-brand-primary text-brand-primary": tone === "positive",
+          "border-text-tertiary text-text-tertiary": tone === "neutral",
+          "border-feedback-error-fg text-feedback-error-fg": tone === "negative",
+        },
+      )}
+    >
+      {Math.abs(value)}%p
+      {iconName && <AppIcon name={iconName} size={12} color="current" />}
+    </span>
+  );
+}
+
+function getPercentPointChangeTone(value: number | undefined) {
+  if (typeof value !== "number" || value === 0) return "neutral";
+  return value > 0 ? "positive" : "negative";
 }

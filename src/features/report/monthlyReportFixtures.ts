@@ -37,6 +37,8 @@ const CURRENT_V1_ID = 9101;
 const PREVIOUS_V1_ID = 9102;
 const CURRENT_V2_ID = 9201;
 const PREVIOUS_V2_ID = 9202;
+const CURRENT_REPORT_MONTH = getRelativeMonth(1);
+const PREVIOUS_REPORT_MONTH = getRelativeMonth(2);
 
 const scenarios = new Set<MonthlyReportFixtureScenario>([
   "empty",
@@ -94,28 +96,48 @@ export function getMonthlyReportFixtureLookup(): MonthlyReportLookup | null {
     case "empty":
       return {};
     case "current-v1":
-      return { report: monthlyReportLocator(CURRENT_V1_ID, "1", 7) };
+      return {
+        report: monthlyReportLocator(CURRENT_V1_ID, "1", CURRENT_REPORT_MONTH),
+      };
     case "current-v2":
-      return { report: monthlyReportLocator(CURRENT_V2_ID, "2", 7) };
+      return {
+        report: monthlyReportLocator(CURRENT_V2_ID, "2", CURRENT_REPORT_MONTH),
+      };
     case "current-v1-previous-v1":
       return {
-        report: monthlyReportLocator(CURRENT_V1_ID, "1", 7),
-        previousReport: monthlyReportLocator(PREVIOUS_V1_ID, "1", 6),
+        report: monthlyReportLocator(CURRENT_V1_ID, "1", CURRENT_REPORT_MONTH),
+        previousReport: monthlyReportLocator(
+          PREVIOUS_V1_ID,
+          "1",
+          PREVIOUS_REPORT_MONTH,
+        ),
       };
     case "current-v1-previous-v2":
       return {
-        report: monthlyReportLocator(CURRENT_V1_ID, "1", 7),
-        previousReport: monthlyReportLocator(PREVIOUS_V2_ID, "2", 6),
+        report: monthlyReportLocator(CURRENT_V1_ID, "1", CURRENT_REPORT_MONTH),
+        previousReport: monthlyReportLocator(
+          PREVIOUS_V2_ID,
+          "2",
+          PREVIOUS_REPORT_MONTH,
+        ),
       };
     case "current-v2-previous-v1":
       return {
-        report: monthlyReportLocator(CURRENT_V2_ID, "2", 7),
-        previousReport: monthlyReportLocator(PREVIOUS_V1_ID, "1", 6),
+        report: monthlyReportLocator(CURRENT_V2_ID, "2", CURRENT_REPORT_MONTH),
+        previousReport: monthlyReportLocator(
+          PREVIOUS_V1_ID,
+          "1",
+          PREVIOUS_REPORT_MONTH,
+        ),
       };
     case "current-v2-previous-v2":
       return {
-        report: monthlyReportLocator(CURRENT_V2_ID, "2", 7),
-        previousReport: monthlyReportLocator(PREVIOUS_V2_ID, "2", 6),
+        report: monthlyReportLocator(CURRENT_V2_ID, "2", CURRENT_REPORT_MONTH),
+        previousReport: monthlyReportLocator(
+          PREVIOUS_V2_ID,
+          "2",
+          PREVIOUS_REPORT_MONTH,
+        ),
       };
   }
 }
@@ -164,6 +186,13 @@ function monthlyReportLocator(
   };
 }
 
+function getRelativeMonth(monthsAgo: number) {
+  const targetMonth = new Date();
+  targetMonth.setDate(1);
+  targetMonth.setMonth(targetMonth.getMonth() - monthsAgo);
+  return targetMonth.getMonth() + 1;
+}
+
 function styledText(text: string): components["schemas"]["StyledText"] {
   return {
     segments: splitSentences(text).map((sentence, index) => ({
@@ -198,11 +227,19 @@ function v1Fixture(month: number, summary: string): MonthlyReportV1 {
 }
 
 const v1Fixtures: Record<number, MonthlyReportV1> = {
-  [CURRENT_V1_ID]: v1Fixture(7, "익숙한 리듬 안에서 나다운 기준을 찾은 달"),
-  [PREVIOUS_V1_ID]: v1Fixture(6, "천천히 회복하며 마음의 방향을 확인한 달"),
+  [CURRENT_V1_ID]: v1Fixture(
+    CURRENT_REPORT_MONTH,
+    "익숙한 리듬 안에서 나다운 기준을 찾은 달",
+  ),
+  [PREVIOUS_V1_ID]: v1Fixture(
+    PREVIOUS_REPORT_MONTH,
+    "천천히 회복하며 마음의 방향을 확인한 달",
+  ),
 };
 
-const currentEmotions: components["schemas"]["EmotionStat"][] = [
+type EmotionStat = components["schemas"]["EmotionStat"];
+
+const currentReportEmotions: EmotionStat[] = [
   { emotionCode: "JOY", emotionName: "기쁨", count: 18, percent: 32 },
   { emotionCode: "CALM", emotionName: "평온", count: 15, percent: 27 },
   { emotionCode: "EXPECTATION", emotionName: "기대", count: 10, percent: 18 },
@@ -210,7 +247,7 @@ const currentEmotions: components["schemas"]["EmotionStat"][] = [
   { emotionCode: "ANXIETY", emotionName: "불안", count: 5, percent: 9 },
 ];
 
-const previousEmotions: components["schemas"]["EmotionStat"][] = [
+const previousReportEmotions: EmotionStat[] = [
   { emotionCode: "CALM", emotionName: "평온", count: 16, percent: 34 },
   { emotionCode: "TIRED", emotionName: "피곤", count: 11, percent: 23 },
   { emotionCode: "JOY", emotionName: "기쁨", count: 9, percent: 19 },
@@ -222,7 +259,18 @@ function v2Fixture(
   month: number,
   summary: string,
   comparisonType: "COMPARISON" | "BASELINE",
+  reportEmotions: EmotionStat[],
+  reportPositivePercent: number,
+  comparison?: {
+    previousMonth: number;
+    previousEmotions: EmotionStat[];
+    previousPositivePercent: number;
+    positivePercentPointChange: number;
+  },
 ): MonthlyReportV2 {
+  const dominantEmotion = reportEmotions[0];
+  const previousDominantEmotion = comparison?.previousEmotions[0];
+
   return {
     month,
     status: "COMPLETED",
@@ -235,22 +283,22 @@ function v2Fixture(
     dominantKeyword: "평온",
     emotionTrend: "긍정 감정이 완만하게 늘었어요",
     emotionStats: {
-      totalCount: 56,
-      dominantEmotionCode: "JOY",
-      positivePercent: 77,
-      emotions: currentEmotions,
+      totalCount: getEmotionTotalCount(reportEmotions),
+      dominantEmotionCode: dominantEmotion?.emotionCode,
+      positivePercent: reportPositivePercent,
+      emotions: reportEmotions,
     },
     emotionComparison:
-      comparisonType === "COMPARISON"
+      comparisonType === "COMPARISON" && comparison
         ? {
             previousReportId: PREVIOUS_V2_ID,
-            previousMonth: month - 1,
-            positivePercentPointChange: 24,
+            previousMonth: comparison.previousMonth,
+            positivePercentPointChange: comparison.positivePercentPointChange,
             previousEmotionStats: {
-              totalCount: 47,
-              dominantEmotionCode: "CALM",
-              positivePercent: 53,
-              emotions: previousEmotions,
+              totalCount: getEmotionTotalCount(comparison.previousEmotions),
+              dominantEmotionCode: previousDominantEmotion?.emotionCode,
+              positivePercent: comparison.previousPositivePercent,
+              emotions: comparison.previousEmotions,
             },
           }
         : undefined,
@@ -288,15 +336,31 @@ function v2Fixture(
   };
 }
 
+function getEmotionTotalCount(emotions: EmotionStat[]) {
+  return emotions.reduce((total, emotion) => {
+    return total + (emotion.count ?? 0);
+  }, 0);
+}
+
 const v2Fixtures: Record<number, MonthlyReportV2> = {
   [CURRENT_V2_ID]: v2Fixture(
-    7,
+    CURRENT_REPORT_MONTH,
     "감정의 결이 또렷해지고 관계의 온도가 따뜻했던 달",
     "COMPARISON",
+    currentReportEmotions,
+    77,
+    {
+      previousMonth: PREVIOUS_REPORT_MONTH,
+      previousEmotions: previousReportEmotions,
+      previousPositivePercent: 53,
+      positivePercentPointChange: 24,
+    },
   ),
   [PREVIOUS_V2_ID]: v2Fixture(
-    6,
+    PREVIOUS_REPORT_MONTH,
     "회복의 속도를 찾고 일상의 균형을 되찾은 달",
     "BASELINE",
+    previousReportEmotions,
+    53,
   ),
 };

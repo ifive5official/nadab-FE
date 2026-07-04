@@ -108,8 +108,8 @@ export default function MonthlyEmotionRadarChart({
             {hasPreviousPolygon && (
               <polygon
                 points={previousValuePoints.map(formatPoint).join(" ")}
-                fill="rgba(115, 115, 115, 0.08)"
-                stroke="var(--color-text-tertiary)"
+                fill="var(--color-report-comparison-alpha-10)"
+                stroke="var(--color-report-comparison)"
                 strokeDasharray="5 4"
                 strokeWidth="2"
               />
@@ -142,16 +142,16 @@ export default function MonthlyEmotionRadarChart({
         </svg>
       </div>
       <div className="flex w-full items-center justify-start gap-gap-x-l text-caption-m text-text-secondary">
+        {hasPreviousPolygon && (
+          <span className="flex items-center gap-gap-x-xs">
+            <span className="h-2 w-2 rounded-full bg-[var(--color-report-comparison)]" />
+            {formatMonthLabel(previousMonth, "지난 달")}
+          </span>
+        )}
         <span className="flex items-center gap-gap-x-xs">
           <span className="h-2 w-2 rounded-full bg-brand-primary" />
           {formatMonthLabel(currentMonth, "이번 달")}
         </span>
-        {hasPreviousPolygon && (
-          <span className="flex items-center gap-gap-x-xs">
-            <span className="h-2 w-2 rounded-full bg-text-tertiary" />
-            {formatMonthLabel(previousMonth, "지난 달")}
-          </span>
-        )}
       </div>
     </div>
   );

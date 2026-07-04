@@ -543,6 +543,8 @@ body {
   /* brand color */
   --color-brand-primary: #5d57f6;
   --color-brand-secondary: #b5e7ff;
+  --color-report-comparison: #f657e6;
+  --color-report-comparison-alpha-10: rgba(246, 87, 230, 0.1);
 
   --color-brand-primary-alpha-90: rgba(93, 87, 246, 0.9);
   --color-brand-primary-alpha-80: rgba(93, 87, 246, 0.8);
@@ -732,6 +734,8 @@ body {
 .dark {
   /* brand color */
   --color-brand-primary: #8e89ff;
+  --color-report-comparison: #f657e6;
+  --color-report-comparison-alpha-10: rgba(246, 87, 230, 0.16);
 
   --color-brand-primary-alpha-90: rgba(93, 87, 246, 0.9);
   --color-brand-primary-alpha-80: rgba(93, 87, 246, 0.8);
