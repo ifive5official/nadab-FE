@@ -7,6 +7,7 @@ import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import useErrorStore from "@/store/modalStore";
 import { REPORT_CONFIGS } from "../reportConfigs";
 import { monthlyReportV2Options } from "../quries";
+import { startMonthlyReportV2Fixture } from "../monthlyReportFixtures";
 
 type MonthlyReportStartResponse =
   components["schemas"]["MonthlyReportStartResponse"];
@@ -21,6 +22,9 @@ export function useGenerateMonthlyReportV2Mutation({ onSuccess }: Props = {}) {
 
   return useMutation({
     mutationFn: async () => {
+      const fixture = startMonthlyReportV2Fixture();
+      if (fixture) return fixture;
+
       const res = await api.post<ApiResponse<MonthlyReportStartResponse>>(
         "/api/v2/monthly-report/start",
       );

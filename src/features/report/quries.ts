@@ -3,6 +3,11 @@ import type { ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import { REPORT_CONFIGS } from "./reportConfigs";
+import {
+  getMonthlyReportFixtureLookup,
+  getMonthlyReportV1Fixture,
+  getMonthlyReportV2Fixture,
+} from "./monthlyReportFixtures";
 
 type ReportRes = components["schemas"]["AnswerDetailResponse"];
 
@@ -49,6 +54,9 @@ export const periodicReportOptions = <T extends keyof ReportTypeMap>(
 export const monthlyReportV2Options = queryOptions({
   queryKey: ["currentUser", "monthly-report-v2"] as const,
   queryFn: async () => {
+    const fixture = getMonthlyReportFixtureLookup();
+    if (fixture) return fixture;
+
     const res = await api.get<ApiResponse<monthlyReportLookupResV2>>(
       "/api/v2/monthly-report",
     );
@@ -60,6 +68,9 @@ export const monthlyReportV1DetailOptions = (reportId: number) =>
   queryOptions({
     queryKey: ["currentUser", "monthly-report-v1", reportId] as const,
     queryFn: async () => {
+      const fixture = getMonthlyReportV1Fixture(reportId);
+      if (fixture) return fixture;
+
       const res = await api.get<ApiResponse<monthlyReportDetailRes>>(
         `/api/v1/monthly-report/${reportId}`,
       );
@@ -72,6 +83,9 @@ export const monthlyReportV2DetailOptions = (reportId: number) =>
   queryOptions({
     queryKey: ["currentUser", "monthly-report-v2", reportId] as const,
     queryFn: async () => {
+      const fixture = getMonthlyReportV2Fixture(reportId);
+      if (fixture) return fixture;
+
       const res = await api.get<ApiResponse<monthlyReportResV2>>(
         `/api/v2/monthly-report/${reportId}`,
       );
