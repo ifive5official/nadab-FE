@@ -5,6 +5,7 @@ import PeriodicReportTab from "@/features/report/PeriodicReportTab";
 import TypeReportTab from "@/features/report/TypeReportTab";
 import Container from "@/components/Container";
 import {
+  monthlyReportV2Options,
   periodicReportOptions,
   typeReportOptions,
 } from "@/features/report/quries";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/_main/report")({
       case "periodic":
         queryClient.ensureQueryData(periodicReportOptions("weekly"));
         queryClient.ensureQueryData(periodicReportOptions("monthly"));
+        queryClient.ensureQueryData(monthlyReportV2Options);
         break;
       case "type":
         queryClient.ensureQueryData(typeReportOptions);

@@ -1603,13 +1603,18 @@ export interface paths {
         };
         /**
          * 나의 월간 리포트 조회 V2
-         * @description 사용자의 (지난 달에 대한) 월간 리포트를 조회합니다. </br>
+         * @description 사용자의 지난달·지지난달 월간 리포트 위치 정보를 조회합니다. </br>
          *
-         *     report: 존재하지 않으면 null, 존재하면 id와 version을 반환합니다. </br>
+         *     report: 지난달 리포트이며 존재하지 않으면 null입니다. </br>
+         *     previousReport: 지지난달 완료 리포트이며 존재하지 않으면 null입니다. </br>
+         *     두 슬롯은 서로 독립적으로 null일 수 있습니다. </br>
+         *     각 항목은 reportId, version, month, status를 반환합니다. </br>
+         *     report.status: PENDING | IN_PROGRESS | TEXT_COMPLETED | COMPLETED | FAILED </br>
+         *     previousReport.status: 존재하는 경우 항상 COMPLETED </br>
          *
          *     version 규칙:
-         *     - monthly_reports - 1인 경우 : GET /api/v1/monthly-report/{id}로 조회 (기존의 레거시 버전)
-         *     - monthly_reports - 2인 경우 : GET /api/v2/monthly-report/{id}로 조회 (새로운 V2 버전)
+         *     - version 1인 경우 : GET /api/v1/monthly-report/{reportId}로 조회 (기존의 레거시 버전)
+         *     - version 2인 경우 : GET /api/v2/monthly-report/{reportId}로 조회 (새로운 V2 버전)
          */
         get: operations["getMyMonthlyReport"];
         put?: never;
@@ -1645,7 +1650,7 @@ export interface paths {
          *
          *     다음은 각 페이지에서 활용되는 필드의 값에 대한 설명입니다. </br>
          *     comparisonType: 최초 생성인지 이전 리포트가 존재하는지 여부입니다. </br>
-         *     현재는 모두 최초 생성이기 때문에 "BASELINE"으로 고정되어 있고, 이전 리포트가 존재하는 경우에는 "COMPARISON"으로 반환될 예정입니다. </br>
+         *     이전에 완료된 V2 월간 리포트가 없으면 "BASELINE", 있으면 "COMPARISON"으로 반환됩니다. </br>
          *
          *     **<페이지 1>** </br>
          *     summary : 월간 기록 요약 </br>
@@ -1654,15 +1659,31 @@ export interface paths {
          *
          *     **<페이지 2>** </br>
          *     dominantKeyword : 이번 달 요약 단어 </br>
+         *     emotionTrend : BASELINE은 "NOT_SUPPORTED", COMPARISON은 주요 감정의 변동 양상 </br>
          *     emotionStats.emotions : 감정에 대한 통계가 빈도 기준 내림차순으로 정렬되어 있습니다. </br>
-         *     emotionSummaryContent.styledText.segments : 감정 분석 텍스트 </br>
+         *     emotionComparison : 직전 월간 리포트 감정 비교 스냅샷이며 BASELINE인 경우 null입니다. </br>
+         *     - emotionComparison.previousReportId : 비교 대상인 직전 완료 리포트 ID </br>
+         *     - emotionComparison.previousMonth : 비교 대상 월 </br>
+         *     - emotionComparison.previousEmotionStats : 직전 리포트의 감정 통계 </br>
+         *     - emotionComparison.positivePercentPointChange : 현재와 직전 리포트의 긍정 감정 비율 차이(%p) </br>
          *
-         *     emotionTrend : "NOT_SUPPORTED" (현재는 고정. 변동 양상은 최초 생성 월간 리포트에서는 지원되지 않음. 이후 업데이트 예정) </br>
+         *     emotionSummaryContent.styledText.segments : 감정 분석 텍스트 </br>
          *
          *     **<페이지 3>** </br>
          *     commentSummary : 나답의 한 마디 요약 </br>
          *     comment.segments : 나답의 한 마디 텍스트 </br>
          *     interestStats.interests : 카테고리(관심사)에 대한 통계가 빈도 기준 내림차순으로 정렬되어 있습니다. </br>
+         *
+         *     **<페이지 4>** </br>
+         *     socialSummary.visible : 월간 소셜 페이지 노출 여부 </br>
+         *     socialSummary.month : 집계 대상 월 </br>
+         *     socialSummary.likeRanking : 내 DailyReport에 좋아요를 많이 누른 친구 최대 3명 </br>
+         *     socialSummary.commentRanking : 내 DailyReport에 댓글·대댓글을 많이 작성한 친구 최대 3명 </br>
+         *     - displayOrder : 화면 표시 순서(1~3) </br>
+         *     - userId : 친구 사용자 ID </br>
+         *     - nickname : 친구 닉네임 </br>
+         *     - profileImageUrl : 친구 프로필 이미지 URL </br>
+         *     - topRank : 공동 1위를 포함한 1위 강조 여부 </br>
          */
         get: operations["getMonthlyReportById"];
         put?: never;
@@ -3453,35 +3474,39 @@ export interface components {
              */
             newPassword: string;
         };
-        /** @description 나의 월간 리포트 라우팅 정보 */
-        MyMonthlyReportLookupItemV2: {
+        /** @description 버전별 월간 리포트 상세 조회를 위한 위치 정보 */
+        MonthlyReportLocatorResponse: {
             /**
              * Format: int64
-             * @description 리포트 ID
+             * @description 월간 리포트 ID
              */
-            id?: number;
+            reportId?: number;
             /**
              * Format: int32
-             * @description 리포트 버전
+             * @description 월간 리포트 버전
              * @example 2
+             * @enum {integer}
              */
-            version?: number;
+            version?: "1" | "2";
             /**
              * Format: int32
-             * @description 리포트 대상 월
+             * @description 월간 리포트 대상 월
+             * @example 5
              */
             month?: number;
             /**
-             * @description 리포트 상태
+             * @description 월간 리포트 상태
              * @example COMPLETED
              * @enum {string}
              */
             status?: "PENDING" | "TEXT_COMPLETED" | "COMPLETED" | "FAILED" | "IN_PROGRESS";
         };
-        /** @description 나의 월간 리포트 단건 조회 응답 */
+        /** @description 나의 현재·이전 월간 리포트 위치 조회 응답 */
         MyMonthlyReportLookupResponseV2: {
-            /** @description 월간 리포트 라우팅 정보. 리포트가 없으면 null */
-            report?: components["schemas"]["MyMonthlyReportLookupItemV2"];
+            /** @description 지난달 월간 리포트 위치 정보. 리포트가 없으면 null */
+            report?: components["schemas"]["MonthlyReportLocatorResponse"];
+            /** @description 지지난달 완료 월간 리포트 위치 정보. 리포트가 없으면 null */
+            previousReport?: components["schemas"]["MonthlyReportLocatorResponse"];
         };
         EmotionStat: {
             emotionCode?: string;
@@ -3499,6 +3524,15 @@ export interface components {
         };
         InterestStatsContent: {
             interests?: components["schemas"]["InterestStat"][];
+        };
+        MonthlyEmotionComparisonContent: {
+            /** Format: int64 */
+            previousReportId?: number;
+            /** Format: int32 */
+            previousMonth?: number;
+            previousEmotionStats?: components["schemas"]["TypeEmotionStatsContent"];
+            /** Format: int32 */
+            positivePercentPointChange?: number;
         };
         /** @description 월간 리포트 V2 조회 응답 */
         MonthlyReportResponseV2: {
@@ -3527,18 +3561,65 @@ export interface components {
             discovered?: components["schemas"]["StyledText"];
             /** @description 핵심 키워드 */
             dominantKeyword?: string;
-            /** @description 감정 통계 */
-            emotionStats?: components["schemas"]["TypeEmotionStatsContent"];
-            /** @description 감정 요약(styled) */
-            emotionSummaryContent?: components["schemas"]["TypeTextContent"];
             /** @description 감정 흐름 요약 */
             emotionTrend?: string;
+            /** @description 감정 통계 */
+            emotionStats?: components["schemas"]["TypeEmotionStatsContent"];
+            /** @description 직전 월간 리포트 감정 비교 스냅샷. BASELINE인 경우 null */
+            emotionComparison?: components["schemas"]["MonthlyEmotionComparisonContent"];
+            /** @description 감정 요약(styled) */
+            emotionSummaryContent?: components["schemas"]["TypeTextContent"];
             /** @description 코멘트(styled) */
             comment?: components["schemas"]["StyledText"];
             /** @description 코멘트 요약 */
             commentSummary?: string;
             /** @description 관심사 통계 */
             interestStats?: components["schemas"]["InterestStatsContent"];
+            /** @description 월간 소셜 반응 요약 */
+            socialSummary?: components["schemas"]["MonthlySocialSummaryResponse"];
+        };
+        MonthlySocialRankingItemResponse: {
+            /**
+             * Format: int32
+             * @description 화면 표시 순서
+             * @example 1
+             */
+            displayOrder?: number;
+            /**
+             * Format: int64
+             * @description 친구 사용자 ID
+             * @example 12
+             */
+            userId?: number;
+            /**
+             * @description 친구 닉네임
+             * @example 가나다
+             */
+            nickname?: string;
+            /** @description 친구 프로필 이미지 URL */
+            profileImageUrl?: string;
+            /**
+             * @description 공동 1위를 포함한 1위 강조 여부
+             * @example true
+             */
+            topRank?: boolean;
+        };
+        MonthlySocialSummaryResponse: {
+            /**
+             * @description 월간 소셜 페이지 노출 여부
+             * @example true
+             */
+            visible?: boolean;
+            /**
+             * Format: int32
+             * @description 집계 대상 월
+             * @example 5
+             */
+            month?: number;
+            /** @description 내 DailyReport에 좋아요를 많이 누른 친구 랭킹 */
+            likeRanking?: components["schemas"]["MonthlySocialRankingItemResponse"][];
+            /** @description 내 DailyReport에 댓글·대댓글을 많이 작성한 친구 랭킹 */
+            commentRanking?: components["schemas"]["MonthlySocialRankingItemResponse"][];
         };
         Segment: {
             text?: string;
@@ -8185,6 +8266,13 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["MonthlyReportResponse"];
                 };
+            };
+            /** @description - ErrorCode: MONTHLY_REPORT_ACCESS_FORBIDDEN - 본인 월간 리포트만 조회 가능 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description - ErrorCode: MONTHLY_REPORT_NOT_FOUND - 월간 리포트를 찾을 수 없음 */
             404: {

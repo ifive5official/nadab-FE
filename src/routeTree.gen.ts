@@ -43,6 +43,7 @@ import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password
 import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
+import { Route as AuthenticatedReportMonthlyV2PeriodRouteImport } from './routes/_authenticated/report/monthly-v2.$period'
 import { Route as AuthenticatedReportReportTypePeriodRouteImport } from './routes/_authenticated/report/$reportType.$period'
 import { Route as AuthenticatedFlagReportReportIdRouteImport } from './routes/_authenticated/flag/report.$reportId'
 import { Route as AuthenticatedFlagCommentCommentIdRouteImport } from './routes/_authenticated/flag/comment.$commentId'
@@ -234,6 +235,12 @@ const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
   path: '/category',
   getParentRoute: () => authOnboardingRoute,
 } as any)
+const AuthenticatedReportMonthlyV2PeriodRoute =
+  AuthenticatedReportMonthlyV2PeriodRouteImport.update({
+    id: '/report/monthly-v2/$period',
+    path: '/report/monthly-v2/$period',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedReportReportTypePeriodRoute =
   AuthenticatedReportReportTypePeriodRouteImport.update({
     id: '/report/$reportType/$period',
@@ -339,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
   '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
+  '/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -384,6 +392,7 @@ export interface FileRoutesByTo {
   '/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
   '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
+  '/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -432,6 +441,7 @@ export interface FileRoutesById {
   '/_authenticated/flag/comment/$commentId': typeof AuthenticatedFlagCommentCommentIdRoute
   '/_authenticated/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/_authenticated/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
+  '/_authenticated/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
   '/_authenticated/_main/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/_authenticated/_main/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/_authenticated/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -479,6 +489,7 @@ export interface FileRouteTypes {
     | '/flag/comment/$commentId'
     | '/flag/report/$reportId'
     | '/report/$reportType/$period'
+    | '/report/monthly-v2/$period'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
@@ -524,6 +535,7 @@ export interface FileRouteTypes {
     | '/flag/comment/$commentId'
     | '/flag/report/$reportId'
     | '/report/$reportType/$period'
+    | '/report/monthly-v2/$period'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
@@ -571,6 +583,7 @@ export interface FileRouteTypes {
     | '/_authenticated/flag/comment/$commentId'
     | '/_authenticated/flag/report/$reportId'
     | '/_authenticated/report/$reportType/$period'
+    | '/_authenticated/report/monthly-v2/$period'
     | '/_authenticated/_main/social/$postId/comments'
     | '/_authenticated/_main/social/$postId/likes'
     | '/_authenticated/detail/$date/$postId/comments'
@@ -831,6 +844,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authOnboardingCategoryRouteImport
       parentRoute: typeof authOnboardingRoute
     }
+    '/_authenticated/report/monthly-v2/$period': {
+      id: '/_authenticated/report/monthly-v2/$period'
+      path: '/report/monthly-v2/$period'
+      fullPath: '/report/monthly-v2/$period'
+      preLoaderRoute: typeof AuthenticatedReportMonthlyV2PeriodRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/report/$reportType/$period': {
       id: '/_authenticated/report/$reportType/$period'
       path: '/report/$reportType/$period'
@@ -1010,6 +1030,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedFlagCommentCommentIdRoute: typeof AuthenticatedFlagCommentCommentIdRoute
   AuthenticatedFlagReportReportIdRoute: typeof AuthenticatedFlagReportReportIdRoute
   AuthenticatedReportReportTypePeriodRoute: typeof AuthenticatedReportReportTypePeriodRoute
+  AuthenticatedReportMonthlyV2PeriodRoute: typeof AuthenticatedReportMonthlyV2PeriodRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -1032,6 +1053,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedFlagReportReportIdRoute: AuthenticatedFlagReportReportIdRoute,
   AuthenticatedReportReportTypePeriodRoute:
     AuthenticatedReportReportTypePeriodRoute,
+  AuthenticatedReportMonthlyV2PeriodRoute:
+    AuthenticatedReportMonthlyV2PeriodRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

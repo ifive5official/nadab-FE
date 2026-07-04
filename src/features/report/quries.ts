@@ -20,6 +20,9 @@ export const dailyReportOptions = (reportId: number) =>
 
 type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
 type monthlyReportRes = components["schemas"]["MyMonthlyReportResponse"];
+type monthlyReportLookupResV2 =
+  components["schemas"]["MyMonthlyReportLookupResponseV2"];
+type monthlyReportResV2 = components["schemas"]["MonthlyReportResponseV2"];
 
 type ReportTypeMap = {
   weekly: weeklyReportsRes;
@@ -41,6 +44,28 @@ export const periodicReportOptions = <T extends keyof ReportTypeMap>(
     },
   });
 };
+
+export const monthlyReportV2Options = queryOptions({
+  queryKey: ["currentUser", "monthly-report-v2"] as const,
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<monthlyReportLookupResV2>>(
+      "/api/v2/monthly-report",
+    );
+    return res.data.data!;
+  },
+});
+
+export const monthlyReportV2DetailOptions = (reportId: number) =>
+  queryOptions({
+    queryKey: ["currentUser", "monthly-report-v2", reportId] as const,
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<monthlyReportResV2>>(
+        `/api/v2/monthly-report/${reportId}`,
+      );
+      return res.data.data!;
+    },
+    enabled: !!reportId,
+  });
 
 type TypeReportRes = components["schemas"]["MyAllTypeReportsResponse"];
 
