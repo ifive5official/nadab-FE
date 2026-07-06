@@ -43,6 +43,7 @@ export default function BottomModal() {
           />
           <ListModal
             className="bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy inset-x-padding-x-m"
+            data-coachmark="bottom-topic-modal"
             title={config.title}
             items={config.items}
             animationVariants={{

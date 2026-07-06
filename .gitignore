@@ -14,3 +14,7 @@ count.txt
 ios/App/App/KakaoSecrets.xcconfig
 GEMINI.md
 .idea/
+<<<<<<< HEAD
+=======
+android/capacitor.settings.gradle
+>>>>>>> v1.3.0

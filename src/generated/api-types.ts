@@ -45,6 +45,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/auth/withdrawal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 회원 탈퇴 V2
+         * @description 회원 탈퇴를 진행합니다.
+         *     - 탈퇴 후 14일 동안 복구 가능합니다.<br>
+         *     - 모든 기기에서 자동 로그아웃됩니다.<br>
+         *     - 14일 후 자동으로 완전 삭제됩니다. <br>
+         *     - 탈퇴 사유를 함께 저장합니다. <br>
+         *     이때, reasons 필드에 OTHER가 포함된 경우 customReason 필드는 필수입니다. <br>
+         *
+         *     **<reasons 필드 enum>** <br>
+         *     DAILY_LOGGING_BURDEN,           // 매일 기록이 부담 <br>
+         *     INSUFFICIENT_QUESTION_ANALYSIS, // 질문·분석 부족 <br>
+         *     LOSS_OF_INTEREST_IN_WRITING,    // 글쓰기 흥미 상실 <br>
+         *     PRIVACY_RECORD_CONCERN,         // 감정·기록 보안 우려 <br>
+         *     APP_ERROR_OR_SLOWNESS,          // 오류·속도 문제 <br>
+         *     OTHER                           // 기타(직접 입력) <br>
+         */
+        post: operations["withdrawUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/weekly-report/start": {
         parameters: {
             query?: never;
@@ -1035,12 +1068,13 @@ export interface paths {
         put?: never;
         /**
          * 회원 탈퇴
+         * @deprecated
          * @description 회원 탈퇴를 진행합니다.<br>
          *     - 탈퇴 후 14일 동안 복구 가능합니다.<br>
          *     - 모든 기기에서 자동 로그아웃됩니다.<br>
          *     - 14일 후 자동으로 완전 삭제됩니다.
          */
-        post: operations["withdrawUser"];
+        post: operations["withdrawUser_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2735,6 +2769,37 @@ export interface components {
             /** Format: int64 */
             completedCount?: number;
         };
+        WithdrawalRequestV2: {
+            /**
+             * @description 탈퇴 사유 목록 (다중 선택 가능)
+             * @example [
+             *       "DAILY_LOGGING_BURDEN",
+             *       "OTHER"
+             *     ]
+             */
+            reasons: ("DAILY_LOGGING_BURDEN" | "INSUFFICIENT_QUESTION_ANALYSIS" | "LOSS_OF_INTEREST_IN_WRITING" | "PRIVACY_RECORD_CONCERN" | "APP_ERROR_OR_SLOWNESS" | "OTHER")[];
+            /**
+             * @description 기타 사유 직접 입력 (reasons에 OTHER가 포함된 경우 필수)
+             * @example 앱이 저에게 맞지 않았어요.
+             */
+            customReason?: string;
+        };
+        /** @description 공통 API 성공 응답 형식 */
+        ApiResponseDto: {
+            /**
+             * Format: int32
+             * @description HTTP 상태 코드
+             * @example 200
+             */
+            status?: number;
+            /**
+             * @description 응답 메시지
+             * @example OK
+             */
+            message?: string;
+            /** @description 응답 데이터 */
+            data?: unknown;
+        };
         /** @description 주간 리포트 생성 시작 응답 */
         WeeklyReportStartResponse: {
             /**
@@ -2826,22 +2891,6 @@ export interface components {
             question: string;
             /** @example 답변 */
             answer: string;
-        };
-        /** @description 공통 API 성공 응답 형식 */
-        ApiResponseDto: {
-            /**
-             * Format: int32
-             * @description HTTP 상태 코드
-             * @example 200
-             */
-            status?: number;
-            /**
-             * @description 응답 메시지
-             * @example OK
-             */
-            message?: string;
-            /** @description 응답 데이터 */
-            data?: unknown;
         };
         /** @description 오늘의 리포트 조회 응답 */
         DailyReportResponse: {
@@ -4569,6 +4618,59 @@ export interface operations {
              *     - ErrorCode: MONTHLY_REPORT_IN_PROGRESS - 현재 월간 리포트를 생성 중임
              */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    withdrawUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WithdrawalRequestV2"];
+            };
+        };
+        responses: {
+            /** @description 탈퇴 성공 */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseDto"];
+                };
+            };
+            /**
+             * @description - ErrorCode: AUTH_WITHDRAWAL_REASON_REQUIRED - 사유 미선택
+             *     - ErrorCode: AUTH_WITHDRAWAL_REASON_DUPLICATED - 사유 중복 선택
+             *     - ErrorCode: AUTH_WITHDRAWAL_OTHER_REASON_REQUIRED - OTHER 선택 후 기타 사유 미입력
+             *     - ErrorCode: AUTH_WITHDRAWAL_OTHER_REASON_TOO_LONG - 기타 사유 200자 초과
+             *     - ErrorCode: AUTH_WITHDRAWAL_OTHER_REASON_NOT_ALLOWED - OTHER 미선택인데 기타 사유 입력
+             *     - ErrorCode: AUTH_ALREADY_WITHDRAWN - 이미 탈퇴된 계정
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description 인증 실패 (JWT 토큰 관련)
+             *     - ErrorCode: AUTH_TOKEN_EXPIRED - JWT Access Token 만료
+             *     - ErrorCode: AUTH_TOKEN_SIGNATURE_INVALID - 토큰 서명 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_MALFORMED - 토큰 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_VERIFICATION_FAILED - 토큰 검증 실패
+             *     - ErrorCode: AUTH_TOKEN_USERID_INVALID - 토큰의 유저 ID 형식 오류
+             *     - ErrorCode: AUTH_TOKEN_ROLES_MISSING - 토큰에 권한 정보 없음
+             */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6555,7 +6657,7 @@ export interface operations {
             };
         };
     };
-    withdrawUser: {
+    withdrawUser_1: {
         parameters: {
             query?: never;
             header?: never;

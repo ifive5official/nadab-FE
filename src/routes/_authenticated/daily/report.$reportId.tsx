@@ -74,13 +74,7 @@ function RouteComponent() {
   return (
     <>
       <SubHeader showBackButton={false}>오늘의 리포트</SubHeader>
-      <Container>
-        {isReady && (friends?.totalCount ?? 0) > 0 && (
-          <ShareBanner
-            type="closable"
-            toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
-          />
-        )}
+      <Container hasBottomPadding={false}>
         <div className="flex-1 flex flex-col gap-gap-y-xl py-padding-y-m">
           <QuestionSection
             question={{
@@ -114,12 +108,24 @@ function RouteComponent() {
                 );
               })}
             </div>
+            <BlockButton
+              disabled={!isReady}
+              onClick={() => navigate({ to: "/" })}
+              className="mt-gap-y-l"
+            >
+              홈으로 돌아가기
+            </BlockButton>
           </div>
         </div>
-
-        <BlockButton disabled={!isReady} onClick={() => navigate({ to: "/" })}>
-          홈으로 돌아가기
-        </BlockButton>
+        {/* {isReady && (friends?.totalCount ?? 0) > 0 && (
+          <ShareBanner
+            type="closable"
+            toastBottom="bottom-[calc(var(--spacing-margin-y-xxxl)+var(--safe-bottom))]"
+          />
+        )} */}
+        {isReady && (friends?.totalCount ?? 0) > 0 && (
+          <ShareBanner type="closable" />
+        )}
       </Container>
     </>
   );

@@ -50,6 +50,7 @@ export default defineConfig([
       "temp.js",
       "config/*",
       "eslint.config.mjs",
+      "scripts/*.mjs",
       "**/routeTree.gen.ts",
     ],
   },

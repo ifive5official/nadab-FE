@@ -4,18 +4,21 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import type { AxiosError } from "axios";
 import type { ApiErrResponse } from "@/generated/api";
+import type { components } from "@/generated/api-types";
 import useAuthStore from "@/store/authStore";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import { usePushNotifications } from "@/hooks/usePushManager";
+
+type WithdrawalRequestV2 = components["schemas"]["WithdrawalRequestV2"];
 
 export function useWithDrawMutation() {
   const clearAuth = useAuthStore.use.clearAuth();
   const { unregisterPush } = usePushNotifications();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (payload: WithdrawalRequestV2) => {
       await unregisterPush();
-      await api.post("/api/v1/auth/withdrawal");
+      await api.post("/api/v2/auth/withdrawal", payload);
     },
     onSuccess: () => {
       clearAuth();
