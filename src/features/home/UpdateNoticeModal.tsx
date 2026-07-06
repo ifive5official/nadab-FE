@@ -46,7 +46,9 @@ export default function UpdateNoticeModal({
   };
 
   const dismissHomeVersion = (onSuccess: () => void) => {
-    if (!dismissed || !data?.appVersionId) {
+    const shouldDismissHomeVersion = !isOutdated || dismissed;
+
+    if (!shouldDismissHomeVersion || !data?.appVersionId) {
       onSuccess();
       return;
     }
