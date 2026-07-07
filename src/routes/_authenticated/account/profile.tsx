@@ -8,7 +8,7 @@ import ProfileImageUploader from "@/features/user/components/ProfileImageUploade
 import BlockButton from "@/components/BlockButton";
 import InputField, { InputFieldWithButton } from "@/components/InputFields";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import { useDeleteProfileMutation } from "@/features/user/hooks/useDeleteProfileImageMutation";
 import Container from "@/components/Container";
 import { useProfileImageUpload } from "@/hooks/useProfileImageUpload";

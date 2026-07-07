@@ -1,7 +1,7 @@
 // 주간/월간 리포트 불러오기(폴링 포함)
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import type { components } from "@/generated/api-types";
-import { periodicReportOptions } from "../quries";
+import { periodicReportOptions } from "../queries";
 import useModalStore from "@/store/modalStore";
 import { REPORT_CONFIGS } from "../reportConfigs";
 import { useEffect } from "react";

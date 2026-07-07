@@ -1,7 +1,7 @@
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 // import SpeechBalloon from "@/components/Speechballoon";

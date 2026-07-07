@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import useModalStore from "@/store/modalStore";
-import { monthlyReportV2Options } from "../quries";
+import { monthlyReportV2Options } from "../queries";
 
 const GENERATING_STATUSES = ["PENDING", "IN_PROGRESS", "TEXT_COMPLETED"];
 

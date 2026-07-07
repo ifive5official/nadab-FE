@@ -5,7 +5,7 @@ import StepTitle from "@/features/auth/StepTitle";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import { useWithDrawMutation } from "@/features/auth/hooks/useWithDrawMutation";
 import Container from "@/components/Container";
 import type { components } from "@/generated/api-types";

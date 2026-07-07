@@ -9,7 +9,7 @@ import { MonthlyReportV2Slides } from "@/features/report/monthly-v2/MonthlyRepor
 import {
   monthlyReportV2DetailOptions,
   monthlyReportV2Options,
-} from "@/features/report/quries";
+} from "@/features/report/queries";
 import type { components } from "@/generated/api-types";
 import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import useModalStore from "@/store/modalStore";

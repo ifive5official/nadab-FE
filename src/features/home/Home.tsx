@@ -1,6 +1,6 @@
 import { MainHeader } from "@/components/Headers";
 import { useSuspenseQueries } from "@tanstack/react-query";
-import { currentUserOptions } from "../user/quries";
+import { currentUserOptions } from "../user/queries";
 import Tabs from "@/components/Tabs";
 import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";

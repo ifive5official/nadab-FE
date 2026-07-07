@@ -21,7 +21,7 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/react-query";
-import { currentUserOptions } from "../user/quries";
+import { currentUserOptions } from "../user/queries";
 import type { CurrentUser } from "@/types/currentUser";
 import { useEffect } from "react";
 import type { AxiosError } from "axios";

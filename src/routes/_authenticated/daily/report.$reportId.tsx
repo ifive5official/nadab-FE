@@ -3,7 +3,7 @@ import BlockButton from "@/components/BlockButton";
 import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import { QuestionSection } from "@/features/daily/QuestionSection";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { dailyReportOptions } from "@/features/report/quries";
+import { dailyReportOptions } from "@/features/report/queries";
 import emotions from "@/constants/emotions";
 import ReportMessage from "@/features/report/ReportMessage";
 import axios from "axios";

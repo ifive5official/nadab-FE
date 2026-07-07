@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { crystalsOptions } from "../user/quries";
+import { crystalsOptions } from "../user/queries";
 import useReport from "./hooks/useReport";
 import PeriodicReportCard from "./PeriodicReportCard";
 import { useGeneratePeriodicReportMutation } from "./hooks/useGeneratePeriodicReportMutation";

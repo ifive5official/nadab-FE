@@ -21,7 +21,7 @@ import clsx from "clsx";
 import { useQueries } from "@tanstack/react-query";
 
 import { CrystalBadge } from "./Badges";
-import { crystalsOptions } from "@/features/user/quries";
+import { crystalsOptions } from "@/features/user/queries";
 import { api } from "@/lib/axios";
 import type { ApiErrResponse } from "@/generated/api";
 import type { components } from "@/generated/api-types";

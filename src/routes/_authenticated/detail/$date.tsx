@@ -7,11 +7,11 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { QuestionBadge, EmotionBadge } from "@/components/Badges";
-import { answerOptions } from "@/features/report/quries";
+import { answerOptions } from "@/features/report/queries";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import categories from "@/constants/categories";
 import emotions from "@/constants/emotions";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import {
   AccordionIcon,
   FeedHeartIcon,

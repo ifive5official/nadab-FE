@@ -23,7 +23,7 @@ import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { recentOptions } from "@/features/calendar/queries";
 import BlockButton from "@/components/BlockButton";
-import { answerOptions } from "@/features/report/quries";
+import { answerOptions } from "@/features/report/queries";
 import Container from "@/components/Container";
 import Loading from "@/components/Loading";
 

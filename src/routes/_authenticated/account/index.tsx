@@ -8,7 +8,7 @@ import NotificationSection from "@/features/user/components/NotificationSection"
 import ThemeSection from "@/features/user/components/ThemeSection";
 import useThemeStore from "@/store/useThemeStore";
 import ProfileSection from "@/features/user/components/ProfileSection";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import AccountSection from "@/features/user/components/AccountSection";
 import DeveloperSection from "@/features/user/components/DeveloperSection";
 import Container from "@/components/Container";

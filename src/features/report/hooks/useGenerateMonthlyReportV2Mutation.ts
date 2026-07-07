@@ -6,7 +6,7 @@ import { api } from "@/lib/axios";
 import { handleDefaultApiError } from "@/lib/handleDefaultError";
 import useErrorStore from "@/store/modalStore";
 import { REPORT_CONFIGS } from "../reportConfigs";
-import { monthlyReportV2Options } from "../quries";
+import { monthlyReportV2Options } from "../queries";
 import { startMonthlyReportV2Fixture } from "../monthlyReportFixtures";
 
 type MonthlyReportStartResponse =

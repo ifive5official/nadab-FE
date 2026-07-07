@@ -9,7 +9,7 @@ import {
   monthlyReportV1DetailOptions,
   monthlyReportV2Options,
   periodicReportOptions,
-} from "@/features/report/quries";
+} from "@/features/report/queries";
 import BlockButton from "@/components/BlockButton";
 import useErrorStore from "@/store/modalStore";
 import { REPORT_CONFIGS } from "@/features/report/reportConfigs";

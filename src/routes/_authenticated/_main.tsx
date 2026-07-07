@@ -1,6 +1,6 @@
 import { MainHeader } from "@/components/Headers";
 import Tabs from "@/components/Tabs";
-import { currentUserOptions } from "@/features/user/quries";
+import { currentUserOptions } from "@/features/user/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 

@@ -8,7 +8,7 @@ import {
   monthlyReportV2Options,
   periodicReportOptions,
   typeReportOptions,
-} from "@/features/report/quries";
+} from "@/features/report/queries";
 import Loading from "@/components/Loading";
 
 type Tab = "periodic" | "type";

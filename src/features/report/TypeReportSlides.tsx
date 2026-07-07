@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { useRef } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { crystalsOptions, currentUserOptions } from "../user/quries";
+import { crystalsOptions, currentUserOptions } from "../user/queries";
 import useModalStore from "@/store/modalStore";
 import type { components } from "@/generated/api-types";
 import { hasLastConsonant } from "@/lib/hasLastConsonant";

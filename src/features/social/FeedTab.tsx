@@ -5,7 +5,7 @@ import { feedOptions, friendsOptions } from "./queries";
 import ShareBanner from "@/components/ShareBanner";
 import NoResult from "@/components/NoResult";
 import Seperator from "@/components/Seperator";
-import { currentUserOptions } from "../user/quries";
+import { currentUserOptions } from "../user/queries";
 import clsx from "clsx";
 
 export default function FeedTab() {

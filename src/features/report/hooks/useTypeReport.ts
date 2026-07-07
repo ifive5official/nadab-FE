@@ -1,6 +1,6 @@
 // 유형 리포트 전체 가져오기(폴링 포함)
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { typeReportOptions } from "../quries";
+import { typeReportOptions } from "../queries";
 import { useEffect } from "react";
 import type { components } from "@/generated/api-types";
 import useModalStore from "@/store/modalStore";
