@@ -8,6 +8,7 @@ import {
   getMonthlyReportV1Fixture,
   getMonthlyReportV2Fixture,
 } from "./monthlyReportFixtures";
+import useDeveloperOptionsStore from "@/store/developerOptionsStore";
 
 type ReportRes = components["schemas"]["AnswerDetailResponse"];
 
@@ -70,6 +71,13 @@ export const monthlyReportV2Options = queryOptions({
 export const allReportsOptions = queryOptions({
   queryKey: ["currentUser", "reports", "history"] as const,
   queryFn: async () => {
+    if (
+      !import.meta.env.PROD &&
+      useDeveloperOptionsStore.getState().isReportHistoryEmptyQaEnabled
+    ) {
+      return [];
+    }
+
     const res = await api.get<ApiResponse<unknown>>(
       "/api/v2/monthly-report/all",
     );

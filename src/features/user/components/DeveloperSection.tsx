@@ -42,6 +42,8 @@ export default function DeveloperSection() {
   const {
     isUpdateNoticeOutdatedQaEnabled,
     toggleUpdateNoticeOutdatedQa,
+    isReportHistoryEmptyQaEnabled,
+    toggleReportHistoryEmptyQa,
   } = useDeveloperOptionsStore();
   const deleteWeeklyReportMutation = useDeleteWeeklyReportMutation();
   const deleteMonthlyReportMutation = useDeleteMonthlyReportMutation();
@@ -94,6 +96,14 @@ export default function DeveloperSection() {
   const resetUpdateNoticeSession = () => {
     window.sessionStorage.removeItem(UPDATE_NOTICE_SHOWN_SESSION_KEY);
     showToast({ message: "업데이트 알림 세션 기록을 초기화했어요." });
+  };
+
+  const toggleReportHistoryEmptyQaMode = () => {
+    toggleReportHistoryEmptyQa();
+    queryClient.invalidateQueries({
+      queryKey: ["currentUser", "reports", "history"],
+    });
+    showToast({ message: "이전 리포트 빈 목록 QA 모드를 변경했어요." });
   };
 
   const deleteWeeklyReport = () => {
@@ -162,6 +172,15 @@ export default function DeveloperSection() {
           <Switch
             isOn={isUpdateNoticeOutdatedQaEnabled}
             onClick={toggleUpdateNoticeOutdatedQa}
+          />
+        }
+      />
+      <SectionItem
+        title="이전 리포트 빈 목록 QA 모드"
+        rightElement={
+          <Switch
+            isOn={isReportHistoryEmptyQaEnabled}
+            onClick={toggleReportHistoryEmptyQaMode}
           />
         }
       />

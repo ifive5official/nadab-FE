@@ -5,6 +5,8 @@ import createSelectors from "./createSelectors";
 type DeveloperOptionsState = {
   isUpdateNoticeOutdatedQaEnabled: boolean;
   toggleUpdateNoticeOutdatedQa: () => void;
+  isReportHistoryEmptyQaEnabled: boolean;
+  toggleReportHistoryEmptyQa: () => void;
 };
 
 const useDeveloperOptionsStoreBase = create<DeveloperOptionsState>()(
@@ -15,6 +17,12 @@ const useDeveloperOptionsStoreBase = create<DeveloperOptionsState>()(
         set((state) => ({
           isUpdateNoticeOutdatedQaEnabled:
             !state.isUpdateNoticeOutdatedQaEnabled,
+        })),
+      isReportHistoryEmptyQaEnabled: false,
+      toggleReportHistoryEmptyQa: () =>
+        set((state) => ({
+          isReportHistoryEmptyQaEnabled:
+            !state.isReportHistoryEmptyQaEnabled,
         })),
     }),
     {
