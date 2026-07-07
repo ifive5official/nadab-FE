@@ -9,6 +9,8 @@ import useToastStore from "@/store/toastStore";
 import Seperator from "@/components/Seperator";
 import useMonthlyReportV2 from "./hooks/useMonthlyReportV2";
 import MonthlyReportV2Card from "./MonthlyReportV2Card";
+import { AppIcon } from "@/components/AppIcon";
+import { Link } from "@tanstack/react-router";
 
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
@@ -39,6 +41,22 @@ export default function PeriodicReportTab() {
 
   return (
     <>
+      <Seperator />
+      <Link to="/report/history" className="py-padding-y-l">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col">
+            <span className="text-caption-m text-text-primary">
+              이전 리포트 보기
+            </span>
+            <span className="text-caption-s text-text-tertiary">
+              지금까지 생성된 모든 리포트를 확인해보세요.
+            </span>
+          </div>
+          <div>
+            <AppIcon name="chevron-right" />
+          </div>
+        </div>
+      </Link>
       <Seperator />
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
         <MonthlyReportV2Card

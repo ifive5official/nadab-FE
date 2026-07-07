@@ -25,6 +25,7 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
 import { Route as AuthenticatedSocialBlockedRouteImport } from './routes/_authenticated/social/blocked'
+import { Route as AuthenticatedReportHistoryRouteImport } from './routes/_authenticated/report/history'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
@@ -49,6 +50,7 @@ import { Route as AuthenticatedFlagReportReportIdRouteImport } from './routes/_a
 import { Route as AuthenticatedFlagCommentCommentIdRouteImport } from './routes/_authenticated/flag/comment.$commentId'
 import { Route as AuthenticatedDailyReportReportIdRouteImport } from './routes/_authenticated/daily/report.$reportId'
 import { Route as authAuthProviderCallbackRouteImport } from './routes/(auth)/auth.$provider.callback'
+import { Route as AuthenticatedReportHistoryReportTypeReportIdRouteImport } from './routes/_authenticated/report/history.$reportType.$reportId'
 import { Route as AuthenticatedDetailDatePostIdLikesRouteImport } from './routes/_authenticated/detail/$date.$postId.likes'
 import { Route as AuthenticatedDetailDatePostIdCommentsRouteImport } from './routes/_authenticated/detail/$date.$postId.comments'
 import { Route as AuthenticatedMainSocialPostIdLikesRouteImport } from './routes/_authenticated/_main/social/$postId.likes'
@@ -138,6 +140,12 @@ const AuthenticatedSocialBlockedRoute =
   AuthenticatedSocialBlockedRouteImport.update({
     id: '/social/blocked',
     path: '/social/blocked',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportHistoryRoute =
+  AuthenticatedReportHistoryRouteImport.update({
+    id: '/report/history',
+    path: '/report/history',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDetailDateRoute = AuthenticatedDetailDateRouteImport.update({
@@ -271,6 +279,12 @@ const authAuthProviderCallbackRoute =
     path: '/auth/$provider/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedReportHistoryReportTypeReportIdRoute =
+  AuthenticatedReportHistoryReportTypeReportIdRouteImport.update({
+    id: '/$reportType/$reportId',
+    path: '/$reportType/$reportId',
+    getParentRoute: () => AuthenticatedReportHistoryRoute,
+  } as any)
 const AuthenticatedDetailDatePostIdLikesRoute =
   AuthenticatedDetailDatePostIdLikesRouteImport.update({
     id: '/$postId/likes',
@@ -334,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
+  '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -351,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
   '/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
+  '/report/history/$reportType/$reportId': typeof AuthenticatedReportHistoryReportTypeReportIdRoute
   '/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
   '/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
@@ -380,6 +396,7 @@ export interface FileRoutesByTo {
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
+  '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -397,6 +414,7 @@ export interface FileRoutesByTo {
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
   '/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
+  '/report/history/$reportType/$reportId': typeof AuthenticatedReportHistoryReportTypeReportIdRoute
   '/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
   '/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
@@ -429,6 +447,7 @@ export interface FileRoutesById {
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
+  '/_authenticated/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
   '/_authenticated/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
@@ -446,6 +465,7 @@ export interface FileRoutesById {
   '/_authenticated/_main/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/_authenticated/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
   '/_authenticated/detail/$date/$postId/likes': typeof AuthenticatedDetailDatePostIdLikesRoute
+  '/_authenticated/report/history/$reportType/$reportId': typeof AuthenticatedReportHistoryReportTypeReportIdRoute
   '/_authenticated/_main/social/$postId/comments/$commentId/likes': typeof AuthenticatedMainSocialPostIdCommentsCommentIdLikesRoute
   '/_authenticated/detail/$date/$postId/comments/$commentId/likes': typeof AuthenticatedDetailDatePostIdCommentsCommentIdLikesRoute
 }
@@ -477,6 +497,7 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
+    | '/report/history'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -494,6 +515,7 @@ export interface FileRouteTypes {
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
     | '/detail/$date/$postId/likes'
+    | '/report/history/$reportType/$reportId'
     | '/social/$postId/comments/$commentId/likes'
     | '/detail/$date/$postId/comments/$commentId/likes'
   fileRoutesByTo: FileRoutesByTo
@@ -523,6 +545,7 @@ export interface FileRouteTypes {
     | '/account/withdraw'
     | '/daily/write'
     | '/detail/$date'
+    | '/report/history'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -540,6 +563,7 @@ export interface FileRouteTypes {
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
     | '/detail/$date/$postId/likes'
+    | '/report/history/$reportType/$reportId'
     | '/social/$postId/comments/$commentId/likes'
     | '/detail/$date/$postId/comments/$commentId/likes'
   id:
@@ -571,6 +595,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/withdraw'
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
+    | '/_authenticated/report/history'
     | '/_authenticated/social/blocked'
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
@@ -588,6 +613,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_main/social/$postId/likes'
     | '/_authenticated/detail/$date/$postId/comments'
     | '/_authenticated/detail/$date/$postId/likes'
+    | '/_authenticated/report/history/$reportType/$reportId'
     | '/_authenticated/_main/social/$postId/comments/$commentId/likes'
     | '/_authenticated/detail/$date/$postId/comments/$commentId/likes'
   fileRoutesById: FileRoutesById
@@ -716,6 +742,13 @@ declare module '@tanstack/react-router' {
       path: '/social/blocked'
       fullPath: '/social/blocked'
       preLoaderRoute: typeof AuthenticatedSocialBlockedRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/report/history': {
+      id: '/_authenticated/report/history'
+      path: '/report/history'
+      fullPath: '/report/history'
+      preLoaderRoute: typeof AuthenticatedReportHistoryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/detail/$date': {
@@ -886,6 +919,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthProviderCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/report/history/$reportType/$reportId': {
+      id: '/_authenticated/report/history/$reportType/$reportId'
+      path: '/$reportType/$reportId'
+      fullPath: '/report/history/$reportType/$reportId'
+      preLoaderRoute: typeof AuthenticatedReportHistoryReportTypeReportIdRouteImport
+      parentRoute: typeof AuthenticatedReportHistoryRoute
+    }
     '/_authenticated/detail/$date/$postId/likes': {
       id: '/_authenticated/detail/$date/$postId/likes'
       path: '/$postId/likes'
@@ -1012,6 +1052,21 @@ const AuthenticatedDetailDateRouteWithChildren =
     AuthenticatedDetailDateRouteChildren,
   )
 
+interface AuthenticatedReportHistoryRouteChildren {
+  AuthenticatedReportHistoryReportTypeReportIdRoute: typeof AuthenticatedReportHistoryReportTypeReportIdRoute
+}
+
+const AuthenticatedReportHistoryRouteChildren: AuthenticatedReportHistoryRouteChildren =
+  {
+    AuthenticatedReportHistoryReportTypeReportIdRoute:
+      AuthenticatedReportHistoryReportTypeReportIdRoute,
+  }
+
+const AuthenticatedReportHistoryRouteWithChildren =
+  AuthenticatedReportHistoryRoute._addFileChildren(
+    AuthenticatedReportHistoryRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedMainRoute: typeof AuthenticatedMainRouteWithChildren
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
@@ -1019,6 +1074,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRouteWithChildren
+  AuthenticatedReportHistoryRoute: typeof AuthenticatedReportHistoryRouteWithChildren
   AuthenticatedSocialBlockedRoute: typeof AuthenticatedSocialBlockedRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
@@ -1040,6 +1096,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRouteWithChildren,
+  AuthenticatedReportHistoryRoute: AuthenticatedReportHistoryRouteWithChildren,
   AuthenticatedSocialBlockedRoute: AuthenticatedSocialBlockedRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,

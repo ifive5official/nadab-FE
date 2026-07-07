@@ -24,11 +24,14 @@ export const dailyReportOptions = (reportId: number) =>
   });
 
 type weeklyReportsRes = components["schemas"]["MyWeeklyReportResponse"];
+type weeklyReportDetailRes = components["schemas"]["WeeklyReportResponse"];
 type monthlyReportRes = components["schemas"]["MyMonthlyReportResponse"];
 type monthlyReportLookupResV2 =
   components["schemas"]["MyMonthlyReportLookupResponseV2"];
 type monthlyReportDetailRes = components["schemas"]["MonthlyReportResponse"];
 type monthlyReportResV2 = components["schemas"]["MonthlyReportResponseV2"];
+export type AllReportItem =
+  components["schemas"]["AllReportItemResponseV2"];
 
 type ReportTypeMap = {
   weekly: weeklyReportsRes;
@@ -64,6 +67,29 @@ export const monthlyReportV2Options = queryOptions({
   },
 });
 
+export const allReportsOptions = queryOptions({
+  queryKey: ["currentUser", "reports", "history"] as const,
+  queryFn: async () => {
+    const res = await api.get<ApiResponse<unknown>>(
+      "/api/v2/monthly-report/all",
+    );
+
+    return normalizeAllReportsResponse(res.data.data);
+  },
+});
+
+export const weeklyReportDetailOptions = (reportId: number) =>
+  queryOptions({
+    queryKey: ["currentUser", "weekly-report", reportId] as const,
+    queryFn: async () => {
+      const res = await api.get<ApiResponse<weeklyReportDetailRes>>(
+        `/api/v1/weekly-report/${reportId}`,
+      );
+      return res.data.data!;
+    },
+    enabled: !!reportId,
+  });
+
 export const monthlyReportV1DetailOptions = (reportId: number) =>
   queryOptions({
     queryKey: ["currentUser", "monthly-report-v1", reportId] as const,
@@ -93,6 +119,30 @@ export const monthlyReportV2DetailOptions = (reportId: number) =>
     },
     enabled: !!reportId,
   });
+
+function normalizeAllReportsResponse(data: unknown): AllReportItem[] {
+  if (Array.isArray(data)) {
+    return data.filter(isAllReportItem);
+  }
+
+  if (isRecord(data) && Array.isArray(data.reports)) {
+    return data.reports.filter(isAllReportItem);
+  }
+
+  if (isAllReportItem(data)) {
+    return [data];
+  }
+
+  return [];
+}
+
+function isAllReportItem(data: unknown): data is AllReportItem {
+  return isRecord(data) && ("id" in data || "type" in data || "period" in data);
+}
+
+function isRecord(data: unknown): data is Record<string, unknown> {
+  return typeof data === "object" && data !== null;
+}
 
 type TypeReportRes = components["schemas"]["MyAllTypeReportsResponse"];
 
