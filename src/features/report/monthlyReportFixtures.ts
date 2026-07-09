@@ -1,4 +1,5 @@
 import type { components } from "@/generated/api-types";
+import { isQaToolsEnabled } from "@/lib/qaTools";
 
 type MonthlyReportLookup =
   components["schemas"]["MyMonthlyReportLookupResponseV2"];
@@ -53,7 +54,7 @@ const scenarios = new Set<MonthlyReportFixtureScenario>([
 export function getMonthlyReportFixtureScenario():
   | MonthlyReportFixtureScenario
   | null {
-  if (import.meta.env.PROD || typeof window === "undefined") return null;
+  if (!isQaToolsEnabled() || typeof window === "undefined") return null;
 
   const params = new URLSearchParams(window.location.search);
   const scenarioParam = params.get("monthlyReportFixture");
@@ -79,7 +80,7 @@ export function isMonthlyReportFixtureEnabled() {
 export function setMonthlyReportFixtureScenario(
   scenario: MonthlyReportFixtureScenario,
 ) {
-  if (import.meta.env.PROD || typeof window === "undefined") return;
+  if (!isQaToolsEnabled() || typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, scenario);
 }
 

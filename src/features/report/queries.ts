@@ -3,6 +3,7 @@ import type { ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
 import { REPORT_CONFIGS } from "./reportConfigs";
+import { isQaToolsEnabled } from "@/lib/qaTools";
 import {
   getMonthlyReportFixtureLookup,
   getMonthlyReportV1Fixture,
@@ -72,7 +73,7 @@ export const allReportsOptions = queryOptions({
   queryKey: ["currentUser", "reports", "history"] as const,
   queryFn: async () => {
     if (
-      !import.meta.env.PROD &&
+      isQaToolsEnabled() &&
       useDeveloperOptionsStore.getState().isReportHistoryEmptyQaEnabled
     ) {
       return [];
