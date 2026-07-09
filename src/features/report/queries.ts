@@ -34,6 +34,7 @@ type monthlyReportDetailRes = components["schemas"]["MonthlyReportResponse"];
 type monthlyReportResV2 = components["schemas"]["MonthlyReportResponseV2"];
 export type AllReportItem =
   components["schemas"]["AllReportItemResponseV2"];
+export type AllReportType = "ALL" | "WEEKLY" | "MONTHLY";
 
 type ReportTypeMap = {
   weekly: weeklyReportsRes;
@@ -69,23 +70,31 @@ export const monthlyReportV2Options = queryOptions({
   },
 });
 
-export const allReportsOptions = queryOptions({
-  queryKey: ["currentUser", "reports", "history"] as const,
-  queryFn: async () => {
-    if (
-      isQaToolsEnabled() &&
-      useDeveloperOptionsStore.getState().isReportHistoryEmptyQaEnabled
-    ) {
-      return [];
-    }
+const reportHistoryOptions = (type: AllReportType) =>
+  queryOptions({
+    queryKey: ["currentUser", "reports", "history", type] as const,
+    queryFn: async () => {
+      if (
+        isQaToolsEnabled() &&
+        useDeveloperOptionsStore.getState().isReportHistoryEmptyQaEnabled
+      ) {
+        return [];
+      }
 
-    const res = await api.get<ApiResponse<unknown>>(
-      "/api/v2/monthly-report/all",
-    );
+      const res = await api.get<ApiResponse<unknown>>(
+        "/api/v2/monthly-report/all",
+        {
+          params: { type },
+        },
+      );
 
-    return normalizeAllReportsResponse(res.data.data);
-  },
-});
+      return normalizeAllReportsResponse(res.data.data);
+    },
+  });
+
+export const allReportsOptions = reportHistoryOptions("ALL");
+export const weeklyReportHistoryOptions = reportHistoryOptions("WEEKLY");
+export const monthlyReportHistoryOptions = reportHistoryOptions("MONTHLY");
 
 export const weeklyReportDetailOptions = (reportId: number) =>
   queryOptions({
