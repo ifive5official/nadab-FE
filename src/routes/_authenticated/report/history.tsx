@@ -23,7 +23,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { SectionDivider } from "@/features/user/components/AccountSectionComponents";
+import Seperator from "@/components/Seperator";
 
 const REPORTS_PER_PAGE = 5;
 const LOAD_MORE_DELAY_MS = 600;
@@ -143,8 +143,8 @@ function ReportHistoryList() {
           selected={selectedReportType}
           onChange={handleReportTypeChange}
         />
-        <div className="mt-margin-y-s -mx-margin-x-l -mb-margin-y-s">
-          <SectionDivider />
+        <div className="-mx-margin-x-l">
+          <Seperator className="mt-margin-y-l" />
         </div>
         {(isPending || reports.length > 0) && (
           <p className="text-caption-m mt-margin-y-m">

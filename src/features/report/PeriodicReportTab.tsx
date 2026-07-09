@@ -59,19 +59,19 @@ export default function PeriodicReportTab() {
       </Link>
       <Seperator />
       <div className="py-padding-y-m flex flex-col gap-gap-y-l">
-        <MonthlyReportV2Card
-          report={monthlyReportV2}
-          prevReport={prevMonthlyReportV2}
-          onGenerate={generateMonthlyReportV2Mutation.mutate}
-          isGenerating={isMonthlyReportV2Generating}
-          crystalBalance={crystalBalance?.crystalBalance ?? 0}
-        />
         <PeriodicReportCard
           reportType="weekly"
           report={weeklyReport}
           prevReport={prevWeeklyReport}
           onGenerate={generateWeeklyReportMutation.mutate}
           isGenerating={isWeeklyReportGenerating}
+          crystalBalance={crystalBalance?.crystalBalance ?? 0}
+        />
+        <MonthlyReportV2Card
+          report={monthlyReportV2}
+          prevReport={prevMonthlyReportV2}
+          onGenerate={generateMonthlyReportV2Mutation.mutate}
+          isGenerating={isMonthlyReportV2Generating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
       </div>
