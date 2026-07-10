@@ -1703,18 +1703,30 @@ export interface paths {
         };
         /**
          * 이전 리포트 목록 조회
-         * @description 주간/월간 이전 리포트를 통합 조회합니다.
+         * @description 주간/월간 이전 리포트를 통합 조회합니다. 응답은 페이지네이션 메타데이터를 포함한 객체입니다.
          *
          *     type: ALL | MONTHLY | WEEKLY
+         *     - ALL: 월간 리포트와 주간 리포트를 모두 조회합니다.
+         *     - MONTHLY: 월간 리포트만 조회합니다.
+         *     - WEEKLY: 주간 리포트만 조회합니다.
+         *
+         *     페이지네이션:
+         *     - page는 1부터 시작합니다. 기본값은 1입니다.
+         *     - size 기본값은 7이고, 최대 50까지 요청할 수 있습니다.
+         *     - data.items에는 현재 페이지의 리포트 목록이 들어갑니다.
+         *     - data.totalCount, data.totalPages, data.hasPrevious, data.hasNext로 페이지 UI를 구성할 수 있습니다.
+         *     - 조회 결과가 없으면 items는 빈 배열, totalCount와 totalPages는 0입니다.
          *
          *     정렬 순서:
-         *     1) 년-월 내림차순
-         *     2) 동일 월에서는 월간 먼저, 그 다음 주간(주차 내림차순)
+         *     1) 최신 연도/월 우선
+         *     2) 같은 월에서는 월간 리포트가 먼저 노출됩니다.
+         *     3) 주간 리포트는 주차가 큰 순서로 노출됩니다.
+         *     4) 같은 조건에서는 version 내림차순, id 내림차순으로 정렬됩니다.
          *
-         *     version 규칙:
-         *     - weekly: 값과 상관없이 GET /api/v1/weekly-report/{id} 로 조회
-         *     - monthly_reports - 1인 경우 : GET /api/v1/monthly-report/{id}로 조회 (기존의 레거시 버전)
-         *     - monthly_reports - 2인 경우 : GET /api/v2/monthly-report/{id}로 조회 (새로운 V2 버전)
+         *     상세 조회 라우팅:
+         *     - type = WEEKLY: GET /api/v1/weekly-report/{id}
+         *     - type = MONTHLY, version = 1: GET /api/v1/monthly-report/{id}
+         *     - type = MONTHLY, version = 2: GET /api/v2/monthly-report/{id}
          */
         get: operations["getAllReports"];
         put?: never;
@@ -3664,6 +3676,45 @@ export interface components {
              * @example 2
              */
             version?: number;
+        };
+        /** @description 이전 리포트 목록 페이지 응답 */
+        AllReportListResponseV2: {
+            /** @description 현재 페이지의 리포트 목록. 각 item의 type/version/id로 상세 조회 API를 선택합니다. */
+            items?: components["schemas"]["AllReportItemResponseV2"][];
+            /**
+             * Format: int32
+             * @description 조회 조건에 맞는 전체 리포트 개수
+             * @example 43
+             */
+            totalCount?: number;
+            /**
+             * Format: int32
+             * @description 현재 페이지 번호(1부터 시작)
+             * @example 1
+             */
+            currentPage?: number;
+            /**
+             * Format: int32
+             * @description 요청한 페이지 크기
+             * @example 7
+             */
+            pageSize?: number;
+            /**
+             * Format: int32
+             * @description 전체 페이지 수. 조회 결과가 없으면 0입니다.
+             * @example 7
+             */
+            totalPages?: number;
+            /**
+             * @description 이전 페이지 존재 여부. 이전 버튼 활성화에 사용할 수 있습니다.
+             * @example false
+             */
+            hasPrevious?: boolean;
+            /**
+             * @description 다음 페이지 존재 여부. 다음 버튼 활성화에 사용할 수 있습니다.
+             * @example true
+             */
+            hasNext?: boolean;
         };
         /** @description 나의 주간 리포트 조회 응답 */
         MyWeeklyReportResponse: {
@@ -7855,7 +7906,21 @@ export interface operations {
     getAllReports: {
         parameters: {
             query?: {
+                /**
+                 * @description 리포트 목록 타입: ALL | MONTHLY | WEEKLY
+                 * @example ALL
+                 */
                 type?: "ALL" | "MONTHLY" | "WEEKLY";
+                /**
+                 * @description 페이지 번호(1부터 시작)
+                 * @example 1
+                 */
+                page?: number;
+                /**
+                 * @description 페이지 크기(기본 7, 최대 50)
+                 * @example 7
+                 */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -7863,14 +7928,21 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 전체 리포트 목록 조회 성공 */
+            /** @description 이전 리포트 목록 페이지 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AllReportItemResponseV2"];
+                    "application/json": components["schemas"]["AllReportListResponseV2"];
                 };
+            };
+            /** @description - ErrorCode: VALIDATION_FAILED - page는 1 이상, size는 1 이상 50 이하로 요청해야 함 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description 인증 실패 */
             401: {

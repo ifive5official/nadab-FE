@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/generated/api";
 import { api } from "@/lib/axios";
 import type { components } from "@/generated/api-types";
@@ -34,7 +34,10 @@ type monthlyReportDetailRes = components["schemas"]["MonthlyReportResponse"];
 type monthlyReportResV2 = components["schemas"]["MonthlyReportResponseV2"];
 export type AllReportItem =
   components["schemas"]["AllReportItemResponseV2"];
+type AllReportListResponse =
+  components["schemas"]["AllReportListResponseV2"];
 export type AllReportType = "ALL" | "WEEKLY" | "MONTHLY";
+const REPORT_HISTORY_PAGE_SIZE = 7;
 
 type ReportTypeMap = {
   weekly: weeklyReportsRes;
@@ -71,25 +74,32 @@ export const monthlyReportV2Options = queryOptions({
 });
 
 const reportHistoryOptions = (type: AllReportType) =>
-  queryOptions({
+  infiniteQueryOptions({
     queryKey: ["currentUser", "reports", "history", type] as const,
-    queryFn: async () => {
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const page = typeof pageParam === "number" ? pageParam : 1;
+
       if (
         isQaToolsEnabled() &&
         useDeveloperOptionsStore.getState().isReportHistoryEmptyQaEnabled
       ) {
-        return [];
+        return createEmptyAllReportListPage(page);
       }
 
-      const res = await api.get<ApiResponse<unknown>>(
+      const res = await api.get<ApiResponse<AllReportListResponse>>(
         "/api/v2/monthly-report/all",
         {
-          params: { type },
+          params: { type, page, size: REPORT_HISTORY_PAGE_SIZE },
         },
       );
 
-      return normalizeAllReportsResponse(res.data.data);
+      return normalizeAllReportListResponse(res.data.data, page);
     },
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.hasNext
+        ? (lastPage.currentPage ?? pages.length) + 1
+        : undefined,
   });
 
 export const allReportsOptions = reportHistoryOptions("ALL");
@@ -138,20 +148,42 @@ export const monthlyReportV2DetailOptions = (reportId: number) =>
     enabled: !!reportId,
   });
 
-function normalizeAllReportsResponse(data: unknown): AllReportItem[] {
-  if (Array.isArray(data)) {
-    return data.filter(isAllReportItem);
+// 이전 리포트 목록 페이지 응답을 안전한 pagination shape로 맞춥니다.
+function normalizeAllReportListResponse(
+  data: AllReportListResponse | undefined,
+  page: number,
+): AllReportListResponse {
+  if (!isRecord(data)) {
+    return createEmptyAllReportListPage(page);
   }
 
-  if (isRecord(data) && Array.isArray(data.reports)) {
-    return data.reports.filter(isAllReportItem);
-  }
+  return {
+    items: Array.isArray(data.items) ? data.items.filter(isAllReportItem) : [],
+    totalCount: typeof data.totalCount === "number" ? data.totalCount : 0,
+    currentPage:
+      typeof data.currentPage === "number" ? data.currentPage : page,
+    pageSize:
+      typeof data.pageSize === "number"
+        ? data.pageSize
+        : REPORT_HISTORY_PAGE_SIZE,
+    totalPages: typeof data.totalPages === "number" ? data.totalPages : 0,
+    hasPrevious:
+      typeof data.hasPrevious === "boolean" ? data.hasPrevious : page > 1,
+    hasNext: typeof data.hasNext === "boolean" ? data.hasNext : false,
+  };
+}
 
-  if (isAllReportItem(data)) {
-    return [data];
-  }
-
-  return [];
+// QA 빈 목록 모드에서도 실제 pagination 응답과 같은 모양을 반환합니다.
+function createEmptyAllReportListPage(page: number): AllReportListResponse {
+  return {
+    items: [],
+    totalCount: 0,
+    currentPage: page,
+    pageSize: REPORT_HISTORY_PAGE_SIZE,
+    totalPages: 0,
+    hasPrevious: page > 1,
+    hasNext: false,
+  };
 }
 
 function isAllReportItem(data: unknown): data is AllReportItem {

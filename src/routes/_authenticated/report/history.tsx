@@ -14,7 +14,7 @@ import {
   weeklyReportHistoryOptions,
 } from "@/features/report/queries";
 import { currentUserOptions } from "@/features/user/queries";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   Link,
@@ -25,8 +25,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Seperator from "@/components/Seperator";
 
-const REPORTS_PER_PAGE = 5;
-const LOAD_MORE_DELAY_MS = 600;
 const SCROLL_TOP_BUTTON_THRESHOLD = 320;
 
 const REPORT_TYPE_FILTER_OPTIONS: {
@@ -47,7 +45,7 @@ const REPORT_HISTORY_NO_RESULT_DESCRIPTION =
 
 export const Route = createFileRoute("/_authenticated/report/history")({
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(allReportsOptions),
+    queryClient.ensureInfiniteQueryData(allReportsOptions),
   component: RouteComponent,
 });
 
@@ -64,42 +62,23 @@ function RouteComponent() {
 function ReportHistoryList() {
   const [selectedReportType, setSelectedReportType] =
     useState<AllReportType>("ALL");
-  const { data: reports = [], isPending } = useQuery(
-    getReportHistoryOptions(selectedReportType),
-  );
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+  } = useInfiniteQuery(getReportHistoryOptions(selectedReportType));
   const { data: currentUser } = useQuery(currentUserOptions);
-  const [visibleCount, setVisibleCount] = useState(REPORTS_PER_PAGE);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
   const containerRef = useRef<HTMLElement>(null);
-  const loadMoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { ref } = useInView({
-    onChange: (inView) => {
-      if (
-        !inView ||
-        isLoadingMore ||
-        loadMoreTimerRef.current ||
-        visibleCount >= reports.length
-      ) {
-        return;
-      }
-
-      setIsLoadingMore(true);
-      loadMoreTimerRef.current = setTimeout(() => {
-        setVisibleCount((prev) =>
-          Math.min(prev + REPORTS_PER_PAGE, reports.length),
-        );
-        setIsLoadingMore(false);
-        loadMoreTimerRef.current = null;
-      }, LOAD_MORE_DELAY_MS);
-    },
-  });
-  const visibleReports = useMemo(
-    () => reports.slice(0, visibleCount),
-    [reports, visibleCount],
+  const { ref, inView } = useInView();
+  const reports = useMemo(
+    () => data?.pages.flatMap((page) => page.items ?? []) ?? [],
+    [data],
   );
-  const hasNextPage = visibleCount < reports.length;
+  const totalCount = data?.pages[0]?.totalCount ?? 0;
   const noResultProps = getReportHistoryNoResultProps(
     selectedReportType,
     currentUser?.nickname,
@@ -115,24 +94,14 @@ function ReportHistoryList() {
   };
 
   useEffect(() => {
-    return () => {
-      if (loadMoreTimerRef.current) {
-        clearTimeout(loadMoreTimerRef.current);
-      }
-    };
-  }, []);
+    if (!inView || !hasNextPage || isFetchingNextPage) return;
+
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
   const handleReportTypeChange = (value: string) => {
     setSelectedReportType(value as AllReportType);
-    // TODO: 타입 탭 전환 시 각 탭의 visibleCount를 보존하도록 개선합니다.
-    setVisibleCount(REPORTS_PER_PAGE);
-    setIsLoadingMore(false);
     setIsPopoverOpen(false);
-
-    if (loadMoreTimerRef.current) {
-      clearTimeout(loadMoreTimerRef.current);
-      loadMoreTimerRef.current = null;
-    }
   };
 
   return (
@@ -146,9 +115,9 @@ function ReportHistoryList() {
         <div className="-mx-margin-x-l">
           <Seperator className="mt-margin-y-l" />
         </div>
-        {(isPending || reports.length > 0) && (
+        {totalCount > 0 && (
           <p className="text-caption-m mt-margin-y-m">
-            {isPending ? "리포트를 불러오는 중" : `총 ${reports.length}개`}
+            총 {totalCount}개
           </p>
         )}
         {isPending ? (
@@ -157,7 +126,7 @@ function ReportHistoryList() {
           </div>
         ) : reports.length > 0 ? (
           <div className="py-padding-y-xs flex flex-col gap-gap-y-xs -mx-margin-x-l">
-            {visibleReports.map((report, index) => (
+            {reports.map((report, index) => (
               <ReportHistoryItem
                 key={`${report.type ?? "report"}-${report.id ?? index}`}
                 report={report}
@@ -168,7 +137,7 @@ function ReportHistoryList() {
                 ref={ref}
                 className="flex min-h-12 items-center justify-center"
               >
-                {isLoadingMore && (
+                {isFetchingNextPage && (
                   <LoadingIcon color="var(--color-icon-primary)" />
                 )}
               </div>
