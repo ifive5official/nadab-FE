@@ -14,6 +14,7 @@ import {
   weeklyReportHistoryOptions,
 } from "@/features/report/queries";
 import { currentUserOptions } from "@/features/user/queries";
+import { formatRelativeDate } from "@/lib/formatters";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -245,6 +246,8 @@ function ReportHistoryItem({ report }: { report: AllReportItem }) {
 }
 
 function ReportHistoryItemContent({ report }: { report: AllReportItem }) {
+  const createdAtText = getReportCreatedAtText(report);
+
   return (
     <article className="flex items-center justify-between gap-x-gap-x-l px-padding-x-m py-padding-y-xs">
       <ReportHistoryThumbnail report={report} />
@@ -255,7 +258,9 @@ function ReportHistoryItemContent({ report }: { report: AllReportItem }) {
         <p className="text-caption-m text-text-primary line-clamp-2">
           {getReportSummaryText(report)}
         </p>
-        <p className="text-caption-m text-icon-muted">23시간 전</p>
+        {createdAtText && (
+          <p className="text-caption-m text-icon-muted">{createdAtText}</p>
+        )}
       </div>
       <div>
         <AppIcon name="chevron-right" size={24} />
@@ -309,6 +314,13 @@ function getMonthlyReportVersion(report: AllReportItem): "1" | "2" {
 function getReportSummaryText(report: AllReportItem): string {
   const summary = report.summary?.trim();
   return `"${summary || "나의 기록을 돌아볼 수 있는 리포트예요."}"`;
+}
+
+// 이전 리포트 목록의 생성 시각을 기존 상대 날짜 표기로 변환합니다.
+function getReportCreatedAtText(report: AllReportItem): string | null {
+  if (!report.createdAt) return null;
+
+  return formatRelativeDate(report.createdAt);
 }
 
 // 선택한 리포트 타입과 사용자 이름에 맞는 빈 목록 문구를 만듭니다.

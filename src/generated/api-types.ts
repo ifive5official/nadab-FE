@@ -3676,6 +3676,12 @@ export interface components {
              * @example 2
              */
             version?: number;
+            /**
+             * Format: date-time
+             * @description 목록 표시 기준 시각(리포트 분석 완료 시각) ISO 8601 timestamp
+             * @example 2026-01-31T10:30:00+09:00
+             */
+            createdAt?: string;
         };
         /** @description 이전 리포트 목록 페이지 응답 */
         AllReportListResponseV2: {
