@@ -13,6 +13,13 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
   const showComparison =
     report.comparisonType === "COMPARISON" && previousEmotions.length > 0;
   const dominantEmotion = emotions[0];
+  const dominantEmotionCount = dominantEmotion?.count;
+  const dominantEmotionTieCount = emotions.filter(
+    (emotion) =>
+      typeof dominantEmotionCount === "number" &&
+      emotion.count === dominantEmotionCount,
+  ).length;
+  const hasEvenlyDistributedDominantEmotions = dominantEmotionTieCount >= 3;
   const emotionSummaryTitle =
     report.comparisonType === "COMPARISON"
       ? "지난 기간과 비교해"
@@ -53,7 +60,16 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
           )}
           <SummaryMetricCard
             label="가장 많이 나타난 감정"
-            value={dominantEmotion?.emotionName ?? "-"}
+            value={
+              hasEvenlyDistributedDominantEmotions
+                ? "이번 달은 감정이 고르게 나타났어요."
+                : (dominantEmotion?.emotionName ?? "-")
+            }
+            valueClassName={
+              hasEvenlyDistributedDominantEmotions
+                ? "text-label-s break-keep"
+                : undefined
+            }
           />
         </div>
         <SurfaceCard className="allow-copy">

@@ -52,6 +52,49 @@ describe("EmotionSection", () => {
     );
   });
 
+  it("uses the evenly distributed message in the dominant emotion card when at least three emotions share the highest count", () => {
+    const report = reportWithPositivePercent(50);
+    report.emotionStats!.emotions = [
+      { emotionName: "기쁨", count: 5 },
+      { emotionName: "평온", count: 5 },
+      { emotionName: "설렘", count: 5 },
+      { emotionName: "슬픔", count: 2 },
+    ];
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("이번 달의 감정은 어땠을까요?");
+    expect(markup).toContain(
+      '<p class="text-label-s break-keep text-text-primary">이번 달은 감정이 고르게 나타났어요.</p>',
+    );
+    expect(markup).not.toContain(">기쁨</p>");
+  });
+
+  it("keeps the dominant emotion name when fewer than three emotions share the highest count", () => {
+    const report = reportWithPositivePercent(50);
+    report.emotionStats!.emotions = [
+      { emotionName: "기쁨", count: 5 },
+      { emotionName: "평온", count: 5 },
+      { emotionName: "설렘", count: 2 },
+    ];
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("이번 달의 감정은 어땠을까요?");
+    expect(markup).not.toContain("이번 달은 감정이 고르게 나타났어요.");
+    expect(markup).toContain(">기쁨</p>");
+  });
+
+  it("does not treat missing emotion counts as a shared highest count", () => {
+    const report = reportWithPositivePercent(50);
+    report.emotionStats!.emotions = [
+      { emotionName: "기쁨" },
+      { emotionName: "평온" },
+      { emotionName: "설렘" },
+    ];
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("이번 달의 감정은 어땠을까요?");
+  });
+
   it("limits only the left metric rows to a height between 96px and 112px", () => {
     const markup = renderToStaticMarkup(
       <EmotionSection report={reportWithPositivePercent(10)} />,
