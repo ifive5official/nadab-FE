@@ -44,6 +44,9 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
             <SummaryMetricCard
               label="긍정적인 감정 비율"
               value={formatPercent(positivePercent)}
+              valueClassName={
+                positivePercent === 100 ? "text-title-1" : undefined
+              }
               badgeValue={positivePercentPointChange}
               badgeTone={getPercentPointChangeTone(positivePercentPointChange)}
             />
@@ -74,11 +77,13 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
 function SummaryMetricCard({
   label,
   value,
+  valueClassName,
   badgeValue,
   badgeTone = "neutral",
 }: {
   label: string;
   value: string;
+  valueClassName?: string;
   badgeValue?: number;
   badgeTone?: "positive" | "negative" | "neutral";
 }) {
@@ -88,7 +93,14 @@ function SummaryMetricCard({
         {label}
       </span>
       <div className="flex items-center gap-gap-x-xs">
-        <p className="text-headline-s text-text-primary">{value}</p>
+        <p
+          className={clsx(
+            valueClassName ?? "text-headline-s",
+            "text-text-primary",
+          )}
+        >
+          {value}
+        </p>
         {typeof badgeValue === "number" && (
           <PercentPointBadge value={badgeValue} tone={badgeTone} />
         )}

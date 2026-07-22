@@ -36,6 +36,22 @@ describe("EmotionSection", () => {
     expect(markup).toContain("긍정적인 감정 비율");
   });
 
+  it("uses a smaller value font only when positive emotion reaches 100 percent", () => {
+    const ninetyNinePercentMarkup = renderToStaticMarkup(
+      <EmotionSection report={reportWithPositivePercent(99)} />,
+    );
+    const oneHundredPercentMarkup = renderToStaticMarkup(
+      <EmotionSection report={reportWithPositivePercent(100)} />,
+    );
+
+    expect(ninetyNinePercentMarkup).toContain(
+      '<p class="text-headline-s text-text-primary">99%</p>',
+    );
+    expect(oneHundredPercentMarkup).toContain(
+      '<p class="text-title-1 text-text-primary">100%</p>',
+    );
+  });
+
   it("limits only the left metric rows to a height between 96px and 112px", () => {
     const markup = renderToStaticMarkup(
       <EmotionSection report={reportWithPositivePercent(10)} />,
