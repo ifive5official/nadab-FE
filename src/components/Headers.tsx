@@ -166,6 +166,9 @@ type SubHeaderProps = {
   showMenuButton?: boolean;
   showCloseButton?: boolean;
   onBackClick?: () => void;
+  subtitle?: React.ReactNode;
+  titleMeta?: React.ReactNode;
+  rightActions?: React.ReactNode;
   children: React.ReactNode;
 };
 
@@ -175,22 +178,36 @@ export function SubHeader({
   showMenuButton = true,
   showCloseButton = false,
   onBackClick,
+  subtitle,
+  titleMeta,
+  rightActions,
   children,
 }: SubHeaderProps) {
   const router = useRouter();
   const openSidebar = useSidebarStore.use.openSidebar();
+  const titleSecondLine = subtitle ?? titleMeta;
 
   return (
     <header
       className={clsx(
-        "shrink-0 z-10 flex items-center",
+        "shrink-0 z-10 items-center",
+        variant === "search"
+          ? "flex"
+          : "grid grid-cols-[1fr_auto_1fr]",
         "w-full sm:w-[412px] h-header-height",
         "bg-surface-base text-label-l text-text-secondary",
         variant === "sub" ? "border-b border-b-border-base" : "",
       )}
     >
       {/* 뒤로가기 */}
-      <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
+      <div
+        className={clsx(
+          "flex items-center justify-center",
+          variant === "search"
+            ? "px-padding-x-s w-6 box-content"
+            : "justify-self-start pl-padding-x-s",
+        )}
+      >
         {showBackButton && (
           <button onClick={onBackClick ?? (() => router.history.back())}>
             <ArrowLeftIcon />
@@ -198,17 +215,35 @@ export function SubHeader({
         )}
       </div>
       {/* 페이지 제목 */}
-      <span className="flex-1 text-center">{children}</span>
+      <span
+        className={clsx(
+          "text-center",
+          variant === "search" ? "flex-1" : "justify-self-center",
+          titleSecondLine && "flex flex-col items-center justify-center",
+        )}
+      >
+        {titleSecondLine ? (
+          <>
+            <span>{children}</span>
+            <span className="text-caption-s text-text-tertiary">
+              {titleSecondLine}
+            </span>
+          </>
+        ) : (
+          children
+        )}
+      </span>
       {/* 닫기 혹은 사이드바 버튼 */}
       {variant !== "search" && (
-        <div className="px-padding-x-s w-6 box-content flex items-center justify-center">
+        <div className="flex min-w-6 items-center justify-center justify-self-end pr-padding-x-s">
+          {rightActions && <div className="ml-margin-x-l">{rightActions}</div>}
           {showMenuButton && (
-            <button onClick={openSidebar}>
+            <button className="ml-margin-x-l" onClick={openSidebar}>
               <MenuIcon />
             </button>
           )}
           {showCloseButton && (
-            <Link to="/">
+            <Link to="/" className="ml-margin-x-l">
               <CloseIcon />
             </Link>
           )}

@@ -1348,6 +1348,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ask-chat/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 물어보기 세션 시작
+         * @description 사용자가 새 채팅을 시작할 때 호출합니다. </br>
+         *     이미 ACTIVE 세션이 있어도 기존 세션을 재사용하거나 종료하지 않고 매번 새 ACTIVE 세션을 생성합니다. </br>
+         *     이 API는 질문 메시지를 저장하지 않으며, 실제 질문 저장은 POST /ask-chat/messages에서 수행합니다. </br>
+         */
+        post: operations["startSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ask-chat/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 물어보기 질문 전송
+         * @description ask_home_01 또는 ask_chat_01 화면에서 사용자가 질문을 보낼 때 호출합니다. </br>
+         *     요청 본문의 sessionId에 해당하는 본인 채팅 세션에만 USER/ASSISTANT 메시지를 저장합니다. </br>
+         *     세션이 없거나 다른 사용자의 세션이면 ASK_CHAT_SESSION_NOT_FOUND를 반환하며, 질문 전송 시 새 세션을 자동 생성하지 않습니다. </br>
+         *     세션 생성은 POST /ask-chat/sessions에서 먼저 수행해야 합니다. </br>
+         *     질문 내용은 앞뒤 공백 제거 후 1자 이상 200자 이하만 허용합니다. </br>
+         *     답변 생성이 성공한 경우에만 answeredTurnCount를 1 증가시키며, 15번째 성공 답변 후 해당 세션은 ENDED로 자동 전환됩니다. </br>
+         *     답변 생성 실패 시에는 응답의 assistantMessage는 null로 반환합니다. </br>
+         *     클라이언트에서는 answerGeneration.success=false, errorCode, message를 기준으로 채팅 말풍선이 아닌 모달/토스트를 표시해야 합니다. </br>
+         *     ENDED 세션 또는 answeredTurnCount가 15 이상인 세션에서는 메시지를 저장하지 않고 ASK_CHAT_TURN_LIMIT_EXCEEDED를 반환합니다. </br>
+         */
+        post: operations["sendQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me": {
         parameters: {
             query?: never;
@@ -2400,6 +2450,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ask-chat/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 물어보기 홈 진입
+         * @description ask_home_01 화면 진입 시 호출합니다. </br>
+         *     홈 진입만으로 새 채팅 세션을 생성하지 않습니다. </br>
+         *     최종 기획에서는 사용자가 여러 채팅 세션을 유지할 수 있으므로, 홈 응답은 특정 ACTIVE 세션 하나를 선택해 반환하지 않고 최근 채팅 세션 목록을 반환합니다. </br>
+         *     recentSessions에는 USER 메시지가 1개 이상 저장된 세션만 최신순으로 포함하며, 각 항목은 첫 질문 제목, 마지막 사용자 질문, 마지막 메시지 시각을 함께 제공합니다. </br>
+         *     새 세션 생성은 POST /ask-chat/sessions에서 명시적으로 수행합니다. </br>
+         *     크리스탈 및 대화권 잔여 횟수는 다음 브랜치에서 별도 정책으로 연결합니다.
+         */
+        get: operations["enterHome"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ask-chat/histories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 물어보기 히스토리 목록 조회
+         * @description ask_history_01 화면에서 사용자의 물어보기 채팅 세션 목록을 최신순으로 조회합니다.  </br>
+         *     USER 메시지가 1개 이상 저장된 세션만 히스토리로 노출하며, 세션만 생성되고 질문이 없는 대화는 목록에 포함하지 않습니다.  </br>
+         *     page는 1부터 시작하며, size는 최대 50까지 요청할 수 있습니다.  </br>
+         *     응답의 empty는 현재 페이지의 목록이 비어 있는지 나타내며, 각 항목은 첫 질문 제목, 마지막 사용자 질문, 마지막 메시지 시각, createdDate를 카드 표시용으로 제공합니다.  </br>
+         */
+        get: operations["getHistories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ask-chat/histories/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 물어보기 히스토리 상세 조회
+         * @description ask_history_02 화면에서 선택한 물어보기 채팅 세션의 전체 메시지를 시간순으로 조회합니다.  </br>
+         *     본인의 세션만 조회할 수 있으며, 다른 사용자의 세션이거나 존재하지 않는 세션이면 ASK_CHAT_SESSION_NOT_FOUND를 반환합니다.  </br>
+         *     과거 대화 상세 화면은 읽기 전용이므로 readOnly=true를 반환하며, 새 질문 입력 UI는 제공하지 않습니다.  </br>
+         */
+        get: operations["getHistoryDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/answers": {
         parameters: {
             query?: never;
@@ -3410,6 +3530,125 @@ export interface components {
              * @example c1234567890abcdef
              */
             code: string;
+        };
+        /** @description 물어보기 채팅 세션 응답 */
+        AskChatSessionResponse: {
+            /**
+             * Format: int64
+             * @description 채팅 세션 ID
+             * @example 1
+             */
+            sessionId?: number;
+            /**
+             * @description 채팅 세션 상태
+             * @example ACTIVE
+             * @enum {string}
+             */
+            status?: "ACTIVE" | "ENDED";
+            /**
+             * Format: int32
+             * @description 성공적으로 답변받은 턴 수
+             * @example 3
+             */
+            answeredTurnCount?: number;
+            /**
+             * Format: int32
+             * @description 세션당 최대 대화 횟수
+             * @example 15
+             */
+            maxTurnCount?: number;
+            /**
+             * Format: int32
+             * @description 현재 세션의 잔여 대화 횟수
+             * @example 12
+             */
+            remainingTurnCount?: number;
+            /**
+             * Format: date-time
+             * @description 채팅 세션 생성 시각
+             */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description 채팅 세션 종료 시각
+             */
+            endedAt?: string;
+        };
+        /** @description Ask Chat 답변 생성 결과 상태 */
+        AskChatAnswerGenerationResponse: {
+            /**
+             * @description 답변 생성 성공 여부
+             * @example true
+             */
+            success?: boolean;
+            /**
+             * @description 답변 생성 실패 시 에러 코드. 성공 시 null
+             * @example AI_RESPONSE_PARSE_FAILED
+             */
+            errorCode?: string;
+            /**
+             * @description 답변 생성 실패 시 프론트 모달/토스트에 표시할 안내 문구. 성공 시 null
+             * @example 답변 생성에 오류가 발생했어요. 다시 시도해주세요.
+             */
+            message?: string;
+        };
+        /** @description Ask Chat 메시지 응답 */
+        AskChatMessageResponse: {
+            /**
+             * Format: int64
+             * @description 메시지 ID
+             * @example 10
+             */
+            id?: number;
+            /**
+             * @description 메시지 역할
+             * @example USER
+             * @enum {string}
+             */
+            role?: "USER" | "ASSISTANT";
+            /**
+             * @description 메시지 상태
+             * @example COMPLETED
+             * @enum {string}
+             */
+            status?: "PENDING" | "COMPLETED" | "FAILED";
+            /**
+             * @description 메시지 내용
+             * @example 나는 어떤 사람이야?
+             */
+            content?: string;
+            /**
+             * Format: date-time
+             * @description 메시지 생성 시각
+             */
+            createdAt?: string;
+        };
+        /** @description 물어보기 질문 전송 응답 */
+        AskChatQuestionSendResponse: {
+            /** @description 질문이 저장된 채팅 세션 */
+            session?: components["schemas"]["AskChatSessionResponse"];
+            /** @description 저장된 사용자 질문 메시지 */
+            userMessage?: components["schemas"]["AskChatMessageResponse"];
+            /** @description 저장된 AI 답변 메시지. 생성 실패 시 채팅 말풍선으로 표시하지 않도록 null로 반환 */
+            assistantMessage?: components["schemas"]["AskChatMessageResponse"];
+            /** @description 답변 생성 성공/실패 상태. 실패 시 프론트에서는 이 값을 기준으로 모달/토스트를 표시합니다. */
+            answerGeneration?: components["schemas"]["AskChatAnswerGenerationResponse"];
+            /** @description AI가 제안한 후속 추천 질문. 생성 실패 시 빈 배열 */
+            followUpQuestions?: string[];
+        };
+        /** @description 물어보기 질문 전송 요청 */
+        AskChatQuestionRequest: {
+            /**
+             * Format: int64
+             * @description 질문을 저장하고 답변을 생성할 채팅 세션 ID
+             * @example 1
+             */
+            sessionId: number;
+            /**
+             * @description 사용자 질문 내용. 앞뒤 공백 제거 후 1자 이상 200자 이하로 입력해야 합니다.
+             * @example 나는 어떤 사람이야?
+             */
+            content: string;
         };
         /** @description 유저 프로필 수정 응답 */
         UpdateUserProfileResponse: {
@@ -4539,6 +4778,146 @@ export interface components {
              * @example https://nid.naver.com/oauth2.0/authorize?client_id=...
              */
             authorizationUrl?: string;
+        };
+        /** @description Ask Chat 히스토리 목록 항목 */
+        AskChatHistoryItemResponse: {
+            /**
+             * Format: int64
+             * @description 채팅 세션 ID
+             * @example 1
+             */
+            sessionId?: number;
+            /**
+             * @description 히스토리 카드 제목으로 사용할 첫 사용자 질문
+             * @example 나는 어떤 사람이야?
+             */
+            title?: string;
+            /**
+             * @description 해당 세션에서 가장 최근에 전송한 사용자 질문
+             * @example 요즘 내가 놓치고 있는 감정은 뭐야?
+             */
+            lastUserQuestion?: string;
+            /**
+             * Format: date
+             * @description 히스토리 카드에 표시할 작성일
+             * @example 2026-06-20
+             */
+            createdDate?: string;
+            /**
+             * @description 채팅 세션 상태
+             * @example ACTIVE
+             * @enum {string}
+             */
+            status?: "ACTIVE" | "ENDED";
+            /**
+             * Format: int32
+             * @description 성공적으로 답변된 대화 횟수
+             * @example 3
+             */
+            answeredTurnCount?: number;
+            /**
+             * Format: date-time
+             * @description 해당 세션의 마지막 메시지 생성 시각
+             */
+            lastMessageAt?: string;
+        };
+        /** @description 물어보기 홈 응답 */
+        AskChatHomeResponse: {
+            /**
+             * Format: int32
+             * @description 세션당 최대 대화 횟수
+             * @example 15
+             */
+            maxTurnCount?: number;
+            /** @description 홈 화면에서 이어갈 수 있는 최근 채팅 세션 목록. USER 메시지가 1개 이상 있는 세션만 포함합니다. */
+            recentSessions?: components["schemas"]["AskChatHistoryItemResponse"][];
+            /**
+             * @description 최근 채팅 세션 목록이 비어 있는지 여부
+             * @example false
+             */
+            recentSessionsEmpty?: boolean;
+        };
+        /** @description Ask Chat 히스토리 목록 응답 */
+        AskChatHistoryListResponse: {
+            /** @description 히스토리 목록 */
+            histories?: components["schemas"]["AskChatHistoryItemResponse"][];
+            /**
+             * @description 히스토리가 비어 있는지 여부
+             * @example false
+             */
+            empty?: boolean;
+            /**
+             * Format: int64
+             * @description 전체 히스토리 수
+             * @example 12
+             */
+            totalCount?: number;
+            /**
+             * Format: int32
+             * @description 현재 페이지 번호(1부터 시작)
+             * @example 1
+             */
+            currentPage?: number;
+            /**
+             * Format: int32
+             * @description 페이지 크기
+             * @example 20
+             */
+            pageSize?: number;
+            /**
+             * Format: int32
+             * @description 전체 페이지 수
+             * @example 1
+             */
+            totalPages?: number;
+            /**
+             * @description 이전 페이지 존재 여부
+             * @example false
+             */
+            hasPrevious?: boolean;
+            /**
+             * @description 다음 페이지 존재 여부
+             * @example false
+             */
+            hasNext?: boolean;
+        };
+        /** @description Ask Chat 히스토리 상세 응답 */
+        AskChatHistoryDetailResponse: {
+            /**
+             * Format: int64
+             * @description 채팅 세션 ID
+             * @example 1
+             */
+            sessionId?: number;
+            /**
+             * @description 채팅 세션 상태
+             * @example ENDED
+             * @enum {string}
+             */
+            status?: "ACTIVE" | "ENDED";
+            /**
+             * Format: int32
+             * @description 성공적으로 답변된 대화 횟수
+             * @example 5
+             */
+            answeredTurnCount?: number;
+            /**
+             * @description 과거 대화 상세 화면은 읽기 전용인지 여부
+             * @example true
+             */
+            readOnly?: boolean;
+            /**
+             * Format: date-time
+             * @description 채팅 시작 시각
+             */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description 채팅 종료 시각
+             */
+            endedAt?: string;
+            /** @description 시간순 메시지 목록 */
+            messages?: components["schemas"]["AskChatMessageResponse"][];
         };
         /** @description 검색 결과 항목 (요약) */
         AnswerEntrySummaryResponse: {
@@ -7306,6 +7685,92 @@ export interface operations {
             };
         };
     };
+    startSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 물어보기 세션 준비 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatSessionResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sendQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AskChatQuestionRequest"];
+            };
+        };
+        responses: {
+            /** @description 질문 저장 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatQuestionSendResponse"];
+                };
+            };
+            /** @description - ErrorCode: VALIDATION_FAILED - 질문은 공백 제외 1자 이상 200자 이하로 요청해야 함 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: ASK_CHAT_SESSION_NOT_FOUND - 채팅 세션을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: ASK_CHAT_TURN_LIMIT_EXCEEDED - 세션당 대화 횟수 제한 초과 */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getMyProfile: {
         parameters: {
             query?: never;
@@ -8678,6 +9143,113 @@ export interface operations {
             };
             /** @description ErrorCode: AUTH_UNSUPPORTED_OAUTH2_PROVIDER - provider가 'naver', 'google', 'kakao'가 아닌 경우 */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    enterHome: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 물어보기 홈 진입 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatHomeResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 사용자를 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getHistories: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 히스토리 목록 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatHistoryListResponse"];
+                };
+            };
+            /** @description - ErrorCode: VALIDATION_FAILED - page는 1 이상, size는 1 이상 50 이하로 요청해야 함 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getHistoryDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 히스토리 상세 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatHistoryDetailResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: ASK_CHAT_SESSION_NOT_FOUND - 채팅 세션을 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -11,13 +11,14 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useModalStore from "@/store/modalStore";
 import { QuestionBadge } from "@/components/Badges";
 import categories from "@/constants/categories";
 import useBottomModalStore from "@/store/bottomModalStore";
 import { useUpdateInterestMutation } from "../user/hooks/useUpdateInterestMutation";
 import { MoreHorizontalIcon } from "@/components/Icons";
+import { AppIcon } from "@/components/AppIcon";
 import useCoachMarkTourStore from "@/store/coachMarkTourStore";
 import { HOME_COACH_MARK_STEP_IDS } from "./coach-mark/constants";
 import clsx from "clsx";
@@ -197,20 +198,23 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full rounded-full object-cover opacity-65 dark:opacity-100"
               />
               <div className="absolute inset-0 flex flex-col justify-center items-center gap-gap-y-xl">
-                <p className="text-body-1 text-center dark:text-neutral-900">
-                  <span className="text-headline-l text-brand-primary">
-                    {homeData.totalRecordDays}
-                  </span>
-                  일째
-                  <br />
-                  기록을 남겼어요.
-                </p>
-                {homeData.answeredFriendCount! > 0 && (
-                  <FriendSection
-                    friends={homeData.answeredFriendProfiles!}
-                    friendsCnt={homeData.answeredFriendCount!}
-                  />
-                )}
+                <div className="flex flex-col justify-center items-center gap-gap-y-xl">
+                  <p className="text-body-1 text-center dark:text-neutral-900">
+                    <span className="text-headline-l text-brand-primary">
+                      {homeData.totalRecordDays}
+                    </span>
+                    일째
+                    <br />
+                    기록을 남겼어요.
+                  </p>
+                  {homeData.answeredFriendCount! > 0 && (
+                    <FriendSection
+                      friends={homeData.answeredFriendProfiles!}
+                      friendsCnt={homeData.answeredFriendCount!}
+                    />
+                  )}
+                </div>
+                <AskCrystalPrompt />
               </div>
             </div>
           </div>
@@ -261,5 +265,36 @@ export default function Home() {
         </div>
       </Container>
     </>
+  );
+}
+
+// 홈 구슬 내부의 물어보기 CTA를 표시하고 클릭 상태를 전환합니다.
+function AskCrystalPrompt() {
+  const [isAsked, setIsAsked] = useState(false);
+  const className =
+    "flex h-[52px] w-[220px] max-w-[calc(100%-32px)] items-center justify-center gap-gap-x-s rounded-2xl border border-border-base bg-surface-base px-gap-x-s text-caption-s text-text-primary dark:bg-surface-layer-3";
+
+  return isAsked ? (
+    <Link to="/ask" className={className}>
+      <span>수정구슬에게 나에 대해 물어보기</span>
+      <AppIcon name="chevron-right" size={16} color="current" />
+    </Link>
+  ) : (
+    <button
+      type="button"
+      onClick={() => setIsAsked(true)}
+      className={className}
+    >
+      <span className="flex size-6 items-center justify-center rounded-full bg-surface-layer-1">
+        <AppIcon name="lock-filled" size={14} color="primary" />
+      </span>
+      <span className="text-left">
+        <span className="flex">
+          <span className="text-brand-primary">20개를</span>
+          <span>&nbsp;더 답하면</span>
+        </span>
+        <span>수정구슬에게 나를 물어볼 수 있어요.</span>
+      </span>
+    </button>
   );
 }
