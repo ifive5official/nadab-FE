@@ -7,6 +7,45 @@ import {
 import type { InterestStat, MonthlyReportV2 } from "./types";
 import { getCommentCardWidth, splitSegmentsIntoSentences } from "./utils";
 
+export type InterestCard = {
+  interest: InterestStat;
+  rank: number;
+  isTopRank: boolean;
+};
+
+export type InterestDisplayState = {
+  cards: InterestCard[];
+  hasMultipleTopRanks: boolean;
+  layoutClassName: string;
+};
+
+// 상위 선택 주제의 노출 여부와 순서, 공동 1위 강조 상태를 계산합니다.
+export function getInterestDisplayState(
+  interests: InterestStat[] | undefined,
+): InterestDisplayState {
+  const rankedInterests = (interests ?? [])
+    .slice(0, 3)
+    .map((interest, index) => ({ interest, rank: index + 1 }))
+    .filter(({ interest }) => (interest.count ?? 0) > 0);
+  const topCount = rankedInterests[0]?.interest.count;
+  const cards = rankedInterests.map(({ interest, rank }) => ({
+    interest,
+    rank,
+    isTopRank: interest.count === topCount,
+  }));
+  const hasMultipleTopRanks =
+    cards.filter(({ isTopRank }) => isTopRank).length > 1;
+
+  return {
+    cards: cards.length === 3 ? [cards[1], cards[0], cards[2]] : cards,
+    hasMultipleTopRanks,
+    layoutClassName:
+      cards.length === 2
+        ? "grid-cols-[repeat(2,calc((100%_-_var(--spacing-gap-x-m)_*_2)_/_3))] justify-evenly"
+        : "grid-cols-3 gap-gap-x-m",
+  };
+}
+
 export function CommentSection({ report }: { report: MonthlyReportV2 }) {
   const sentences = splitSegmentsIntoSentences(report.comment?.segments);
 
@@ -35,15 +74,13 @@ export function CommentSection({ report }: { report: MonthlyReportV2 }) {
 }
 
 export function InterestSection({ report }: { report: MonthlyReportV2 }) {
-  const interests = report.interestStats?.interests ?? [];
-  if (interests.length === 0) {
+  const { cards, hasMultipleTopRanks, layoutClassName } =
+    getInterestDisplayState(report.interestStats?.interests);
+  if (cards.length === 0) {
     return null;
   }
 
-  const mostAnsweredInterest = interests[0];
-  const rankedInterests = [interests[1], interests[0], interests[2]].filter(
-    (interest): interest is InterestStat => Boolean(interest),
-  );
+  const mostAnsweredInterest = cards.find(({ rank }) => rank === 1)?.interest;
 
   return (
     <section className="flex flex-col gap-gap-y-s">
@@ -53,20 +90,22 @@ export function InterestSection({ report }: { report: MonthlyReportV2 }) {
         label="많이 답한 선택 주제"
       />
       <h1 className="text-label-l">
-        {report.month}월에는 {mostAnsweredInterest.interestName} 질문에 가장
-        많이 답했어요.
+        {hasMultipleTopRanks
+          ? `${report.month}월에는 이런 주제들에 대해 많이 답했어요.`
+          : `${report.month}월에는 ${mostAnsweredInterest?.interestName ?? ""} 질문에 가장 많이 답했어요.`}
       </h1>
-      <div className="grid grid-cols-3 items-center gap-gap-x-m mt-margin-y-m">
-        {rankedInterests.map((interest) => {
-          const rank = interests.indexOf(interest) + 1;
-          const isTopRank = rank === 1;
+      <div
+        className={`grid ${layoutClassName} items-center mt-margin-y-m`}
+      >
+        {cards.map(({ interest, rank, isTopRank }) => {
           const originClassName = rank === 2 ? "origin-right" : "origin-left";
+          const centeredClassName = cards.length === 1 ? "col-start-2" : "";
 
           return (
             <SurfaceCard
               key={interest.interestCode ?? interest.interestName ?? rank}
               roundedClassName="rounded-lg"
-              className={`flex aspect-square w-full flex-col items-center justify-center gap-gap-y-s text-center ${
+              className={`flex aspect-square w-full flex-col items-center justify-center gap-gap-y-s text-center ${centeredClassName} ${
                 isTopRank ? "" : `scale-80 ${originClassName}`
               }`}
             >
@@ -77,7 +116,7 @@ export function InterestSection({ report }: { report: MonthlyReportV2 }) {
               >
                 {interest.interestName}
               </span>
-              <span className="rounded-full border border-brand-primary px-padding-x-s py-padding-y-xxs text-caption-s text-brand-primary">
+              <span className="whitespace-nowrap rounded-full border border-brand-primary px-padding-x-s py-padding-y-xxs text-caption-s text-brand-primary">
                 {interest.count ?? 0}회 작성
               </span>
             </SurfaceCard>
