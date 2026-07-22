@@ -21,6 +21,9 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
     showComparison && typeof comparison?.positivePercentPointChange === "number"
       ? comparison.positivePercentPointChange
       : undefined;
+  const positivePercent = report.emotionStats?.positivePercent;
+  const showPositivePercentCard =
+    typeof positivePercent !== "number" || positivePercent >= 10;
 
   return (
     <section className="flex flex-col gap-gap-y-l">
@@ -35,14 +38,22 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
         currentMonth={report.month}
         previousMonth={comparison?.previousMonth}
       />
-      <div className="grid grid-cols-2 grid-rows-2 gap-gap-y-s gap-gap-x-s">
-        <SummaryMetricCard
-          label="긍정적인 감정 비율"
-          value={formatPercent(report.emotionStats?.positivePercent)}
-          badgeValue={positivePercentPointChange}
-          badgeTone={getPercentPointChangeTone(positivePercentPointChange)}
-        />
-        <SurfaceCard className="row-span-2 allow-copy">
+      <div className="grid grid-cols-2 items-start gap-gap-x-s">
+        <div className="grid auto-rows-[minmax(6rem,7rem)] gap-gap-y-s">
+          {showPositivePercentCard && (
+            <SummaryMetricCard
+              label="긍정적인 감정 비율"
+              value={formatPercent(positivePercent)}
+              badgeValue={positivePercentPointChange}
+              badgeTone={getPercentPointChangeTone(positivePercentPointChange)}
+            />
+          )}
+          <SummaryMetricCard
+            label="가장 많이 나타난 감정"
+            value={dominantEmotion?.emotionName ?? "-"}
+          />
+        </div>
+        <SurfaceCard className="allow-copy">
           <p className="mb-gap-y-s text-label-m text-text-secondary break-keep">
             {emotionSummaryTitle}
           </p>
@@ -55,10 +66,6 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
             />
           </p>
         </SurfaceCard>
-        <SummaryMetricCard
-          label="가장 많이 나타난 감정"
-          value={dominantEmotion?.emotionName ?? "-"}
-        />
       </div>
     </section>
   );
