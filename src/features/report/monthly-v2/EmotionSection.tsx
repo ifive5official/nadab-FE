@@ -32,8 +32,11 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
   const positivePercent = report.emotionStats?.positivePercent;
   const showPositivePercentCard =
     typeof positivePercent !== "number" || positivePercent >= 10;
+  const hasSupportedEmotionTrend =
+    report.emotionTrend &&
+    report.emotionTrend !== "NOT_SUPPORTED";
   const sectionTitle =
-    report.dominantKeyword && report.emotionTrend ? (
+    report.dominantKeyword && hasSupportedEmotionTrend ? (
       <>
         {report.month}월에는 {josa(report.dominantKeyword, "을/를")} 중심으로
         <br />

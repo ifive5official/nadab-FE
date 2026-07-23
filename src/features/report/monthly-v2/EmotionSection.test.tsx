@@ -22,7 +22,9 @@ describe("EmotionSection", () => {
     report.emotionTrend = "긍정 감정이 늘었어요";
     const markup = renderToStaticMarkup(<EmotionSection report={report} />);
 
-    expect(markup).toContain("평온를 중심으로<br/>긍정 감정이 늘었어요");
+    expect(markup).toContain(
+      "7월에는 평온을 중심으로<br/>긍정 감정이 늘었어요",
+    );
     expect(markup).not.toContain("이번 달의 감정은 어땠을까요?");
   });
 
@@ -32,7 +34,18 @@ describe("EmotionSection", () => {
     const markup = renderToStaticMarkup(<EmotionSection report={report} />);
 
     expect(markup).toContain("이번 달의 감정은 어땠을까요?");
-    expect(markup).not.toContain("평온를 중심으로");
+    expect(markup).not.toContain("평온을 중심으로");
+  });
+
+  it("keeps the default title when emotion trend is NOT_SUPPORTED", () => {
+    const report = reportWithPositivePercent(50);
+    report.dominantKeyword = "평온";
+    report.emotionTrend = "NOT_SUPPORTED";
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("이번 달의 감정은 어땠을까요?");
+    expect(markup).not.toContain("평온을 중심으로");
+    expect(markup).not.toContain("NOT_SUPPORTED");
   });
 
   it("hides the positive emotion card below 10 percent and moves the dominant emotion card up", () => {
