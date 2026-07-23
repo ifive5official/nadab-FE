@@ -14,7 +14,6 @@ type MonthlyReportLocator =
 
 type Props = {
   report: MonthlyReportLocator | undefined;
-  prevReport: MonthlyReportLocator | undefined;
   onGenerate: () => void;
   crystalBalance: number;
   isGenerating: boolean;
@@ -22,7 +21,6 @@ type Props = {
 
 export default function MonthlyReportV2Card({
   report,
-  prevReport,
   onGenerate,
   crystalBalance,
   isGenerating,
@@ -32,10 +30,7 @@ export default function MonthlyReportV2Card({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { showModal, closeModal, showError } = useModalStore();
 
-  const goToReport = (
-    locator: MonthlyReportLocator | undefined,
-    period: "current" | "previous",
-  ) => {
+  const goToReport = (locator: MonthlyReportLocator | undefined) => {
     if (!locator) {
       showError("리포트를 불러올 수 없어요.");
       return;
@@ -44,12 +39,18 @@ export default function MonthlyReportV2Card({
     const version = String(locator.version);
 
     if (version === "1") {
-      navigate({ to: `/report/monthly/${period}` });
+      navigate({
+        to: "/report/$reportType/$period",
+        params: { reportType: "monthly", period: "current" },
+      });
       return;
     }
 
     if (version === "2") {
-      navigate({ to: `/report/monthly-v2/${period}` });
+      navigate({
+        to: "/report/monthly-v2/$period",
+        params: { period: "current" },
+      });
       return;
     }
 
@@ -84,7 +85,7 @@ export default function MonthlyReportV2Card({
 
   const statusConfig = {
     NONE: {
-      title: "지난달 리포트 v2를 받아볼까요?",
+      title: "지난달 리포트를 받아볼까요?",
       content:
         "지난달에 답변을 15건 이상 작성했다면 새로운 월간 리포트를 생성할 수 있어요.",
       btnText: `${reportConfig.cost} 크리스탈로 받기`,
@@ -92,18 +93,18 @@ export default function MonthlyReportV2Card({
       handleBtnClick: handleGenerateClick,
     },
     GENERATING: {
-      title: "지난달 리포트 v2를 생성 중이에요.",
+      title: "지난달 리포트를 생성 중이에요.",
       content: "리포트 생성에 1-2분 정도 걸릴 수 있어요.\n조금만 기다려주세요.",
       btnText: "리포트 생성 중",
       btnVariant: "disabled",
       handleBtnClick: undefined,
     },
     READY: {
-      title: "지난달 리포트 v2를 확인해보세요.",
+      title: "지난달 리포트를 확인해보세요.",
       content: "지난달 기록에서 발견된 흐름과 감정, 관심사를 확인해보세요.",
       btnText: "리포트 보기",
       btnVariant: "primary",
-      handleBtnClick: () => goToReport(report, "current"),
+      handleBtnClick: () => goToReport(report),
     },
   } as const;
 
@@ -127,19 +128,7 @@ export default function MonthlyReportV2Card({
           {currentConfig.content}
         </p>
       </div>
-      <div className="flex gap-gap-x-xs">
-        <BlockButton
-          onClick={() => {
-            if (prevReport) {
-              goToReport(prevReport, "previous");
-            } else {
-              showError("이전 리포트가\n존재하지 않아요.");
-            }
-          }}
-          variant={prevReport ? "secondary" : "disabled"}
-        >
-          이전 리포트 보기
-        </BlockButton>
+      <div>
         <BlockButton
           variant={currentConfig.btnVariant}
           onClick={currentConfig.handleBtnClick}

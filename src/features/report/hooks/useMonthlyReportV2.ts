@@ -29,7 +29,7 @@ export default function useMonthlyReportV2() {
       useModalStore
         .getState()
         .showError(
-          "월간 리포트 v2 생성 도중 문제가 발생했어요.",
+          "월간 리포트 생성 도중 문제가 발생했어요.",
           "다시 시도해주세요. 사용한 크리스탈은 환불되었어요.",
         );
       queryClient.invalidateQueries({

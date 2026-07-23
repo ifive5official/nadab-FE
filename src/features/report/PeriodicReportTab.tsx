@@ -17,7 +17,6 @@ export default function PeriodicReportTab() {
   const { showToast } = useToastStore();
   const {
     report: weeklyReport,
-    prevReport: prevWeeklyReport,
     isGenerating: isWeeklyReportGenerating,
   } = useReport({ type: "weekly" });
   const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
@@ -29,7 +28,6 @@ export default function PeriodicReportTab() {
   });
   const {
     report: monthlyReportV2,
-    prevReport: prevMonthlyReportV2,
     isGenerating: isMonthlyReportV2Generating,
   } = useMonthlyReportV2();
   const generateMonthlyReportV2Mutation = useGenerateMonthlyReportV2Mutation({
@@ -62,14 +60,12 @@ export default function PeriodicReportTab() {
         <PeriodicReportCard
           reportType="weekly"
           report={weeklyReport}
-          prevReport={prevWeeklyReport}
           onGenerate={generateWeeklyReportMutation.mutate}
           isGenerating={isWeeklyReportGenerating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
         <MonthlyReportV2Card
           report={monthlyReportV2}
-          prevReport={prevMonthlyReportV2}
           onGenerate={generateMonthlyReportV2Mutation.mutate}
           isGenerating={isMonthlyReportV2Generating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}

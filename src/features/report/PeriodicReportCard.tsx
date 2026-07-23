@@ -15,7 +15,6 @@ type ReportRes = components["schemas"]["WeeklyReportResponse"];
 type Props = {
   reportType: "weekly" | "monthly";
   report: ReportRes | undefined;
-  prevReport: ReportRes | undefined;
   onGenerate: () => void;
   crystalBalance: number;
   isGenerating: boolean; // 생성중 로딩 화면을 보이기 위함
@@ -24,7 +23,6 @@ type Props = {
 export default function PeriodicReportCard({
   reportType,
   report,
-  prevReport,
   onGenerate,
   crystalBalance,
   isGenerating,
@@ -73,7 +71,7 @@ export default function PeriodicReportCard({
     report && !isGenerating ? "READY" : isGenerating ? "GENERATING" : "NONE";
   const statusConfig = REPORT_STATUS[reportState];
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const { showModal, closeModal, showError } = useModalStore();
+  const { showModal, closeModal } = useModalStore();
 
   const navigate = useNavigate();
 
@@ -99,19 +97,7 @@ export default function PeriodicReportCard({
           {statusConfig.content}
         </p>
       </div>
-      <div className="flex gap-gap-x-xs">
-        <BlockButton
-          onClick={() => {
-            if (prevReport) {
-              navigate({ to: `/report/${reportType}/previous` });
-            } else {
-              showError("이전 리포트가\n존재하지 않아요.");
-            }
-          }}
-          variant={prevReport ? "secondary" : "disabled"}
-        >
-          이전 리포트 보기
-        </BlockButton>
+      <div>
         <BlockButton
           variant={statusConfig.btnVariant}
           onClick={statusConfig.handleBtnClick}

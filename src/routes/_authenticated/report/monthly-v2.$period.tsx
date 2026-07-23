@@ -65,7 +65,7 @@ function InvalidMonthlyReportV2({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-      <SubHeader>월간 리포트 v2</SubHeader>
+      <SubHeader>월간 리포트</SubHeader>
       <Container>{null}</Container>
     </>
   );
@@ -134,7 +134,7 @@ function MonthlyReportV2Detail({
 
   return (
     <>
-      <SubHeader>월간 리포트 v2</SubHeader>
+      <SubHeader>월간 리포트</SubHeader>
       <Container hasScroll={true} className="min-h-0">
         <div className="flex-1 min-h-0 flex flex-col">
           <MonthlyReportV2Slides report={report} />

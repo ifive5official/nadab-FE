@@ -16,6 +16,25 @@ function reportWithPositivePercent(positivePercent: number): MonthlyReportV2 {
 }
 
 describe("EmotionSection", () => {
+  it("uses the dominant keyword and emotion trend as a two-line title when both exist", () => {
+    const report = reportWithPositivePercent(50);
+    report.dominantKeyword = "평온";
+    report.emotionTrend = "긍정 감정이 늘었어요";
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("평온를 중심으로<br/>긍정 감정이 늘었어요");
+    expect(markup).not.toContain("이번 달의 감정은 어땠을까요?");
+  });
+
+  it("keeps the default title when either title field is missing", () => {
+    const report = reportWithPositivePercent(50);
+    report.dominantKeyword = "평온";
+    const markup = renderToStaticMarkup(<EmotionSection report={report} />);
+
+    expect(markup).toContain("이번 달의 감정은 어땠을까요?");
+    expect(markup).not.toContain("평온를 중심으로");
+  });
+
   it("hides the positive emotion card below 10 percent and moves the dominant emotion card up", () => {
     const markup = renderToStaticMarkup(
       <EmotionSection report={reportWithPositivePercent(9)} />,

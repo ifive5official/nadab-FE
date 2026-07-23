@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { ReportSectionHeader, SurfaceCard } from "./LayoutPrimitives";
 import type { MonthlyReportV2 } from "./types";
 import { formatPercent, normalizeSegments } from "./utils";
+import { josa } from "es-hangul";
 
 export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
   const emotions = report.emotionStats?.emotions ?? [];
@@ -31,12 +32,22 @@ export function EmotionSection({ report }: { report: MonthlyReportV2 }) {
   const positivePercent = report.emotionStats?.positivePercent;
   const showPositivePercentCard =
     typeof positivePercent !== "number" || positivePercent >= 10;
+  const sectionTitle =
+    report.dominantKeyword && report.emotionTrend ? (
+      <>
+        {report.month}월에는 {josa(report.dominantKeyword, "을/를")} 중심으로
+        <br />
+        {report.emotionTrend}
+      </>
+    ) : (
+      "이번 달의 감정은 어땠을까요?"
+    );
 
   return (
     <section className="flex flex-col gap-gap-y-l">
       <ReportSectionHeader
         caption={`${report.month}월의 감정 통계`}
-        title="이번 달의 감정은 어땠을까요?"
+        title={sectionTitle}
       />
       <MonthlyEmotionRadarChart
         emotions={emotions}
@@ -146,7 +157,8 @@ function PercentPointBadge({
         {
           "border-brand-primary text-brand-primary": tone === "positive",
           "border-text-tertiary text-text-tertiary": tone === "neutral",
-          "border-feedback-error-fg text-feedback-error-fg": tone === "negative",
+          "border-feedback-error-fg text-feedback-error-fg":
+            tone === "negative",
         },
       )}
     >
