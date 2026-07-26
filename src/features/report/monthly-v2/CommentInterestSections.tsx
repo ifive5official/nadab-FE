@@ -81,6 +81,11 @@ export function InterestSection({ report }: { report: MonthlyReportV2 }) {
   }
 
   const mostAnsweredInterest = cards.find(({ rank }) => rank === 1)?.interest;
+  const topInterestNames = cards
+    .filter(({ isTopRank }) => isTopRank)
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ interest }) => interest.interestName)
+    .filter((interestName): interestName is string => Boolean(interestName));
 
   return (
     <section className="flex flex-col gap-gap-y-s">
@@ -91,7 +96,7 @@ export function InterestSection({ report }: { report: MonthlyReportV2 }) {
       />
       <h1 className="text-label-l">
         {hasMultipleTopRanks
-          ? `${report.month}월에는 이런 주제들에 대해 많이 답했어요.`
+          ? `${report.month}월에는 ${topInterestNames.join(", ")} 질문에 가장 많이 답했어요.`
           : `${report.month}월에는 ${mostAnsweredInterest?.interestName ?? ""} 질문에 가장 많이 답했어요.`}
       </h1>
       <div

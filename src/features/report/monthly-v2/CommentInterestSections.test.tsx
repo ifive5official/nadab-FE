@@ -119,23 +119,27 @@ describe("getInterestDisplayState", () => {
     ).toEqual([]);
   });
 
-  it("renders the plural title for shared first place", () => {
+  it("includes every shared first-place interest in server order in the title", () => {
     const markup = renderToStaticMarkup(
       <InterestSection
         report={
           {
             month: 7,
             interestStats: {
-              interests: [interest("관계", 2), interest("성장", 2)],
+              interests: [
+                interest("관계", 2),
+                interest("성장", 2),
+                interest("휴식", 2),
+              ],
             },
           } as MonthlyReportV2
         }
       />,
     );
 
-    expect(markup).toContain("7월에는 이런 주제들에 대해 많이 답했어요.");
-    expect(markup).toContain("justify-evenly");
-    expect(markup).toContain("var(--spacing-gap-x-m)");
+    expect(markup).toContain(
+      "7월에는 관계, 성장, 휴식 질문에 가장 많이 답했어요.",
+    );
     expect(markup).not.toContain("scale-80");
   });
 
