@@ -5,7 +5,6 @@ import createSelectors from "./createSelectors";
 type ToastConfig = {
   bottom?: string; // tailwind class spacing 값 받음
   message: string;
-  variant?: "success" | "error";
 };
 
 type State = {
