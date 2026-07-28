@@ -74,7 +74,7 @@ function RankingList({
             className="flex items-center gap-gap-x-s"
           >
             <span className="w-5 text-button-1 text-brand-primary">
-              {item.displayOrder}
+              {item.rank ?? item.displayOrder}
             </span>
             <ProfileImg width={32} src={item.profileImageUrl} />
             <span className="text-button-3 text-text-primary">

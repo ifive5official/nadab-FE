@@ -324,14 +324,26 @@ function v2Fixture(
       visible: true,
       month,
       likeRanking: [
-        { displayOrder: 1, userId: 1, nickname: "민지", topRank: true },
-        { displayOrder: 2, userId: 2, nickname: "서준" },
-        { displayOrder: 3, userId: 3, nickname: "하린" },
+        {
+          displayOrder: 1,
+          rank: 1,
+          userId: 1,
+          nickname: "민지",
+          topRank: true,
+        },
+        { displayOrder: 2, rank: 2, userId: 2, nickname: "서준" },
+        { displayOrder: 3, rank: 3, userId: 3, nickname: "하린" },
       ],
       commentRanking: [
-        { displayOrder: 1, userId: 4, nickname: "도윤", topRank: true },
-        { displayOrder: 2, userId: 5, nickname: "지우" },
-        { displayOrder: 3, userId: 6, nickname: "유나" },
+        {
+          displayOrder: 1,
+          rank: 1,
+          userId: 4,
+          nickname: "도윤",
+          topRank: true,
+        },
+        { displayOrder: 2, rank: 2, userId: 5, nickname: "지우" },
+        { displayOrder: 3, rank: 3, userId: 6, nickname: "유나" },
       ],
     },
   };

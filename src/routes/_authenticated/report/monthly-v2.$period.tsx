@@ -11,7 +11,6 @@ import {
   monthlyReportV2Options,
 } from "@/features/report/queries";
 import type { components } from "@/generated/api-types";
-import { getPreviousPeriodText } from "@/lib/getPrevPeriod";
 import useModalStore from "@/store/modalStore";
 
 type MonthlyReportLocator =
@@ -85,10 +84,11 @@ function MonthlyReportV2Detail({
   const { data: reports } = useSuspenseQuery(monthlyReportV2Options);
   const nextLocator =
     period === "current" ? reports.previousReport : reports.report;
-  const nextLabel =
-    period === "current"
-      ? `${getPreviousPeriodText("monthly", "prev")} 리포트 보기`
-      : `${getPreviousPeriodText("monthly", "current")} 리포트 보기`;
+  const nextLabel = nextLocator?.month
+    ? `${nextLocator.month}월 리포트 보기`
+    : period === "current"
+      ? "이전 리포트 보기"
+      : "다음 리포트 보기";
   const nextVariant =
     nextLocator?.status === "COMPLETED"
       ? period === "current"

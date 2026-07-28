@@ -234,10 +234,11 @@ function MonthlyReportV1Content({
   const { data: locators } = useSuspenseQuery(monthlyReportV2Options);
   const nextLocator =
     period === "current" ? locators.previousReport : locators.report;
-  const nextLabel =
-    period === "current"
-      ? `${getPreviousPeriodText("monthly", "prev")} 리포트 보기`
-      : `${getPreviousPeriodText("monthly", "current")} 리포트 보기`;
+  const nextLabel = nextLocator?.month
+    ? `${nextLocator.month}월 리포트 보기`
+    : period === "current"
+      ? "이전 리포트 보기"
+      : "다음 리포트 보기";
   const nextVariant =
     nextLocator?.status === "COMPLETED"
       ? period === "current"
