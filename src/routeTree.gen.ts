@@ -21,6 +21,7 @@ import { Route as authByeRouteImport } from './routes/(auth)/bye'
 import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
 import { Route as AuthenticatedNotificationsIndexRouteImport } from './routes/_authenticated/notifications/index'
 import { Route as AuthenticatedDailyIndexRouteImport } from './routes/_authenticated/daily/index'
+import { Route as AuthenticatedAskIndexRouteImport } from './routes/_authenticated/ask/index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
@@ -28,6 +29,8 @@ import { Route as AuthenticatedSocialBlockedRouteImport } from './routes/_authen
 import { Route as AuthenticatedReportHistoryRouteImport } from './routes/_authenticated/report/history'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
+import { Route as AuthenticatedAskChatRouteImport } from './routes/_authenticated/ask/chat'
+import { Route as AuthenticatedAskArchiveRouteImport } from './routes/_authenticated/ask/archive'
 import { Route as AuthenticatedAccountWithdrawRouteImport } from './routes/_authenticated/account/withdraw'
 import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
 import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_authenticated/account/password'
@@ -118,6 +121,11 @@ const AuthenticatedDailyIndexRoute = AuthenticatedDailyIndexRouteImport.update({
   path: '/daily/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAskIndexRoute = AuthenticatedAskIndexRouteImport.update({
+  id: '/ask/',
+  path: '/ask/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAccountIndexRoute =
   AuthenticatedAccountIndexRouteImport.update({
     id: '/account/',
@@ -156,6 +164,16 @@ const AuthenticatedDetailDateRoute = AuthenticatedDetailDateRouteImport.update({
 const AuthenticatedDailyWriteRoute = AuthenticatedDailyWriteRouteImport.update({
   id: '/daily/write',
   path: '/daily/write',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAskChatRoute = AuthenticatedAskChatRouteImport.update({
+  id: '/ask/chat',
+  path: '/ask/chat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAskArchiveRoute = AuthenticatedAskArchiveRouteImport.update({
+  id: '/ask/archive',
+  path: '/ask/archive',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAccountWithdrawRoute =
@@ -346,6 +364,8 @@ export interface FileRoutesByFullPath {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/ask/archive': typeof AuthenticatedAskArchiveRoute
+  '/ask/chat': typeof AuthenticatedAskChatRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
@@ -353,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/ask': typeof AuthenticatedAskIndexRoute
   '/daily': typeof AuthenticatedDailyIndexRoute
   '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
@@ -394,6 +415,8 @@ export interface FileRoutesByTo {
   '/account/password': typeof AuthenticatedAccountPasswordRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/ask/archive': typeof AuthenticatedAskArchiveRoute
+  '/ask/chat': typeof AuthenticatedAskChatRoute
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
@@ -401,6 +424,7 @@ export interface FileRoutesByTo {
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/ask': typeof AuthenticatedAskIndexRoute
   '/daily': typeof AuthenticatedDailyIndexRoute
   '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
@@ -445,6 +469,8 @@ export interface FileRoutesById {
   '/_authenticated/account/password': typeof AuthenticatedAccountPasswordRoute
   '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
   '/_authenticated/account/withdraw': typeof AuthenticatedAccountWithdrawRoute
+  '/_authenticated/ask/archive': typeof AuthenticatedAskArchiveRoute
+  '/_authenticated/ask/chat': typeof AuthenticatedAskChatRoute
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/_authenticated/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
@@ -452,6 +478,7 @@ export interface FileRoutesById {
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
+  '/_authenticated/ask/': typeof AuthenticatedAskIndexRoute
   '/_authenticated/daily/': typeof AuthenticatedDailyIndexRoute
   '/_authenticated/notifications/': typeof AuthenticatedNotificationsIndexRoute
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
@@ -495,6 +522,8 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/ask/archive'
+    | '/ask/chat'
     | '/daily/write'
     | '/detail/$date'
     | '/report/history'
@@ -502,6 +531,7 @@ export interface FileRouteTypes {
     | '/social/requests'
     | '/social/search'
     | '/account'
+    | '/ask'
     | '/daily'
     | '/notifications'
     | '/search'
@@ -543,6 +573,8 @@ export interface FileRouteTypes {
     | '/account/password'
     | '/account/profile'
     | '/account/withdraw'
+    | '/ask/archive'
+    | '/ask/chat'
     | '/daily/write'
     | '/detail/$date'
     | '/report/history'
@@ -550,6 +582,7 @@ export interface FileRouteTypes {
     | '/social/requests'
     | '/social/search'
     | '/account'
+    | '/ask'
     | '/daily'
     | '/notifications'
     | '/search'
@@ -593,6 +626,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/password'
     | '/_authenticated/account/profile'
     | '/_authenticated/account/withdraw'
+    | '/_authenticated/ask/archive'
+    | '/_authenticated/ask/chat'
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
     | '/_authenticated/report/history'
@@ -600,6 +635,7 @@ export interface FileRouteTypes {
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
     | '/_authenticated/account/'
+    | '/_authenticated/ask/'
     | '/_authenticated/daily/'
     | '/_authenticated/notifications/'
     | '/_authenticated/search/'
@@ -716,6 +752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDailyIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/ask/': {
+      id: '/_authenticated/ask/'
+      path: '/ask'
+      fullPath: '/ask'
+      preLoaderRoute: typeof AuthenticatedAskIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/': {
       id: '/_authenticated/account/'
       path: '/account'
@@ -763,6 +806,20 @@ declare module '@tanstack/react-router' {
       path: '/daily/write'
       fullPath: '/daily/write'
       preLoaderRoute: typeof AuthenticatedDailyWriteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ask/chat': {
+      id: '/_authenticated/ask/chat'
+      path: '/ask/chat'
+      fullPath: '/ask/chat'
+      preLoaderRoute: typeof AuthenticatedAskChatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ask/archive': {
+      id: '/_authenticated/ask/archive'
+      path: '/ask/archive'
+      fullPath: '/ask/archive'
+      preLoaderRoute: typeof AuthenticatedAskArchiveRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/withdraw': {
@@ -1072,6 +1129,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
   AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
   AuthenticatedAccountWithdrawRoute: typeof AuthenticatedAccountWithdrawRoute
+  AuthenticatedAskArchiveRoute: typeof AuthenticatedAskArchiveRoute
+  AuthenticatedAskChatRoute: typeof AuthenticatedAskChatRoute
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRouteWithChildren
   AuthenticatedReportHistoryRoute: typeof AuthenticatedReportHistoryRouteWithChildren
@@ -1079,6 +1138,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+  AuthenticatedAskIndexRoute: typeof AuthenticatedAskIndexRoute
   AuthenticatedDailyIndexRoute: typeof AuthenticatedDailyIndexRoute
   AuthenticatedNotificationsIndexRoute: typeof AuthenticatedNotificationsIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
@@ -1094,6 +1154,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountPasswordRoute: AuthenticatedAccountPasswordRoute,
   AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
   AuthenticatedAccountWithdrawRoute: AuthenticatedAccountWithdrawRoute,
+  AuthenticatedAskArchiveRoute: AuthenticatedAskArchiveRoute,
+  AuthenticatedAskChatRoute: AuthenticatedAskChatRoute,
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRouteWithChildren,
   AuthenticatedReportHistoryRoute: AuthenticatedReportHistoryRouteWithChildren,
@@ -1101,6 +1163,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+  AuthenticatedAskIndexRoute: AuthenticatedAskIndexRoute,
   AuthenticatedDailyIndexRoute: AuthenticatedDailyIndexRoute,
   AuthenticatedNotificationsIndexRoute: AuthenticatedNotificationsIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,

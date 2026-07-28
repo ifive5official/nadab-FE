@@ -8,6 +8,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { createPortal } from "react-dom";
 import { CloseBigIcon, ToastCircleCheckFilledIcon } from "./Icons";
+import { AppIcon } from "./AppIcon";
 import clsx from "clsx";
 import useToastStore from "@/store/toastStore";
 import { useLocation } from "@tanstack/react-router";
@@ -16,6 +17,7 @@ import { useEffect } from "react";
 export default function Toast() {
   const { isOpen, config, closeToast } = useToastStore();
   const location = useLocation();
+  const variant = config?.variant ?? "success";
 
   // 경로 변경 시 자동으로 닫힘
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function Toast() {
           <div className="z-20 fixed inset-0" onClick={closeToast} />
           <motion.div
             className={clsx(
-              "fixed z-21 inset-x-padding-x-m bottom-(--safe-bottom) sm:mx-auto sm:w-[412px]",
+              "fixed z-21 inset-x-padding-x-m bottom-(--safe-bottom) sm:left-[calc((100vw-412px)/2_+_var(--spacing-padding-x-m))] sm:right-[calc((100vw-412px)/2_+_var(--spacing-padding-x-m))]",
               config.bottom ??
                 "bottom-[calc(var(--spacing-padding-y-m)+var(--safe-bottom))] bottom-support-legacy",
               "px-padding-x-xs py-padding-x-xs flex gap-gap-x-s items-center",
@@ -40,8 +42,14 @@ export default function Toast() {
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
-            <ToastCircleCheckFilledIcon />
-            <p className="mr-auto text-label-m">{config.message}</p>
+            {variant === "error" ? (
+              <AppIcon name="error-filled" size={24} color="current" />
+            ) : (
+              <ToastCircleCheckFilledIcon />
+            )}
+            <p className="mr-auto whitespace-pre-line text-label-m">
+              {config.message}
+            </p>
             <button onClick={closeToast}>
               <CloseBigIcon />
             </button>
