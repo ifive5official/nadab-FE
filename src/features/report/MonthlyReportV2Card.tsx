@@ -114,7 +114,7 @@ export default function MonthlyReportV2Card({
     <section className="px-margin-x-l py-margin-y-xl bg-surface-layer-1 rounded-2xl shadow-2">
       <div className="flex flex-col gap-margin-y-m mb-padding-y-xxl">
         <div className="relative flex justify-between items-center">
-          <Badge>월간 리포트 v2</Badge>
+          <Badge>월간 리포트</Badge>
           <InfoButton onClick={() => setIsPopoverOpen(true)} />
           <div className="absolute z-1 top-full w-full mt-margin-y-m flex justify-center">
             <Popover
