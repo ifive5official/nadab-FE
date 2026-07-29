@@ -6,7 +6,6 @@ import { Badge } from "@/components/Badges";
 import BlockButton from "@/components/BlockButton";
 import useTypeReport from "./hooks/useTypeReport";
 import { useGenerateTypeReportMutation } from "./hooks/useGenerateTypeReportMutation";
-import { useDeleteTypeReportMutation } from "./hooks/useDeleteTypeReportMutation";
 import { LoadingSpinnerIcon } from "@/components/Icons";
 import useToastStore from "@/store/toastStore";
 import clsx from "clsx";
@@ -56,10 +55,6 @@ export default function TypeReportTab() {
   const { showToast } = useToastStore();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const isTopNotificationVisible = !typeReport.current && !isGenerating;
-
-  const deleteTypeReportMutation = useDeleteTypeReportMutation({
-    interestCode: selectedCategory,
-  });
 
   return (
     <>
@@ -111,11 +106,6 @@ export default function TypeReportTab() {
           dailyCompletedCount={typeReport.eligibility?.dailyCompletedCount ?? 0}
           requiredCount={typeReport.eligibility?.requiredCount ?? 0}
         />
-      )}
-      {!import.meta.env.VITE_IS_PRODUCTION && (
-        <button onClick={() => deleteTypeReportMutation.mutate()}>
-          유형 리포트 삭제(테스트용)
-        </button>
       )}
       <section className="relative z-0 flex-1 flex flex-col items-center">
         {typeReport.current && !isGenerating ? (

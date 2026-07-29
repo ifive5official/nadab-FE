@@ -386,6 +386,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pdf-exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * PDF 내보내기 아카이브(이력) 목록
+         * @description 내 PDF 내보내기 이력을 최신순(생성순 DESC)으로 조회합니다. 대상은 완료(COMPLETED)뿐입니다 — 생성 중(PENDING/IN_PROGRESS)은 진행 중 조회(GET /pdf-exports/current)로, 실패(FAILED)는 자동 환불된 상태라 목록에 포함되지 않습니다. </br>
+         *     각 항목은 유형(type)·기간(startDate~endDate)·상태(status)와 함께 expiresAt(다운로드 보관 만료 = 완료 + 7일)·expired(만료 여부)를 담습니다. expired=false면 다운로드 URL을 발급(POST /pdf-exports/{jobId}/download-url)해 받고, expired=true면 보관 기간이 지나 다운로드가 불가하므로 재생성이 필요합니다. </br>
+         *     같은 유형·기간으로 재생성하면 이전 완료 항목은 삭제되어 목록에는 가장 최근 것만 남습니다.
+         */
+        get: operations["getPdfExportArchive"];
+        put?: never;
+        /**
+         * PDF 내보내기 생성 시작
+         * @description 선택한 유형(리포트만/답변만/리포트+답변)과 기간(종료일 기준 최대 1년)으로 PDF 생성을 시작합니다. 호출 즉시 크리스탈이 차감됩니다. </br>
+         *     생성은 비동기라 이 API는 곧바로 jobId, status, balanceAfter만 반환합니다. 완료 확인은 셋 중 하나로: </br>
+         *     (1) 생성 후 로딩 화면에 머물러 완료를 바로 반영하려면 GET /pdf-exports/{jobId}를 일정 시간 간격으로 폴링, </br>
+         *     (2) 생성 화면을 벗어나는 흐름이면 나중에 아카이브(GET /pdf-exports)에서 해당 작업이 COMPLETED로 뜨는지 확인(완료 시 FCM 푸시로 전송 후 사용자는 아카이브에서 확인), </br>
+         *     (3) 화면을 벗어났다가 PDF 탭으로 다시 들어오면 GET /pdf-exports/current가 진행 중 작업을 돌려주므로, 그 로딩 화면으로 이동해 (1)과 동일하게 GET /pdf-exports/{jobId}를 폴링. </br>
+         *     어느 쪽이든 COMPLETED가 되면 POST /pdf-exports/{jobId}/download-url 로 다운로드 URL을 발급받아 받으면 됩니다. </br>
+         *     응답의 balanceAfter는 차감 후 남은 크리스탈 잔액입니다(지갑 UI 갱신용). </br>
+         *     생성 로딩 화면의 "포함 내용" 개수(답변/주간/월간)는 이 API가 반환하지 않습니다 — 방금 생성 직전 호출한 미리보기(GET /pdf-exports/preview) 응답값을 그대로 표시하면 됩니다(생성 직후엔 그 값이 곧 생성 대상 개수). 화면을 벗어났다 다시 들어오는 재진입 흐름에서는 GET /pdf-exports/current가 같은 개수를 함께 내려줍니다. </br>
+         *     동시 생성 1개: 한 사용자는 생성 중(PENDING/IN_PROGRESS) 작업을 동시에 1개만 가질 수 있습니다. 생성 중인데 다른 유형·기간으로 다시 호출하면 409(PDF_EXPORT_ALREADY_IN_PROGRESS)로 거부되며, 응답 data에 이미 생성 중인 작업의 jobId가 담겨 옵니다 — 그 작업의 생성 화면으로 유도하고 상세·포함 개수는 GET /pdf-exports/current로 받으세요. </br>
+         *     멱등 재사용: 같은 유형·기간의 작업이 아직 생성 중일 때 다시 호출하면(응답을 못 받아 재시도하거나 버튼 더블탭 등) 재과금 없이 그 작업을 그대로 돌려주며 balanceAfter=null 입니다(이중 과금 없음, 지갑 추가 차감 표시 금지). 완료(COMPLETED)된 작업은 재사용하지 않으므로 같은 기간 재요청은 새 작업으로 재과금됩니다(= 재생성). </br>
+         *     생성 실패는 아카이브에도 안 뜨고 완료 푸시도 없어, 오직 폴링(GET /pdf-exports/{jobId})의 status=FAILED(errorCode 포함)로만 드러납니다. 그래서 로딩 화면에서 폴링 중이라면 FAILED를 COMPLETED와 같은 '종료 상태'로 처리해야 합니다(안 그러면 "생성 중"이 무한히 돕니다). 화면을 벗어난 뒤라면 따로 확인할 필요가 없습니다 — 차감 크리스탈은 자동 환불되고(지갑 이력에 남음) 산출물이 없어 사용자가 할 액션이 없습니다. 잔액을 표시 중이면 다시 조회해 갱신하세요. </br>
+         *     내보낼 답변/리포트가 하나도 없으면 PDF_EXPORT_NO_DATA로 거부됩니다 — 미리보기(GET /pdf-exports/preview)로 사전 확인을 권장합니다.
+         */
+        post: operations["startPdfExport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pdf-exports/{jobId}/download-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * PDF 다운로드 URL 발급
+         * @description 완료된 PDF의 다운로드 URL(CloudFront 서명 URL)을 발급합니다. 폴링과 분리된 발급 전용 API로, 상태가 COMPLETED가 된 뒤(아카이브 항목의 다운로드 버튼에서) 호출합니다. </br>
+         *     downloadUrl은 약 3분간 유효합니다. 3분은 다운로드를 '시작'할 수 있는 제한시간이며, 한 번 시작된 전송은 3분을 넘겨도 끝까지 받아집니다. 만료 후에는 이 API를 다시 호출해 새 URL을 발급받으면 됩니다(같은 파일). </br>
+         *     이미 지정해놨지만 혹시 필요하다면 저장 파일명은 응답의 fileName을 사용하세요(예: 나답_20251101-20251130.pdf). 브라우저로 열어 받으면 URL에 파일명이 지정돼 있어 자동 적용되고, 앱(Capacitor) 네이티브 저장은 헤더를 읽지 않으므로 이 fileName으로 직접 지정해야 할듯 합니다. </br>
+         *     expiresAt은 다운로드 보관 만료 시각(완료 + 7일)입니다. 이 시각이 지나면 발급되지 않으므로(409 EXPIRED) 재생성이 필요합니다. </br>
+         *     아직 생성 완료 전이면 409(NOT_COMPLETED)가 반환됩니다. </br>
+         *     발급은 유저당 1분에 20회로 제한되며, 초과하면 429(RATE_LIMITED)가 반환됩니다. 실제 다운로드 버튼을 누를 때만 1회 호출하면 정상 사용으로는 제한에 걸릴 일이 없지만, 폴링할 때마다·화면이 리렌더될 때마다·아카이브 목록의 모든 항목에 대해 자동으로 이 API를 부르면 실수로 걸릴 수 있으니 주의하세요. 429가 나면 잠시 후 재시도하면 됩니다.
+         */
+        post: operations["issuePdfExportDownloadUrl"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications/tokens": {
         parameters: {
             query?: never;
@@ -1348,6 +1410,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ask-chat/turns/charge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 물어보기 대화권 충전
+         * @description 보유 크리스탈 200개를 차감하고 물어보기 유료 대화권 10회를 충전합니다. </br>
+         *     잔여 크리스탈이 부족하면 대화권을 충전하지 않고 WALLET_INSUFFICIENT_BALANCE 에러 코드를 반환합니다. </br>
+         *     응답에는 충전 후 크리스탈 잔액과 무료/유료 대화권을 합산한 남은 메시지 횟수가 포함됩니다.
+         */
+        post: operations["chargeTurns"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ask-chat/sessions": {
         parameters: {
             query?: never;
@@ -1359,9 +1443,9 @@ export interface paths {
         put?: never;
         /**
          * 물어보기 세션 시작
-         * @description 사용자가 새 채팅을 시작할 때 호출합니다. </br>
-         *     이미 ACTIVE 세션이 있어도 기존 세션을 재사용하거나 종료하지 않고 매번 새 ACTIVE 세션을 생성합니다. </br>
-         *     이 API는 질문 메시지를 저장하지 않으며, 실제 질문 저장은 POST /ask-chat/messages에서 수행합니다. </br>
+         * @description 사용자가 새 채팅을 시작하면서 첫 질문을 함께 전송할 때 호출합니다. </br>
+         *     요청 본문의 content를 첫 USER 메시지로 저장하고, 기존 POST /ask-chat/messages와 동일한 답변 생성/실패 응답 구조를 반환합니다. </br>
+         *     세션 생성 후 첫 질문 처리 중 대화권 부족 등 예외가 발생하면 세션 생성도 함께 롤백됩니다.
          */
         post: operations["startSession"];
         delete?: never;
@@ -1381,15 +1465,16 @@ export interface paths {
         put?: never;
         /**
          * 물어보기 질문 전송
-         * @description ask_home_01 또는 ask_chat_01 화면에서 사용자가 질문을 보낼 때 호출합니다. </br>
-         *     요청 본문의 sessionId에 해당하는 본인 채팅 세션에만 USER/ASSISTANT 메시지를 저장합니다. </br>
+         * @description 사용자가 질문을 보낼 때 호출합니다. </br>
          *     세션이 없거나 다른 사용자의 세션이면 ASK_CHAT_SESSION_NOT_FOUND를 반환하며, 질문 전송 시 새 세션을 자동 생성하지 않습니다. </br>
          *     세션 생성은 POST /ask-chat/sessions에서 먼저 수행해야 합니다. </br>
          *     질문 내용은 앞뒤 공백 제거 후 1자 이상 200자 이하만 허용합니다. </br>
+         *     사용 가능한 대화권이 모두 0회이면 메시지를 저장하지 않고 ASK_CHAT_TURN_BALANCE_INSUFFICIENT 에러 코드를 반환합니다. </br>
          *     답변 생성이 성공한 경우에만 answeredTurnCount를 1 증가시키며, 15번째 성공 답변 후 해당 세션은 ENDED로 자동 전환됩니다. </br>
          *     답변 생성 실패 시에는 응답의 assistantMessage는 null로 반환합니다. </br>
-         *     클라이언트에서는 answerGeneration.success=false, errorCode, message를 기준으로 채팅 말풍선이 아닌 모달/토스트를 표시해야 합니다. </br>
-         *     ENDED 세션 또는 answeredTurnCount가 15 이상인 세션에서는 메시지를 저장하지 않고 ASK_CHAT_TURN_LIMIT_EXCEEDED를 반환합니다. </br>
+         *     클라이언트에서는 answerGeneration.success를 기준으로 채팅 말풍선(성공 케이스) 또는 모달/토스트(실패 케이스)를 표시해야 합니다. </br>
+         *     실패 케이스에서는 answerGeneration.message를 사용합니다.
+         *     ENDED 세션 또는 answeredTurnCount가 15 이상인 세션에서는 메시지를 저장하지 않고 ASK_CHAT_TURN_LIMIT_EXCEEDED 에러 코드를 반환합니다.
          */
         post: operations["sendQuestion"];
         delete?: never;
@@ -2035,6 +2120,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pdf-exports/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * PDF 내보내기 상태 조회 (폴링)
+         * @description jobId로 특정 작업 하나의 진행 상태를 조회합니다. 생성 시작(POST /pdf-exports) 직후 로딩 화면에 머무는 동안, 또는 PDF 탭 재진입 시 진행 중 조회(GET /pdf-exports/current)로 찾은 작업의 로딩 화면을 볼 때, COMPLETED나 FAILED가 될 때까지 이 API를 주기적으로 폴링합니다. </br>
+         *     status 값: </br>
+         *     - PENDING: 생성 대기 중 </br>
+         *     - IN_PROGRESS: 생성 진행 중 </br>
+         *     - COMPLETED: 생성 완료. expiresAt(다운로드 보관 만료 = 완료 + 7일)와 expired(만료 여부)가 포함됩니다. expired=true면 보관 기간이 지나 다운로드가 불가하므로 재생성이 필요합니다. </br>
+         *     - FAILED: 생성 실패(errorCode 포함). 차감된 크리스탈은 자동 환불되므로, 잔액을 표시 중이면 다시 조회해 갱신하세요. </br>
+         *     FAILED일 때 errorCode 값(둘 다 자동 환불됨): </br>
+         *     - PDF_EXPORT_GENERATION_FAILED: 생성 도중 오류로 실패 </br>
+         *     - PDF_EXPORT_GENERATION_TIMEOUT: 생성이 60분 안에 끝나지 않아 자동 취소(배포·서버 재시작 등으로 작업이 유실된 경우) </br>
+         *     다운로드 URL은 이 응답에 포함되지 않습니다. COMPLETED가 된 뒤 POST /pdf-exports/{jobId}/download-url 로 발급받으세요(발급 빈도 제한이 폴링에 영향을 주지 않도록 분리되어 있습니다).
+         */
+        get: operations["getPdfExportStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pdf-exports/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * PDF 내보내기 미리보기(포함 개수)
+         * @description 해당 기간에 포함될 답변·주간 리포트·월간 리포트 개수를 돌려줍니다. 생성/차감 전 확인 팝업에서 "무엇이 몇 개 포함되는지" 보여주는 용도의 순수 조회입니다. </br>
+         *     유형과 무관하게 3종 개수를 모두 내려주므로, 선택한 유형에 맞는 값만 표시하면 됩니다(예: 답변만 선택 시 answerCount). </br>
+         *     세 개수가 모두 0이면 생성해도 빈 PDF라 생성 API가 PDF_EXPORT_NO_DATA로 거부합니다. 이 경우 생성 버튼을 비활성화하거나 기획에 맞게 팝업을 띄우면 됩니다. </br>
+         *     기간 규칙은 생성 API와 동일합니다(시작일 ≤ 종료일, 종료일 ≤ 오늘, 최대 1년) — 잘못된 기간이면 PDF_EXPORT_INVALID_PERIOD.
+         */
+        get: operations["getPdfExportPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pdf-exports/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 진행 중인 PDF 내보내기 작업 조회
+         * @description 지금 생성 중인(PENDING/IN_PROGRESS) 내 PDF 작업을 돌려줍니다. 동시 생성은 유저당 1개라 결과는 단건이며, 없으면 data=null 입니다. </br>
+         *     PDF 탭에 진입할 때 이 API를 호출해, 생성 중인 작업이 있으면(data≠null) 그 작업의 생성/로딩 화면으로 이동시켜 GET /pdf-exports/{jobId} 폴링으로 완료를 확인하는 흐름에 사용합니다. </br>
+         *     응답에는 jobId·유형(type)·기간(startDate~endDate)·상태(status)와 함께, 로딩 화면 "포함 내용" 표시용 개수 3종(answerCount·weeklyCount·monthlyCount)이 담깁니다. 이 개수는 조회 시점에 즉석 계산한 값입니다(유형과 무관하게 3종 모두 내려주므로 선택 유형에 맞는 값만 표시하면 됩니다). 차감 크리스탈은 유형에서 유도하세요(리포트만/답변만 50, 둘 다 100). </br>
+         *     완료된 이력은 여기 나오지 않으며 아카이브(GET /pdf-exports)에서 확인합니다.
+         */
+        get: operations["getCurrentPdfExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications": {
         parameters: {
             query?: never;
@@ -2451,6 +2611,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ask-chat/turns/remaining": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 물어보기 남은 메시지 횟수 조회
+         * @description 현재 사용자가 사용할 수 있는 물어보기 남은 메시지 횟수만 조회합니다. </br>
+         *     홈 전체 정보를 다시 조회하지 않고 질문 전송/충전 이후 카운터만 갱신할 때 사용할 수 있습니다.
+         */
+        get: operations["getRemainingTurns"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ask-chat/home": {
         parameters: {
             query?: never;
@@ -2459,13 +2640,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * 물어보기 홈 진입
-         * @description ask_home_01 화면 진입 시 호출합니다. </br>
-         *     홈 진입만으로 새 채팅 세션을 생성하지 않습니다. </br>
-         *     최종 기획에서는 사용자가 여러 채팅 세션을 유지할 수 있으므로, 홈 응답은 특정 ACTIVE 세션 하나를 선택해 반환하지 않고 최근 채팅 세션 목록을 반환합니다. </br>
-         *     recentSessions에는 USER 메시지가 1개 이상 저장된 세션만 최신순으로 포함하며, 각 항목은 첫 질문 제목, 마지막 사용자 질문, 마지막 메시지 시각을 함께 제공합니다. </br>
-         *     새 세션 생성은 POST /ask-chat/sessions에서 명시적으로 수행합니다. </br>
-         *     크리스탈 및 대화권 잔여 횟수는 다음 브랜치에서 별도 정책으로 연결합니다.
+         * 물어보기 홈 조회
+         * @description 홈 진입만으로 새 채팅 세션을 생성하지 않습니다. </br>
+         *     사용자의 누적 답변 개수가 20개 이상인 경우에만 물어보기 홈을 조회할 수 있습니다. </br>
+         *     응답에는 남은 메시지 횟수, 사용자 닉네임, 보유 크리스탈 수, 예시 질문 목록을 포함합니다. </br>
+         *     히스토리 목록은 이 API에서 반환하지 않으며, 별도 히스토리 API를 사용해야 합니다.
          */
         get: operations["enterHome"];
         put?: never;
@@ -2485,10 +2664,11 @@ export interface paths {
         };
         /**
          * 물어보기 히스토리 목록 조회
-         * @description ask_history_01 화면에서 사용자의 물어보기 채팅 세션 목록을 최신순으로 조회합니다.  </br>
+         * @description 사용자의 물어보기 채팅 세션 목록을 최신순으로 조회합니다.  </br>
          *     USER 메시지가 1개 이상 저장된 세션만 히스토리로 노출하며, 세션만 생성되고 질문이 없는 대화는 목록에 포함하지 않습니다.  </br>
          *     page는 1부터 시작하며, size는 최대 50까지 요청할 수 있습니다.  </br>
-         *     응답의 empty는 현재 페이지의 목록이 비어 있는지 나타내며, 각 항목은 첫 질문 제목, 마지막 사용자 질문, 마지막 메시지 시각, createdDate를 카드 표시용으로 제공합니다.  </br>
+         *     응답은 히스토리 목록과 페이지 정보를 포함하며, 목록이 비어 있는지는 histories 배열 길이로 판단할 수 있습니다.  </br>
+         *     각 항목은 첫 질문 제목, 마지막 사용자 질문, 마지막 메시지 시각, createdDate를 카드 표시용으로 제공합니다.  </br>
          */
         get: operations["getHistories"];
         put?: never;
@@ -2510,7 +2690,7 @@ export interface paths {
          * 물어보기 히스토리 상세 조회
          * @description ask_history_02 화면에서 선택한 물어보기 채팅 세션의 전체 메시지를 시간순으로 조회합니다.  </br>
          *     본인의 세션만 조회할 수 있으며, 다른 사용자의 세션이거나 존재하지 않는 세션이면 ASK_CHAT_SESSION_NOT_FOUND를 반환합니다.  </br>
-         *     과거 대화 상세 화면은 읽기 전용이므로 readOnly=true를 반환하며, 새 질문 입력 UI는 제공하지 않습니다.  </br>
+         *     readOnly는 해당 세션에 새 질문을 입력할 수 없는지 여부입니다. 세션이 ENDED이거나 answeredTurnCount가 15 이상이면 true를 반환합니다.  </br>
          */
         get: operations["getHistoryDetail"];
         put?: never;
@@ -3145,6 +3325,68 @@ export interface components {
             /** @description 사용자가 새로운 질문 받기를 했는지 여부 */
             rerollUsed?: boolean;
         };
+        PdfExportStartResponse: {
+            /**
+             * Format: int64
+             * @description 생성된(또는 재사용된) 작업 id
+             * @example 1
+             */
+            jobId?: number;
+            /**
+             * @description 작업 상태
+             * @example PENDING
+             */
+            status?: string;
+            /**
+             * Format: int64
+             * @description 차감 후 크리스탈 잔액. 멱등 재사용으로 재과금이 없으면 null
+             * @example 150
+             */
+            balanceAfter?: number;
+        };
+        PdfExportInProgressResponse: {
+            /**
+             * Format: int64
+             * @description 이미 생성 중인 작업 id
+             * @example 1
+             */
+            jobId?: number;
+        };
+        PdfExportStartRequest: {
+            /**
+             * @description 내보내기 유형
+             * @example REPORT_AND_ANSWER
+             * @enum {string}
+             */
+            type: "REPORT_ONLY" | "ANSWER_ONLY" | "REPORT_AND_ANSWER";
+            /**
+             * Format: date
+             * @description 시작일 (포함)
+             * @example 2026-01-01
+             */
+            startDate: string;
+            /**
+             * Format: date
+             * @description 종료일 (포함). 종료일 기준 최대 1년
+             * @example 2026-06-30
+             */
+            endDate: string;
+        };
+        PdfExportDownloadResponse: {
+            /** @description CloudFront signed 다운로드 URL (약 3분간 유효, 만료 시 재발급) */
+            downloadUrl?: string;
+            /**
+             * @description 저장에 사용할 파일명. 필요하면 다운로드 저장 시 이 값을 그대로 사용
+             * @example 나답_20251101-20251130.pdf
+             */
+            fileName?: string;
+            /**
+             * Format: date-time
+             * @description 다운로드 보관 만료 시각(완료 시각 + 7일). 이 시각이 지나면 재발급 불가
+             * @example 2025-11-08T05:30:00Z
+             */
+            expiresAt?: string;
+        };
         /** @description FCM 토큰 등록 응답 */
         RegisterDeviceResponse: {
             /**
@@ -3532,48 +3774,20 @@ export interface components {
              */
             code: string;
         };
-        /** @description 물어보기 채팅 세션 응답 */
-        AskChatSessionResponse: {
+        /** @description 물어보기 대화권 충전 응답 */
+        AskChatTurnChargeResponse: {
             /**
              * Format: int64
-             * @description 채팅 세션 ID
-             * @example 1
+             * @description 충전 후 남은 크리스탈 수
+             * @example 70
              */
-            sessionId?: number;
-            /**
-             * @description 채팅 세션 상태
-             * @example ACTIVE
-             * @enum {string}
-             */
-            status?: "ACTIVE" | "ENDED";
+            crystalBalance?: number;
             /**
              * Format: int32
-             * @description 성공적으로 답변받은 턴 수
-             * @example 3
-             */
-            answeredTurnCount?: number;
-            /**
-             * Format: int32
-             * @description 세션당 최대 대화 횟수
-             * @example 15
-             */
-            maxTurnCount?: number;
-            /**
-             * Format: int32
-             * @description 현재 세션의 잔여 대화 횟수
+             * @description 충전 후 사용 가능한 남은 메시지 횟수
              * @example 12
              */
-            remainingTurnCount?: number;
-            /**
-             * Format: date-time
-             * @description 채팅 세션 생성 시각
-             */
-            createdAt?: string;
-            /**
-             * Format: date-time
-             * @description 채팅 세션 종료 시각
-             */
-            endedAt?: string;
+            remainingMessageCount?: number;
         };
         /** @description Ask Chat 답변 생성 결과 상태 */
         AskChatAnswerGenerationResponse: {
@@ -3634,8 +3848,55 @@ export interface components {
             assistantMessage?: components["schemas"]["AskChatMessageResponse"];
             /** @description 답변 생성 성공/실패 상태. 실패 시 프론트에서는 이 값을 기준으로 모달/토스트를 표시합니다. */
             answerGeneration?: components["schemas"]["AskChatAnswerGenerationResponse"];
+            /**
+             * Format: int32
+             * @description 답변 생성 처리 이후 사용 가능한 남은 메시지 횟수. 성공 시에는 차감 이후 값, 실패 시에는 환불 이후 값입니다.
+             * @example 8
+             */
+            remainingMessageCount?: number;
             /** @description AI가 제안한 후속 추천 질문. 생성 실패 시 빈 배열 */
             followUpQuestions?: string[];
+        };
+        /** @description 물어보기 채팅 세션 응답 */
+        AskChatSessionResponse: {
+            /**
+             * Format: int64
+             * @description 채팅 세션 ID
+             * @example 1
+             */
+            sessionId?: number;
+            /**
+             * @description 채팅 세션 상태
+             * @example ACTIVE
+             * @enum {string}
+             */
+            status?: "ACTIVE" | "ENDED";
+            /**
+             * Format: int32
+             * @description 성공적으로 답변받은 턴 수
+             * @example 3
+             */
+            answeredTurnCount?: number;
+            /**
+             * Format: int32
+             * @description 세션당 최대 대화 횟수
+             * @example 15
+             */
+            maxTurnCount?: number;
+            /**
+             * Format: int32
+             * @description 현재 세션의 잔여 대화 횟수
+             * @example 12
+             */
+            remainingTurnCount?: number;
+        };
+        /** @description 물어보기 채팅 세션 시작 요청 */
+        AskChatSessionStartRequest: {
+            /**
+             * @description 새 세션을 만들면서 함께 전송할 첫 질문 내용. 앞뒤 공백 제거 후 1자 이상 200자 이하로 입력해야 합니다.
+             * @example 나는 어떤 사람이야?
+             */
+            content: string;
         };
         /** @description 물어보기 질문 전송 요청 */
         AskChatQuestionRequest: {
@@ -4233,6 +4494,141 @@ export interface components {
              */
             profileImageUrl?: string;
         };
+        PdfExportArchiveItemResponse: {
+            /**
+             * Format: int64
+             * @description 작업 id
+             * @example 1
+             */
+            jobId?: number;
+            /**
+             * @description 내보내기 유형 (REPORT_ONLY/ANSWER_ONLY/REPORT_AND_ANSWER)
+             * @example REPORT_AND_ANSWER
+             */
+            type?: string;
+            /**
+             * Format: date
+             * @description 기간 시작일
+             * @example 2025-11-01
+             */
+            startDate?: string;
+            /**
+             * Format: date
+             * @description 기간 종료일
+             * @example 2025-11-30
+             */
+            endDate?: string;
+            /**
+             * @description 작업 상태 (아카이브는 COMPLETED만)
+             * @example COMPLETED
+             */
+            status?: string;
+            /**
+             * Format: date-time
+             * @description 다운로드 보관 만료 시각(완료 시각 + 7일)
+             * @example 2025-12-07T05:30:00Z
+             */
+            expiresAt?: string;
+            /**
+             * @description COMPLETED 이후 보관 기간(7일)이 지나 만료됐는지 여부(만료 시 재생성 필요)
+             * @example false
+             */
+            expired?: boolean;
+        };
+        PdfExportStatusResponse: {
+            /**
+             * Format: int64
+             * @description 작업 id
+             * @example 1
+             */
+            jobId?: number;
+            /**
+             * @description 작업 상태 (PENDING/IN_PROGRESS/COMPLETED/FAILED)
+             * @example COMPLETED
+             */
+            status?: string;
+            /**
+             * Format: date-time
+             * @description COMPLETED 시 다운로드 보관 만료 시각(완료 시각 + 7일). 그 외 null
+             * @example 2025-11-08T05:30:00Z
+             */
+            expiresAt?: string;
+            /**
+             * @description COMPLETED 이후 보관 기간(7일)이 지나 만료됐는지 여부. 만료되면 다운로드 발급 불가(재생성 필요)
+             * @example false
+             */
+            expired?: boolean;
+            /** @description FAILED 시 실패 코드 (그 외 null) */
+            errorCode?: string;
+        };
+        PdfExportPreviewResponse: {
+            /**
+             * Format: int64
+             * @description 기간 내 답변 수
+             * @example 30
+             */
+            answerCount?: number;
+            /**
+             * Format: int64
+             * @description 기간과 겹치는 완료 주간 리포트 수
+             * @example 4
+             */
+            weeklyCount?: number;
+            /**
+             * Format: int64
+             * @description 기간과 겹치는 완료 월간 리포트 수
+             * @example 1
+             */
+            monthlyCount?: number;
+        };
+        PdfExportCurrentResponse: {
+            /**
+             * Format: int64
+             * @description 작업 id
+             * @example 1
+             */
+            jobId?: number;
+            /**
+             * @description 내보내기 유형 (REPORT_ONLY/ANSWER_ONLY/REPORT_AND_ANSWER)
+             * @example REPORT_AND_ANSWER
+             */
+            type?: string;
+            /**
+             * Format: date
+             * @description 기간 시작일
+             * @example 2025-11-01
+             */
+            startDate?: string;
+            /**
+             * Format: date
+             * @description 기간 종료일
+             * @example 2025-11-30
+             */
+            endDate?: string;
+            /**
+             * @description 작업 상태 (PENDING/IN_PROGRESS)
+             * @example IN_PROGRESS
+             */
+            status?: string;
+            /**
+             * Format: int64
+             * @description 기간 내 답변 수
+             * @example 30
+             */
+            answerCount?: number;
+            /**
+             * Format: int64
+             * @description 기간과 겹치는 완료 주간 리포트 수
+             * @example 4
+             */
+            weeklyCount?: number;
+            /**
+             * Format: int64
+             * @description 기간과 겹치는 완료 월간 리포트 수
+             * @example 1
+             */
+            monthlyCount?: number;
+        };
         /** @description 알림 목록 응답 (커서 기반 페이지네이션, 20개씩) */
         NotificationListResponse: {
             /** @description 알림 목록 (최신순, 최대 20개) */
@@ -4262,7 +4658,7 @@ export interface components {
              * @example DAILY_WRITE_REMINDER
              * @enum {string}
              */
-            type?: "DAILY_WRITE_REMINDER" | "INACTIVE_USER_REMINDER" | "WEEKLY_REPORT_COMPLETED" | "MONTHLY_REPORT_COMPLETED" | "TYPE_REPORT_COMPLETED" | "WEEKLY_REPORT_AVAILABLE" | "MONTHLY_REPORT_AVAILABLE" | "TYPE_REPORT_AVAILABLE" | "FRIEND_REQUEST_RECEIVED" | "FRIEND_REQUEST_ACCEPTED" | "COMMENT_ON_MY_REPORT" | "REPLY_ON_MY_COMMENT" | "REPLY_ON_PARTICIPATED_COMMENT";
+            type?: "DAILY_WRITE_REMINDER" | "INACTIVE_USER_REMINDER" | "WEEKLY_REPORT_COMPLETED" | "MONTHLY_REPORT_COMPLETED" | "TYPE_REPORT_COMPLETED" | "WEEKLY_REPORT_AVAILABLE" | "MONTHLY_REPORT_AVAILABLE" | "TYPE_REPORT_AVAILABLE" | "PDF_EXPORT_COMPLETED" | "FRIEND_REQUEST_RECEIVED" | "FRIEND_REQUEST_ACCEPTED" | "COMMENT_ON_MY_REPORT" | "REPLY_ON_MY_COMMENT" | "REPLY_ON_PARTICIPATED_COMMENT";
             /**
              * @description 알림 제목
              * @example 오늘의 질문에 답변해주세요
@@ -4786,6 +5182,56 @@ export interface components {
              */
             authorizationUrl?: string;
         };
+        /** @description 물어보기 남은 메시지 횟수 응답 */
+        AskChatRemainingMessageCountResponse: {
+            /**
+             * Format: int32
+             * @description 사용 가능한 남은 메시지 횟수
+             * @example 9
+             */
+            remainingMessageCount?: number;
+        };
+        /** @description 물어보기 홈 화면 응답 */
+        AskChatHomeResponse: {
+            /**
+             * Format: int32
+             * @description 사용자가 사용할 수 있는 남은 메시지 횟수. 무료/유료 대화권을 합산한 값입니다.
+             * @example 9
+             */
+            remainingMessageCount?: number;
+            /**
+             * @description 홈 화면 인트로 문구에 표시할 사용자 닉네임
+             * @example 현진
+             */
+            nickname?: string;
+            /**
+             * Format: int64
+             * @description 사용자가 보유한 크리스탈 개수
+             * @example 100
+             */
+            crystalBalance?: number;
+            /** @description 홈 화면에 표시할 예시 질문 목록. 여러 주제 중 일부를 랜덤으로 제공합니다. */
+            sampleQuestions?: components["schemas"]["AskChatSampleQuestionResponse"][];
+        };
+        /** @description 물어보기 홈 예시 질문 응답 */
+        AskChatSampleQuestionResponse: {
+            /**
+             * Format: int64
+             * @description 예시 질문 ID
+             * @example 1
+             */
+            id?: number;
+            /**
+             * @description 예시 질문 주제 코드. interests.code 값을 사용합니다.
+             * @example VALUES
+             */
+            category?: string;
+            /**
+             * @description 예시 질문 내용
+             * @example 나는 어떤 사람이야?
+             */
+            question?: string;
+        };
         /** @description Ask Chat 히스토리 목록 항목 */
         AskChatHistoryItemResponse: {
             /**
@@ -4817,42 +5263,15 @@ export interface components {
              */
             status?: "ACTIVE" | "ENDED";
             /**
-             * Format: int32
-             * @description 성공적으로 답변된 대화 횟수
-             * @example 3
-             */
-            answeredTurnCount?: number;
-            /**
              * Format: date-time
              * @description 해당 세션의 마지막 메시지 생성 시각
              */
             lastMessageAt?: string;
         };
-        /** @description 물어보기 홈 응답 */
-        AskChatHomeResponse: {
-            /**
-             * Format: int32
-             * @description 세션당 최대 대화 횟수
-             * @example 15
-             */
-            maxTurnCount?: number;
-            /** @description 홈 화면에서 이어갈 수 있는 최근 채팅 세션 목록. USER 메시지가 1개 이상 있는 세션만 포함합니다. */
-            recentSessions?: components["schemas"]["AskChatHistoryItemResponse"][];
-            /**
-             * @description 최근 채팅 세션 목록이 비어 있는지 여부
-             * @example false
-             */
-            recentSessionsEmpty?: boolean;
-        };
         /** @description Ask Chat 히스토리 목록 응답 */
         AskChatHistoryListResponse: {
             /** @description 히스토리 목록 */
             histories?: components["schemas"]["AskChatHistoryItemResponse"][];
-            /**
-             * @description 히스토리가 비어 있는지 여부
-             * @example false
-             */
-            empty?: boolean;
             /**
              * Format: int64
              * @description 전체 히스토리 수
@@ -4909,8 +5328,8 @@ export interface components {
              */
             answeredTurnCount?: number;
             /**
-             * @description 과거 대화 상세 화면은 읽기 전용인지 여부
-             * @example true
+             * @description 해당 세션에 새 질문을 입력할 수 없는지 여부
+             * @example false
              */
             readOnly?: boolean;
             /**
@@ -5733,6 +6152,161 @@ export interface operations {
              *     - ErrorCode: QUESTION_ALREADY_ANSWERED - 오늘의 질문에 이미 답변을 작성함
              */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPdfExportArchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 아카이브 목록 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportArchiveItemResponse"][];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    startPdfExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PdfExportStartRequest"];
+            };
+        };
+        responses: {
+            /** @description PDF 내보내기 시작 성공 (또는 기존 작업 재사용) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportStartResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: PDF_EXPORT_INVALID_PERIOD - 기간이 올바르지 않음(시작일 > 종료일, 종료일이 미래, 또는 1년 초과)
+             *     - ErrorCode: PDF_EXPORT_NO_DATA - 해당 기간에 내보낼 답변/리포트가 없음
+             *     - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 크리스탈 잔액 부족
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_ALREADY_IN_PROGRESS - 이미 다른 조건으로 생성 중인 작업이 있음(응답 data에 그 작업의 jobId 포함) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportInProgressResponse"];
+                };
+            };
+            /** @description - ErrorCode: PDF_EXPORT_SERVER_BUSY - 생성 대기 줄이 길어 접수 불가(크리스탈 차감 없음, 잠시 후 재시도하면 됨) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    issuePdfExportDownloadUrl: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 다운로드 URL 발급 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportDownloadResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_ACCESS_FORBIDDEN - 본인 작업이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_JOB_NOT_FOUND - 작업을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: PDF_EXPORT_NOT_COMPLETED - 아직 생성이 완료되지 않음(폴링으로 완료 확인 후 호출)
+             *     - ErrorCode: PDF_EXPORT_EXPIRED - 보관 기간(7일)이 지나 만료됨(재생성 필요)
+             */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_DOWNLOAD_RATE_LIMITED - 다운로드 URL 발급 요청이 너무 잦음(잠시 후 재시도) */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7692,7 +8266,7 @@ export interface operations {
             };
         };
     };
-    startSession: {
+    chargeTurns: {
         parameters: {
             query?: never;
             header?: never;
@@ -7701,14 +8275,73 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 물어보기 세션 준비 성공 */
+            /** @description 대화권 충전 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AskChatSessionResponse"];
+                    "*/*": components["schemas"]["AskChatTurnChargeResponse"];
                 };
+            };
+            /** @description - ErrorCode: WALLET_INSUFFICIENT_BALANCE - 보유 크리스탈 부족 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 크리스탈 지갑을 찾을 수 없음
+             *     - ErrorCode: ASK_CHAT_WALLET_NOT_FOUND - Ask Chat 대화권 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    startSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AskChatSessionStartRequest"];
+            };
+        };
+        responses: {
+            /** @description 물어보기 세션 생성 및 첫 질문 전송 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatQuestionSendResponse"];
+                };
+            };
+            /**
+             * @description - ErrorCode: VALIDATION_FAILED - 질문은 공백 제외 1자 이상 200자 이하로 요청해야 함
+             *     - ErrorCode: ASK_CHAT_TURN_BALANCE_INSUFFICIENT - 사용 가능한 Ask Chat 대화권이 없음
+             */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description 인증 실패 */
             401: {
@@ -7748,7 +8381,10 @@ export interface operations {
                     "*/*": components["schemas"]["AskChatQuestionSendResponse"];
                 };
             };
-            /** @description - ErrorCode: VALIDATION_FAILED - 질문은 공백 제외 1자 이상 200자 이하로 요청해야 함 */
+            /**
+             * @description - ErrorCode: VALIDATION_FAILED - 질문은 공백 제외 1자 이상 200자 이하로 요청해야 함
+             *     - ErrorCode: ASK_CHAT_TURN_BALANCE_INSUFFICIENT - 사용 가능한 Ask Chat 대화권이 없음
+             */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -7769,7 +8405,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description - ErrorCode: ASK_CHAT_TURN_LIMIT_EXCEEDED - 세션당 대화 횟수 제한 초과 */
+            /** @description - ErrorCode: ASK_CHAT_TURN_LIMIT_EXCEEDED - 세션의 대화 횟수 제한 초과 */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -8668,6 +9304,113 @@ export interface operations {
             };
         };
     };
+    getPdfExportStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 상태 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportStatusResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_ACCESS_FORBIDDEN - 본인 작업이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: PDF_EXPORT_JOB_NOT_FOUND - 작업을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPdfExportPreview: {
+        parameters: {
+            query: {
+                startDate: string;
+                endDate: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 미리보기 개수 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportPreviewResponse"];
+                };
+            };
+            /** @description - ErrorCode: PDF_EXPORT_INVALID_PERIOD - 기간이 올바르지 않음(시작일 > 종료일, 종료일이 미래, 또는 1년 초과) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getCurrentPdfExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 진행 중 작업 조회 성공(없으면 data=null) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PdfExportCurrentResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getNotifications: {
         parameters: {
             query?: {
@@ -9157,7 +9900,7 @@ export interface operations {
             };
         };
     };
-    enterHome: {
+    getRemainingTurns: {
         parameters: {
             query?: never;
             header?: never;
@@ -9166,13 +9909,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 물어보기 홈 진입 성공 */
+            /** @description 남은 메시지 횟수 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AskChatHomeResponse"];
+                    "*/*": components["schemas"]["AskChatRemainingMessageCountResponse"];
                 };
             };
             /** @description 인증 실패 */
@@ -9182,7 +9925,52 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description 사용자를 찾을 수 없음 */
+            /** @description - ErrorCode: ASK_CHAT_WALLET_NOT_FOUND - Ask Chat 대화권 지갑을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    enterHome: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 물어보기 홈 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AskChatHomeResponse"];
+                };
+            };
+            /** @description - ErrorCode: ASK_CHAT_NOT_ENOUGH_ANSWERS - 누적 답변 20개 미만 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 크리스탈 지갑을 찾을 수 없음
+             *     - ErrorCode: ASK_CHAT_WALLET_NOT_FOUND - Ask Chat 대화권 지갑을 찾을 수 없음
+             */
             404: {
                 headers: {
                     [name: string]: unknown;
