@@ -15,10 +15,8 @@ import { Link } from "@tanstack/react-router";
 export default function PeriodicReportTab() {
   const { data: crystalBalance } = useQuery(crystalsOptions);
   const { showToast } = useToastStore();
-  const {
-    report: weeklyReport,
-    isGenerating: isWeeklyReportGenerating,
-  } = useReport({ type: "weekly" });
+  const { report: weeklyReport, isGenerating: isWeeklyReportGenerating } =
+    useReport({ type: "weekly" });
   const generateWeeklyReportMutation = useGeneratePeriodicReportMutation({
     reportType: "weekly",
     onSuccess: () =>
@@ -26,10 +24,8 @@ export default function PeriodicReportTab() {
         message: `${REPORT_CONFIGS["weekly"].cost} 크리스탈이 소진되었어요.`,
       }),
   });
-  const {
-    report: monthlyReportV2,
-    isGenerating: isMonthlyReportV2Generating,
-  } = useMonthlyReportV2();
+  const { report: monthlyReportV2, isGenerating: isMonthlyReportV2Generating } =
+    useMonthlyReportV2();
   const generateMonthlyReportV2Mutation = useGenerateMonthlyReportV2Mutation({
     onSuccess: () =>
       showToast({
@@ -70,6 +66,22 @@ export default function PeriodicReportTab() {
           isGenerating={isMonthlyReportV2Generating}
           crystalBalance={crystalBalance?.crystalBalance ?? 0}
         />
+        <Link
+          to="/report/pdf"
+          className="block bg-surface-layer-1 border border-border-base rounded-xl p-padding-x-m"
+        >
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-y-gap-y-xs">
+              <p className="text-caption-m">
+                기록을 한 눈에 모아보고 싶으신가요?
+              </p>
+              <h3 className="text-title-3">
+                PDF로 저장해서 천천히 읽어보세요.
+              </h3>
+            </div>
+            <AppIcon name="chevron-right" />
+          </div>
+        </Link>
       </div>
     </>
   );

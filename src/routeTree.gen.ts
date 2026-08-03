@@ -26,6 +26,7 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedSocialSearchRouteImport } from './routes/_authenticated/social/search'
 import { Route as AuthenticatedSocialRequestsRouteImport } from './routes/_authenticated/social/requests'
 import { Route as AuthenticatedSocialBlockedRouteImport } from './routes/_authenticated/social/blocked'
+import { Route as AuthenticatedReportPdfRouteImport } from './routes/_authenticated/report/pdf'
 import { Route as AuthenticatedReportHistoryRouteImport } from './routes/_authenticated/report/history'
 import { Route as AuthenticatedDetailDateRouteImport } from './routes/_authenticated/detail/$date'
 import { Route as AuthenticatedDailyWriteRouteImport } from './routes/_authenticated/daily/write'
@@ -47,6 +48,9 @@ import { Route as authPasswordForgotRouteImport } from './routes/(auth)/password
 import { Route as authOnboardingProfileRouteImport } from './routes/(auth)/onboarding/profile'
 import { Route as authOnboardingIntroRouteImport } from './routes/(auth)/onboarding/intro'
 import { Route as authOnboardingCategoryRouteImport } from './routes/(auth)/onboarding/category'
+import { Route as AuthenticatedReportPdfHistoryRouteImport } from './routes/_authenticated/report/pdf.history'
+import { Route as AuthenticatedReportPdfDebugRouteImport } from './routes/_authenticated/report/pdf.debug'
+import { Route as AuthenticatedReportPdfJobIdRouteImport } from './routes/_authenticated/report/pdf.$jobId'
 import { Route as AuthenticatedReportMonthlyV2PeriodRouteImport } from './routes/_authenticated/report/monthly-v2.$period'
 import { Route as AuthenticatedReportReportTypePeriodRouteImport } from './routes/_authenticated/report/$reportType.$period'
 import { Route as AuthenticatedFlagReportReportIdRouteImport } from './routes/_authenticated/flag/report.$reportId'
@@ -150,6 +154,11 @@ const AuthenticatedSocialBlockedRoute =
     path: '/social/blocked',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedReportPdfRoute = AuthenticatedReportPdfRouteImport.update({
+  id: '/report/pdf',
+  path: '/report/pdf',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedReportHistoryRoute =
   AuthenticatedReportHistoryRouteImport.update({
     id: '/report/history',
@@ -261,6 +270,24 @@ const authOnboardingCategoryRoute = authOnboardingCategoryRouteImport.update({
   path: '/category',
   getParentRoute: () => authOnboardingRoute,
 } as any)
+const AuthenticatedReportPdfHistoryRoute =
+  AuthenticatedReportPdfHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedReportPdfRoute,
+  } as any)
+const AuthenticatedReportPdfDebugRoute =
+  AuthenticatedReportPdfDebugRouteImport.update({
+    id: '/debug',
+    path: '/debug',
+    getParentRoute: () => AuthenticatedReportPdfRoute,
+  } as any)
+const AuthenticatedReportPdfJobIdRoute =
+  AuthenticatedReportPdfJobIdRouteImport.update({
+    id: '/$jobId',
+    path: '/$jobId',
+    getParentRoute: () => AuthenticatedReportPdfRoute,
+  } as any)
 const AuthenticatedReportMonthlyV2PeriodRoute =
   AuthenticatedReportMonthlyV2PeriodRouteImport.update({
     id: '/report/monthly-v2/$period',
@@ -369,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
+  '/report/pdf': typeof AuthenticatedReportPdfRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -383,6 +411,9 @@ export interface FileRoutesByFullPath {
   '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
+  '/report/pdf/$jobId': typeof AuthenticatedReportPdfJobIdRoute
+  '/report/pdf/debug': typeof AuthenticatedReportPdfDebugRoute
+  '/report/pdf/history': typeof AuthenticatedReportPdfHistoryRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -420,6 +451,7 @@ export interface FileRoutesByTo {
   '/daily/write': typeof AuthenticatedDailyWriteRoute
   '/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
+  '/report/pdf': typeof AuthenticatedReportPdfRouteWithChildren
   '/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/social/search': typeof AuthenticatedSocialSearchRoute
@@ -434,6 +466,9 @@ export interface FileRoutesByTo {
   '/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
+  '/report/pdf/$jobId': typeof AuthenticatedReportPdfJobIdRoute
+  '/report/pdf/debug': typeof AuthenticatedReportPdfDebugRoute
+  '/report/pdf/history': typeof AuthenticatedReportPdfHistoryRoute
   '/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -474,6 +509,7 @@ export interface FileRoutesById {
   '/_authenticated/daily/write': typeof AuthenticatedDailyWriteRoute
   '/_authenticated/detail/$date': typeof AuthenticatedDetailDateRouteWithChildren
   '/_authenticated/report/history': typeof AuthenticatedReportHistoryRouteWithChildren
+  '/_authenticated/report/pdf': typeof AuthenticatedReportPdfRouteWithChildren
   '/_authenticated/social/blocked': typeof AuthenticatedSocialBlockedRoute
   '/_authenticated/social/requests': typeof AuthenticatedSocialRequestsRoute
   '/_authenticated/social/search': typeof AuthenticatedSocialSearchRoute
@@ -488,6 +524,9 @@ export interface FileRoutesById {
   '/_authenticated/flag/report/$reportId': typeof AuthenticatedFlagReportReportIdRoute
   '/_authenticated/report/$reportType/$period': typeof AuthenticatedReportReportTypePeriodRoute
   '/_authenticated/report/monthly-v2/$period': typeof AuthenticatedReportMonthlyV2PeriodRoute
+  '/_authenticated/report/pdf/$jobId': typeof AuthenticatedReportPdfJobIdRoute
+  '/_authenticated/report/pdf/debug': typeof AuthenticatedReportPdfDebugRoute
+  '/_authenticated/report/pdf/history': typeof AuthenticatedReportPdfHistoryRoute
   '/_authenticated/_main/social/$postId/comments': typeof AuthenticatedMainSocialPostIdCommentsRouteWithChildren
   '/_authenticated/_main/social/$postId/likes': typeof AuthenticatedMainSocialPostIdLikesRoute
   '/_authenticated/detail/$date/$postId/comments': typeof AuthenticatedDetailDatePostIdCommentsRouteWithChildren
@@ -527,6 +566,7 @@ export interface FileRouteTypes {
     | '/daily/write'
     | '/detail/$date'
     | '/report/history'
+    | '/report/pdf'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -541,6 +581,9 @@ export interface FileRouteTypes {
     | '/flag/report/$reportId'
     | '/report/$reportType/$period'
     | '/report/monthly-v2/$period'
+    | '/report/pdf/$jobId'
+    | '/report/pdf/debug'
+    | '/report/pdf/history'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
@@ -578,6 +621,7 @@ export interface FileRouteTypes {
     | '/daily/write'
     | '/detail/$date'
     | '/report/history'
+    | '/report/pdf'
     | '/social/blocked'
     | '/social/requests'
     | '/social/search'
@@ -592,6 +636,9 @@ export interface FileRouteTypes {
     | '/flag/report/$reportId'
     | '/report/$reportType/$period'
     | '/report/monthly-v2/$period'
+    | '/report/pdf/$jobId'
+    | '/report/pdf/debug'
+    | '/report/pdf/history'
     | '/social/$postId/comments'
     | '/social/$postId/likes'
     | '/detail/$date/$postId/comments'
@@ -631,6 +678,7 @@ export interface FileRouteTypes {
     | '/_authenticated/daily/write'
     | '/_authenticated/detail/$date'
     | '/_authenticated/report/history'
+    | '/_authenticated/report/pdf'
     | '/_authenticated/social/blocked'
     | '/_authenticated/social/requests'
     | '/_authenticated/social/search'
@@ -645,6 +693,9 @@ export interface FileRouteTypes {
     | '/_authenticated/flag/report/$reportId'
     | '/_authenticated/report/$reportType/$period'
     | '/_authenticated/report/monthly-v2/$period'
+    | '/_authenticated/report/pdf/$jobId'
+    | '/_authenticated/report/pdf/debug'
+    | '/_authenticated/report/pdf/history'
     | '/_authenticated/_main/social/$postId/comments'
     | '/_authenticated/_main/social/$postId/likes'
     | '/_authenticated/detail/$date/$postId/comments'
@@ -785,6 +836,13 @@ declare module '@tanstack/react-router' {
       path: '/social/blocked'
       fullPath: '/social/blocked'
       preLoaderRoute: typeof AuthenticatedSocialBlockedRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/report/pdf': {
+      id: '/_authenticated/report/pdf'
+      path: '/report/pdf'
+      fullPath: '/report/pdf'
+      preLoaderRoute: typeof AuthenticatedReportPdfRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/report/history': {
@@ -933,6 +991,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/category'
       preLoaderRoute: typeof authOnboardingCategoryRouteImport
       parentRoute: typeof authOnboardingRoute
+    }
+    '/_authenticated/report/pdf/history': {
+      id: '/_authenticated/report/pdf/history'
+      path: '/history'
+      fullPath: '/report/pdf/history'
+      preLoaderRoute: typeof AuthenticatedReportPdfHistoryRouteImport
+      parentRoute: typeof AuthenticatedReportPdfRoute
+    }
+    '/_authenticated/report/pdf/debug': {
+      id: '/_authenticated/report/pdf/debug'
+      path: '/debug'
+      fullPath: '/report/pdf/debug'
+      preLoaderRoute: typeof AuthenticatedReportPdfDebugRouteImport
+      parentRoute: typeof AuthenticatedReportPdfRoute
+    }
+    '/_authenticated/report/pdf/$jobId': {
+      id: '/_authenticated/report/pdf/$jobId'
+      path: '/$jobId'
+      fullPath: '/report/pdf/$jobId'
+      preLoaderRoute: typeof AuthenticatedReportPdfJobIdRouteImport
+      parentRoute: typeof AuthenticatedReportPdfRoute
     }
     '/_authenticated/report/monthly-v2/$period': {
       id: '/_authenticated/report/monthly-v2/$period'
@@ -1124,6 +1203,24 @@ const AuthenticatedReportHistoryRouteWithChildren =
     AuthenticatedReportHistoryRouteChildren,
   )
 
+interface AuthenticatedReportPdfRouteChildren {
+  AuthenticatedReportPdfJobIdRoute: typeof AuthenticatedReportPdfJobIdRoute
+  AuthenticatedReportPdfDebugRoute: typeof AuthenticatedReportPdfDebugRoute
+  AuthenticatedReportPdfHistoryRoute: typeof AuthenticatedReportPdfHistoryRoute
+}
+
+const AuthenticatedReportPdfRouteChildren: AuthenticatedReportPdfRouteChildren =
+  {
+    AuthenticatedReportPdfJobIdRoute: AuthenticatedReportPdfJobIdRoute,
+    AuthenticatedReportPdfDebugRoute: AuthenticatedReportPdfDebugRoute,
+    AuthenticatedReportPdfHistoryRoute: AuthenticatedReportPdfHistoryRoute,
+  }
+
+const AuthenticatedReportPdfRouteWithChildren =
+  AuthenticatedReportPdfRoute._addFileChildren(
+    AuthenticatedReportPdfRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedMainRoute: typeof AuthenticatedMainRouteWithChildren
   AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
@@ -1134,6 +1231,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDailyWriteRoute: typeof AuthenticatedDailyWriteRoute
   AuthenticatedDetailDateRoute: typeof AuthenticatedDetailDateRouteWithChildren
   AuthenticatedReportHistoryRoute: typeof AuthenticatedReportHistoryRouteWithChildren
+  AuthenticatedReportPdfRoute: typeof AuthenticatedReportPdfRouteWithChildren
   AuthenticatedSocialBlockedRoute: typeof AuthenticatedSocialBlockedRoute
   AuthenticatedSocialRequestsRoute: typeof AuthenticatedSocialRequestsRoute
   AuthenticatedSocialSearchRoute: typeof AuthenticatedSocialSearchRoute
@@ -1159,6 +1257,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDailyWriteRoute: AuthenticatedDailyWriteRoute,
   AuthenticatedDetailDateRoute: AuthenticatedDetailDateRouteWithChildren,
   AuthenticatedReportHistoryRoute: AuthenticatedReportHistoryRouteWithChildren,
+  AuthenticatedReportPdfRoute: AuthenticatedReportPdfRouteWithChildren,
   AuthenticatedSocialBlockedRoute: AuthenticatedSocialBlockedRoute,
   AuthenticatedSocialRequestsRoute: AuthenticatedSocialRequestsRoute,
   AuthenticatedSocialSearchRoute: AuthenticatedSocialSearchRoute,

@@ -61,6 +61,28 @@ export const NOTIFICATION_CONFIG: Record<
       search: { tab: "type" },
     }),
   },
+  PDF_EXPORT_COMPLETED: {
+    inboxIconSrc: "/icon/report.png",
+    inboxTitle: "PDF 생성 완료",
+    getLinkProps: (notification) =>
+      notification.targetId
+        ? {
+            to: "/report/pdf/$jobId",
+            params: { jobId: notification.targetId },
+          }
+        : { to: "/report/pdf/history" },
+  },
+  PDF_EXPORT_FAILED: {
+    inboxIconSrc: "/icon/report.png",
+    inboxTitle: "PDF 생성 실패",
+    getLinkProps: (notification) =>
+      notification.targetId
+        ? {
+            to: "/report/pdf/$jobId",
+            params: { jobId: notification.targetId },
+          }
+        : { to: "/report/pdf" },
+  },
   FRIEND_REQUEST_RECEIVED: {
     inboxIconSrc: "/icon/friend-request.png",
     inboxTitle: "친구 요청",
