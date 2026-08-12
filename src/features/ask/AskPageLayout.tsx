@@ -20,9 +20,11 @@ export type AskInputController = {
 
 type AskPageLayoutProps = {
   children: ReactNode | ((input: AskInputController) => ReactNode);
-  onSubmit?: (message: string) => void;
+  onSubmit?: (message: string) => boolean | void | Promise<boolean | void>;
   isSubmitDisabled?: boolean;
   onNewChat?: () => void;
+  remainingMessageCount?: number;
+  isInputVisible?: boolean;
 };
 
 // 물어보기 화면에서 공통 서브헤더, 배경, 하단 입력 액세서리를 제공합니다.
@@ -31,6 +33,8 @@ export function AskPageLayout({
   onSubmit,
   isSubmitDisabled = false,
   onNewChat,
+  remainingMessageCount = 0,
+  isInputVisible = true,
 }: AskPageLayoutProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -46,7 +50,9 @@ export function AskPageLayout({
     !!onNewChat &&
     (location.pathname === "/ask/chat" ||
       location.pathname.startsWith("/ask/chat/"));
-  const accessoryBottomPadding = isInputAccessoryVisible
+  const shouldShowInputAccessory =
+    isInputVisible && isInputAccessoryVisible;
+  const accessoryBottomPadding = shouldShowInputAccessory
     ? inputAccessoryHeight
     : 0;
   const keyboardBottomPadding =
@@ -82,18 +88,18 @@ export function AskPageLayout({
     resizeObserver.observe(accessoryElement);
 
     return () => resizeObserver.disconnect();
-  }, [isInputAccessoryVisible]);
+  }, [shouldShowInputAccessory]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value.slice(0, ASK_MESSAGE_MAX_LENGTH));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedMessage = message.trim();
     if (!trimmedMessage || isSubmitDisabled || !onSubmit) return;
-    onSubmit(trimmedMessage);
-    setMessage("");
+    const shouldClear = await onSubmit(trimmedMessage);
+    if (shouldClear !== false) setMessage("");
   };
 
   const focusInput = () => {
@@ -121,7 +127,7 @@ export function AskPageLayout({
         titleMeta={
           <span className="flex h-4 items-center gap-gap-x-xs rounded-full bg-surface-layer-1 px-gap-x-xs">
             <AppIcon name="message" size={10} color="current" />
-            <span className="text-caption-s">9</span>
+            <span className="text-caption-s">{remainingMessageCount}</span>
           </span>
         }
         rightActions={
@@ -141,9 +147,11 @@ export function AskPageLayout({
         style={{ paddingBottom: keyboardAwareBottomPadding }}
         className="bg-[#E9ECFB] text-text-primary dark:bg-field-bg-muted"
       >
+        {/* 입력 포커스는 사용자 이벤트에서만 실행되는 명령형 컨트롤러입니다. */}
+        {/* eslint-disable-next-line react-hooks/refs */}
         {typeof children === "function" ? children(inputController) : children}
       </Container>
-      {isInputAccessoryVisible && (
+      {shouldShowInputAccessory && (
         <AskInputAccessory
           accessoryRef={accessoryRef}
           textareaRef={textareaRef}

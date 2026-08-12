@@ -11,7 +11,7 @@ import { questionOptions } from "../question/queries";
 import { useRerollQuestionMutation } from "../question/useRerollQuestionMutation";
 import { formatISODate } from "@/lib/formatters";
 import { homeOptions } from "./queries";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useModalStore from "@/store/modalStore";
 import { QuestionBadge } from "@/components/Badges";
 import categories from "@/constants/categories";
@@ -24,6 +24,10 @@ import { HOME_COACH_MARK_STEP_IDS } from "./coach-mark/constants";
 import clsx from "clsx";
 import { useHomeEntryPrompts } from "./useHomeEntryPrompts";
 import UpdateNoticeModal from "./UpdateNoticeModal";
+import {
+  canAccessAskChat,
+  getAskChatRequiredRecordCount,
+} from "@/features/ask/access";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -214,7 +218,9 @@ export default function Home() {
                     />
                   )}
                 </div>
-                <AskCrystalPrompt />
+                <AskCrystalPrompt
+                  totalRecordDays={homeData.totalRecordDays ?? 0}
+                />
               </div>
             </div>
           </div>
@@ -268,33 +274,33 @@ export default function Home() {
   );
 }
 
-// 홈 구슬 내부의 물어보기 CTA를 표시하고 클릭 상태를 전환합니다.
-function AskCrystalPrompt() {
-  const [isAsked, setIsAsked] = useState(false);
+// 실제 누적 기록 수에 따라 물어보기 진입 또는 잠금 안내를 표시합니다.
+function AskCrystalPrompt({ totalRecordDays }: { totalRecordDays: number }) {
+  const canAccess = canAccessAskChat(totalRecordDays);
+  const requiredRecordCount = getAskChatRequiredRecordCount(totalRecordDays);
   const className =
     "flex h-[52px] w-[220px] max-w-[calc(100%-32px)] items-center justify-center gap-gap-x-s rounded-2xl border border-border-base bg-surface-base px-gap-x-s text-caption-s text-text-primary dark:bg-surface-layer-3";
 
-  return isAsked ? (
+  return canAccess ? (
     <Link to="/ask" className={className}>
       <span>수정구슬에게 나에 대해 물어보기</span>
       <AppIcon name="chevron-right" size={16} color="current" />
     </Link>
   ) : (
-    <button
-      type="button"
-      onClick={() => setIsAsked(true)}
-      className={className}
+    <div
+      aria-disabled="true"
+      className={clsx(className, "cursor-not-allowed")}
     >
       <span className="flex size-6 items-center justify-center rounded-full bg-surface-layer-1">
         <AppIcon name="lock-filled" size={14} color="primary" />
       </span>
       <span className="text-left">
         <span className="flex">
-          <span className="text-brand-primary">20개를</span>
+          <span className="text-brand-primary">{requiredRecordCount}개를</span>
           <span>&nbsp;더 답하면</span>
         </span>
         <span>수정구슬에게 나를 물어볼 수 있어요.</span>
       </span>
-    </button>
+    </div>
   );
 }

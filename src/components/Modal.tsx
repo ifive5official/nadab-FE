@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import BlockButton from "./BlockButton";
 import useModalStore from "@/store/modalStore";
 import { useLocation } from "@tanstack/react-router";
+import { CloseBigIcon } from "./Icons";
 
 export default function Modal() {
   const { isOpen, closeModal, config } = useModalStore();
@@ -58,13 +59,23 @@ export default function Modal() {
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
+            {config.showCloseButton && (
+              <button
+                type="button"
+                aria-label="모달 닫기"
+                onClick={closeModal}
+                className="absolute right-padding-x-m top-padding-y-m flex size-6 items-center justify-center text-icon-muted"
+              >
+                <CloseBigIcon />
+              </button>
+            )}
             {/* 아이콘, 제목, 본문 */}
             <div className="flex flex-col items-center gap-margin-y-s">
               {Icon && <Icon />}
               <p className="text-label-l whitespace-pre-line text-center">
                 {config.title}
               </p>
-              <p className="text-caption-m">{config.children}</p>
+              <div className="text-caption-m">{config.children}</div>
             </div>
             {/* 버튼(1~2개, 개수에 따라 자동 스타일링) */}
             <div className="w-full flex gap-gap-x-s mt-gap-y-xl">

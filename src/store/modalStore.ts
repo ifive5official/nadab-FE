@@ -8,6 +8,7 @@ type ModalConfig = {
   title: string;
   children?: React.ReactNode;
   openOnNavigate?: boolean; // 다른 페이지로 이동해도 열려 있는지
+  showCloseButton?: boolean;
   buttons: {
     label: string;
     onClick: () => void;
