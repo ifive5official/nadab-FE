@@ -216,7 +216,7 @@ function AskInputAccessory({
           ? `${keyboardBottomOffset}px`
           : "var(--safe-bottom, 0px)",
       }}
-      className="fixed inset-x-0 z-30 flex flex-col gap-gap-y-xs bg-surface-layer-1 px-padding-x-m py-padding-y-s sm:mx-auto sm:w-[412px]"
+      className="fixed inset-x-0 z-1 flex flex-col gap-gap-y-xs bg-surface-layer-1 px-padding-x-m py-padding-y-s sm:mx-auto sm:w-[412px]"
     >
       <div className="flex items-center justify-between">
         <div className="text-caption-s">

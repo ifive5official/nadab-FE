@@ -101,7 +101,7 @@ export default function CommentAccessoryView() {
         bottom: isVisible ? `${bottomOffset}px` : "var(--safe-bottom, 0px)",
       }}
       className={clsx(
-        "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1 z-[9999]",
+        "bg-surface-base dark:bg-surface-layer-2 w-full sm:w-[412px] sm:mx-auto fixed inset-x-0 flex items-center gap-padding-x-s px-padding-x-s border-t border-t-border-base dark:border-t-border-layer-1 z-1",
         mode === "SUB" || mode === "EDIT" ? "h-[104px]" : "h-16",
       )}
     >

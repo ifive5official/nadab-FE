@@ -26,7 +26,7 @@ export function AskChatDebugPanel({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed right-padding-x-m bottom-[calc(var(--ask-toast-bottom,0px)+56px)] z-30 flex flex-col items-end gap-gap-y-s sm:right-[calc((100vw-412px)/2_+_var(--spacing-padding-x-m))]">
+    <div className="fixed right-padding-x-m bottom-[calc(var(--ask-toast-bottom,0px)+56px)] z-1 flex flex-col items-end gap-gap-y-s sm:right-[calc((100vw-412px)/2_+_var(--spacing-padding-x-m))]">
       {isOpen && (
         <div className="flex w-60 flex-col gap-gap-y-xs rounded-xl border border-border-base bg-surface-base p-padding-x-s text-text-primary shadow-3 dark:bg-surface-layer-2">
           <p className="px-padding-x-s pt-padding-y-xs text-label-m">
