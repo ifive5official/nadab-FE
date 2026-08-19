@@ -129,14 +129,18 @@ function NotificationItem({ notification }: { notification: Notification }) {
   return (
     <li
       className="flex items-center gap-gap-x-l py-padding-y-xs cursor-pointer"
-      onClick={async () => {
+      onClick={() => {
         readNotificationMutation.mutate({ notificationId: notification.id! });
+        navigate({ ...linkProps });
+
         if (Capacitor.isNativePlatform()) {
-          await PushNotifications.removeDeliveredNotifications({
+          // 시스템 알림 제거 실패가 알림 상세 화면 이동을 막지 않도록 별도로 처리합니다.
+          void PushNotifications.removeDeliveredNotifications({
             notifications: [{ id: String(notification.id), data: {} }],
+          }).catch((error) => {
+            console.error("Delivered notification removal error:", error);
           });
         }
-        navigate({ ...linkProps });
       }}
     >
       <div className="aspect-square h-13 bg-neutral-100 rounded-full flex justify-center items-center">
