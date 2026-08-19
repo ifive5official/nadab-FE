@@ -5,7 +5,7 @@ import {
   useNavigate,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { GemFilledIcon } from "@/components/Icons";
 import { findCategoryByCode } from "@/constants/categories";
 import {
@@ -25,17 +25,23 @@ import useModalStore from "@/store/modalStore";
 import { useEffect, useRef, useState } from "react";
 import { AskChatContainer } from "@/features/ask/AskChatContainer";
 import { AskAnswerLoadingMessage } from "@/features/ask/AskAnswerLoadingMessage";
+import { homeOptions } from "@/features/home/queries";
 
 export const Route = createFileRoute("/_authenticated/ask/")({
   component: RouteComponent,
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(askChatHomeOptions),
+    Promise.all([
+      queryClient.ensureQueryData(askChatHomeOptions),
+      queryClient.ensureQueryData(homeOptions),
+    ]),
   errorComponent: AskHomeError,
 });
 
 // 물어보기 홈 API를 화면과 첫 세션 생성 흐름에 연결합니다.
 function RouteComponent() {
-  const { data } = useSuspenseQuery(askChatHomeOptions);
+  const [{ data }, { data: homeData }] = useSuspenseQueries({
+    queries: [askChatHomeOptions, homeOptions],
+  });
   const navigate = useNavigate();
   const { requestCharge, isCharging } = useAskChatTurnChargeFlow();
   const { showToast } = useToastStore();
@@ -98,7 +104,11 @@ function RouteComponent() {
         pendingQuestion ? (
           <AskPendingConversation question={pendingQuestion} />
         ) : (
-          <AskMainContent data={data} input={input} />
+          <AskMainContent
+            data={data}
+            recordCount={homeData.totalRecordDays ?? 0}
+            input={input}
+          />
         )
       }
     </AskPageLayout>
@@ -117,11 +127,12 @@ function AskPendingConversation({ question }: { question: string }) {
 
 type AskMainContentProps = {
   data: AskChatHome;
+  recordCount: number;
   input: AskInputController;
 };
 
 // 서버에서 받은 사용자 안내와 예시 질문을 세로로 보여줍니다.
-function AskMainContent({ data, input }: AskMainContentProps) {
+function AskMainContent({ data, recordCount, input }: AskMainContentProps) {
   const sampleQuestions = (data.sampleQuestions ?? []).filter(
     (item) => !!item.question,
   );
@@ -142,8 +153,9 @@ function AskMainContent({ data, input }: AskMainContentProps) {
             오늘은 어떤 모습을 알아볼까요?
           </p>
           <p className="text-caption-s text-text-tertiary">
-            지금까지 남긴 <span className="font-bold">기록을 바탕으로</span>
-            &nbsp; 답변을 드려요.
+            지금까지 남긴{" "}
+            <span className="font-bold">{recordCount}개의 기록을 바탕으로</span>
+            &nbsp;답변을 드려요.
           </p>
         </div>
         <AskCrystalBadge crystals={data.crystalBalance ?? 0} />

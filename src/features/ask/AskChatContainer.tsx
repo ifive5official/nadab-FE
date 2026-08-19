@@ -81,7 +81,7 @@ export function AskChatContainer({
               key={question}
               type="button"
               onClick={() => onSelectFollowUpQuestion?.(question)}
-              className="flex w-fit max-w-full items-center gap-gap-x-s rounded-2xl bg-overlay-base px-padding-x-m py-padding-y-xs text-left text-caption-l text-text-inverse-primary"
+              className="flex w-fit max-w-full items-center gap-gap-x-s rounded-2xl bg-overlay-base px-padding-x-m py-padding-y-xs text-left text-caption-m text-text-inverse-primary"
             >
               <AppIcon name="sub-right-filled" size={24} color="current" />
               <span className="min-w-0 whitespace-normal break-words">
