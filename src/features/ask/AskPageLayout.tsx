@@ -145,7 +145,7 @@ export function AskPageLayout({
       <Container
         hasBottomPadding={false}
         style={{ paddingBottom: keyboardAwareBottomPadding }}
-        className="bg-[#E9ECFB] text-text-primary dark:bg-field-bg-muted"
+        className="overscroll-y-contain bg-[#E9ECFB] text-text-primary dark:bg-field-bg-muted"
       >
         {/* 입력 포커스는 사용자 이벤트에서만 실행되는 명령형 컨트롤러입니다. */}
         {/* eslint-disable-next-line react-hooks/refs */}

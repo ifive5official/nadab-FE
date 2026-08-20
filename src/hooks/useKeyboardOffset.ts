@@ -3,7 +3,7 @@
  * @page 현재는 답변 시에만 사용
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { Keyboard } from "@capacitor/keyboard";
 
@@ -11,40 +11,69 @@ export function useKeyboardOffset() {
   const isNative = Capacitor.isNativePlatform();
   const [bottomOffset, setBottomOffset] = useState(0);
   const [isVisible, setIsVisible] = useState(!isNative);
+  const keyboardHeightRef = useRef(0);
+  const layoutViewportHeightRef = useRef(window.innerHeight);
 
   useEffect(() => {
-    if (!isNative) {
-      // 웹 환경: visualViewport를 사용하여 키보드(혹은 가상 키보드) 대응
-      const handleViewportChange = () => {
-        if (!window.visualViewport) return;
-        const viewport = window.visualViewport;
-        const offset = window.innerHeight - (viewport.height + viewport.offsetTop);
-        const isKeyboardOpen = window.innerHeight - viewport.height > 50;
-        
-        setIsVisible(isKeyboardOpen);
-        setBottomOffset(Math.max(0, offset));
-      };
+    const updateFromViewport = () => {
+      const viewport = window.visualViewport;
+      if (!viewport) return;
 
-      window.visualViewport?.addEventListener("resize", handleViewportChange);
-      return () => window.visualViewport?.removeEventListener("resize", handleViewportChange);
+      const viewportBottom = viewport.height + viewport.offsetTop;
+      const viewportOcclusion = Math.max(
+        0,
+        layoutViewportHeightRef.current - viewportBottom,
+      );
+      const nativeFallback = Math.max(
+        0,
+        keyboardHeightRef.current - viewport.offsetTop,
+      );
+      const offset = Math.max(viewportOcclusion, nativeFallback);
+      const isKeyboardOpen =
+        offset > 50 || keyboardHeightRef.current > 0;
+
+      setIsVisible(isKeyboardOpen);
+      setBottomOffset(offset);
+    };
+
+    window.visualViewport?.addEventListener("resize", updateFromViewport);
+    window.visualViewport?.addEventListener("scroll", updateFromViewport);
+
+    if (!isNative) {
+      updateFromViewport();
+      return () => {
+        window.visualViewport?.removeEventListener(
+          "resize",
+          updateFromViewport,
+        );
+        window.visualViewport?.removeEventListener(
+          "scroll",
+          updateFromViewport,
+        );
+      };
     }
 
-    // 네이티브 환경: 실제 키보드 높이를 가져와서 오프셋으로 사용
+    // 네이티브 키보드 높이는 Visual Viewport가 변하지 않을 때 보정값으로 사용합니다.
     const showListener = Keyboard.addListener("keyboardWillShow", (info) => {
+      keyboardHeightRef.current = info.keyboardHeight;
       setIsVisible(true);
-      setBottomOffset(info.keyboardHeight); 
-      
+      updateFromViewport();
+
       if (Capacitor.getPlatform() === "ios") {
         Keyboard.setAccessoryBarVisible({ isVisible: false }).catch(() => {});
       }
     });
 
     const hideListener = Keyboard.addListener("keyboardWillHide", () => {
+      keyboardHeightRef.current = 0;
+      layoutViewportHeightRef.current = window.innerHeight;
       setIsVisible(false);
       setBottomOffset(0);
     });
 
     return () => {
+      window.visualViewport?.removeEventListener("resize", updateFromViewport);
+      window.visualViewport?.removeEventListener("scroll", updateFromViewport);
       showListener.then((l) => l.remove());
       hideListener.then((l) => l.remove());
     };
