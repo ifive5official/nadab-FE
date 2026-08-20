@@ -23,12 +23,17 @@ import clsx from "clsx";
 
 type Props = {
   typeName: string;
-  typeReport: components["schemas"]["TypeReportResponse"];
+  typeReport: CompatibleTypeReportResponse;
   isLoading: boolean;
   onGenerate: () => void;
   isPopoverOpen: boolean;
   handlePopoverOpen: () => void;
   handlePooverClose: () => void;
+};
+
+type CompatibleTypeReportResponse = components["schemas"]["TypeReportResponse"] & {
+  personaContent1Content?: components["schemas"]["TypeTextContent"];
+  personaContent2Content?: components["schemas"]["TypeTextContent"];
 };
 
 export default function TypeReportSlides({
@@ -160,12 +165,18 @@ export default function TypeReportSlides({
                   <TypeReportDesctiptionSection
                     title={typeReport.personaTitle1}
                   >
-                    {typeReport.personaContent1!}
+                    <PersonaDescriptionContent
+                      content={typeReport.personaContent1Content}
+                      fallback={typeReport.personaContent1}
+                    />
                   </TypeReportDesctiptionSection>
                   <TypeReportDesctiptionSection
                     title={typeReport.personaTitle2}
                   >
-                    {typeReport.personaContent2!}
+                    <PersonaDescriptionContent
+                      content={typeReport.personaContent2Content}
+                      fallback={typeReport.personaContent2}
+                    />
                   </TypeReportDesctiptionSection>
                 </div>
 
@@ -278,4 +289,23 @@ function TypeReportDesctiptionSection({
       </p>
     </div>
   );
+}
+
+type PersonaDescriptionContentProps = {
+  content?: components["schemas"]["TypeTextContent"];
+  fallback?: string;
+};
+
+// 구조화된 성향 설명을 우선 표시하고, 없으면 기존 문자열을 표시합니다.
+export function PersonaDescriptionContent({
+  content,
+  fallback,
+}: PersonaDescriptionContentProps) {
+  const segments = content?.styledText?.segments ?? [];
+
+  if (segments.length === 0) {
+    return fallback ?? null;
+  }
+
+  return <StyledSegments segments={segments} type="bold" />;
 }
