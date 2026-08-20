@@ -167,7 +167,7 @@ function AskMainContent({ data, recordCount, input }: AskMainContentProps) {
               key={preset.id ?? `${preset.category}-${index}`}
               type="button"
               onClick={() => input.setValueAndFocus(preset.question!)}
-              className="flex min-w-0 flex-col items-start gap-gap-y-s rounded-2xl bg-surface-base px-padding-x-xs py-padding-y-s text-left shadow-1"
+              className="flex min-w-0 flex-col items-start gap-gap-y-s rounded-2xl bg-surface-base px-padding-x-xs py-padding-y-xs text-left shadow-1"
             >
               <AskQuestionBadge category={preset.category} />
               <span className="min-w-0 whitespace-normal break-words text-caption-m text-text-primary">
