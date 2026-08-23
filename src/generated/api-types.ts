@@ -144,7 +144,7 @@ export interface paths {
          *     - **PREFERENCE** : 취향
          *     - **EMOTION** : 감정
          *     - **ROUTINE** : 루틴
-         *     - **RELATIONSHIP** : 인간관계
+         *     - **RELATIONSHIP** : 관계
          *     - **LOVE** : 사랑
          *     - **VALUES** : 가치관
          */
@@ -1539,7 +1539,7 @@ export interface paths {
          *     - **PREFERENCE** : 취향
          *     - **EMOTION** : 감정
          *     - **ROUTINE** : 루틴
-         *     - **RELATIONSHIP** : 인간관계
+         *     - **RELATIONSHIP** : 관계
          *     - **LOVE** : 사랑
          *     - **VALUES** : 가치관
          */
@@ -2648,6 +2648,7 @@ export interface paths {
          * @description 홈 진입만으로 새 채팅 세션을 생성하지 않습니다. </br>
          *     사용자의 누적 답변 개수가 20개 이상인 경우에만 물어보기 홈을 조회할 수 있습니다. </br>
          *     응답에는 남은 메시지 횟수, 사용자 닉네임, 보유 크리스탈 수, 예시 질문 목록을 포함합니다. </br>
+         *     예시 질문은 사용자별로 10분 단위로 갱신되며 같은 시간 구간에는 동일하게 유지됩니다. </br>
          *     히스토리 목록은 이 API에서 반환하지 않으며, 별도 히스토리 API를 사용해야 합니다.
          */
         get: operations["enterHome"];
@@ -5231,7 +5232,7 @@ export interface components {
              * @example 100
              */
             crystalBalance?: number;
-            /** @description 홈 화면에 표시할 예시 질문 목록. 여러 주제 중 일부를 랜덤으로 제공합니다. */
+            /** @description 홈 화면에 표시할 예시 질문 목록. 사용자별로 10분 단위로 갱신됩니다. */
             sampleQuestions?: components["schemas"]["AskChatSampleQuestionResponse"][];
         };
         /** @description 물어보기 홈 예시 질문 응답 */
