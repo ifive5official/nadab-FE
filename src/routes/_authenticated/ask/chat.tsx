@@ -24,6 +24,7 @@ import Container from "@/components/Container";
 import { SubHeader } from "@/components/Headers";
 import BlockButton from "@/components/BlockButton";
 import { AskChatDebugPanel } from "@/features/ask/AskChatDebugPanel";
+import { AskMarkdownContent } from "@/features/ask/AskMarkdownContent";
 import useModalStore from "@/store/modalStore";
 
 export const Route = createFileRoute("/_authenticated/ask/chat")({
@@ -231,7 +232,7 @@ function AskChatMessageItem({
         followUpQuestions={followUpQuestions}
         onSelectFollowUpQuestion={onSelectFollowUpQuestion}
       >
-        {content}
+        <AskMarkdownContent content={content} />
       </AskChatContainer>
     </div>
   );
