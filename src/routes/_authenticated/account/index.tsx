@@ -17,6 +17,7 @@ import { notificationSettingsOptions } from "@/features/notifications/queries";
 import { useChangeNotificationSettingsMutation } from "@/features/notifications/useChangeNotificationSettingsMutation";
 import { Capacitor } from "@capacitor/core";
 import { useRerollQuestionMutation } from "@/features/question/useRerollQuestionMutation";
+import { AdPrivacySettings } from "@/features/ad-rewards/AdPrivacySettings";
 
 export const Route = createFileRoute("/_authenticated/account/")({
   component: RouteComponent,
@@ -85,6 +86,7 @@ function RouteComponent() {
             <ThemeSection isDarkMode={isDarkMode} onToggle={toggleTheme} />
             <SectionDivider />
             <AccountSection />
+            <AdPrivacySettings />
             {shouldShowDeveloperSection && (
               <>
                 <SectionDivider />

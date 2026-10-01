@@ -1483,6 +1483,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ad-rewards/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 광고 보상 세션 발급
+         * @description 광고를 보기로 확정한 시점(광고 보기 버튼을 눌렀을 때)에 호출합니다. 부족분(requiredCrystal)을 확정 계산해 지급 예정 크리스탈(rewardAmount)로 세션을 만들고, AdMob custom_data에 담을 sessionKey를 반환합니다. </br>
+         *     흐름은 광고 보기 버튼 클릭 -> 이 api 호출(서버에서 세션 생성) -> 클라이언트에서 응답으로 받은 sessionKey를 AdMob custom_data에 담아 광고 시청입니다.</br>
+         *     ※ AdMob SSV에는 custom_data(sessionKey)만 설정하세요. user_id는 비워둡니다 — 내부 식별자를 넣으면 노출되며, 유저 바인딩은 sessionKey로 이뤄집니다. </br>
+         *     같은 사용자의 기존 대기(PENDING) 세션은 만료 처리되어, 활성 세션은 항상 1개만 유지됩니다. </br>
+         *     이미 크리스탈이 충분하면 AD_REWARD_NOT_NEEDED(400)로 거부되며, 이 경우 광고가 불필요합니다. </br>
+         *     광고 시청 후에는 지급 완료 여부를 세션 상태 조회(GET /ad-rewards/sessions/{sessionKey})로 확인하세요.
+         */
+        post: operations["createSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me": {
         parameters: {
             query?: never;
@@ -2869,6 +2894,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ad-rewards/sessions/{sessionKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 광고 보상 세션 상태 조회 (폴링)
+         * @description 광고 시청 후 서버의 크리스탈 지급 완료 여부를 sessionKey로 폴링합니다. 본인 세션만 조회할 수 있습니다. </br>
+         *     지급은 AdMob 클라이언트 콜백이 아니라 서버-서버 SSV 검증으로 이뤄지므로, 클라이언트 보상 콜백을 믿지 말고 이 API로 REWARDED를 확인한 뒤에 진행하세요. 광고 백엔드는 크리스탈 지급만 담당하고, 실제 차감·실행은 기존 기능 API가 그대로 처리합니다. </br>
+         *     광고 시청 완료 후 보통 1~2초 내에 REWARDED가 됩니다(서버-서버 SSV 전달 시간). 폴링 간격·타임아웃은 FE가 정하면 됩니다. </br>
+         *     REWARDED가 일정 시간 안 떠서 FE가 폴링을 멈추는 경우(= 폴링 타임아웃)의 사용자 안내(실패/재시도 표시/다시 기능화면으로 돌아가기 등)는 FE·기획 정책입니다. 다만 폴링을 멈춰도 리워드가 영구히 사라지는 건 아닙니다 — SSV가 늦게 도착하면 세션 유효시간 내에서 서버가 지급하기 때문입니다. </br>
+         *     status 값: </br>
+         *     - PENDING: 지급 대기 중(SSV 콜백 대기) </br>
+         *     - REWARDED: 지급 완료. rewardAmount만큼 충전되어 크리스탈이 충분해졌으므로, 크리스탈 부족으로 막혔던 그 기능의 기존 API(예: PDF 내보내기 생성 POST /pdf-exports, 물어보기 대화권 충전·사용)를 다시 호출하면 정상 차감·실행됩니다. </br>
+         *     - EXPIRED: 세션 TTL이 지나 만료됨(지급 없이 종료). 광고를 다시 보려면 세션 발급(POST /ad-rewards/sessions)부터 다시 시작하세요. </br>
+         *     status는 계산값으로, PENDING이라도 TTL이 지났으면 EXPIRED로 반환됩니다.
+         */
+        get: operations["getSessionStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ad-rewards/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 광고 보상 부족분 조회
+         * @description 크리스탈이 부족해 기능 실행(PDF 내보내기, 물어보기)이 막혔을 때 호출합니다. 광고로 채워야 할 부족분을 계산해 반환하는 순수 조회이며, 세션을 만들지 않습니다. </br>
+         *     선택한 기능의 비용(crystalCost)·현재 보유 크리스탈(balance)·부족분(requiredCrystal, 0 이상)을 반환합니다. </br>
+         *     크리스탈이 부족한 상황에서 호출하므로 보통 requiredCrystal > 0입니다. requiredCrystal이 0이면 이미 크리스탈이 충분하다는 의미(광고 시청 불필요)입니다.
+         */
+        get: operations["quote"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user/me/profile-image": {
         parameters: {
             query?: never;
@@ -3916,6 +3991,33 @@ export interface components {
              * @example 나는 어떤 사람이야?
              */
             content: string;
+        };
+        AdRewardSessionCreateResponse: {
+            /**
+             * @description 세션 토큰(AdMob custom_data로 전달)
+             * @example aB3x... (40자)
+             */
+            sessionKey?: string;
+            /**
+             * Format: int64
+             * @description 지급 예정 크리스탈 N(확정값)
+             * @example 70
+             */
+            rewardAmount?: number;
+            /**
+             * Format: date-time
+             * @description 세션 만료 시각
+             * @example 2026-09-19T12:10:00Z
+             */
+            expiresAt?: string;
+        };
+        AdRewardSessionCreateRequest: {
+            /**
+             * @description 광고 보상 대상 기능
+             * @example PDF_REPORT_AND_ANSWER
+             * @enum {string}
+             */
+            feature: "PDF_REPORT_ONLY" | "PDF_ANSWER_ONLY" | "PDF_REPORT_AND_ANSWER" | "ASK_CHAT_TURN_CHARGE";
         };
         /** @description 유저 프로필 수정 응답 */
         UpdateUserProfileResponse: {
@@ -5473,6 +5575,46 @@ export interface components {
         CalendarRecentsResponse: {
             /** @description 최근 답변 목록 (최대 6개, 날짜 내림차순) */
             items?: components["schemas"]["AnswerEntrySummaryResponse"][];
+        };
+        AdRewardSessionStatusResponse: {
+            /**
+             * @description 세션 상태(PENDING 대기 / REWARDED 지급완료 / EXPIRED 만료)
+             * @example REWARDED
+             * @enum {string}
+             */
+            status?: "PENDING" | "REWARDED" | "EXPIRED";
+            /**
+             * Format: int64
+             * @description 지급 예정/완료 크리스탈 N
+             * @example 70
+             */
+            rewardAmount?: number;
+        };
+        AdRewardQuoteResponse: {
+            /**
+             * @description 대상 기능
+             * @example PDF_REPORT_AND_ANSWER
+             * @enum {string}
+             */
+            feature?: "PDF_REPORT_ONLY" | "PDF_ANSWER_ONLY" | "PDF_REPORT_AND_ANSWER" | "ASK_CHAT_TURN_CHARGE";
+            /**
+             * Format: int64
+             * @description 기능 사용 비용(크리스탈)
+             * @example 100
+             */
+            crystalCost?: number;
+            /**
+             * Format: int64
+             * @description 현재 보유 크리스탈
+             * @example 30
+             */
+            balance?: number;
+            /**
+             * Format: int64
+             * @description 부족분 (광고로 채워야 할 크리스탈, 0 이상). 0이면 이미 충분해 광고 불필요
+             * @example 70
+             */
+            requiredCrystal?: number;
         };
     };
     responses: never;
@@ -8436,6 +8578,54 @@ export interface operations {
             };
         };
     };
+    createSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdRewardSessionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description 세션 발급 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdRewardSessionCreateResponse"];
+                };
+            };
+            /** @description - ErrorCode: AD_REWARD_NOT_NEEDED - 이미 크리스탈이 충분해 광고 시청이 필요하지 않음 */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /**
+             * @description - ErrorCode: USER_NOT_FOUND - 사용자를 찾을 수 없음
+             *     - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음
+             */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getMyProfile: {
         parameters: {
             query?: never;
@@ -10245,6 +10435,85 @@ export interface operations {
             };
             /** @description 인증 실패 */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getSessionStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 상태 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdRewardSessionStatusResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: AD_REWARD_SESSION_ACCESS_FORBIDDEN - 본인의 광고 보상 세션이 아님 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: AD_REWARD_SESSION_NOT_FOUND - 광고 보상 세션을 찾을 수 없음 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    quote: {
+        parameters: {
+            query: {
+                feature: "PDF_REPORT_ONLY" | "PDF_ANSWER_ONLY" | "PDF_REPORT_AND_ANSWER" | "ASK_CHAT_TURN_CHARGE";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 부족분 조회 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdRewardQuoteResponse"];
+                };
+            };
+            /** @description 인증 실패 */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description - ErrorCode: WALLET_NOT_FOUND - 지갑을 찾을 수 없음 */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

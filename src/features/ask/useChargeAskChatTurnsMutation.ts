@@ -10,13 +10,15 @@ type Result = components["schemas"]["AskChatTurnChargeResponse"];
 
 type Props = {
   onSuccess?: (data: Result) => void;
+  onInsufficientBalance?: () => void;
 };
 
 // 크리스탈을 사용해 물어보기 대화권을 충전하고 관련 캐시를 갱신합니다.
-export function useChargeAskChatTurnsMutation({ onSuccess }: Props = {}) {
+export function useChargeAskChatTurnsMutation({ onSuccess, onInsufficientBalance }: Props = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
+    retry: false,
     mutationFn: async () => {
       const res = await api.post<ApiResponse<Result>>(
         "/api/v1/ask-chat/turns/charge",
@@ -42,6 +44,10 @@ export function useChargeAskChatTurnsMutation({ onSuccess }: Props = {}) {
       onSuccess?.(data);
     },
     onError: (error: AxiosError<ApiErrResponse<null>>) => {
+      if (error.response?.data?.code === "WALLET_INSUFFICIENT_BALANCE" && onInsufficientBalance) {
+        onInsufficientBalance();
+        return;
+      }
       handleAskChatApiError(error);
     },
   });

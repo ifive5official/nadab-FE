@@ -12,6 +12,8 @@ count.txt
 .wrangler
 **/GoogleService-Info.plist
 ios/App/App/KakaoSecrets.xcconfig
+ios/App/App/AdMob.local.xcconfig
+android/admob.local.properties
 GEMINI.md
 .idea/
 <<<<<<< HEAD

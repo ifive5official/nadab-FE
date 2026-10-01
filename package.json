@@ -11,6 +11,7 @@
     "serve": "vite preview",
     "test": "vitest run",
     "gen:icons": "node scripts/generate-app-icons.mjs",
+    "capacitor:sync:before": "node scripts/configure-admob.mjs",
     "gen:api": "openapi-typescript https://nadab-dev.n-e.kr/v3/api-docs --output src/generated/api-types.ts",
     "app:sync": "pnpm run app:sync:android",
     "app:sync:android": "pnpm run build:prod && CAPACITOR_ENV=production npx cap sync android",
@@ -19,6 +20,7 @@
     "app:sync:ios:dev": "pnpm run build:dev && CAPACITOR_ENV=development npx cap sync ios"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.1.0",
     "@capacitor-community/apple-sign-in": "^7.1.0",
     "@capacitor-community/fcm": "^8.1.0",
     "@capacitor/android": "^8.0.2",

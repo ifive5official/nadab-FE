@@ -27,6 +27,10 @@ PODS:
   - CapacitorCamera (8.2.0):
     - Capacitor
     - IONCameraLib (~> 1.0.4)
+  - CapacitorCommunityAdmob (8.1.0):
+    - Capacitor
+    - Google-Mobile-Ads-SDK (= 13.6.0)
+    - GoogleUserMessagingPlatform (~> 3.1)
   - CapacitorCommunityAppleSignIn (7.1.0):
     - Capacitor
   - CapacitorCommunityFcm (8.1.0):
@@ -81,6 +85,8 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
+  - Google-Mobile-Ads-SDK (13.6.0):
+    - GoogleUserMessagingPlatform (>= 1.1)
   - GoogleDataTransport (10.1.0):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
@@ -89,6 +95,7 @@ PODS:
     - AppCheckCore (~> 11.0)
     - GTMAppAuth (~> 5.0)
     - GTMSessionFetcher/Core (~> 3.3)
+  - GoogleUserMessagingPlatform (3.1.0)
   - GoogleUtilities/AppDelegateSwizzler (8.1.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -154,6 +161,7 @@ DEPENDENCIES:
   - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/app`)"
   - "CapacitorBrowser (from `../../node_modules/.pnpm/@capacitor+browser@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/browser`)"
   - "CapacitorCamera (from `../../node_modules/.pnpm/@capacitor+camera@8.2.0_@capacitor+core@8.0.2/node_modules/@capacitor/camera`)"
+  - "CapacitorCommunityAdmob (from `../../node_modules/.pnpm/@capacitor-community+admob@8.1.0/node_modules/@capacitor-community/admob`)"
   - "CapacitorCommunityAppleSignIn (from `../../node_modules/.pnpm/@capacitor-community+apple-sign-in@7.1.0_@capacitor+core@8.0.2/node_modules/@capacitor-community/apple-sign-in`)"
   - "CapacitorCommunityFcm (from `../../node_modules/.pnpm/@capacitor-community+fcm@8.1.0_@capacitor+core@8.0.2/node_modules/@capacitor-community/fcm`)"
   - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.3.0_@capacitor+core@8.0.2/node_modules/@capacitor/ios`)"
@@ -182,8 +190,10 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
+    - Google-Mobile-Ads-SDK
     - GoogleDataTransport
     - GoogleSignIn
+    - GoogleUserMessagingPlatform
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
@@ -209,6 +219,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/.pnpm/@capacitor+browser@8.0.1_@capacitor+core@8.0.2/node_modules/@capacitor/browser"
   CapacitorCamera:
     :path: "../../node_modules/.pnpm/@capacitor+camera@8.2.0_@capacitor+core@8.0.2/node_modules/@capacitor/camera"
+  CapacitorCommunityAdmob:
+    :path: "../../node_modules/.pnpm/@capacitor-community+admob@8.1.0/node_modules/@capacitor-community/admob"
   CapacitorCommunityAppleSignIn:
     :path: "../../node_modules/.pnpm/@capacitor-community+apple-sign-in@7.1.0_@capacitor+core@8.0.2/node_modules/@capacitor-community/apple-sign-in"
   CapacitorCommunityFcm:
@@ -243,6 +255,7 @@ SPEC CHECKSUMS:
   CapacitorApp: 3963a84197280757b84f126afd1520a85ae3b092
   CapacitorBrowser: e72e572d5dbdbb854fda5950586a2451e981f2d6
   CapacitorCamera: 8f6acf83664118321111e76acef86390211ccb08
+  CapacitorCommunityAdmob: 6af78978278c429d21cb6ac604acefe7d99c054d
   CapacitorCommunityAppleSignIn: 271cb2860576fd2961508bbfa7a82117d93eadca
   CapacitorCommunityFcm: 8e659cf3177bb510011b328cf5809ae3e93721a5
   CapacitorCordova: 2e1e2bb93b2f365309dc4ff18b72b9a69a7814a9
@@ -262,8 +275,10 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: 7c12fc3011d889085e765e317d7b9fd1cef97af9
   FirebaseInstallations: 4e6e162aa4abaaeeeb01dd00179dfc5ad9c2194e
   FirebaseMessaging: 341004946fa7ffc741344b20f1b667514fc93e31
+  Google-Mobile-Ads-SDK: 6e501ace4af8d63e967bd45497c8b2b05821163d
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleSignIn: c7f09cfbc85a1abf69187be091997c317cc33b77
+  GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
@@ -279,6 +294,6 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   TeamLepisodeCapacitorNaverLogin: f226aa83f0c68600726d54c39e994cbe7b68c911
 
-PODFILE CHECKSUM: 184de67e08a7a6d57e433e3fcd66e595a175944a
+PODFILE CHECKSUM: 93c7bd5c2a3c9fc02c30faf14a56fed4cde6d191
 
 COCOAPODS: 1.16.2

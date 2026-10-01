@@ -6,6 +6,7 @@ import { startPdfExport } from "./api";
 import type {
   PdfExportInProgressResponse,
   PdfExportStartResponse,
+  PdfExportStartRequest,
 } from "./types";
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
   onAlreadyInProgress: (jobId: number) => void;
   onInvalidPeriod: () => void;
   onNoData: () => void;
-  onInsufficientBalance: () => void;
+  onInsufficientBalance: (request: PdfExportStartRequest) => void;
   onServerBusy: () => void;
 };
 
@@ -29,6 +30,7 @@ export function useStartPdfExportMutation({
   const queryClient = useQueryClient();
 
   return useMutation({
+    retry: false,
     mutationFn: startPdfExport,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser", "crystals"] });
@@ -36,13 +38,14 @@ export function useStartPdfExportMutation({
     },
     onError: (
       error: AxiosError<ApiErrResponse<PdfExportInProgressResponse>>,
+      request: PdfExportStartRequest,
     ) => {
       const code = error.response?.data?.code;
 
       if (code === "PDF_EXPORT_INVALID_PERIOD") return onInvalidPeriod();
       if (code === "PDF_EXPORT_NO_DATA") return onNoData();
       if (code === "WALLET_INSUFFICIENT_BALANCE") {
-        return onInsufficientBalance();
+        return onInsufficientBalance(request);
       }
       if (code === "PDF_EXPORT_SERVER_BUSY") return onServerBusy();
       if (code === "PDF_EXPORT_ALREADY_IN_PROGRESS") {

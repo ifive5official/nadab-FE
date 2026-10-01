@@ -15,6 +15,7 @@ import { Network } from "@capacitor/network";
 import PushToast from "@/components/PushToast";
 import BottomModal from "@/components/BottomModal";
 import CoachMarkTour from "@/components/CoachMarkTour";
+import { AdRewardDialog } from "@/features/ad-rewards/AdRewardDialog";
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -58,6 +59,7 @@ function RootComponent() {
         {isOnline ? <Outlet /> : <ErrorPage error={{}} type="network" />}
         <BottomModal />
         <Modal />
+        <AdRewardDialog />
         <CoachMarkTour />
         <Toast />
         <PushToast />
