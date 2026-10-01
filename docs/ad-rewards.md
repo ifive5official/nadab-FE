@@ -20,6 +20,26 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 
 ## AdMob·백엔드 준비
 
+### app-ads.txt 앱 인증
+
+개발자 웹사이트는 운영 도메인 `https://nadab.app`을 사용합니다. `nadab-fe.vercel.app`은 개발 브랜치의 배포이므로 스토어의 인증용 주소로 사용하지 않습니다.
+
+- Google Play 스토어 등록정보의 웹사이트와 App Store의 마케팅 URL에 `https://nadab.app`을 등록합니다.
+- `public/app-ads.txt`에 같은 AdMob 계정의 Android·iOS 앱이 공유하는 게시자 정보를 넣었습니다.
+- Vercel 설정에서 `/app-ads.txt`와 `/robots.txt`를 SPA 재작성 대상에서 제외하여 실제 텍스트 파일이 제공되도록 합니다.
+- 변경 사항을 **운영 Vercel 프로젝트에 연결된 브랜치(master/main)** 에 반영하고 배포해야 `https://nadab.app/app-ads.txt`에 적용됩니다. 개발 브랜치 배포만으로는 운영 도메인에 반영되지 않습니다.
+- 운영 배포 후 해당 URL이 로그인 없이 HTTP 200 및 `text/plain`으로 아래 한 줄을 반환하는지 확인합니다.
+
+```text
+google.com, pub-5637327100149211, DIRECT, f08c47fec0942fa0
+```
+
+이후 AdMob의 앱 설정에서 **앱 인증 → 업데이트 확인**을 진행합니다. 스토어 웹사이트 변경과 파일 크롤링 반영에는 시간이 걸릴 수 있습니다. 파일 인증은 광고 기능 활성화·SSV 지급 검증과 별도입니다.
+
+참고: [Google app-ads.txt 설정 안내](https://support.google.com/admob/answer/9363762?hl=ko).
+
+### 보상형 광고 설정
+
 - 양 플랫폼의 보상형 광고 단위에 백엔드 SSV 콜백 URL을 등록하고 검증합니다. FE는 이 URL을 직접 호출하지 않습니다.
 - 광고마다 서버에서 발급한 `sessionKey`를 `ssv.customData`로 전달합니다. `userId`는 전달하지 않습니다.
 - 실제 지급량은 세션의 `rewardAmount`로 결정됩니다. SDK가 반환한 보상 수치로 잔액을 변경하지 않습니다.
