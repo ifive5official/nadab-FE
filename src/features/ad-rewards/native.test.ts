@@ -31,6 +31,9 @@ describe("네이티브 광고 어댑터", () => {
     sdk.initialize.mockResolvedValue(undefined);
     sdk.consent.mockResolvedValue({ canRequestAds: true });
     vi.stubEnv("VITE_AD_REWARDS_ENABLED", "true");
+    vi.stubEnv("VITE_AD_REWARDS_ANDROID_ENABLED", undefined);
+    vi.stubEnv("VITE_AD_REWARDS_IOS_ENABLED", undefined);
+    vi.stubEnv("VITE_ADMOB_USE_DEMO_ADS", "false");
     vi.stubEnv("VITE_ADMOB_ANDROID_APP_ID", "ca-app-pub-1~2");
     vi.stubEnv("VITE_ADMOB_ANDROID_REWARDED_ID", "ca-app-pub-1/3");
     vi.stubEnv("VITE_ADMOB_IOS_APP_ID", "ca-app-pub-4~5");
@@ -61,6 +64,35 @@ describe("네이티브 광고 어댑터", () => {
     sdk.listeners.get("dismissed")?.();
     await expect(result).resolves.toBeUndefined();
     expect(sdk.listeners.size).toBe(0);
+  });
+
+  it.each([
+    ["android", "ca-app-pub-3940256099942544/5224354917"],
+    ["ios", "ca-app-pub-3940256099942544/1712485313"],
+  ])("%s 데모 모드는 자체 광고 단위 대신 Google 테스트 광고를 요청한다", async (platform, adId) => {
+    sdk.platform = platform;
+    vi.stubEnv("VITE_ADMOB_USE_DEMO_ADS", "true");
+    const { showRewardAd } = await import("./native");
+    const result = showRewardAd(session, new AbortController().signal);
+    await vi.waitFor(() => expect(sdk.show).toHaveBeenCalledOnce());
+    expect(sdk.prepare).toHaveBeenCalledWith({ adId, ssv: { customData: session.sessionKey } });
+    sdk.listeners.get("dismissed")?.();
+    await result;
+  });
+
+  it("공통 설정과 관계없이 Android만 활성화하고 iOS는 비활성화할 수 있다", async () => {
+    vi.stubEnv("VITE_AD_REWARDS_ENABLED", "false");
+    vi.stubEnv("VITE_AD_REWARDS_ANDROID_ENABLED", "true");
+    vi.stubEnv("VITE_AD_REWARDS_IOS_ENABLED", "false");
+    const { isAdRewardAvailable } = await import("./native");
+    expect(isAdRewardAvailable()).toBe(true);
+    sdk.platform = "ios";
+    expect(isAdRewardAvailable()).toBe(false);
+    vi.stubEnv("VITE_AD_REWARDS_ENABLED", "true");
+    expect(isAdRewardAvailable()).toBe(false);
+    sdk.native = false;
+    sdk.platform = "android";
+    expect(isAdRewardAvailable()).toBe(false);
   });
 
   it("표시 실패 시 모든 리스너를 정리한다", async () => {

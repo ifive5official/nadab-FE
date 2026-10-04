@@ -12,15 +12,24 @@ function checkAborted(signal: AbortSignal) {
 // 설정이 완료된 네이티브 앱에만 광고 보상 진입을 허용합니다.
 export function isAdRewardAvailable() {
   const platform = Capacitor.getPlatform();
+  const enabled = (platform === "ios"
+    ? import.meta.env.VITE_AD_REWARDS_IOS_ENABLED
+    : import.meta.env.VITE_AD_REWARDS_ANDROID_ENABLED) ?? import.meta.env.VITE_AD_REWARDS_ENABLED;
   const appId = platform === "ios" ? import.meta.env.VITE_ADMOB_IOS_APP_ID : import.meta.env.VITE_ADMOB_ANDROID_APP_ID;
   return Capacitor.isNativePlatform() && ["ios", "android"].includes(platform)
-    && import.meta.env.VITE_AD_REWARDS_ENABLED === "true"
+    && enabled === "true"
     && /^ca-app-pub-\d+~\d+$/.test(appId ?? "")
     && /^ca-app-pub-\d+\/\d+$/.test(getAdUnitId() ?? "");
 }
 
 // 현재 플랫폼의 보상형 광고 단위 ID를 선택합니다.
 function getAdUnitId(): string | undefined {
+  // 데모 모드에서는 테스트 기기 등록 여부와 관계없이 Google의 테스트 광고만 요청합니다.
+  if (import.meta.env.VITE_ADMOB_USE_DEMO_ADS === "true") {
+    return Capacitor.getPlatform() === "ios"
+      ? "ca-app-pub-3940256099942544/1712485313"
+      : "ca-app-pub-3940256099942544/5224354917";
+  }
   return Capacitor.getPlatform() === "ios"
     ? import.meta.env.VITE_ADMOB_IOS_REWARDED_ID
     : import.meta.env.VITE_ADMOB_ANDROID_REWARDED_ID;

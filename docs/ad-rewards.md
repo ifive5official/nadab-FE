@@ -8,7 +8,10 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 
 | 변수 | 용도 |
 | --- | --- |
-| `VITE_AD_REWARDS_ENABLED` | SSV 검증을 마친 환경에서만 `true` |
+| `VITE_AD_REWARDS_ENABLED` | 플랫폼별 설정이 없을 때 사용하는 공통 활성화 값. 운영은 SSV 검증 후 활성화 |
+| `VITE_AD_REWARDS_ANDROID_ENABLED` | Android 활성화 여부. 공통 값보다 우선 |
+| `VITE_AD_REWARDS_IOS_ENABLED` | iOS 활성화 여부. 공통 값보다 우선 |
+| `VITE_ADMOB_USE_DEMO_ADS` | `true`이면 자체 광고 단위 대신 Google 데모 광고 사용 |
 | `VITE_ADMOB_ANDROID_APP_ID` | Android AdMob 앱 ID |
 | `VITE_ADMOB_ANDROID_REWARDED_ID` | Android 보상형 광고 단위 ID |
 | `VITE_ADMOB_IOS_APP_ID` | iOS AdMob 앱 ID |
@@ -17,6 +20,46 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 기존 `pnpm app:sync:android` / `pnpm app:sync:ios` 명령으로 빌드·동기화합니다. 개발 환경은 각각 `:dev` 스크립트를 사용합니다. `capacitor:sync:before` 훅이 `CAPACITOR_ENV`에 맞춰 네이티브 앱 ID 파일을 생성합니다. 로컬 파일은 Git에서 제외됩니다.
 
 활성화된 환경에서 ID가 빠지거나 형식이 틀리면 동기화가 실패합니다. 비활성 환경은 SDK의 시작 오류를 방지하기 위해 Google 데모 앱 ID를 기본으로 사용하지만 광고 버튼은 표시하지 않습니다. 환경 변수 변경 후에는 웹 재빌드와 네이티브 동기화를 모두 실행해야 합니다. CI에서도 웹 빌드와 동기화에 동일한 환경 변수를 전달합니다.
+
+네이티브 광고 설정은 Vite와 같은 순서로 `.env` → `.env.local` → `.env.[mode]` → `.env.[mode].local`을 읽으며, 실행 시 전달한 환경 변수가 우선합니다. 개발 설정에서 운영 파일을 기본값으로 읽지 않습니다.
+
+## Android 개발 테스트
+
+개발용 API(`https://nadab-dev.n-e.kr`)에 연결하는 Android 빌드부터 확인합니다. `.env.development.local`은 Git에서 제외되며 다음 값을 사용합니다. 운영 환경과 iOS 광고는 활성화하지 않습니다.
+
+```dotenv
+VITE_AD_REWARDS_ENABLED=false
+VITE_AD_REWARDS_ANDROID_ENABLED=true
+VITE_AD_REWARDS_IOS_ENABLED=false
+VITE_ADMOB_USE_DEMO_ADS=true
+VITE_ADMOB_ANDROID_APP_ID=ca-app-pub-5637327100149211~7879133168
+VITE_ADMOB_ANDROID_REWARDED_ID=ca-app-pub-5637327100149211/9895293547
+```
+
+### 1. 광고 표시·닫힘 검증
+
+```sh
+pnpm app:sync:android:dev
+cd android
+./gradlew assembleDebug
+```
+
+APK는 `android/app/build/outputs/apk/debug/app-debug.apk`에 생성됩니다. Android Studio에서 `android` 프로젝트를 열고 테스트 기기로 실행할 수도 있습니다. 현재 패키지 이름은 스토어 앱과 같은 `com.nadab.app`이므로, 스토어 앱이 설치된 기기는 서명 충돌이 날 수 있습니다. 이 경우 기존 앱을 자동 삭제하지 말고 별도 에뮬레이터나 테스트 기기를 사용합니다.
+
+1. 개발 계정으로 로그인하고 크리스탈이 부족한 상태에서 PDF 생성 또는 물어보기 대화권 충전을 시도합니다.
+2. 부족 안내의 광고 보기 버튼을 누르고 Google 테스트 광고가 표시되는지 확인합니다.
+3. 시청 완료·닫힘·중도 종료 후 앱으로 정상 복귀하는지 확인합니다.
+4. **데모 광고는 나답 광고 단위의 SSV URL로 지급 콜백을 보내는 검증이 아닙니다.** 서버가 `REWARDED`를 반환하지 않으면 기능을 이어가지 않으며, `PENDING`이 유지되면 30초 뒤 지급 확인 지연 안내가 나타납니다. 이 단계에서 SDK 보상 이벤트로 지급을 흉내 내지 않습니다.
+
+### 2. 개발 광고 단위의 SSV 지급 검증
+
+1. 실기기를 AdMob **설정 → 테스트 기기**에 등록하고 반영을 기다립니다. Android 에뮬레이터는 기본 테스트 기기입니다. 이름에 `dev`가 있는 광고 단위도 별도 테스트 설정 없이는 실제 광고 단위입니다.
+2. `.env.development.local`에서 `VITE_ADMOB_USE_DEMO_ADS=false`로 변경하고 개발 빌드·동기화를 다시 실행합니다. 광고 단위는 위의 `android_dev_crystal_reward`를 유지합니다.
+3. 광고의 **Test Ad** 표시를 확인합니다. 개발 광고 단위의 SSV URL은 `https://nadab-dev.n-e.kr/api/v1/ad-rewards/ssv`입니다.
+4. 백엔드 로그의 콜백 수신·서명 검증과 같은 `sessionKey`의 `PENDING → REWARDED` 전환을 확인합니다. 이어 지갑 갱신 및 PDF 생성 또는 대화권 충전이 한 번만 실행되는지 확인합니다. 물어보기 질문은 자동 전송되지 않아야 합니다.
+5. 테스트 광고 표시와 실제 서버 지급은 각각 확인합니다. 지급이 안 되면 클라이언트에서 성공 처리하지 말고 콜백 수신 여부·세션 만료·광고 단위 허용 설정을 백엔드와 확인합니다.
+
+참고: [Google Android 테스트 광고](https://developers.google.com/admob/android/test-ads), [SSV 검증](https://developers.google.com/admob/android/ssv).
 
 ## AdMob·백엔드 준비
 
