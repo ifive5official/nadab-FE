@@ -4,7 +4,42 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 
 ## 환경 설정
 
-`.env.admob.example`에 있는 값을 개발·운영 환경 파일 또는 CI 환경 변수에 추가합니다. 앱 ID(`~` 포함)와 보상형 광고 단위 ID(`/` 포함)는 서로 다릅니다.
+### 수정할 파일과 자동 생성 파일
+
+광고 설정을 바꿀 때는 **환경 파일을 수정하고 해당 플랫폼의 빌드·동기화를 실행**합니다. 앱 ID(`~` 포함)와 보상형 광고 단위 ID(`/` 포함)는 서로 다릅니다.
+
+| 파일 | 역할 | Git 관리 / 직접 수정 여부 |
+| --- | --- | --- |
+| `.env.admob.example` | 광고 환경 변수 전체 항목과 설명. 자동 로드되지 않음 | 관리 / 설정 복사 시 참고 |
+| `.env.development.local` | 현재 개발 광고 설정 원본. Android·iOS 개발 ID와 활성화 값 | 제외 / 개발 설정 변경 시 수정 |
+| `.env.production` 또는 `.env.production.local`, CI 환경 변수 | 운영 설정 원본. 현재 로컬 운영 광고 값은 미설정이므로 비활성 | 로컬 파일 제외 / 운영 전환 시 설정 |
+| `scripts/configure-admob.mjs` | 환경 변수를 검증하고 아래 두 네이티브 파일 생성 | 관리 / 설정 로직 변경 시 수정 |
+| `android/admob.local.properties` | 생성된 Android 앱 ID | 제외 / 직접 수정하지 않음 |
+| `ios/App/App/AdMob.local.xcconfig` | 생성된 iOS 앱 ID | 제외 / 직접 수정하지 않음 |
+| `android/app/build.gradle` → `AndroidManifest.xml` | 생성된 앱 ID를 `admob_app_id` 리소스로 연결 | 관리 / ID 값은 환경 파일에서 변경 |
+| `ios/App/App/App.debug.xcconfig`, `App.release.xcconfig` → `Info.plist` | 생성된 `ADMOB_APP_ID`를 `GADApplicationIdentifier`로 연결 | 관리 / ID 값은 환경 파일에서 변경 |
+| `src/features/ad-rewards/native.ts` | 웹 빌드에 포함된 환경 변수로 플랫폼 활성화 여부·광고 단위 선택 | 관리 / 실행 로직 변경 시 수정 |
+| `public/app-ads.txt` | 스토어 앱 인증에 사용하는 게시자 정보 | 관리 / 운영 웹사이트에도 배포 필요 |
+
+`capacitor.config.ts`는 앱 ID 생성기가 아닙니다. 광고 설정은 `package.json`의 `capacitor:sync:before` 훅이 처리합니다. 플랫폼에 복사되는 웹 빌드(`android/app/src/main/assets/public`, `ios/App/App/public`)도 Git에서 제외됩니다. 따라서 로컬 광고 설정과 빌드만 변경하면 Git 변경 목록에 나타나지 않습니다.
+
+### 현재 개발 설정과 운영 상태
+
+2026-10-05 기준 로컬 설정입니다. 개발에서는 두 플랫폼의 자체 개발 광고 단위를 사용하고, 운영 광고는 비활성입니다.
+
+| 항목 | 개발 | 운영 |
+| --- | --- | --- |
+| Android 광고 | 활성 | 비활성 |
+| iOS 광고 | 활성 | 비활성 |
+| `VITE_ADMOB_USE_DEMO_ADS` | `false` | 미설정 (`false` 취급) |
+| API | `https://nadab-dev.n-e.kr/` | `https://r9k2m7q3.shop/` |
+| 실행 검증 | Android 사용자 테스트 정상, iOS 개발 빌드 완료·실행 검증 대기 | 광고 활성화 전 |
+
+`VITE_ADMOB_USE_DEMO_ADS=false`는 **자체 광고 단위 선택**을 의미합니다. 테스트 광고 여부는 테스트 기기 등록으로 결정됩니다. 개발 광고 단위 이름에 `dev`가 있어도 테스트 기기 설정을 대신하지 않습니다.
+
+### 환경 변수
+
+`.env.admob.example`의 항목을 해당 환경 파일 또는 CI 환경 변수에 추가합니다. 이 예시 파일을 이름 그대로 두는 것만으로 설정이 적용되지는 않습니다.
 
 | 변수 | 용도 |
 | --- | --- |
@@ -17,7 +52,39 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 | `VITE_ADMOB_IOS_APP_ID` | iOS AdMob 앱 ID |
 | `VITE_ADMOB_IOS_REWARDED_ID` | iOS 보상형 광고 단위 ID |
 
+플랫폼별 활성화 값이 있으면 공통 값보다 우선합니다. 현재 공통 값은 `false`, Android·iOS 값은 각각 `true`이므로 개발 앱에서는 둘 다 활성화됩니다. 플랫폼별 값이 `false`인 경우에는 공통 값만 `true`로 바꿔도 해당 플랫폼은 활성화되지 않습니다.
+
+### 나답 AdMob ID 목록
+
+아래 ID는 기존 AdMob 콘솔에서 확인한 값입니다. 운영 ID는 참고용이며, 이 문서에 적는 것만으로 운영 설정에 적용되지는 않습니다.
+
+| 구분 | Android | iOS |
+| --- | --- | --- |
+| 앱 ID (개발·운영 공통) | `ca-app-pub-5637327100149211~7879133168` | `ca-app-pub-5637327100149211~1942963556` |
+| 개발 보상형 광고 단위 | `ca-app-pub-5637327100149211/9895293547` | `ca-app-pub-5637327100149211/6215797780` |
+| 운영 보상형 광고 단위 | `ca-app-pub-5637327100149211/4189700982` | `ca-app-pub-5637327100149211/2683021508` |
+
+SSV 콜백 URL은 **각 광고 단위의 AdMob 콘솔 설정**에 등록하며, 프런트엔드 환경 변수로 넣지 않습니다.
+
+| 광고 단위 환경 | Android·iOS 공통 SSV URL |
+| --- | --- |
+| 개발 | `https://nadab-dev.n-e.kr/api/v1/ad-rewards/ssv` |
+| 운영 | `https://r9k2m7q3.shop/api/v1/ad-rewards/ssv` |
+
+UMP 동의 메시지, IDFA 메시지, 테스트 기기 등록, 앱 인증·승인 상태도 AdMob 콘솔에서 관리합니다.
+
+### 설정 적용
+
 기존 `pnpm app:sync:android` / `pnpm app:sync:ios` 명령으로 빌드·동기화합니다. 개발 환경은 각각 `:dev` 스크립트를 사용합니다. `capacitor:sync:before` 훅이 `CAPACITOR_ENV`에 맞춰 네이티브 앱 ID 파일을 생성합니다. 로컬 파일은 Git에서 제외됩니다.
+
+| 대상 | 설정 수정 후 실행할 명령 |
+| --- | --- |
+| Android 개발 | `pnpm app:sync:android:dev` |
+| iOS 개발 | `pnpm app:sync:ios:dev` |
+| Android 운영 | `pnpm app:sync:android` |
+| iOS 운영 | `pnpm app:sync:ios` |
+
+동기화 후 Android Studio 또는 Xcode에서 다시 빌드합니다. Xcode의 Debug/Release 선택만으로 개발·운영 환경이 바뀌지는 않습니다. 동기화 당시 선택한 환경의 웹 파일과 앱 ID가 사용됩니다. 현재 훅은 Android·iOS 앱 ID 파일을 함께 생성하므로, 다른 환경으로 전환했다면 빌드할 플랫폼의 동기화를 먼저 실행합니다.
 
 활성화된 환경에서 ID가 빠지거나 형식이 틀리면 동기화가 실패합니다. 비활성 환경은 SDK의 시작 오류를 방지하기 위해 Google 데모 앱 ID를 기본으로 사용하지만 광고 버튼은 표시하지 않습니다. 환경 변수 변경 후에는 웹 재빌드와 네이티브 동기화를 모두 실행해야 합니다. CI에서도 웹 빌드와 동기화에 동일한 환경 변수를 전달합니다.
 
@@ -25,7 +92,7 @@ PDF 생성과 물어보기 대화권 충전의 `WALLET_INSUFFICIENT_BALANCE` 오
 
 ## Android 개발 테스트
 
-개발용 API(`https://nadab-dev.n-e.kr`)에 연결하는 Android 빌드부터 확인합니다. `.env.development.local`은 Git에서 제외되며 다음 값을 사용합니다. 운영 환경과 iOS 광고는 활성화하지 않습니다.
+개발용 API(`https://nadab-dev.n-e.kr`)에 연결하는 Android 빌드부터 확인합니다. `.env.development.local`은 Git에서 제외됩니다. 아래는 Android만 데모 광고로 시작하는 설정 예시이며, iOS 테스트를 병행할 때는 다음 절의 값을 적용합니다. 운영 광고는 별도로 활성화하기 전까지 비활성 상태를 유지합니다.
 
 ```dotenv
 VITE_AD_REWARDS_ENABLED=false
@@ -60,6 +127,31 @@ APK는 `android/app/build/outputs/apk/debug/app-debug.apk`에 생성됩니다. A
 5. 테스트 광고 표시와 실제 서버 지급은 각각 확인합니다. 지급이 안 되면 클라이언트에서 성공 처리하지 말고 콜백 수신 여부·세션 만료·광고 단위 허용 설정을 백엔드와 확인합니다.
 
 참고: [Google Android 테스트 광고](https://developers.google.com/admob/android/test-ads), [SSV 검증](https://developers.google.com/admob/android/ssv).
+
+## iOS 개발 테스트
+
+Android의 테스트 광고 시청·보상 지급과 후속 기능은 2026-10-05 사용자 테스트에서 정상으로 확인했습니다. iOS는 아래 설정으로 별도로 검증합니다. `.env.development.local`의 Android 설정은 유지하고 다음 값을 추가하거나 변경합니다.
+
+```dotenv
+VITE_AD_REWARDS_IOS_ENABLED=true
+VITE_ADMOB_USE_DEMO_ADS=false
+VITE_ADMOB_IOS_APP_ID=ca-app-pub-5637327100149211~1942963556
+VITE_ADMOB_IOS_REWARDED_ID=ca-app-pub-5637327100149211/6215797780
+```
+
+```sh
+pnpm app:sync:ios:dev
+```
+
+동기화 후 Xcode에서 `ios/App/App.xcworkspace`를 열고 `App` 스킴과 iPhone 시뮬레이터를 선택해 실행합니다. 시뮬레이터는 기본 테스트 기기입니다. 실기기는 AdMob 테스트 기기로 등록한 뒤 사용하며, 광고의 **Test Ad / Test mode** 표시를 확인합니다. 위 설정은 Google 샘플 광고 단위가 아닌 `ios_dev_crystal_reward`를 사용합니다.
+
+- 개발 서버는 `https://nadab-dev.n-e.kr`, SSV 콜백은 `https://nadab-dev.n-e.kr/api/v1/ad-rewards/ssv`입니다.
+- iOS 앱에 연결된 IDFA 메시지와, 적용 지역의 UMP 동의 메시지를 AdMob에서 게시합니다. Android에만 연결한 유럽 규정 메시지는 iOS에 적용되지 않습니다. `no form(s) configured` 오류가 발생하면 iOS 앱의 메시지 연결·게시 상태를 확인합니다.
+- 개발 계정으로 로그인한 뒤 크리스탈 부족 상태에서 PDF 생성 또는 대화권 충전을 시도합니다. 광고가 닫힌 후 서버의 `REWARDED`와 후속 기능이 한 번만 실행되는지 확인합니다.
+- 질문 입력 유지·자동 전송 방지, PDF 기간·구성 보존, 광고 중도 종료, 화면 이탈·앱 복귀를 Android와 동일하게 확인합니다. ATT 허용·거부에 따른 동작은 실제 iPhone에서도 별도로 확인합니다.
+- 빌드 성공은 광고 표시나 서버 지급 검증 완료를 의미하지 않습니다. 앱에서 시청하고 서버 상태까지 확인한 뒤 검증 결과를 기록합니다.
+
+참고: [Google iOS 테스트 광고](https://developers.google.com/admob/ios/test-ads), [iOS IDFA 안내](https://developers.google.com/admob/ios/privacy/idfa).
 
 ## AdMob·백엔드 준비
 

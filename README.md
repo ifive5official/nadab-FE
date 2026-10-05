@@ -1,5 +1,9 @@
 Welcome to your new TanStack app! 
 
+## 광고 UI Storybook
+
+`pnpm storybook` 실행 후 [localhost:6006](http://localhost:6006)에서 광고 팝업과 개인정보 설정 항목을 상태별로 확인할 수 있습니다. [사용 방법과 스토리 목록](docs/storybook.md)
+
 # Getting Started
 
 To run this application:

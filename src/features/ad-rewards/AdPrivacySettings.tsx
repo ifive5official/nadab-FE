@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Section, SectionDivider } from "@/features/user/components/AccountSectionComponents";
+import { AdPrivacySettingsView } from "./AdPrivacySettingsView";
 import useToastStore from "@/store/toastStore";
 import { isAdRewardAvailable } from "./native";
 
@@ -28,12 +28,5 @@ export function AdPrivacySettings() {
     }
   }
 
-  return <>
-    <SectionDivider />
-    <Section title="광고">
-      <button type="button" disabled={pending} onClick={() => void openPrivacyOptions()} className="py-padding-y-xs text-caption-l">
-        광고 개인정보 설정
-      </button>
-    </Section>
-  </>;
+  return <AdPrivacySettingsView visible pending={pending} onOpen={() => void openPrivacyOptions()} />;
 }
