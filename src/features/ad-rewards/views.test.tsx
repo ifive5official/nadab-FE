@@ -21,13 +21,15 @@ describe("광고 보상 안내 화면", () => {
     const callbacks = actions();
     const { rerender } = render(<AdRewardDialogView state={offer} {...callbacks} />);
     expect(screen.getByText("필요한 크리스탈 10개 · 보유 3개")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "광고 보고 대화권 충전" }));
+    expect(screen.getByText("광고를 보고 대화권 충전을 진행할까요?")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "네" }));
     expect(callbacks.onWatch).toHaveBeenCalledOnce();
     expect(callbacks.onCheck).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "돌아가기" }));
+    fireEvent.click(screen.getByRole("button", { name: "아니요" }));
     expect(callbacks.onCancel).toHaveBeenCalledOnce();
     rerender(<AdRewardDialogView state={{ ...offer, feature: "PDF_REPORT_ONLY" }} {...callbacks} />);
-    expect(screen.getByRole("button", { name: "광고 보고 PDF 생성" })).toBeTruthy();
+    expect(screen.getByText("광고를 보고 PDF 생성을 진행할까요?")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "네" })).toBeTruthy();
   });
 
   it("지급 지연은 같은 세션 확인을, 만료와 광고 실패는 명시적 광고 재시도를 제공한다", () => {
@@ -73,8 +75,8 @@ describe("광고 보상 안내 화면", () => {
     rerender(<><button>팝업 열기</button><AdRewardDialogView state={offer} {...callbacks} /></>);
     const dialog = screen.getByRole("dialog", { name: "크리스탈이 부족해요." });
     expect(document.activeElement).toBe(dialog);
-    const first = screen.getByRole("button", { name: "돌아가기" });
-    const last = screen.getByRole("button", { name: "광고 보고 대화권 충전" });
+    const first = screen.getByRole("button", { name: "아니요" });
+    const last = screen.getByRole("button", { name: "네" });
     fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
     expect(document.activeElement).toBe(last);
     fireEvent.keyDown(document, { key: "Tab" });

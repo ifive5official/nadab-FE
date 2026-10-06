@@ -30,7 +30,7 @@ const meta = {
     balance: 3,
     requiredCrystal: 7,
     message: "",
-    onCancel: fn().mockName("돌아가기"),
+    onCancel: fn().mockName("취소"),
     onWatch: fn().mockName("광고 보기"),
     onCheck: fn().mockName("다시 확인"),
   },
