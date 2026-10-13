@@ -8,7 +8,7 @@ import type { AdRewardState } from "./types";
 const offer: AdRewardState = {
   phase: "offer",
   feature: "ASK_CHAT_TURN_CHARGE",
-  quote: { feature: "ASK_CHAT_TURN_CHARGE", crystalCost: 10, balance: 3, requiredCrystal: 7 },
+  quote: { feature: "ASK_CHAT_TURN_CHARGE", crystalCost: 200, balance: 30, requiredCrystal: 170 },
 };
 
 // 화면에서 발생한 사용자 동작을 독립적으로 확인할 콜백을 만듭니다.
@@ -19,17 +19,14 @@ afterEach(cleanup);
 describe("광고 보상 안내 화면", () => {
   it("금액과 후속 기능을 표시하고 사용자가 선택한 동작만 호출한다", () => {
     const callbacks = actions();
-    const { rerender } = render(<AdRewardDialogView state={offer} {...callbacks} />);
-    expect(screen.getByText("필요한 크리스탈 10개 · 보유 3개")).toBeTruthy();
+    render(<AdRewardDialogView state={offer} {...callbacks} />);
+    expect(screen.getByText("필요한 크리스탈 200개 · 보유 30개")).toBeTruthy();
     expect(screen.getByText("광고를 보고 대화권 충전을 진행할까요?")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "네" }));
     expect(callbacks.onWatch).toHaveBeenCalledOnce();
     expect(callbacks.onCheck).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "아니요" }));
     expect(callbacks.onCancel).toHaveBeenCalledOnce();
-    rerender(<AdRewardDialogView state={{ ...offer, feature: "PDF_REPORT_ONLY" }} {...callbacks} />);
-    expect(screen.getByText("광고를 보고 PDF 생성을 진행할까요?")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "네" })).toBeTruthy();
   });
 
   it("지급 지연은 같은 세션 확인을, 만료와 광고 실패는 명시적 광고 재시도를 제공한다", () => {

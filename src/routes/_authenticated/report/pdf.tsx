@@ -30,8 +30,6 @@ import {
 import { useStartPdfExportMutation } from "@/features/pdf/useStartPdfExportMutation";
 import useModalStore from "@/store/modalStore";
 import { currentPdfExportOptions } from "@/features/pdf/queries";
-import { useAdRewardFlow } from "@/features/ad-rewards/useAdRewardFlow";
-import { PDF_AD_REWARD_FEATURES } from "@/features/ad-rewards/types";
 
 const PERIOD_OPTIONS = [
   "최근 12개월",
@@ -92,7 +90,6 @@ function PdfExportSetupPage({ retrySearch }: { retrySearch: PdfRetrySearch }) {
   const { showToast } = useToastStore();
   const { showError } = useModalStore();
   const navigate = useNavigate();
-  const { requestReward, isRewardBusy } = useAdRewardFlow();
   const currentPdfExportQuery = useQuery(currentPdfExportOptions);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodOption | null>(
@@ -181,9 +178,8 @@ function PdfExportSetupPage({ retrySearch }: { retrySearch: PdfRetrySearch }) {
         bottom: PDF_TOAST_BOTTOM,
       });
     },
-    onInsufficientBalance: (request) => {
+    onInsufficientBalance: () => {
       setIsConfirmModalOpen(false);
-      if (requestReward(PDF_AD_REWARD_FEATURES[request.type], () => startPdfExportMutation.mutateAsync(request))) return;
       showError(
         "현재 보유한\n크리스탈이 부족해요.",
         "크리스탈을 모은 뒤 다시 시도해 주세요.",
@@ -274,7 +270,7 @@ function PdfExportSetupPage({ retrySearch }: { retrySearch: PdfRetrySearch }) {
 
   // 확인한 조건을 API 요청 타입으로 변환해 PDF 생성을 시작합니다.
   function handleConfirmCreate() {
-    if (!selectedContent || !selectedDateRange || isRewardBusy || startPdfExportMutation.isPending) return;
+    if (!selectedContent || !selectedDateRange || startPdfExportMutation.isPending) return;
 
     startPdfExportMutation.mutate({
       type: PDF_CONTENT_CONFIG[selectedContent].type,
@@ -400,7 +396,7 @@ function PdfExportSetupPage({ retrySearch }: { retrySearch: PdfRetrySearch }) {
         )}
         <BlockButton
           type="button"
-          disabled={!isPeriodComplete || !selectedContent || isRewardBusy || startPdfExportMutation.isPending}
+          disabled={!isPeriodComplete || !selectedContent || startPdfExportMutation.isPending}
           onClick={handleCreateClick}
           className="mt-auto pt-gap-y-l"
         >
@@ -414,7 +410,7 @@ function PdfExportSetupPage({ retrySearch }: { retrySearch: PdfRetrySearch }) {
           dateRange={selectedDateRange}
           preview={preview}
           cost={PDF_CONTENT_CONFIG[selectedContent].cost}
-          isLoading={startPdfExportMutation.isPending || isRewardBusy}
+          isLoading={startPdfExportMutation.isPending}
           onClose={() => setIsConfirmModalOpen(false)}
           onConfirm={handleConfirmCreate}
         />

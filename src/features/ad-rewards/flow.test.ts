@@ -2,9 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AxiosError } from "axios";
 import { createAdRewardFlow } from "./flow";
 import type { AdRewardStatus } from "./types";
-import { PDF_AD_REWARD_FEATURES } from "./types";
 
-const quote = { feature: "PDF_REPORT_ONLY" as const, crystalCost: 50, balance: 10, requiredCrystal: 40 };
+const quote = { feature: "ASK_CHAT_TURN_CHARGE" as const, crystalCost: 200, balance: 160, requiredCrystal: 40 };
 const session = { sessionKey: "session-one", rewardAmount: 40, expiresAt: "2099-01-01T00:00:00Z" };
 
 // 비동기 상태 전이를 실제 네트워크나 광고 없이 검증할 의존성을 만듭니다.
@@ -33,10 +32,6 @@ function apiError(status: number, code?: string) {
 describe("광고 보상 흐름", () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); });
-
-  it("PDF 구성별 광고 대상을 정확히 연결한다", () => {
-    expect(PDF_AD_REWARD_FEATURES).toEqual({ REPORT_ONLY: "PDF_REPORT_ONLY", ANSWER_ONLY: "PDF_ANSWER_ONLY", REPORT_AND_ANSWER: "PDF_REPORT_AND_ANSWER" });
-  });
 
   it("광고 버튼을 누르기 전에는 세션을 만들지 않는다", async () => {
     const { flow, deps, request } = setup();

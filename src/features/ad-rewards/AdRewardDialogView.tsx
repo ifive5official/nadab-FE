@@ -39,8 +39,6 @@ export function AdRewardDialogView({
   const visible = state.phase !== "idle";
   const busy = ["quoting", "preparing", "showing", "checking", "resuming"].includes(state.phase);
   const canCancel = !["showing", "resuming"].includes(state.phase);
-  const continuation =
-    state.feature === "ASK_CHAT_TURN_CHARGE" ? "대화권 충전" : "PDF 생성";
   const latest = useRef({ canCancel, onCancel });
 
   // 상태 전환 때 초점을 다시 잡지 않으면서 최신 취소 가능 여부를 반영합니다.
@@ -117,7 +115,7 @@ export function AdRewardDialogView({
                     필요한 크리스탈 {state.quote.crystalCost}개 · 보유{" "}
                     {state.quote.balance}개
                   </p>
-                  <p>광고를 보고 {continuation}을 진행할까요?</p>
+                  <p>광고를 보고 대화권 충전을 진행할까요?</p>
                 </>
               )}
               {state.phase === "delayed" && (
@@ -128,7 +126,7 @@ export function AdRewardDialogView({
               )}
               {state.phase === "expired" && (
                 <p>
-                  보상이 지급되지 않았어요. 광고를 다시 보고 {continuation}을
+                  보상이 지급되지 않았어요. 광고를 다시 보고 대화권 충전을
                   진행할 수 있어요.
                 </p>
               )}

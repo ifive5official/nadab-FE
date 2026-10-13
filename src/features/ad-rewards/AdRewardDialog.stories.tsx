@@ -26,9 +26,9 @@ const meta = {
   args: {
     phase: "offer",
     feature: "ASK_CHAT_TURN_CHARGE",
-    crystalCost: 10,
-    balance: 3,
-    requiredCrystal: 7,
+    crystalCost: 200,
+    balance: 30,
+    requiredCrystal: 170,
     message: "",
     onCancel: fn().mockName("취소"),
     onWatch: fn().mockName("광고 보기"),
@@ -36,7 +36,7 @@ const meta = {
   },
   argTypes: {
     phase: { control: "select", options: ["idle", "quoting", "offer", "preparing", "showing", "checking", "delayed", "expired", "adError", "error", "resuming"], description: "광고 흐름의 화면 상태" },
-    feature: { control: "select", options: ["PDF_REPORT_ONLY", "PDF_ANSWER_ONLY", "PDF_REPORT_AND_ANSWER", "ASK_CHAT_TURN_CHARGE"], description: "보상 이후 실행할 기능" },
+    feature: { control: false, description: "물어보기 대화권 충전" },
     crystalCost: { control: { type: "number", min: 0 }, description: "기능 비용" },
     balance: { control: { type: "number", min: 0 }, description: "보유 크리스탈" },
     requiredCrystal: { control: { type: "number", min: 0 }, description: "부족한 크리스탈" },
@@ -51,9 +51,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const AskCharge: Story = { name: "부족 안내 · 대화권 충전" };
-export const PdfReport: Story = { name: "부족 안내 · PDF 리포트", args: { feature: "PDF_REPORT_ONLY" } };
-export const PdfAnswer: Story = { name: "부족 안내 · PDF 답변", args: { feature: "PDF_ANSWER_ONLY" } };
-export const PdfBoth: Story = { name: "부족 안내 · PDF 리포트와 답변", args: { feature: "PDF_REPORT_AND_ANSWER" } };
 export const Quoting: Story = { name: "진행 · 잔액 조회", args: { phase: "quoting" } };
 export const Preparing: Story = { name: "진행 · 광고 준비", args: { phase: "preparing" } };
 export const Showing: Story = { name: "진행 · 광고 시청", args: { phase: "showing" } };
