@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | `.env.admob.example` | 광고 환경 변수 전체 항목과 설명. 자동 로드되지 않음 | 관리 / 설정 복사 시 참고 |
 | `.env.development.local` | 현재 개발 광고 설정 원본. Android·iOS 개발 ID와 활성화 값 | 제외 / 개발 설정 변경 시 수정 |
-| `.env.production` 또는 `.env.production.local`, CI 환경 변수 | 운영 설정 원본. 현재 로컬 운영 광고 값은 미설정이므로 비활성 | 로컬 파일 제외 / 운영 전환 시 설정 |
+| `.env.production`, `.env.production.local`, CI 환경 변수 | 운영 API·로그인은 `.env.production`, 운영 광고는 `.env.production.local`에서 설정 | 로컬 파일 제외 / 운영 전환 시 설정 |
 | `scripts/configure-admob.mjs` | 환경 변수를 검증하고 아래 두 네이티브 파일 생성 | 관리 / 설정 로직 변경 시 수정 |
 | `android/admob.local.properties` | 생성된 Android 앱 ID | 제외 / 직접 수정하지 않음 |
 | `ios/App/App/AdMob.local.xcconfig` | 생성된 iOS 앱 ID | 제외 / 직접 수정하지 않음 |
@@ -25,15 +25,15 @@
 
 ### 현재 개발 설정과 운영 상태
 
-2026-10-05 기준 로컬 설정입니다. 개발에서는 두 플랫폼의 자체 개발 광고 단위를 사용하고, 운영 광고는 비활성입니다.
+2026-10-16 기준 로컬 설정입니다. 개발에서는 두 플랫폼의 자체 개발 광고 단위를 사용하고, 운영에서는 `.env.production.local`에 양 플랫폼 운영 광고 단위와 활성화 값을 설정했습니다. 이 설정은 로컬 빌드 준비이며, 운영 SSV 등록·지급과 실기기 검증 완료를 의미하지 않습니다.
 
 | 항목 | 개발 | 운영 |
 | --- | --- | --- |
-| Android 광고 | 활성 | 비활성 |
-| iOS 광고 | 활성 | 비활성 |
-| `VITE_ADMOB_USE_DEMO_ADS` | `false` | 미설정 (`false` 취급) |
+| Android 광고 | 활성 | 활성 |
+| iOS 광고 | 활성 | 활성 |
+| `VITE_ADMOB_USE_DEMO_ADS` | `false` | `false` |
 | API | `https://nadab-dev.n-e.kr/` | `https://r9k2m7q3.shop/` |
-| 실행 검증 | Android 사용자 테스트 정상, iOS 개발 빌드 완료·실행 검증 대기 | 광고 활성화 전 |
+| 실행 검증 | 기존 기록: Android 사용자 테스트 정상, iOS 개발 빌드 완료·실행 검증 대기 | 운영 SSV·실기기 검증 여부 별도 확인 필요 |
 
 `VITE_ADMOB_USE_DEMO_ADS=false`는 **자체 광고 단위 선택**을 의미합니다. 테스트 광고 여부는 테스트 기기 등록으로 결정됩니다. 개발 광고 단위 이름에 `dev`가 있어도 테스트 기기 설정을 대신하지 않습니다.
 
@@ -56,7 +56,7 @@
 
 ### 나답 AdMob ID 목록
 
-아래 ID는 기존 AdMob 콘솔에서 확인한 값입니다. 운영 ID는 참고용이며, 이 문서에 적는 것만으로 운영 설정에 적용되지는 않습니다.
+아래 ID는 기존 AdMob 콘솔에서 확인한 값입니다. 운영 ID는 로컬 `.env.production.local`에도 설정했습니다. 문서와 로컬 환경 파일은 별개이며, 다른 개발 기기나 CI에서는 같은 값을 별도로 설정해야 합니다.
 
 | 구분 | Android | iOS |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ UMP 동의 메시지, IDFA 메시지, 테스트 기기 등록, 앱 인증·승�
 
 ## Android 개발 테스트
 
-개발용 API(`https://nadab-dev.n-e.kr`)에 연결하는 Android 빌드부터 확인합니다. `.env.development.local`은 Git에서 제외됩니다. 아래는 Android만 데모 광고로 시작하는 설정 예시이며, iOS 테스트를 병행할 때는 다음 절의 값을 적용합니다. 운영 광고는 별도로 활성화하기 전까지 비활성 상태를 유지합니다.
+개발용 API(`https://nadab-dev.n-e.kr`)에 연결하는 Android 빌드부터 확인합니다. `.env.development.local`은 Git에서 제외됩니다. 아래는 Android만 데모 광고로 시작하는 설정 예시이며, iOS 테스트를 병행할 때는 다음 절의 값을 적용합니다. 개발 테스트에는 운영 광고 단위를 사용하지 않습니다.
 
 ```dotenv
 VITE_AD_REWARDS_ENABLED=false

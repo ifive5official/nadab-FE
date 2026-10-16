@@ -14,8 +14,8 @@ android {
         applicationId "com.nadab.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "1.5.1"
+        versionCode 25
+        versionName "1.5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "admob_app_id", admobProperties.getProperty('admobAppId', 'ca-app-pub-3940256099942544~3347511713')
         aaptOptions {
